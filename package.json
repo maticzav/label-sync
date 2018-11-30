@@ -1,0 +1,32 @@
+{
+  "name": "github-labels",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/prisma/github-labels.git",
+  "author": "Matic Zavadlal <matic.zavadlal@gmail.com>",
+  "scripts": {
+    "clean": "rimraf dist",
+    "dev": "",
+    "prebuild": "npm run clean",
+    "build": "tsc -d"
+  },
+  "dependencies": {
+    "@octokit/rest": "^16.1.0",
+    "graphql-binding-github": "^0.3.25"
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.10",
+    "ava": "^1.0.0-rc.2",
+    "husky": "^1.2.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^1.15.3",
+    "pretty-quick": "^1.8.0",
+    "rimraf": "^2.6.2",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.17.0",
+    "tslint-config-standard": "^8.0.1",
+    "typescript": "^3.2.1"
+  },
+  "license": "MIT"
+}
