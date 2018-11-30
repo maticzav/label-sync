@@ -11,8 +11,7 @@
     "build": "tsc -d"
   },
   "dependencies": {
-    "@octokit/rest": "^16.1.0",
-    "graphql-binding-github": "^0.3.25"
+    "@octokit/rest": "^16.1.0"
   },
   "devDependencies": {
     "@types/node": "^10.12.10",
