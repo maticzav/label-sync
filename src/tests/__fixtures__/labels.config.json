@@ -1,0 +1,10 @@
+{
+  "strict": true,
+  "labels": {
+    "label-name": "label-color",
+    "label-advanced": {
+      "description": "label-advanced-description",
+      "color": "label-advanced-color"
+    }
+  }
+}

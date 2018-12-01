@@ -3,7 +3,14 @@ import * as path from 'path'
 import * as assert from 'assert'
 import * as Octokit from '@octokit/rest'
 
-async function main(): Promise<void> {
+/* istanbul ignore next */
+if (!(process.env.NODE_ENV === 'test')) main()
+
+/**
+ * Action
+ */
+
+export async function main(): Promise<void> {
   if (
     !process.env.GITHUB_TOKEN ||
     !process.env.GITHUB_WORKSPACE ||
@@ -34,16 +41,43 @@ async function main(): Promise<void> {
   const configuration = getGithubLabelsConfiguration(
     process.env.GITHUB_WORKSPACE,
   )
+
+  if (!configuration) {
+    throw new Error('No configuration file found!')
+  }
+
   const newLabels = getGithubLabelsFromConfiguration(configuration)
 
   // Github
   const repository = getRepositoryFromName(process.env.GITHUB_REPOSITORY)
-  const currentLabels = await getRepostioryLabels(client, repository!) // TODO: add check
+
+  if (!repository) {
+    throw new Error('Cannot decode the provided repository name.')
+  }
+
+  const currentLabels = await getRepostioryLabels(client, repository)
+
+  /**
+   * Diff
+   */
 
   const diff = getLabelsDiff(currentLabels, newLabels)
-}
 
-main()
+  /**
+   * Sync
+   */
+  if (diff.add) await addLabelsToRepository(client, diff.add, repository)
+
+  if (diff.update) {
+    await updateLabelsInRepository(client, diff.update, repository)
+  }
+
+  if (diff.remove && configuration.strict) {
+    await removeLabelsFromRepository(client, diff.remove, repository)
+  }
+
+  return
+}
 
 /**
  * Helper functions
@@ -57,7 +91,7 @@ type LabelConfiguration =
   | string
 
 interface GithubLabelsConfiguration {
-  strict?: boolean
+  strict: boolean
   labels: { [name: string]: LabelConfiguration }
 }
 
@@ -68,13 +102,13 @@ interface GithubLabelsConfiguration {
  *
  * @param workspace
  */
-function getGithubLabelsConfiguration(
+export function getGithubLabelsConfiguration(
   workspace: string,
-): GithubLabelsConfiguration {
+): GithubLabelsConfiguration | null {
   const configPath = path.resolve(workspace, 'labels.config.json')
 
   if (!fs.existsSync(configPath)) {
-    throw new Error('No configuration file found!')
+    return null
   }
 
   const config = JSON.parse(fs.readFileSync(configPath, 'utf8'))
@@ -93,7 +127,7 @@ function getGithubLabelsConfiguration(
  *
  * @param configuration
  */
-function getGithubLabelsFromConfiguration(
+export function getGithubLabelsFromConfiguration(
   configuration: GithubLabelsConfiguration,
 ): GithubLabel[] {
   const labelNames = Object.keys(configuration.labels)
@@ -143,7 +177,7 @@ function getGithubLabelsFromConfiguration(
  * Github functions
  */
 
-interface GithubRepository {
+export interface GithubRepository {
   owner: string
   repo: string
 }
@@ -154,9 +188,13 @@ interface GithubRepository {
  *
  * @param name
  */
-function getRepositoryFromName(name: string): GithubRepository | null {
+export function getRepositoryFromName(name: string): GithubRepository | null {
   try {
     const [owner, repo] = name.split('/')
+
+    assert.ok(typeof owner === 'string')
+    assert.ok(typeof repo === 'string')
+
     return {
       owner,
       repo,
@@ -166,7 +204,7 @@ function getRepositoryFromName(name: string): GithubRepository | null {
   }
 }
 
-interface GithubLabel {
+export interface GithubLabel {
   id?: number
   node_id?: string
   url?: string
@@ -183,7 +221,7 @@ interface GithubLabel {
  * @param github
  * @param repository
  */
-async function getRepostioryLabels(
+export async function getRepostioryLabels(
   github: Octokit,
   repository: GithubRepository,
 ): Promise<GithubLabel[]> {
@@ -194,12 +232,116 @@ async function getRepostioryLabels(
 
 /**
  *
+ * Creates new labels in a repository.
+ *
+ * @param github
+ * @param labels
+ * @param repository
+ */
+export async function addLabelsToRepository(
+  github: Octokit,
+  labels: GithubLabel[],
+  repository: GithubRepository,
+): Promise<GithubLabel[]> {
+  const actions = labels.map(label => addLabelToRepository(label))
+
+  return Promise.all(actions)
+
+  /**
+   * Helper functions
+   */
+  async function addLabelToRepository(
+    label: GithubLabel,
+  ): Promise<GithubLabel> {
+    return github.issues
+      .createLabel({
+        owner: repository.owner,
+        repo: repository.repo,
+        name: label.name,
+        description: label.description,
+        color: label.color,
+      })
+      .then(res => res.data)
+  }
+}
+
+/**
+ *
+ * Updates labels in repository.
+ *
+ * @param github
+ * @param labels
+ * @param repository
+ */
+export async function updateLabelsInRepository(
+  github: Octokit,
+  labels: GithubLabel[],
+  repository: GithubRepository,
+): Promise<GithubLabel[]> {
+  const actions = labels.map(label => updateLabelInREpository(label))
+
+  return Promise.all(actions)
+
+  /**
+   * Helper functions
+   */
+  async function updateLabelInREpository(
+    label: GithubLabel,
+  ): Promise<GithubLabel> {
+    return github.issues
+      .updateLabel({
+        current_name: label.name,
+        owner: repository.owner,
+        repo: repository.repo,
+        name: label.name,
+        description: label.description,
+        color: label.color,
+      })
+      .then(res => res.data)
+  }
+}
+
+/**
+ *
+ * Removes labels from repository.
+ *
+ * @param github
+ * @param labels
+ * @param repository
+ */
+export async function removeLabelsFromRepository(
+  github: Octokit,
+  labels: GithubLabel[],
+  repository: GithubRepository,
+): Promise<Octokit.IssuesDeleteLabelResponse[]> {
+  const actions = labels.map(label => removeLabelFromRepository(label))
+
+  return Promise.all(actions)
+
+  /**
+   * Helper functions
+   */
+  async function removeLabelFromRepository(
+    label: GithubLabel,
+  ): Promise<Octokit.IssuesDeleteLabelResponse> {
+    return github.issues
+      .deleteLabel({
+        owner: repository.owner,
+        repo: repository.repo,
+        name: label.name,
+      })
+      .then(res => res.data)
+  }
+}
+
+/**
+ *
  * Calculates the diff of labels.
  *
  * @param currentLabels
  * @param newLabels
  */
-function getLabelsDiff(
+export function getLabelsDiff(
   currentLabels: GithubLabel[],
   newLabels: GithubLabel[],
 ): {
@@ -283,7 +425,7 @@ function getLabelsDiff(
  *
  * @param fallback
  */
-function withDefault<T>(fallback: T): (value: T | undefined) => T {
+export function withDefault<T>(fallback: T): (value: T | undefined) => T {
   return value => {
     if (value !== undefined) {
       return value
@@ -299,7 +441,7 @@ function withDefault<T>(fallback: T): (value: T | undefined) => T {
  *
  * @param label
  */
-function isLabel(label: GithubLabel): (compare: GithubLabel) => boolean {
+export function isLabel(label: GithubLabel): (compare: GithubLabel) => boolean {
   return compare => {
     try {
       assert.deepStrictEqual(label, compare)
