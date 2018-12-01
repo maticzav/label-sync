@@ -1,5 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
+import * as assert from 'assert'
 import * as Octokit from '@octokit/rest'
 
 async function main(): Promise<void> {
@@ -37,7 +38,7 @@ async function main(): Promise<void> {
 
   // Github
   const repository = getRepositoryFromName(process.env.GITHUB_REPOSITORY)
-  const currentLabels = await getRepostioryLabels(client, repository)
+  const currentLabels = await getRepostioryLabels(client, repository!) // TODO: add check
 
   const diff = getLabelsDiff(currentLabels, newLabels)
 }
@@ -52,17 +53,18 @@ type LabelConfiguration =
   | {
       description?: string
       color: string
-      default?: boolean
     }
   | string
 
 interface GithubLabelsConfiguration {
+  strict?: boolean
   labels: { [name: string]: LabelConfiguration }
 }
 
 /**
  *
  * Gets labels configuration from Github repository workspace.
+ * Replaces optional values with defaults if no value is provided.
  *
  * @param workspace
  */
@@ -77,9 +79,12 @@ function getGithubLabelsConfiguration(
 
   const config = JSON.parse(fs.readFileSync(configPath, 'utf8'))
 
-  // TODO: add schema check
+  // TODO: add configuration schema check
 
-  return config
+  return {
+    strict: withDefault(false)(config.strict),
+    labels: config.labels,
+  }
 }
 
 /**
@@ -127,24 +132,8 @@ function getGithubLabelsFromConfiguration(
           name: labelName,
           description: withDefault('')(labelConfig.description),
           color: labelConfig.color,
-          default: withDefault(false)(labelConfig.default),
+          default: false,
         }
-      }
-    }
-  }
-
-  /**
-   *
-   * Returns fallback if value is undefined.
-   *
-   * @param fallback
-   */
-  function withDefault<T>(fallback: T): (value: T) => T {
-    return (value: T) => {
-      if (value !== undefined) {
-        return value
-      } else {
-        return fallback
       }
     }
   }
@@ -218,9 +207,105 @@ function getLabelsDiff(
   update: GithubLabel[]
   remove: GithubLabel[]
 } {
-  return {
-    add: [],
-    update: [],
-    remove: [],
+  const labels = [...currentLabels, ...newLabels]
+  const diff = labels.reduce<{
+    add: GithubLabel[]
+    update: GithubLabel[]
+    remove: GithubLabel[]
+  }>(
+    (acc, label) => {
+      const status = getLabelStatus(label)
+
+      switch (status) {
+        case 'create':
+          return { ...acc, add: acc.add.concat(label) }
+
+        case 'update':
+          return { ...acc, update: acc.update.concat(label) }
+
+        case 'delete':
+          return { ...acc, remove: acc.remove.concat(label) }
+
+        case 'ignore':
+          return acc
+      }
+    },
+    {
+      add: [],
+      update: [],
+      remove: [],
+    },
+  )
+
+  return diff
+
+  /**
+   * Helper functions
+   */
+  function getLabelStatus(
+    label: GithubLabel,
+  ): 'create' | 'update' | 'delete' | 'ignore' {
+    const newDefinition = newLabels.find(isLabelDefinition(label))
+    const currentDefinition = currentLabels.find(isLabelDefinition(label))
+
+    if (newDefinition && !currentDefinition) {
+      return 'create'
+    } else if (
+      newDefinition &&
+      currentDefinition &&
+      !isLabel(newDefinition)(currentDefinition)
+    ) {
+      return 'update'
+    } else if (!newDefinition && currentDefinition) {
+      return 'delete'
+    } else {
+      return 'ignore'
+    }
+  }
+
+  /**
+   * Helper functions
+   */
+  function isLabelDefinition(
+    label: GithubLabel,
+  ): (compare: GithubLabel) => boolean {
+    return compare => label.name === compare.name
+  }
+}
+
+/**
+ * Utils
+ */
+
+/**
+ *
+ * Returns fallback if value is undefined.
+ *
+ * @param fallback
+ */
+function withDefault<T>(fallback: T): (value: T | undefined) => T {
+  return value => {
+    if (value !== undefined) {
+      return value
+    } else {
+      return fallback
+    }
+  }
+}
+
+/**
+ *
+ * Compares two labels by comparing all of their keys.
+ *
+ * @param label
+ */
+function isLabel(label: GithubLabel): (compare: GithubLabel) => boolean {
+  return compare => {
+    try {
+      assert.deepStrictEqual(label, compare)
+      return true
+    } catch (err) {
+      return false
+    }
   }
 }
