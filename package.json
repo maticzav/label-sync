@@ -6,8 +6,8 @@
   "author": "Matic Zavadlal <matic.zavadlal@gmail.com>",
   "scripts": {
     "clean": "rimraf dist",
-    "test": "NODE_ENV=test jest",
-    "prebuild": "npm-run-all clean",
+    "test": "NODE_ENV=test jest -i",
+    "prebuild": "npm-run-all clean test",
     "build": "tsc -d"
   },
   "dependencies": {

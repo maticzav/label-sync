@@ -13,10 +13,10 @@ LABEL "maintainer"="Matic Zavadlal <matic.zavadlal@gmail.com>"
 
 # Process
 
-ADD package.json yarn.lock /
+ADD package.json yarn.lock ./
 RUN yarn install
 
-ADD . /
+ADD . ./
 
 RUN yarn build
 
