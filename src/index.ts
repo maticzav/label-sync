@@ -324,6 +324,7 @@ export function getLabelsDiff(
   function getLabelStatus(
     label: GithubLabel,
   ): 'create' | 'update' | 'delete' | 'ignore' {
+    const isNew = newLabels.find(isLabel(label))
     const newDefinition = newLabels.find(isLabelDefinition(label))
     const currentDefinition = currentLabels.find(isLabelDefinition(label))
 
@@ -332,7 +333,8 @@ export function getLabelsDiff(
     } else if (
       newDefinition &&
       currentDefinition &&
-      !isLabel(newDefinition)(currentDefinition)
+      !isLabel(newDefinition)(currentDefinition) &&
+      isNew
     ) {
       return 'update'
     } else if (!newDefinition && currentDefinition) {
