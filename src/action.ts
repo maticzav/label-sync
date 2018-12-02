@@ -1,5 +1,14 @@
 import * as Octokit from '@octokit/rest'
-import * as labels from './'
+import {
+  getGithubLabelsConfiguration,
+  getGithubLabelsFromConfiguration,
+  getRepositoryFromName,
+  getRepostioryLabels,
+  getLabelsDiff,
+  addLabelsToRepository,
+  updateLabelsInRepository,
+  removeLabelsFromRepository,
+} from '.'
 
 /* istanbul ignore next */
 if (!(process.env.NODE_ENV === 'test')) main()
@@ -36,7 +45,7 @@ export async function main(): Promise<boolean> {
    */
 
   // Local
-  const configuration = labels.getGithubLabelsConfiguration(
+  const configuration = getGithubLabelsConfiguration(
     process.env.GITHUB_WORKSPACE,
   )
 
@@ -44,32 +53,32 @@ export async function main(): Promise<boolean> {
     throw new Error('No configuration file found!')
   }
 
-  const newLabels = labels.getGithubLabelsFromConfiguration(configuration)
+  const newLabels = getGithubLabelsFromConfiguration(configuration)
 
   // Github
-  const repository = labels.getRepositoryFromName(process.env.GITHUB_REPOSITORY)
+  const repository = getRepositoryFromName(process.env.GITHUB_REPOSITORY)
 
   if (!repository) {
     throw new Error('Cannot decode the provided repository name.')
   }
 
-  const currentLabels = await labels.getRepostioryLabels(client, repository)
+  const currentLabels = await getRepostioryLabels(client, repository)
 
   /**
    * Diff
    */
 
-  const diff = labels.getLabelsDiff(currentLabels, newLabels)
+  const diff = getLabelsDiff(currentLabels, newLabels)
 
   /**
    * Sync
    */
-  await labels.addLabelsToRepository(client, diff.add, repository)
+  await addLabelsToRepository(client, diff.add, repository)
 
-  await labels.updateLabelsInRepository(client, diff.update, repository)
+  await updateLabelsInRepository(client, diff.update, repository)
 
   if (configuration.strict) {
-    await labels.removeLabelsFromRepository(client, diff.remove, repository)
+    await removeLabelsFromRepository(client, diff.remove, repository)
   }
 
   return true
