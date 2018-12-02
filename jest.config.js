@@ -14,6 +14,7 @@ module.exports = {
     '!**/vendor/**',
     '!**/generated/**',
   ],
+  verbose: true,
   coverageDirectory: './coverage',
   coverageReporters: ['json', 'lcov', 'text', 'clover', 'html'],
 }
