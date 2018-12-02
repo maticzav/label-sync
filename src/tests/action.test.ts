@@ -23,30 +23,68 @@ describe('Action', () => {
     await expect(action.main()).rejects.toThrow('Missing Github configuration!')
   })
 
-  test('fails if no configuration found', async () => {
+  test('throws if no configuration found', async () => {
     // Set ENVVAR
     process.env.GITHUB_TOKEN = 'token'
     process.env.GITHUB_WORKSPACE = '/not_found'
     process.env.GITHUB_HOME = 'home'
     process.env.GITHUB_REPOSITORY = 'prisma/github-labels'
     process.env.GITHUB_EVENT_NAME = 'event'
-    process.env.GITHUB_REF = 'ref'
+    process.env.GITHUB_REF = 'master'
 
     await expect(action.main()).rejects.toThrow('No configuration file found!')
   })
 
-  test('fails if repository name malformed', async () => {
+  test('throws if repository name malformed', async () => {
     // Set ENVVAR
     process.env.GITHUB_TOKEN = 'token'
     process.env.GITHUB_WORKSPACE = path.resolve(__dirname, './__fixtures__/')
     process.env.GITHUB_HOME = 'home'
     process.env.GITHUB_REPOSITORY = 'prisma'
     process.env.GITHUB_EVENT_NAME = 'event'
-    process.env.GITHUB_REF = 'ref'
+    process.env.GITHUB_REF = 'master'
 
     await expect(action.main()).rejects.toThrow(
       'Cannot decode the provided repository name.',
     )
+  })
+
+  /**
+   * Ref
+   */
+
+  test('prevents execution on different ref', async () => {
+    // Set ENVVAR
+    process.env.GITHUB_TOKEN = 'token'
+    process.env.GITHUB_WORKSPACE = 'workspace'
+    process.env.GITHUB_HOME = 'home'
+    process.env.GITHUB_REPOSITORY = 'prisma/github-labels'
+    process.env.GITHUB_EVENT_NAME = 'event'
+    process.env.GITHUB_REF = 'fail'
+
+    /**
+     * Mocks
+     */
+    const getGithubLabelsConfigurationMock = jest
+      .spyOn(labels, 'getGithubLabelsConfiguration')
+      .mockReturnValue({
+        strict: false,
+        labels: {},
+        branch: 'master',
+      })
+
+    /**
+     * Execution, Tests
+     */
+
+    const res = await action.main()
+
+    expect(res).toBe(false)
+
+    /**
+     * Clearing
+     */
+    getGithubLabelsConfigurationMock.mockRestore()
   })
 
   /**
@@ -59,7 +97,7 @@ describe('Action', () => {
     process.env.GITHUB_HOME = 'home'
     process.env.GITHUB_REPOSITORY = 'prisma/github-labels'
     process.env.GITHUB_EVENT_NAME = 'event'
-    process.env.GITHUB_REF = 'ref'
+    process.env.GITHUB_REF = 'master'
 
     /**
      * Mocks
@@ -69,6 +107,7 @@ describe('Action', () => {
       .mockReturnValue({
         strict: false,
         labels: {},
+        branch: 'master',
       })
     const getGithubLabelsFromConfigurationMock = jest
       .spyOn(labels, 'getGithubLabelsFromConfiguration')
@@ -161,7 +200,7 @@ describe('Action', () => {
     process.env.GITHUB_HOME = 'home'
     process.env.GITHUB_REPOSITORY = 'prisma/github-labels'
     process.env.GITHUB_EVENT_NAME = 'event'
-    process.env.GITHUB_REF = 'ref'
+    process.env.GITHUB_REF = 'master'
 
     /**
      * Mocks
@@ -171,6 +210,7 @@ describe('Action', () => {
       .mockReturnValue({
         strict: true,
         labels: {},
+        branch: 'master',
       })
     const getGithubLabelsFromConfigurationMock = jest
       .spyOn(labels, 'getGithubLabelsFromConfiguration')

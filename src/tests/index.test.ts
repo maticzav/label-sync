@@ -22,7 +22,14 @@ describe('Configuration function', () => {
           color: 'label-advanced-color',
         },
       },
+      branch: 'master',
     })
+  })
+
+  test('getGithubLabelsConfiguration throws on invalid configuration', async () => {
+    const configPath = path.resolve(__dirname, './__fixtures__/invalid/')
+
+    expect(labels.getGithubLabelsConfiguration(configPath)).toBeNull()
   })
 
   test('getGithubLabelsConfiguration throws on missing configuration', async () => {
@@ -44,6 +51,7 @@ describe('Configuration function', () => {
             color: 'label-advanced-color',
           },
         },
+        branch: 'master',
       }),
     ).toEqual([
       {

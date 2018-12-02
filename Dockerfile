@@ -20,4 +20,4 @@ ADD . /
 
 RUN yarn build
 
-ENTRYPOINT ["/dist/index.js"]
+ENTRYPOINT ["/dist/action.js"]

@@ -11,7 +11,8 @@
     "build": "tsc -d"
   },
   "dependencies": {
-    "@octokit/rest": "^16.1.0"
+    "@octokit/rest": "^16.1.0",
+    "ajv": "^6.6.1"
   },
   "devDependencies": {
     "@types/jest": "^23.3.10",

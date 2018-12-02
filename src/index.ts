@@ -2,6 +2,14 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as assert from 'assert'
 import * as Octokit from '@octokit/rest'
+import * as Ajv from 'ajv'
+
+import schema = require('./schema.json')
+
+const ajv = new Ajv().addMetaSchema(
+  require('ajv/lib/refs/json-schema-draft-06.json'),
+)
+const validateSchema = ajv.compile(schema)
 
 /**
  * Action
@@ -28,8 +36,7 @@ type LabelConfiguration =
 interface GithubLabelsConfiguration {
   strict: boolean
   labels: { [name: string]: LabelConfiguration }
-  // branch: string
-  // event: string
+  branch: string
 }
 
 /**
@@ -50,11 +57,14 @@ export function getGithubLabelsConfiguration(
 
   const config = JSON.parse(fs.readFileSync(configPath, 'utf8'))
 
-  // TODO: add configuration schema check
+  if (!validateSchema(config)) {
+    return null
+  }
 
   return {
     strict: withDefault(false)(config.strict),
     labels: config.labels,
+    branch: withDefault('master')(config.branch),
   }
 }
 

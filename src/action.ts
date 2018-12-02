@@ -30,6 +30,25 @@ export async function main(): Promise<boolean> {
   }
 
   /**
+   * Configuration
+   */
+
+  const configuration = getGithubLabelsConfiguration(
+    process.env.GITHUB_WORKSPACE,
+  )
+
+  if (!configuration) {
+    throw new Error('No configuration file found!')
+  }
+
+  if (configuration.branch !== process.env.GITHUB_REF) {
+    /**
+     * Terminates the execution on non-set branches.
+     */
+    return false
+  }
+
+  /**
    * Authentication
    */
 
@@ -45,14 +64,6 @@ export async function main(): Promise<boolean> {
    */
 
   // Local
-  const configuration = getGithubLabelsConfiguration(
-    process.env.GITHUB_WORKSPACE,
-  )
-
-  if (!configuration) {
-    throw new Error('No configuration file found!')
-  }
-
   const newLabels = getGithubLabelsFromConfiguration(configuration)
 
   // Github
