@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "test": "NODE_ENV=test jest",
-    "prebuild": "npm run clean && npm run test",
+    "prebuild": "npm-run-all clean",
     "build": "tsc -d"
   },
   "dependencies": {
