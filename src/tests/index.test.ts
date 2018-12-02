@@ -2,29 +2,80 @@ import * as path from 'path'
 import * as labels from '../'
 
 describe('Action', () => {
-  test('throws on missing credentials', async () => {
-    process.env.GITHUB_TOKEN = undefined
-    process.env.GITHUB_WORKSPACE = undefined
-    process.env.GITHUB_HOME = undefined
-    process.env.GITHUB_REPOSITORY = undefined
-    process.env.GITHUB_EVENT_NAME = undefined
-    process.env.GITHUB_REF = undefined
+  beforeEach(() => {
+    jest.resetModules()
 
-    const res = labels.main()
-
-    await expect(res).toThrowError('Missing Github configuration!')
+    delete process.env.GITHUB_TOKEN
+    delete process.env.GITHUB_WORKSPACE
+    delete process.env.GITHUB_HOME
+    delete process.env.GITHUB_REPOSITORY
+    delete process.env.GITHUB_EVENT_NAME
+    delete process.env.GITHUB_REF
   })
 
-  test('calls correct functions', async () => {
-    // Set ENVVAR
-    process.env.GITHUB_TOKEN = ''
-    process.env.GITHUB_WORKSPACE = ''
-    process.env.GITHUB_HOME = ''
-    process.env.GITHUB_REPOSITORY = ''
-    process.env.GITHUB_EVENT_NAME = ''
-    process.env.GITHUB_REF = ''
+  /**
+   * Config check.
+   */
 
-    expect(undefined).toBeUndefined()
+  test('throws on missing credentials', async () => {
+    await expect(labels.main()).rejects.toThrow('Missing Github configuration!')
+  })
+
+  test('fails if no configuration found', async () => {
+    // Set ENVVAR
+    process.env.GITHUB_TOKEN = 'token'
+    process.env.GITHUB_WORKSPACE = '/not_found'
+    process.env.GITHUB_HOME = 'home'
+    process.env.GITHUB_REPOSITORY = 'prisma/github-labels'
+    process.env.GITHUB_EVENT_NAME = 'event'
+    process.env.GITHUB_REF = 'ref'
+
+    await expect(labels.main()).rejects.toThrow('No configuration file found!')
+  })
+
+  test('fails if repository name malformed', async () => {
+    // Set ENVVAR
+    process.env.GITHUB_TOKEN = 'token'
+    process.env.GITHUB_WORKSPACE = path.resolve(__dirname, './__fixtures__/')
+    process.env.GITHUB_HOME = 'home'
+    process.env.GITHUB_REPOSITORY = 'prisma'
+    process.env.GITHUB_EVENT_NAME = 'event'
+    process.env.GITHUB_REF = 'ref'
+
+    await expect(labels.main()).rejects.toThrow(
+      'Cannot decode the provided repository name.',
+    )
+  })
+
+  /**
+   * Labels, Sync
+   */
+  test('calls correct functions in normal mode', async () => {
+    // Set ENVVAR
+    process.env.GITHUB_TOKEN = 'token'
+    process.env.GITHUB_WORKSPACE = path.resolve(__dirname, './__fixtures__/')
+    process.env.GITHUB_HOME = 'home'
+    process.env.GITHUB_REPOSITORY = 'prisma/github-labels'
+    process.env.GITHUB_EVENT_NAME = 'event'
+    process.env.GITHUB_REF = 'ref'
+
+    const res = await labels.main()
+
+    expect(res).toBe(true)
+  })
+
+  test('calls correct functions in strict mode', async () => {
+    // Set ENVVAR
+    process.env.GITHUB_TOKEN = 'token'
+    process.env.GITHUB_WORKSPACE = path.resolve(__dirname, './__fixtures__/')
+    process.env.GITHUB_HOME = 'home'
+    process.env.GITHUB_REPOSITORY = 'prisma/github-labels'
+    process.env.GITHUB_EVENT_NAME = 'event'
+    process.env.GITHUB_REF = 'ref'
+
+    const res = await labels.main()
+
+    expect(res).toBe(true)
   })
 })
 

@@ -10,7 +10,7 @@ if (!(process.env.NODE_ENV === 'test')) main()
  * Action
  */
 
-export async function main(): Promise<void> {
+export async function main(): Promise<boolean> {
   if (
     !process.env.GITHUB_TOKEN ||
     !process.env.GITHUB_WORKSPACE ||
@@ -76,7 +76,7 @@ export async function main(): Promise<void> {
     await removeLabelsFromRepository(client, diff.remove, repository)
   }
 
-  return
+  return true
 }
 
 /**
@@ -93,6 +93,8 @@ type LabelConfiguration =
 interface GithubLabelsConfiguration {
   strict: boolean
   labels: { [name: string]: LabelConfiguration }
+  // branch: string
+  // event: string
 }
 
 /**
