@@ -1,4 +1,4 @@
-workflow "New workflow" {
+workflow "Prisma Repositories Issue Labeling" {
   on = "push"
   resolves = ["Github Labels"]
 }
