@@ -1,75 +1,6 @@
 import * as path from 'path'
 import * as labels from '../'
 
-describe('Configuration function', () => {
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
-
-  /**
-   * getGithubLabelsConfiguration
-   */
-
-  test('getGithubLabelsConfiguration finds configuration', async () => {
-    const configPath = path.resolve(__dirname, './__fixtures__/')
-
-    expect(labels.getGithubLabelsConfiguration(configPath)).toEqual({
-      strict: true,
-      labels: {
-        'label-name': 'label-color',
-        'label-advanced': {
-          description: 'label-advanced-description',
-          color: 'label-advanced-color',
-        },
-      },
-      branch: 'master',
-    })
-  })
-
-  test('getGithubLabelsConfiguration throws on invalid configuration', async () => {
-    const configPath = path.resolve(__dirname, './__fixtures__/invalid/')
-
-    expect(labels.getGithubLabelsConfiguration(configPath)).toBeNull()
-  })
-
-  test('getGithubLabelsConfiguration throws on missing configuration', async () => {
-    expect(labels.getGithubLabelsConfiguration('/not_found/')).toBeNull()
-  })
-
-  /**
-   * getGithubLabelsFromConfiguration
-   */
-
-  test('getGithubLabelsFromConfiguration hydrates the labels correctly', async () => {
-    expect(
-      labels.getGithubLabelsFromConfiguration({
-        strict: true,
-        labels: {
-          'label-name': 'label-color',
-          'label-advanced': {
-            description: 'label-advanced-description',
-            color: 'label-advanced-color',
-          },
-        },
-        branch: 'master',
-      }),
-    ).toEqual([
-      {
-        name: 'label-name',
-        description: '',
-        color: 'label-color',
-        default: false,
-      },
-      {
-        name: 'label-advanced',
-        description: 'label-advanced-description',
-        color: 'label-advanced-color',
-        default: false,
-      },
-    ])
-  })
-})
-
 describe('Github function', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -167,7 +98,6 @@ describe('Github function', () => {
       description: 'label-advanced-description',
       color: 'label-advanced-color',
     })
-    expect(res).toEqual(['pass', 'pass'])
   })
 
   /**
@@ -221,7 +151,6 @@ describe('Github function', () => {
       description: 'label-advanced-description',
       color: 'label-advanced-color',
     })
-    expect(res).toEqual(['pass', 'pass'])
   })
 
   /**
@@ -269,7 +198,6 @@ describe('Github function', () => {
       repo: repository.repo,
       name: 'label-advanced',
     })
-    expect(res).toEqual(['pass', 'pass'])
   })
 
   /**

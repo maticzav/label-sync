@@ -8,14 +8,15 @@
     "clean": "rimraf dist",
     "test": "NODE_ENV=test jest -i",
     "prebuild": "npm-run-all clean test",
-    "build": "tsc -d"
+    "build": "tsc -d",
+    "start": "node dist/index.js"
   },
   "dependencies": {
     "@octokit/rest": "^16.1.0",
-    "ajv": "^6.6.1"
+    "chalk": "^2.4.1"
   },
   "devDependencies": {
-    "@types/ajv": "^1.0.0",
+    "@types/chalk": "^2.2.0",
     "@types/jest": "^23.3.10",
     "@types/node": "^10.12.10",
     "husky": "^1.2.0",

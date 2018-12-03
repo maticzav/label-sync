@@ -1,26 +1,63 @@
-import * as fs from 'fs'
-import * as path from 'path'
 import * as assert from 'assert'
 import * as Octokit from '@octokit/rest'
-import * as Ajv from 'ajv'
+import chalk from 'chalk'
 
-import schema = require('./schema.json')
+/**
+ * Sync
+ */
 
-const ajv = new Ajv().addMetaSchema(
-  require('ajv/lib/refs/json-schema-draft-06.json'),
-)
-const validateSchema = ajv.compile(schema)
+import configuration from './config'
+
+/* istanbul ignore next */
+if (process.env.NODE_ENV !== 'test') {
+  main(configuration).then(report => console.log(report))
+}
 
 /**
  * Action
  */
 
-/**
- * Action definition should be placed here but was moved to another
- * file to make Jest testing of Action execution possible.
- * This file looked a lot better before and I hope we will be able to
- * move action definition back here someday when Jest fixes mocking for good.
- */
+export async function main(configuration: Config): Promise<string> {
+  if (!process.env.GITHUB_TOKEN) {
+    throw new Error('Missing Github configuration!')
+  }
+
+  /**
+   * Authentication
+   */
+
+  const client = new Octokit()
+
+  client.authenticate({
+    type: 'app',
+    token: process.env.GITHUB_TOKEN,
+  })
+
+  /**
+   * Repositories Sync
+   */
+
+  const repositories = getRepositoriesFromConfiguration(configuration)
+  const actions = repositories.map(repository =>
+    handleRepository(client, repository.name, repository.config),
+  )
+
+  const report = await Promise.all(actions)
+  return syncReport(report)
+
+  /**
+   * Helper functions
+   */
+
+  function syncReport(repositoryReports: string[]): string {
+    const message = `
+Synced labels accross ${repositoryReports.length} repositories;
+${repositoryReports.join('\n\n')}
+    `
+
+    return message
+  }
+}
 
 /**
  * Helper functions
@@ -33,38 +70,115 @@ type LabelConfiguration =
     }
   | string
 
-interface GithubLabelsConfiguration {
-  strict: boolean
+interface RepositoryConfiguration {
+  strict?: boolean
   labels: { [name: string]: LabelConfiguration }
-  branch: string
+}
+
+export interface Config {
+  [repository: string]: RepositoryConfiguration
+}
+
+export function getRepositoriesFromConfiguration(
+  configuration: Config,
+): { name: string; config: RepositoryConfiguration }[] {
+  const repositories = Object.keys(configuration).map(repository => ({
+    name: repository,
+    config: hydrateRepositoryConfiguration(configuration[repository]),
+  }))
+
+  return repositories
+
+  /**
+   * Helpers
+   */
+  function hydrateRepositoryConfiguration(config: RepositoryConfiguration) {
+    return {
+      strict: withDefault(false)(config.strict),
+      labels: config.labels,
+    }
+  }
 }
 
 /**
  *
- * Gets labels configuration from Github repository workspace.
- * Replaces optional values with defaults if no value is provided.
+ * Handles report installation.
  *
- * @param workspace
+ * @param client
+ * @param name
+ * @param config
  */
-export function getGithubLabelsConfiguration(
-  workspace: string,
-): GithubLabelsConfiguration | null {
-  const configPath = path.resolve(workspace, 'labels.config.json')
+async function handleRepository(
+  client: Octokit,
+  name: string,
+  config: RepositoryConfiguration,
+): Promise<string> {
+  const repository = getRepositoryFromName(name)
 
-  if (!fs.existsSync(configPath)) {
-    return null
+  if (!repository) {
+    throw new Error(`Cannot decode the provided repository name ${name}`)
   }
 
-  const config = JSON.parse(fs.readFileSync(configPath, 'utf8'))
+  /**
+   * Labels
+   */
 
-  if (!validateSchema(config)) {
-    return null
-  }
+  // Github
+  const currentLabels = await getRepostioryLabels(client, repository)
 
-  return {
-    strict: withDefault(false)(config.strict),
-    labels: config.labels,
-    branch: withDefault('master')(config.branch),
+  // Local
+  const newLabels = getGithubLabelsFromRepositoryConfiguration(config)
+
+  /**
+   * Diff
+   */
+
+  const diff = getLabelsDiff(currentLabels, newLabels)
+
+  /**
+   * Sync
+   */
+  const additions = await addLabelsToRepository(client, diff.add, repository)
+  const updates = await updateLabelsInRepository(
+    client,
+    diff.update,
+    repository,
+  )
+  const removals = configuration.strict
+    ? await removeLabelsFromRepository(client, diff.remove, repository)
+    : `${diff.remove.length} labels should be removed. 
+To override them, set strict property to true in repository configuration.
+    `
+
+  return syncReport({
+    additions,
+    updates,
+    removals,
+  })
+
+  /**
+   * Helper functions
+   */
+  function syncReport({
+    additions,
+    updates,
+    removals,
+  }: {
+    additions: string
+    updates: string
+    removals: string
+  }): string {
+    const message = `
+Synced ${name}:
+
+${additions}
+
+${updates}
+
+${removals}
+    `
+
+    return message
   }
 }
 
@@ -74,8 +188,8 @@ export function getGithubLabelsConfiguration(
  *
  * @param configuration
  */
-export function getGithubLabelsFromConfiguration(
-  configuration: GithubLabelsConfiguration,
+export function getGithubLabelsFromRepositoryConfiguration(
+  configuration: RepositoryConfiguration,
 ): GithubLabel[] {
   const labelNames = Object.keys(configuration.labels)
   const labels = labelNames.map(labelName =>
@@ -189,10 +303,11 @@ export async function addLabelsToRepository(
   github: Octokit,
   labels: GithubLabel[],
   repository: GithubRepository,
-): Promise<GithubLabel[]> {
+): Promise<string> {
   const actions = labels.map(label => addLabelToRepository(label))
+  const res = await Promise.all(actions)
 
-  return Promise.all(actions)
+  return reportSync(res)
 
   /**
    * Helper functions
@@ -210,6 +325,15 @@ export async function addLabelsToRepository(
       })
       .then(res => res.data)
   }
+
+  function reportSync(additions: GithubLabel[]): string {
+    const message = `
+Added ${additions.length} labels:
+${additions.map(label => chalk.hex(label.color)` - ${label.name}\n`)}
+    `
+
+    return message
+  }
 }
 
 /**
@@ -224,10 +348,11 @@ export async function updateLabelsInRepository(
   github: Octokit,
   labels: GithubLabel[],
   repository: GithubRepository,
-): Promise<GithubLabel[]> {
+): Promise<string> {
   const actions = labels.map(label => updateLabelInREpository(label))
+  const res = await Promise.all(actions)
 
-  return Promise.all(actions)
+  return reportSync(res)
 
   /**
    * Helper functions
@@ -246,6 +371,15 @@ export async function updateLabelsInRepository(
       })
       .then(res => res.data)
   }
+
+  function reportSync(updates: GithubLabel[]): string {
+    const message = `
+Updated ${updates.length} labels:
+${updates.map(label => chalk.hex(label.color)` - ${label.name}\n`)}
+    `
+
+    return message
+  }
 }
 
 /**
@@ -260,10 +394,11 @@ export async function removeLabelsFromRepository(
   github: Octokit,
   labels: GithubLabel[],
   repository: GithubRepository,
-): Promise<Octokit.IssuesDeleteLabelResponse[]> {
+): Promise<string> {
   const actions = labels.map(label => removeLabelFromRepository(label))
+  const res = await Promise.all(actions)
 
-  return Promise.all(actions)
+  return reportSync(labels)
 
   /**
    * Helper functions
@@ -278,6 +413,15 @@ export async function removeLabelsFromRepository(
         name: label.name,
       })
       .then(res => res.data)
+  }
+
+  function reportSync(removals: GithubLabel[]): string {
+    const message = `
+Removed ${removals.length} labels:
+${removals.map(label => chalk.hex(label.color)` - ${label.name}\n`)}
+    `
+
+    return message
   }
 }
 
