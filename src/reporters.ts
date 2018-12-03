@@ -56,7 +56,7 @@ ${options.labels.map(generateLabelSyncReport)}
       }
 
       case 'update': {
-        if (options.labels.length > 0) {
+        if (options.labels.length === 0) {
           return `No labels updated.`
         }
 
@@ -67,7 +67,7 @@ ${options.labels.map(generateLabelSyncReport)}
       }
 
       case 'remove': {
-        if (options.labels.length > 0) {
+        if (options.labels.length === 0) {
           return `No labels removed.`
         }
 

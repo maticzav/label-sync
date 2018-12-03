@@ -13,7 +13,7 @@ if (process.env.NODE_ENV !== 'test') main(prisma)
  * Main
  */
 
-async function main(configuration: Config): Promise<string> {
+export async function main(configuration: Config): Promise<string> {
   if (!process.env.GITHUB_TOKEN) {
     throw new Error('Missing Github configuration!')
   }

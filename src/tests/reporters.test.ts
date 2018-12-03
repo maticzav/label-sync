@@ -82,6 +82,24 @@ describe('Reporters', () => {
           },
         ],
       },
+      {
+        name: 'github-labels',
+        configuration: {
+          labels: {
+            test: {
+              description: 'description',
+              color: 'color',
+            },
+            bug: {
+              description: 'description',
+              color: 'color',
+            },
+          },
+        },
+        additions: [],
+        updates: [],
+        removals: [],
+      },
     ])
 
     expect(report).toMatchSnapshot()

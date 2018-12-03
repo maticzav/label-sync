@@ -1,41 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Reporters correctly build report for organizatio sync 1`] = `
-"
-Synced labels accross 2 repositories;
-
-Synced github-labels:
-  
-
-Added 1 labels:
-[38;2;0;0;0m - test[39m
-[38;2;0;0;0m[39m
-        
-  
-No labels updated.
-  
-No labels removed.
-    
-
-
-Synced graphql-shield:
-  
-
-Added 1 labels:
-[38;2;0;0;0m - test[39m
-[38;2;0;0;0m[39m
-        
-  
-No labels updated.
-  
-No labels removed.
-    
-      "
-`;
-
 exports[`Reporters correctly build report for organization sync 1`] = `
 "
-Synced labels accross 2 repositories;
+Synced labels accross 3 repositories;
 
 Synced github-labels:
   
@@ -45,9 +12,17 @@ Added 1 labels:
 [38;2;0;0;0m[39m
         
   
-No labels updated.
+
+Updated 1 labels:
+[38;2;0;0;0m - bug[39m
+[38;2;0;0;0m[39m
+        
   
-No labels removed.
+
+Removed 1 labels:
+[38;2;0;0;0m - enchantment[39m
+[38;2;0;0;0m[39m
+                  
     
 
 
@@ -58,6 +33,26 @@ Added 1 labels:
 [38;2;0;0;0m - test[39m
 [38;2;0;0;0m[39m
         
+  
+
+Updated 1 labels:
+[38;2;0;0;0m - bug[39m
+[38;2;0;0;0m[39m
+        
+  
+
+1 labels should be removed;
+[38;2;0;0;0m - enchantment[39m
+[38;2;0;0;0m[39m
+
+To remove them, set \\"strict\\" property to true in repository configuration.
+    
+    
+
+
+Synced github-labels:
+  
+No new labels.
   
 No labels updated.
   
