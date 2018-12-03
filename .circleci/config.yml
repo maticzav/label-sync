@@ -12,5 +12,8 @@ jobs:
           name: test
           command: yarn test
       - run:
+          name: build
+          command: yarn build
+      - run:
           name: update labels
           command: yarn start
