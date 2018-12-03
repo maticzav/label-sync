@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Reporters correctly build report for organizatio sync 1`] = `
+"
+Synced labels accross 2 repositories;
+
+Synced github-labels:
+  
+
+Added 1 labels:
+[38;2;0;0;0m - test[39m
+[38;2;0;0;0m[39m
+        
+  
+No labels updated.
+  
+No labels removed.
+    
+
+
+Synced graphql-shield:
+  
+
+Added 1 labels:
+[38;2;0;0;0m - test[39m
+[38;2;0;0;0m[39m
+        
+  
+No labels updated.
+  
+No labels removed.
+    
+      "
+`;
+
+exports[`Reporters correctly build report for organization sync 1`] = `
+"
+Synced labels accross 2 repositories;
+
+Synced github-labels:
+  
+
+Added 1 labels:
+[38;2;0;0;0m - test[39m
+[38;2;0;0;0m[39m
+        
+  
+No labels updated.
+  
+No labels removed.
+    
+
+
+Synced graphql-shield:
+  
+
+Added 1 labels:
+[38;2;0;0;0m - test[39m
+[38;2;0;0;0m[39m
+        
+  
+No labels updated.
+  
+No labels removed.
+    
+      "
+`;

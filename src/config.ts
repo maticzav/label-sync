@@ -1,6 +1,4 @@
-import { Config } from '.'
-
-const config: Config = {
+export default {
   'prisma/github-labels': {
     labels: {
       test: {
@@ -10,5 +8,3 @@ const config: Config = {
     },
   },
 }
-
-export default config
