@@ -17,12 +17,25 @@ Github Labels by default searches for `labels.config.json` file in the root of a
 
 ```json
 {
-  "strict": true,
+  "strict": false,
   "labels": {
     "FAQ": "#345345",
     "Feature: Request": {
       "color": "#F69ABC",
       "description": "All issues which are feature requests."
+    }
+  },
+  "repositories": {
+    "paths": "prisma/*",
+    "graphql-middleware": {
+      "strict": true,
+      "labels": {
+        "FAQ": "white",
+        "Awesome Middleware": {
+          "color": "#F69ABC",
+          "description": "All PRs which are awesome middleware suggestions."
+        }
+      }
     }
   },
   "branch": "master"
