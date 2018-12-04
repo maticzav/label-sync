@@ -1,4 +1,3 @@
-import * as path from 'path'
 import * as labels from '../labels'
 
 describe('Configuration function', () => {

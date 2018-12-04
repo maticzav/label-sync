@@ -1,10 +1,12 @@
 import * as Octokit from '@octokit/rest'
 import {
+  Config,
   RepositoryConfig,
   GithubLabel,
-  getRepostioryLabels,
   getGithubLabelsFromRepositoryConfig,
+  getRepositoriesFromConfiguration,
   getRepositoryFromName,
+  getRepostioryLabels,
   getLabelsDiff,
   addLabelsToRepository,
   updateLabelsInRepository,
@@ -15,67 +17,191 @@ import {
  * Handlers
  */
 
-export interface RepositorySyncReport {
+export interface SyncOptions {
+  dryRun: boolean
+  githubToken: string
+}
+
+export interface SyncReport {
+  config: Config
+  options: SyncOptions
+  successes: RepositorySyncSuccessReport[]
+  errors: RepositorySyncErrorReport[]
+}
+
+export interface RepositorySyncSuccessReport {
   name: string
-  configuration: RepositoryConfig
+  config: RepositoryConfig
   additions: GithubLabel[]
   updates: GithubLabel[]
   removals: GithubLabel[]
 }
 
-/**
- *
- * Handles report installation.
- *
- * @param client
- * @param name
- * @param config
- */
-export async function handleRepository(
-  client: Octokit,
-  name: string,
-  configuration: RepositoryConfig,
-): Promise<RepositorySyncReport> {
-  const repository = getRepositoryFromName(name)
+export interface RepositorySyncErrorReport {
+  name: string
+  config: RepositoryConfig
+  message: string
+}
 
-  if (!repository) {
-    throw new Error(`Cannot decode the provided repository name ${name}`)
+export type RepositorySyncReport =
+  | {
+      status: 'success'
+      report: RepositorySyncSuccessReport
+    }
+  | {
+      status: 'error'
+      report: RepositorySyncErrorReport
+    }
+
+export async function handleSync(
+  config: Config,
+  options: SyncOptions,
+): Promise<SyncReport> {
+  /**
+   * Authentication
+   */
+
+  const client = new Octokit()
+
+  client.authenticate({
+    type: 'app',
+    token: options.githubToken,
+  })
+
+  /**
+   * Repositories Sync
+   */
+
+  const repositories = getRepositoriesFromConfiguration(config)
+  const repositoryHandlers = repositories.map(repository =>
+    handleRepository(repository.name, repository.config),
+  )
+
+  const repositoryReports = await Promise.all(repositoryHandlers)
+
+  const report = generateSyncReport(repositoryReports)
+
+  return {
+    config: config,
+    options: options,
+    successes: report.successes,
+    errors: report.errors,
   }
 
   /**
-   * Labels
+   * Helper functions
    */
+  async function handleRepository(
+    name: string,
+    config: RepositoryConfig,
+  ): Promise<RepositorySyncReport> {
+    const repository = getRepositoryFromName(name)
 
-  // Github
-  const currentLabels = await getRepostioryLabels(client, repository)
+    if (!repository) {
+      return {
+        status: 'error',
+        report: {
+          name: name,
+          config: config,
+          message: `Cannot decode the provided repository name ${name}`,
+        },
+      }
+    }
 
-  // Local
-  const newLabels = getGithubLabelsFromRepositoryConfig(configuration)
+    /**
+     * Labels
+     */
 
-  /**
-   * Diff
-   */
+    // Github
+    const currentLabels = await getRepostioryLabels(client, repository)
 
-  const diff = getLabelsDiff(currentLabels, newLabels)
+    // Local
+    const newLabels = getGithubLabelsFromRepositoryConfig(config)
 
-  /**
-   * Sync
-   */
-  const additions = await addLabelsToRepository(client, diff.add, repository)
-  const updates = await updateLabelsInRepository(
-    client,
-    diff.update,
-    repository,
-  )
-  const removals = configuration.strict
-    ? await removeLabelsFromRepository(client, diff.remove, repository)
-    : []
+    /**
+     * Diff
+     */
 
-  return {
-    name,
-    configuration,
-    additions,
-    updates,
-    removals,
+    const diff = getLabelsDiff(currentLabels, newLabels)
+
+    /**
+     * Sync
+     */
+
+    if (options.dryRun) {
+      return {
+        status: 'success',
+        report: {
+          name,
+          config,
+          additions: diff.add,
+          updates: diff.update,
+          removals: diff.remove,
+        },
+      }
+    } else {
+      /**
+       * Sync
+       */
+      try {
+        const additions = await addLabelsToRepository(
+          client,
+          diff.add,
+          repository,
+        )
+        const updates = await updateLabelsInRepository(
+          client,
+          diff.update,
+          repository,
+        )
+        const removals = config.strict
+          ? await removeLabelsFromRepository(client, diff.remove, repository)
+          : []
+
+        return {
+          status: 'success',
+          report: {
+            name,
+            config,
+            additions,
+            updates,
+            removals,
+          },
+        }
+      } catch (err) {
+        return {
+          status: 'error',
+          report: {
+            name: name,
+            config: config,
+            message: err.message,
+          },
+        }
+      }
+    }
+  }
+
+  function generateSyncReport(
+    repositoryReports: RepositorySyncReport[],
+  ): {
+    successes: RepositorySyncSuccessReport[]
+    errors: RepositorySyncErrorReport[]
+  } {
+    const report = repositoryReports.reduce<{
+      successes: RepositorySyncSuccessReport[]
+      errors: RepositorySyncErrorReport[]
+    }>(
+      (acc, report) => {
+        switch (report.status) {
+          case 'success':
+            return { ...acc, successes: [...acc.successes, report.report] }
+          case 'error':
+            return { ...acc, errors: [...acc.errors, report.report] }
+        }
+      },
+      { successes: [], errors: [] },
+    )
+
+    return report
   }
 }

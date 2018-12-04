@@ -1,106 +1,143 @@
-import { generateSyncReport } from '../reporters'
+import { generateSyncReport } from '../'
 
 describe('Reporters', () => {
   test('correctly build report for organization sync', async () => {
-    const report = generateSyncReport([
-      {
-        name: 'github-labels',
-        configuration: {
-          labels: {
-            test: {
-              description: 'description',
-              color: 'color',
-            },
-            bug: {
-              description: 'description',
-              color: 'color',
-            },
-          },
-        },
-        additions: [
-          {
-            name: 'test',
-            description: 'description',
-            color: 'color',
-            default: false,
-          },
-        ],
-        updates: [
-          {
-            name: 'bug',
-            description: 'description',
-            color: 'color',
-            default: false,
-          },
-        ],
-        removals: [
-          {
-            name: 'enchantment',
-            description: 'description',
-            color: 'color',
-            default: false,
-          },
-        ],
+    const report = generateSyncReport({
+      config: {},
+      options: {
+        githubToken: '',
+        dryRun: true,
       },
-      {
-        name: 'graphql-shield',
-        configuration: {
-          strict: true,
-          labels: {
-            test: {
-              description: 'description',
-              color: 'color',
-            },
-            bug: {
-              description: 'description',
-              color: 'color',
+      successes: [
+        {
+          name: 'github-labels',
+          config: {
+            labels: {
+              test: {
+                description: 'description',
+                color: 'color',
+              },
+              bug: {
+                description: 'description',
+                color: 'color',
+              },
             },
           },
+          additions: [
+            {
+              name: 'test',
+              description: 'description',
+              color: 'color',
+              default: false,
+            },
+          ],
+          updates: [
+            {
+              name: 'bug',
+              description: 'description',
+              color: 'color',
+              default: false,
+            },
+          ],
+          removals: [
+            {
+              name: 'enchantment',
+              description: 'description',
+              color: 'color',
+              default: false,
+            },
+          ],
         },
-        additions: [
-          {
-            name: 'test',
-            description: 'description',
-            color: 'color',
-            default: false,
-          },
-        ],
-        updates: [
-          {
-            name: 'bug',
-            description: 'description',
-            color: 'color',
-            default: false,
-          },
-        ],
-        removals: [
-          {
-            name: 'enchantment',
-            description: 'description',
-            color: 'color',
-            default: false,
-          },
-        ],
-      },
-      {
-        name: 'github-labels',
-        configuration: {
-          labels: {
-            test: {
-              description: 'description',
-              color: 'color',
-            },
-            bug: {
-              description: 'description',
-              color: 'color',
+        {
+          name: 'graphql-shield',
+          config: {
+            strict: true,
+            labels: {
+              test: {
+                description: 'description',
+                color: 'color',
+              },
+              bug: {
+                description: 'description',
+                color: 'color',
+              },
             },
           },
+          additions: [
+            {
+              name: 'test',
+              description: 'description',
+              color: 'color',
+              default: false,
+            },
+          ],
+          updates: [
+            {
+              name: 'bug',
+              description: 'description',
+              color: 'color',
+              default: false,
+            },
+          ],
+          removals: [
+            {
+              name: 'enchantment',
+              description: 'description',
+              color: 'color',
+              default: false,
+            },
+          ],
         },
-        additions: [],
-        updates: [],
-        removals: [],
+        {
+          name: 'github-labels',
+          config: {
+            labels: {
+              test: {
+                description: 'description',
+                color: 'color',
+              },
+              bug: {
+                description: 'description',
+                color: 'color',
+              },
+            },
+          },
+          additions: [],
+          updates: [],
+          removals: [],
+        },
+      ],
+      errors: [
+        {
+          name: 'github-labels',
+          config: {
+            labels: {
+              test: {
+                description: 'description',
+                color: 'color',
+              },
+              bug: {
+                description: 'description',
+                color: 'color',
+              },
+            },
+          },
+          message: 'Something horrific has occured.',
+        },
+      ],
+    })
+  })
+
+  test('correctly build empyt organization sync report', async () => {
+    const report = generateSyncReport({
+      config: {},
+      options: {
+        githubToken: '',
+        dryRun: true,
       },
-    ])
+      successes: [],
+      errors: [],
+    })
 
     expect(report).toMatchSnapshot()
   })
