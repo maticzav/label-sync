@@ -76,16 +76,75 @@ describe('Sync handler', () => {
 
     expect(getRepositoriesFromConfigurationMock).toHaveBeenCalledTimes(1)
     expect(getRepositoryFromNameMock).toHaveBeenCalledTimes(3)
-    expect(getRepositoryLabelsMock).toHaveBeenCalledTimes(1)
-    expect(getLabelsDiffMock).toHaveBeenCalledTimes(1)
+    expect(getRepositoryLabelsMock).toHaveBeenCalledTimes(2)
+    expect(getLabelsDiffMock).toHaveBeenCalledTimes(2)
     expect(addLabelsToRepositoryMock).toHaveBeenCalledTimes(0)
     expect(updateLabelsInRepositoryMock).toHaveBeenCalledTimes(0)
     expect(removeLabelsFromRepositoryMock).toHaveBeenCalledTimes(0)
     expect(res).toEqual({
       config: configuration,
       options: options,
-      successes: [],
-      errors: [],
+      successes: [
+        {
+          name: 'prisma/github-labels',
+          config: {
+            labels: {
+              test: {
+                color: '#123456',
+                description: 'Testing sync.',
+              },
+            },
+            strict: false,
+          },
+          additions: [
+            {
+              color: '#123456',
+              default: false,
+              description: 'Testing sync.',
+              name: 'test',
+            },
+          ],
+          removals: [],
+          updates: [],
+        },
+        {
+          name: 'prisma/prisma-binding',
+          config: {
+            labels: {
+              test: {
+                color: '#123456',
+                description: 'Testing sync.',
+              },
+            },
+            strict: true,
+          },
+          additions: [
+            {
+              color: '#123456',
+              default: false,
+              description: 'Testing sync.',
+              name: 'test',
+            },
+          ],
+          removals: [],
+          updates: [],
+        },
+      ],
+      errors: [
+        {
+          config: {
+            labels: {
+              test: {
+                color: '#123456',
+                description: 'Testing sync.',
+              },
+            },
+            strict: false,
+          },
+          message: 'Cannot decode the provided repository name wrong-name',
+          name: 'wrong-name',
+        },
+      ],
     } as SyncReport)
 
     /**
@@ -175,12 +234,71 @@ describe('Sync handler', () => {
     expect(getLabelsDiffMock).toHaveBeenCalledTimes(2)
     expect(addLabelsToRepositoryMock).toHaveBeenCalledTimes(2)
     expect(updateLabelsInRepositoryMock).toHaveBeenCalledTimes(2)
-    expect(removeLabelsFromRepositoryMock).toHaveBeenCalledTimes(2)
+    expect(removeLabelsFromRepositoryMock).toHaveBeenCalledTimes(1)
     expect(res).toEqual({
       config: configuration,
       options: options,
-      successes: [],
-      errors: [],
+      successes: [
+        {
+          name: 'prisma/github-labels',
+          config: {
+            labels: {
+              test: {
+                color: '#123456',
+                description: 'Testing sync.',
+              },
+            },
+            strict: false,
+          },
+          additions: [
+            {
+              color: '#123456',
+              default: false,
+              description: 'Testing sync.',
+              name: 'test',
+            },
+          ],
+          removals: [],
+          updates: [],
+        },
+        {
+          name: 'prisma/prisma-binding',
+          config: {
+            labels: {
+              test: {
+                color: '#123456',
+                description: 'Testing sync.',
+              },
+            },
+            strict: true,
+          },
+          additions: [
+            {
+              color: '#123456',
+              default: false,
+              description: 'Testing sync.',
+              name: 'test',
+            },
+          ],
+          removals: [],
+          updates: [],
+        },
+      ],
+      errors: [
+        {
+          config: {
+            labels: {
+              test: {
+                color: '#123456',
+                description: 'Testing sync.',
+              },
+            },
+            strict: false,
+          },
+          message: 'Cannot decode the provided repository name wrong-name',
+          name: 'wrong-name',
+        },
+      ],
     } as SyncReport)
 
     /**
@@ -214,15 +332,15 @@ describe('Sync handler', () => {
     const getLabelsDiffMock = jest.spyOn(labels, 'getLabelsDiff')
     const addLabelsToRepositoryMock = jest
       .spyOn(labels, 'addLabelsToRepository')
-      .mockImplementation(labels => Promise.resolve(labels))
+      .mockImplementation(() => {
+        throw new Error('pass-error')
+      })
     const updateLabelsInRepositoryMock = jest
       .spyOn(labels, 'updateLabelsInRepository')
       .mockImplementation(labels => Promise.resolve(labels))
     const removeLabelsFromRepositoryMock = jest
       .spyOn(labels, 'removeLabelsFromRepository')
-      .mockImplementation(() => {
-        throw new Error()
-      })
+      .mockImplementation(labels => Promise.resolve(labels))
 
     /**
      * Execution
@@ -271,13 +389,53 @@ describe('Sync handler', () => {
     expect(getRepositoryLabelsMock).toHaveBeenCalledTimes(2)
     expect(getLabelsDiffMock).toHaveBeenCalledTimes(2)
     expect(addLabelsToRepositoryMock).toHaveBeenCalledTimes(2)
-    expect(updateLabelsInRepositoryMock).toHaveBeenCalledTimes(2)
-    expect(removeLabelsFromRepositoryMock).toHaveBeenCalledTimes(2)
+    expect(updateLabelsInRepositoryMock).toHaveBeenCalledTimes(0)
+    expect(removeLabelsFromRepositoryMock).toHaveBeenCalledTimes(0)
     expect(res).toEqual({
       config: configuration,
       options: options,
       successes: [],
-      errors: [],
+      errors: [
+        {
+          name: 'prisma/github-labels',
+          config: {
+            labels: {
+              test: {
+                color: '#123456',
+                description: 'Testing sync.',
+              },
+            },
+            strict: false,
+          },
+          message: 'pass-error',
+        },
+        {
+          name: 'prisma/prisma-binding',
+          config: {
+            labels: {
+              test: {
+                color: '#123456',
+                description: 'Testing sync.',
+              },
+            },
+            strict: true,
+          },
+          message: 'pass-error',
+        },
+        {
+          config: {
+            labels: {
+              test: {
+                color: '#123456',
+                description: 'Testing sync.',
+              },
+            },
+            strict: false,
+          },
+          message: 'Cannot decode the provided repository name wrong-name',
+          name: 'wrong-name',
+        },
+      ],
     } as SyncReport)
 
     /**
