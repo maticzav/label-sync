@@ -1,0 +1,7 @@
+{
+  "name": "@prisma/github-labels",
+  "version": "0.0.0",
+  "main": "dist/index.js",
+  "author": "Matic Zavadlal <matic.zavadlal@gmail.com>",
+  "license": "MIT"
+}
