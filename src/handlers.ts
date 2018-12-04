@@ -156,7 +156,7 @@ export async function handleSync(
         )
         const removals = config.strict
           ? await removeLabelsFromRepository(client, diff.remove, repository)
-          : []
+          : diff.remove
 
         return {
           status: 'success',
