@@ -22,15 +22,20 @@ describe('Sync handler', () => {
       .spyOn(labels, 'getRepostioryLabels')
       .mockResolvedValue([])
     const getLabelsDiffMock = jest.spyOn(labels, 'getLabelsDiff')
-    const addLabelsToRepositoryMock = jest
-      .spyOn(labels, 'addLabelsToRepository')
-      .mockImplementation(labels => Promise.resolve(labels))
-    const updateLabelsInRepositoryMock = jest
-      .spyOn(labels, 'updateLabelsInRepository')
-      .mockImplementation(labels => Promise.resolve(labels))
-    const removeLabelsFromRepositoryMock = jest
-      .spyOn(labels, 'removeLabelsFromRepository')
-      .mockImplementation(labels => Promise.resolve(labels))
+    const addLabelsToRepositoryMock = jest.spyOn(
+      labels,
+      'addLabelsToRepository',
+    )
+
+    const updateLabelsInRepositoryMock = jest.spyOn(
+      labels,
+      'updateLabelsInRepository',
+    )
+
+    const removeLabelsFromRepositoryMock = jest.spyOn(
+      labels,
+      'removeLabelsFromRepository',
+    )
 
     /**
      * Execution
@@ -178,13 +183,13 @@ describe('Sync handler', () => {
     const getLabelsDiffMock = jest.spyOn(labels, 'getLabelsDiff')
     const addLabelsToRepositoryMock = jest
       .spyOn(labels, 'addLabelsToRepository')
-      .mockImplementation(labels => Promise.resolve(labels))
+      .mockResolvedValue([])
     const updateLabelsInRepositoryMock = jest
       .spyOn(labels, 'updateLabelsInRepository')
-      .mockImplementation(labels => Promise.resolve(labels))
+      .mockResolvedValue([])
     const removeLabelsFromRepositoryMock = jest
       .spyOn(labels, 'removeLabelsFromRepository')
-      .mockImplementation(labels => Promise.resolve(labels))
+      .mockResolvedValue([])
 
     /**
      * Execution
@@ -250,14 +255,7 @@ describe('Sync handler', () => {
             },
             strict: false,
           },
-          additions: [
-            {
-              color: '#123456',
-              default: false,
-              description: 'Testing sync.',
-              name: 'test',
-            },
-          ],
+          additions: [],
           removals: [],
           updates: [],
         },
@@ -272,14 +270,7 @@ describe('Sync handler', () => {
             },
             strict: true,
           },
-          additions: [
-            {
-              color: '#123456',
-              default: false,
-              description: 'Testing sync.',
-              name: 'test',
-            },
-          ],
+          additions: [],
           removals: [],
           updates: [],
         },
