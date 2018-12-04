@@ -1,7 +1,7 @@
 {
-  "name": "github-labels",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "@prisma/github-labels-core",
+  "version": "0.0.0",
+  "main": "dist/index.js",
   "repository": "https://github.com/prisma/github-labels.git",
   "author": "Matic Zavadlal <matic.zavadlal@gmail.com>",
   "scripts": {
@@ -9,7 +9,7 @@
     "test": "NODE_ENV=test jest -i",
     "prebuild": "npm-run-all clean test",
     "build": "tsc -d",
-    "start": "node dist/index.js"
+    "prepublish": "npm run build"
   },
   "dependencies": {
     "@octokit/rest": "^16.1.0",

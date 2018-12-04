@@ -632,6 +632,12 @@
     universal-user-agent "^2.0.0"
     url-template "^2.0.8"
 
+"@prisma/github-labels-core@file:packages/github-labels-core":
+  version "0.0.0"
+  dependencies:
+    "@octokit/rest" "^16.1.0"
+    chalk "^2.4.1"
+
 "@types/chalk@^2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@types/chalk/-/chalk-2.2.0.tgz#b7f6e446f4511029ee8e3f43075fb5b73fbaa0ba"
