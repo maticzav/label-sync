@@ -11,8 +11,5 @@
     "lerna": "^3.5.1",
     "prettier": "^1.15.3",
     "pretty-quick": "^1.8.0"
-  },
-  "workspaces": [
-    "packages/*"
-  ]
+  }
 }
