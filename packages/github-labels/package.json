@@ -11,9 +11,11 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "@prisma/github-labels-core": "file:../github-labels-core"
+    "@prisma/github-labels-core": "file:../github-labels-core",
+    "ajv": "^6.6.1"
   },
   "devDependencies": {
+    "@types/ajv": "^1.0.0",
     "@types/chalk": "^2.2.0",
     "@types/jest": "^23.3.10",
     "@types/node": "^10.12.10",

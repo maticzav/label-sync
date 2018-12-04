@@ -22,6 +22,30 @@
         ]
       }
     },
+    "repositories": {
+      "additionalProperties": {
+        "strict": {
+          "type": "boolean"
+        },
+        "labels": {
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "description": { "type": "string" },
+                  "color": { "type": "string" }
+                },
+                "required": ["color"]
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        }
+      }
+    },
     "branch": {
       "type": "string"
     }
