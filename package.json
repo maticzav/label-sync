@@ -1,5 +1,5 @@
 {
-  "name": "github-labels",
+  "name": "label-sync",
   "private": true,
   "scripts": {
     "bootstrap": "lerna bootstrap",

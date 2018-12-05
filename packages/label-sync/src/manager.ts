@@ -6,7 +6,7 @@ import {
   Config,
   SyncOptions,
   SyncReport,
-} from '@prisma/github-labels-core'
+} from 'label-sync-core'
 
 import {
   generateConfigurationFromJSONLabelsConfiguration,

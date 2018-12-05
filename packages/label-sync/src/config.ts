@@ -3,8 +3,8 @@ import * as fs from 'fs'
 import * as Ajv from 'ajv'
 import * as Octokit from '@octokit/rest'
 
-import { Config as CoreConfig } from '@prisma/github-labels-core'
-import { RepositoryConfig as CoreRepositoryConfig } from '@prisma/github-labels-core/dist/labels'
+import { Config as CoreConfig } from 'label-sync-core'
+import { RepositoryConfig as CoreRepositoryConfig } from 'label-sync-core/dist/labels'
 
 import { getRepositories, GithubRepository } from './github'
 

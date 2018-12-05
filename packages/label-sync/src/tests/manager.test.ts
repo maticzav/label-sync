@@ -2,7 +2,7 @@ import * as path from 'path'
 import { manage } from '../manager'
 
 import * as config from '../config'
-import * as labels from '@prisma/github-labels-core'
+import * as labels from 'label-sync-core'
 
 describe('manager', () => {
   beforeEach(() => {

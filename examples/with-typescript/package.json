@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
-    "@prisma/github-labels-core": "latest"
+    "label-sync-core": "latest"
   },
   "devDependencies": {
     "@types/node": "^10.12.10",

@@ -1,9 +1,9 @@
 {
-  "name": "@prisma/github-labels-core",
+  "name": "label-sync-core",
   "description": "The core module of Github Labels manager.",
   "version": "0.0.0",
   "main": "dist/index.js",
-  "repository": "https://github.com/prisma/github-labels.git",
+  "repository": "https://github.com/maticzav/label-sync.git",
   "author": "Matic Zavadlal <matic.zavadlal@gmail.com>",
   "files": [
     "dist"

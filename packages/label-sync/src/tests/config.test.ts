@@ -6,7 +6,7 @@ import {
 } from '../'
 
 import * as github from '../github'
-import { Config } from '@prisma/github-labels-core'
+import { Config } from 'label-sync-core'
 
 describe('Configuration function', () => {
   beforeEach(() => {

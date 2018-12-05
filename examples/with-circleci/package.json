@@ -6,7 +6,7 @@
     "sync": "labels --config labels.config.json"
   },
   "dependencies": {
-    "@prisma/github-labels": "latest"
+    "label-sync": "latest"
   },
   "license": "MIT"
 }
