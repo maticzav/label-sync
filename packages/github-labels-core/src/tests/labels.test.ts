@@ -2,7 +2,7 @@ import * as labels from '../labels'
 
 describe('Configuration function', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    jest.resetAllMocks()
   })
 
   /**

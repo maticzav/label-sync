@@ -1,19 +1,19 @@
 version: 2
-  sync-github-labels:
-    jobs:
-      - checkout
-      - run:
-          name: install
-          command: yarn install
-      - run:
-          type: approval
-          name: dry-run
-          command: yarn sync --dryrun
-          requires:
-            - install
-      - run:
-          name: sync
-          command: yarn sync
-          requires:
-            - dry-run
-            - install
+sync-github-labels:
+  jobs:
+    - checkout
+    - run:
+        name: install
+        command: yarn install
+    - run:
+        type: approval
+        name: dry-run
+        command: yarn sync --dryrun
+        requires:
+          - install
+    - run:
+        name: sync
+        command: yarn sync
+        requires:
+          - dry-run
+          - install

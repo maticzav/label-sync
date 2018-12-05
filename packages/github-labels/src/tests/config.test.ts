@@ -246,7 +246,7 @@ describe('Configuration function', () => {
      * Clearings
      */
 
-    getRepositoriesMock.mockRestore()
+    getRepositoriesMock.mockReset()
   })
 
   test('generateConfigurationFromJSONLabelsConfiguration returns error message on error', async () => {
@@ -289,6 +289,6 @@ describe('Configuration function', () => {
      * Clearings
      */
 
-    getRepositoriesMock.mockRestore()
+    getRepositoriesMock.mockReset()
   })
 })
