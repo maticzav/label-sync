@@ -3,7 +3,7 @@ import * as labels from '../labels'
 
 describe('Sync handler', () => {
   beforeEach(() => {
-    jest.resetAllMocks()
+    jest.restoreAllMocks()
   })
 
   test('correctly performs dry run', async () => {
@@ -156,13 +156,13 @@ describe('Sync handler', () => {
      * Clearings
      */
 
-    getRepositoriesFromConfigurationMock.mockReset()
-    getRepositoryFromNameMock.mockReset()
-    getRepositoryLabelsMock.mockReset()
-    getLabelsDiffMock.mockReset()
-    addLabelsToRepositoryMock.mockReset()
-    updateLabelsInRepositoryMock.mockReset()
-    removeLabelsFromRepositoryMock.mockReset()
+    getRepositoriesFromConfigurationMock.mockRestore()
+    getRepositoryFromNameMock.mockRestore()
+    getRepositoryLabelsMock.mockRestore()
+    getLabelsDiffMock.mockRestore()
+    addLabelsToRepositoryMock.mockRestore()
+    updateLabelsInRepositoryMock.mockRestore()
+    removeLabelsFromRepositoryMock.mockRestore()
   })
 
   test('correctly handles sync', async () => {
@@ -296,13 +296,13 @@ describe('Sync handler', () => {
      * Clearings
      */
 
-    getRepositoriesFromConfigurationMock.mockReset()
-    getRepositoryFromNameMock.mockReset()
-    getRepositoryLabelsMock.mockReset()
-    getLabelsDiffMock.mockReset()
-    addLabelsToRepositoryMock.mockReset()
-    updateLabelsInRepositoryMock.mockReset()
-    removeLabelsFromRepositoryMock.mockReset()
+    getRepositoriesFromConfigurationMock.mockRestore()
+    getRepositoryFromNameMock.mockRestore()
+    getRepositoryLabelsMock.mockRestore()
+    getLabelsDiffMock.mockRestore()
+    addLabelsToRepositoryMock.mockRestore()
+    updateLabelsInRepositoryMock.mockRestore()
+    removeLabelsFromRepositoryMock.mockRestore()
   })
 
   test('correctly reports non-strict repositories with deletions', async () => {
@@ -394,13 +394,13 @@ describe('Sync handler', () => {
      * Clearings
      */
 
-    getRepositoriesFromConfigurationMock.mockReset()
-    getRepositoryFromNameMock.mockReset()
-    getRepositoryLabelsMock.mockReset()
-    getLabelsDiffMock.mockReset()
-    addLabelsToRepositoryMock.mockReset()
-    updateLabelsInRepositoryMock.mockReset()
-    removeLabelsFromRepositoryMock.mockReset()
+    getRepositoriesFromConfigurationMock.mockRestore()
+    getRepositoryFromNameMock.mockRestore()
+    getRepositoryLabelsMock.mockRestore()
+    getLabelsDiffMock.mockRestore()
+    addLabelsToRepositoryMock.mockRestore()
+    updateLabelsInRepositoryMock.mockRestore()
+    removeLabelsFromRepositoryMock.mockRestore()
   })
 
   test('correctly handles errors in repository sync', async () => {
@@ -531,12 +531,12 @@ describe('Sync handler', () => {
      * Clearings
      */
 
-    getRepositoriesFromConfigurationMock.mockReset()
-    getRepositoryFromNameMock.mockReset()
-    getRepositoryLabelsMock.mockReset()
-    getLabelsDiffMock.mockReset()
-    addLabelsToRepositoryMock.mockReset()
-    updateLabelsInRepositoryMock.mockReset()
-    removeLabelsFromRepositoryMock.mockReset()
+    getRepositoriesFromConfigurationMock.mockRestore()
+    getRepositoryFromNameMock.mockRestore()
+    getRepositoryLabelsMock.mockRestore()
+    getLabelsDiffMock.mockRestore()
+    addLabelsToRepositoryMock.mockRestore()
+    updateLabelsInRepositoryMock.mockRestore()
+    removeLabelsFromRepositoryMock.mockRestore()
   })
 })
