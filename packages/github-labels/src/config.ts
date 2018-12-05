@@ -193,6 +193,7 @@ export async function generateConfigurationFromJSONLabelsConfiguration(
           {},
         )
 
+        // TODO: Improve strict definition.
         const combinedStrict = repositoryConfigs.find(
           config => config.isExact && config.strict !== undefined,
         )
