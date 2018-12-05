@@ -1,1 +1,4 @@
-import { handleSync } from '@prisma/github-labels-core'
+export {
+  getGithubLabelsConfiguration,
+  generateConfigurationFromLabelsConfiguration,
+} from './config'

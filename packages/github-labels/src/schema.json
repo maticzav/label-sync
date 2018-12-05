@@ -23,31 +23,49 @@
       }
     },
     "repositories": {
-      "additionalProperties": {
-        "strict": {
-          "type": "boolean"
+      "type": "array",
+      "items": [
+        {
+          "type": "string"
         },
-        "labels": {
-          "additionalProperties": {
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "description": { "type": "string" },
-                  "color": { "type": "string" }
+        {
+          "type": "object",
+          "properties": {
+            "paths": { "type": "string" },
+            "labels": {
+              "additionalProperties": {
+                "strict": {
+                  "type": "boolean"
                 },
-                "required": ["color"]
-              },
-              {
-                "type": "string"
+                "labels": {
+                  "additionalProperties": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "description": { "type": "string" },
+                          "color": { "type": "string" }
+                        },
+                        "required": ["color"]
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
               }
-            ]
-          }
+            },
+            "strict": { "type": "boolean" }
+          },
+          "required": ["paths"]
         }
-      }
+      ]
     },
-    "branch": {
-      "type": "string"
+    "publish": {
+      "properties": {
+        "branch": { "type": "string" }
+      }
     }
   },
   "required": ["labels"],
