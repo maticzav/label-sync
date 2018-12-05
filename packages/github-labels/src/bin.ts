@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import * as meow from 'meow'
-import { main } from './manager'
+import { manage } from './manager'
 
 const cli = meow(
   `
@@ -30,10 +30,14 @@ Examples
 )
 
 /* istanbul ignore next */
-main(cli.flags.config, { dryrun: cli.flags.dryrun }).then(res => {
-  if (res.status === 'ok') {
-    console.log(res.message)
-  } else {
-    console.warn(res.message)
-  }
-})
+if (process.env.NODE_ENV !== 'test') main(cli)
+
+export async function main(cli: meow.Result): Promise<void> {
+  manage(cli.flags.config, { dryrun: cli.flags.dryrun }).then(res => {
+    if (res.status === 'ok') {
+      console.log(res.message)
+    } else {
+      console.warn(res.message)
+    }
+  })
+}

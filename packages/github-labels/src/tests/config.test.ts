@@ -10,7 +10,7 @@ import { Config } from '@prisma/github-labels-core'
 
 describe('Configuration function', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    jest.restoreAllMocks()
   })
 
   /**
@@ -246,7 +246,7 @@ describe('Configuration function', () => {
      * Clearings
      */
 
-    getRepositoriesMock.mockReset()
+    getRepositoriesMock.mockRestore()
   })
 
   test('generateConfigurationFromJSONLabelsConfiguration returns error message on error', async () => {
@@ -289,6 +289,6 @@ describe('Configuration function', () => {
      * Clearings
      */
 
-    getRepositoriesMock.mockReset()
+    getRepositoriesMock.mockRestore()
   })
 })

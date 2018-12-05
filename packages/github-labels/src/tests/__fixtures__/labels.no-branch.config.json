@@ -1,0 +1,7 @@
+{
+  "strict": false,
+  "labels": {
+    "FAQ": "blue"
+  },
+  "repositories": ["prisma/*"]
+}
