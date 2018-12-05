@@ -2,12 +2,14 @@
   "name": "label-sync",
   "private": true,
   "scripts": {
-    "bootstrap": "lerna bootstrap",
+    "bootstrap": "lerna exec yarn install",
     "test": "lerna run test",
     "publish": "lerna publish"
   },
   "devDependencies": {
     "husky": "^1.2.0",
+    "label-sync": "file:packages/label-sync",
+    "label-sync-core": "file:packages/label-sync-core",
     "lerna": "^3.5.1",
     "prettier": "^1.15.3",
     "pretty-quick": "^1.8.0"
