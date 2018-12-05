@@ -48,11 +48,11 @@ interface LabelsConfig {
 
 /**
  *
- * Gets labels configuration from absolute path and validates schema.
+ * Gets JSON labels configuration from absolute path, and validates schema.
  *
  * @param configPath
  */
-export function getGithubLabelsConfiguration(
+export function getGithubLabelsJSONConfiguration(
   configPath: string,
 ): LabelsConfig | null {
   /** Schema import */
@@ -66,6 +66,25 @@ export function getGithubLabelsConfiguration(
   if (!validateSchema(config)) {
     return null
   }
+
+  return config
+}
+
+/**
+ *
+ * Obtains JavaScript configuration file.
+ *
+ * @param configPath
+ */
+export function getGithubLabelsJSConfiguration(
+  configPath: string,
+): CoreConfig | null {
+  /** Schema import */
+  if (!fs.existsSync(configPath) || !path.isAbsolute(configPath)) {
+    return null
+  }
+
+  const config = require(configPath)
 
   return config
 }

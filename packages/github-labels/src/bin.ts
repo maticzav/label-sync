@@ -7,7 +7,8 @@ import { handleSync, generateSyncReport } from '@prisma/github-labels-core'
 
 import {
   generateConfigurationFromLabelsConfiguration,
-  getGithubLabelsConfiguration,
+  getGithubLabelsJSONConfiguration,
+  getGithubLabelsJSConfiguration,
 } from './config'
 
 const cli = meow(

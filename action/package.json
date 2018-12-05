@@ -1,0 +1,8 @@
+{
+  "name": "action",
+  "version": "1.0.0",
+  "dependencies": {
+    "@prisma/github-labels": "latest"
+  },
+  "license": "MIT"
+}

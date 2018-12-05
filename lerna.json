@@ -1,6 +1,16 @@
 {
   "version": "0.0.1",
   "npmClient": "yarn",
+  "command": {
+    "publish": {
+      "allowBranch": "master"
+    },
+    "ignoreChanges": [
+      "**/__snapshots__/**",
+      "**/tests/**",
+      "**/__fixtures__/**"
+    ]
+  },
   "packages": ["packages/*"],
   "useWorkspaces": false
 }

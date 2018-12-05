@@ -3,7 +3,7 @@ FROM node:11.3.0
 # Action configuration
 
 LABEL "com.github.actions.name"="Github Labels"
-LABEL "com.github.actions.description"="Delightful label manager for Github"
+LABEL "com.github.actions.description"="Delightful labels manager for Github"
 LABEL "com.github.actions.icon"="bookmark"
 LABEL "com.github.actions.color"="green"
 
@@ -13,11 +13,9 @@ LABEL "maintainer"="Matic Zavadlal <matic.zavadlal@gmail.com>"
 
 # Process
 
-ADD package.json yarn.lock ./
+ADD package.json /
 RUN yarn install
 
-ADD . ./
+ADD entrypoint.sh /entrypoint.sh
 
-RUN yarn build
-
-ENTRYPOINT ["/dist/action.js"]
+ENTRYPOINT ["/entrypoint.sh"]
