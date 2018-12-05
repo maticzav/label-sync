@@ -95,12 +95,25 @@ export function getGithubLabelsJSConfiguration(
  *
  * @param config
  */
-export async function generateConfigurationFromLabelsConfiguration(
-  client: Octokit,
+export async function generateConfigurationFromJSONLabelsConfiguration(
   config: LabelsConfig,
+  options: {
+    githubToken: string
+  },
 ): Promise<
   { status: 'ok'; config: CoreConfig } | { status: 'err'; message: string }
 > {
+  /**
+   * Authentication
+   */
+
+  const client = new Octokit()
+
+  client.authenticate({
+    type: 'token',
+    token: options.githubToken,
+  })
+
   /** Globals */
   const strict = withDefault(false)(config.strict)
   const commonLabels = config.labels

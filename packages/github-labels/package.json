@@ -3,6 +3,12 @@
   "description": "A delightful Github Labels manager.",
   "version": "0.0.0",
   "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "bin": {
+    "labels": "dist/bin.js"
+  },
   "author": "Matic Zavadlal <matic.zavadlal@gmail.com>",
   "scripts": {
     "clean": "rimraf dist",
