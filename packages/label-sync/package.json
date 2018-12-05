@@ -1,7 +1,7 @@
 {
   "name": "label-sync",
   "description": "A delightful Github Labels manager.",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "main": "dist/index.js",
   "files": [
     "dist"
@@ -19,8 +19,8 @@
   },
   "dependencies": {
     "@octokit/rest": "^16.1.0",
-    "label-sync-core": "file:../label-sync-core",
     "ajv": "^6.6.1",
+    "label-sync-core": "file:../label-sync-core",
     "meow": "^5.0.0"
   },
   "devDependencies": {
