@@ -1,0 +1,13 @@
+{
+  "name": "with-typescript",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "@prisma/github-labels-core": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.10",
+    "typescript": "^3.2.1"
+  },
+  "license": "MIT"
+}

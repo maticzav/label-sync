@@ -1,0 +1,12 @@
+{
+  "name": "with-typescript",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "sync": "labels --config labels.config.json"
+  },
+  "dependencies": {
+    "@prisma/github-labels": "latest"
+  },
+  "license": "MIT"
+}

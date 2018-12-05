@@ -1,0 +1,10 @@
+{
+  "strict": false,
+  "labels": {
+    "FAQ": {
+      "color": "purple",
+      "description": "Frequently asked questions"
+    }
+  },
+  "repositories": ["maticzav/*"]
+}
