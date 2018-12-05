@@ -6,7 +6,7 @@
     "sync": "labels --config labels.config.js"
   },
   "dependencies": {
-    "label-sync": "latest"
+    "label-sync": "0.0.2"
   },
   "license": "MIT"
 }
