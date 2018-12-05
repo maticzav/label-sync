@@ -6,14 +6,13 @@ import * as Octokit from '@octokit/rest'
 import { Config as CoreConfig } from '@prisma/github-labels-core'
 import { RepositoryConfig as CoreRepositoryConfig } from '@prisma/github-labels-core/dist/labels'
 
+import { getRepositories, GithubRepository } from './github'
+
 /** Schema */
 
 import schema = require('./schema.json')
-import { getRepositories, GithubRepository } from './github.js'
 
-const ajv = new Ajv().addMetaSchema(
-  require('ajv/lib/refs/json-schema-draft-06.json'),
-)
+const ajv = new Ajv()
 const validateSchema = ajv.compile(schema)
 
 /**
@@ -169,6 +168,7 @@ export async function generateConfigurationFromJSONLabelsConfiguration(
   function generateRepositoryDefinitions(
     configs: {
       paths: RegExp
+      isExact: boolean
       labels?: { [name: string]: LabelConfig }
       strict?: boolean
     }[],
@@ -176,15 +176,36 @@ export async function generateConfigurationFromJSONLabelsConfiguration(
     globals: { strict: boolean; labels: { [name: string]: LabelConfig } },
   ): { name: string; config: CoreRepositoryConfig }[] {
     const repositories = filterMap(repos, repository => {
+      /** Finds every repository definition in configuration. */
+      const repositoryConfigs = configs.filter(config =>
+        config.paths.test(repository.full_name),
+      )
+
       /** Combines definitions into one. */
-      if (configs.some(config => config.paths.test(repository.full_name))) {
+      if (repositoryConfigs.length > 0) {
+        const combinedLabels = repositoryConfigs.reduce<{
+          [label: string]: LabelConfig
+        }>(
+          (acc, config) => ({
+            ...acc,
+            ...config.labels,
+          }),
+          {},
+        )
+
+        const combinedStrict = repositoryConfigs.find(
+          config => config.isExact && config.strict !== undefined,
+        )
+
         return {
           name: repository.full_name,
           config: {
-            strict: withDefault(globals.strict)(config.strict),
+            strict: withDefault(globals.strict)(
+              combinedStrict ? combinedStrict.strict : undefined,
+            ),
             labels: {
               ...globals.labels,
-              ...config.labels,
+              ...combinedLabels,
             },
           },
         }
@@ -207,16 +228,21 @@ export async function generateConfigurationFromJSONLabelsConfiguration(
     configurations: RepositoryConfig[],
   ): {
     paths: RegExp
+    isExact: boolean
     labels?: { [name: string]: LabelConfig }
     strict?: boolean
   }[] {
     const hydratedConigurations = configurations.map(configuration => {
       switch (typeof configuration) {
         case 'string':
-          return { paths: new RegExp(configuration) }
+          return {
+            paths: new RegExp(configuration),
+            isExact: configuration.includes('*'),
+          }
         case 'object':
           return {
             paths: new RegExp(configuration.paths),
+            isExact: configuration.paths.includes('*'),
             labels: configuration.labels,
             strict: configuration.strict,
           }

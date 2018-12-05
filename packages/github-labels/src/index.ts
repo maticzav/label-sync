@@ -1,4 +1,5 @@
 export {
-  getGithubLabelsConfiguration,
-  generateConfigurationFromLabelsConfiguration,
+  getGithubLabelsJSConfiguration,
+  getGithubLabelsJSONConfiguration,
+  generateConfigurationFromJSONLabelsConfiguration,
 } from './config'
