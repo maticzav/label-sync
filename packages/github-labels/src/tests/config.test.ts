@@ -103,7 +103,7 @@ describe('Configuration function', () => {
     const config = getGithubLabelsJSConfiguration(jsConfigPath)
 
     expect(config).toEqual({
-      'graphql-shield': {
+      'maticzav/graphql-shield': {
         labels: {
           FAQ: 'orange',
           'kind/feature': {

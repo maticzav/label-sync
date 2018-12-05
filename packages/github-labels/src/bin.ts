@@ -1,4 +1,4 @@
-#!/bash/node
+#!/usr/bin/env node
 
 import * as meow from 'meow'
 import * as path from 'path'
@@ -44,14 +44,14 @@ if (process.env.NODE_ENV !== 'test') main(cli.flags.config)
  * Main
  */
 
-async function main(relativeConfigPath: string): Promise<void> {
+export async function main(relativeConfigPath: string): Promise<boolean> {
   /**
    * Environment
    */
 
   if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_BRANCH) {
     console.warn('Missing Github credentials!')
-    return
+    return false
   }
 
   /**
@@ -62,7 +62,7 @@ async function main(relativeConfigPath: string): Promise<void> {
 
   if (config.status === 'err') {
     console.warn(config.message)
-    return
+    return false
   }
 
   /**
@@ -77,10 +77,25 @@ async function main(relativeConfigPath: string): Promise<void> {
   const message = generateSyncReport(report)
 
   /**
+   * Report
+   */
+
+  console.log(message)
+
+  return true
+
+  /**
    * Helper functions
    *
    * Functions which help with the execution of the main
    * process of Label Sync.
+   */
+
+  /**
+   *
+   * Obtains the configuration file from relative path.
+   *
+   * @param relativeConfigPath
    */
   async function getConfigurationFile(
     relativeConfigPath: string,
@@ -124,12 +139,15 @@ async function main(relativeConfigPath: string): Promise<void> {
       const config = await generateConfigurationFromJSONLabelsConfiguration(
         configFile,
         {
-          githubToken: 'token',
+          githubToken: process.env.GITHUB_TOKEN!,
         },
       )
 
       if (config.status === 'err') {
-        return config
+        return {
+          status: 'err',
+          message: config.message,
+        }
       }
 
       return {
