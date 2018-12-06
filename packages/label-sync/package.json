@@ -15,7 +15,8 @@
     "test": "NODE_ENV=test jest -i",
     "prebuild": "npm-run-all clean test",
     "build": "tsc -d",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "coverage": "jest --coverage | coveralls"
   },
   "dependencies": {
     "@octokit/rest": "^16.1.0",

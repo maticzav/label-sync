@@ -4,6 +4,7 @@
   "scripts": {
     "bootstrap": "lerna exec yarn install",
     "test": "lerna run test",
+    "coverage": "lerna run coverage",
     "release": "lerna publish"
   },
   "devDependencies": {

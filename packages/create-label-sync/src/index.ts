@@ -5,6 +5,7 @@ import * as fs from 'fs'
 import * as meow from 'meow'
 import * as ora from 'ora'
 import * as inquirer from 'inquirer'
+import * as mkdirp from 'mkdirp'
 
 import { loadLabelSyncTemplate } from './loader'
 import { templates, Template } from './templates'
@@ -24,7 +25,7 @@ if (process.env.NODE_ENV !== 'test') main(cli)
 /**
  * Main
  */
-async function main(cli: meow.Result): Promise<void> {
+export async function main(cli: meow.Result): Promise<void> {
   /**
    * Inquier about template
    */
@@ -48,11 +49,13 @@ async function main(cli: meow.Result): Promise<void> {
     },
   ])
 
-  if (fs.existsSync(dist)) {
-    console.log(`Directory ${dist} must be empty.`)
+  const absoluteDist = path.resolve(process.cwd(), dist)
+
+  if (fs.existsSync(absoluteDist)) {
+    console.log(`Directory ${absoluteDist} must be empty.`)
     return
   } else {
-    fs.mkdirSync(dist)
+    mkdirp.sync(absoluteDist)
   }
 
   /**
@@ -62,10 +65,7 @@ async function main(cli: meow.Result): Promise<void> {
     text: `Loading ${template.name} template.`,
   }).start()
 
-  const res = await loadLabelSyncTemplate(
-    template,
-    path.resolve(process.cwd(), dist),
-  )
+  const res = await loadLabelSyncTemplate(template, absoluteDist)
 
   if (res.status === 'ok') {
     spinner.succeed()
