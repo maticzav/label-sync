@@ -145,10 +145,9 @@ To remove them, set ${chalk.bgBlueBright('strict')} property to true.
     if (label.description === '') {
       return ` - ${chalk.hex(label.color)(label.name)}`
     }
-    return `
- - ${chalk.hex(label.color)(label.name)}
-     ${chalk.gray(label.description)}
-    `
+    return ` - ${chalk.hex(label.color)(label.name)}\n     ${chalk.gray(
+      label.description,
+    )}`
   }
 
   /**

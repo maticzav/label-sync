@@ -41,25 +41,19 @@ Successfully synced labels accross 4 repositories;
 Synced [36mgithub-labels[39m:
 
 Added 2 labels:
-
  - [38;2;0;0;0mtest[39m
      [90mdescription-test[39m
-    
  - [38;2;0;0;0msimple[39m
         
 
 Updated 1 labels:
-
  - [38;2;0;0;0mbug[39m
      [90mdescription[39m
-    
         
 
 1 labels should be removed;
-
  - [38;2;0;0;0menchantment[39m
      [90mdescription[39m
-    
 
 To remove them, set [104mstrict[49m property to true.
     
@@ -68,24 +62,18 @@ To remove them, set [104mstrict[49m property to true.
 Synced [36mgraphql-shield[39m:
 
 Added 1 labels:
-
  - [38;2;0;0;0mtest[39m
      [90mdescription[39m
-    
         
 
 Updated 1 labels:
-
  - [38;2;0;0;0mbug[39m
      [90mdescription[39m
-    
         
 
 Removed 1 labels:
-
  - [38;2;0;0;0menchantment[39m
      [90mdescription[39m
-    
                   
     
 
@@ -98,14 +86,10 @@ No labels removed.
 Synced [36mgithub-labels[39m:
 
 Added 2 labels:
-
  - [38;2;0;0;0mtest[39m
      [90mdescription[39m
-    
-
  - [38;2;0;0;0mtest[39m
      [90mdescription[39m
-    
         
 No labels updated.
 No labels removed.
