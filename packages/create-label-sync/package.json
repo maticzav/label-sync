@@ -1,6 +1,6 @@
 {
   "name": "create-label-sync",
-  "version": "0.1.0",
+  "version": "1.0.0-alpha.0",
   "main": "dist/index.js",
   "bin": {
     "create-label-sync": "dist/index.js",
