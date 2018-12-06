@@ -90,6 +90,8 @@ Every value can be configured `globaly` or later changed in each repository scop
 
 > NOTE: Globs should always include organization name before repository definition, and global definitions can always be overwritten using repository specific configuration.
 
+---
+
 ### `JavaScript`
 
 > `javascript` template
@@ -136,6 +138,8 @@ export interface Config {
   [repository: string]: RepositoryConfig
 }
 ```
+
+---
 
 ### `TypeScript`
 
