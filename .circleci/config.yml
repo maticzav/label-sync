@@ -10,10 +10,10 @@ jobs:
           command: yarn install
       - run:
           name: Prepare packages.
-          command: yarn run bootstrap
+          command: yarn bootstrap
       - run:
           name: Test packages.
-          command: yarn run test
+          command: yarn test
       - run:
-          name: Publish packages.
-          command: yarn run publish
+          name: Release packages.
+          command: yarn release

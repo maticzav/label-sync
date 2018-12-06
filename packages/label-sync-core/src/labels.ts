@@ -204,7 +204,7 @@ export async function updateLabelsInRepository(
   labels: GithubLabel[],
   repository: GithubRepository,
 ): Promise<GithubLabel[]> {
-  const actions = labels.map(label => updateLabelInREpository(label))
+  const actions = labels.map(label => updateLabelInRepository(label))
   const res = await Promise.all(actions)
 
   return res
@@ -212,7 +212,7 @@ export async function updateLabelsInRepository(
   /**
    * Helper functions
    */
-  async function updateLabelInREpository(
+  async function updateLabelInRepository(
     label: GithubLabel,
   ): Promise<GithubLabel> {
     return github.issues
