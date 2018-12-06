@@ -110,7 +110,7 @@ ${codeBlock(JSON.stringify(report.config, null, 2), 'json')}
 
         return `
 Added ${options.labels.length} labels:
-${options.labels.map(generateLabelSyncReport)}
+${options.labels.map(generateLabelSyncReport).join('\n')}
         `
       }
 
@@ -121,7 +121,7 @@ ${options.labels.map(generateLabelSyncReport)}
 
         return `
 Updated ${options.labels.length} labels:
-${options.labels.map(generateLabelSyncReport)}
+${options.labels.map(generateLabelSyncReport).join('\n')}
         `
       }
 
@@ -133,14 +133,14 @@ ${options.labels.map(generateLabelSyncReport)}
         if (options.warn) {
           return `
 ${options.labels.length} labels should be removed;
-${options.labels.map(generateLabelSyncReport)}
+${options.labels.map(generateLabelSyncReport).join('\n')}
 
 To remove them, set "strict" property to true in repository configuration.
     `
         } else {
           return `
 Removed ${options.labels.length} labels:
-${options.labels.map(generateLabelSyncReport)}
+${options.labels.map(generateLabelSyncReport).join('\n')}
                   `
         }
       }

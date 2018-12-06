@@ -106,6 +106,37 @@ describe('Reporters', () => {
           updates: [],
           removals: [],
         },
+        {
+          name: 'github-labels',
+          config: {
+            labels: {
+              test: {
+                description: 'description',
+                color: 'color',
+              },
+              bug: {
+                description: 'description',
+                color: 'color',
+              },
+            },
+          },
+          additions: [
+            {
+              name: 'test',
+              description: 'description',
+              color: 'color',
+              default: false,
+            },
+            {
+              name: 'test',
+              description: 'description',
+              color: 'color',
+              default: false,
+            },
+          ],
+          updates: [],
+          removals: [],
+        },
       ],
       errors: [
         {
@@ -126,9 +157,11 @@ describe('Reporters', () => {
         },
       ],
     })
+
+    expect(report).toMatchSnapshot()
   })
 
-  test('correctly build empyt organization sync report', async () => {
+  test('correctly builds empty organization sync report', async () => {
     const report = generateSyncReport({
       config: {},
       options: {
