@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  install:
     docker:
       - image: 'circleci/node:latest'
     steps:
@@ -11,9 +11,33 @@ jobs:
       - run:
           name: Prepare packages.
           command: yarn bootstrap
+  build:
+    docker:
+      - image: 'circleci/node:latest'
+    steps:
+      - checkout
       - run:
           name: Test packages.
           command: yarn test
+  publish:
+    docker:
+      - image: 'circleci/node:latest'
+    steps:
+      - checkout
       - run:
           name: Release packages.
           command: yarn release
+workflows:
+  version: 2
+  test-and-publish:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - publish:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master

@@ -1,19 +1,38 @@
 version: 2
-sync-github-labels:
-  jobs:
-    - checkout
-    - run:
-        name: install
-        command: yarn install
-    - run:
-        type: approval
-        name: dry-run
-        command: yarn sync --dryrun
-        requires:
-          - install
-    - run:
-        name: sync
-        command: yarn sync
-        requires:
-          - dry-run
-          - install
+jobs:
+  install:
+    docker:
+      - image: 'circleci/node:latest'
+    steps:
+      - checkout
+      - run:
+          name: Install monorepo.
+          command: yarn install
+  dryrun:
+    docker:
+      - image: 'circleci/node:latest'
+    steps:
+      - checkout
+      - run:
+          name: Perform dryrun of Label Sync.
+          command: yarn sync --dryrun
+  sync:
+    docker:
+      - image: 'circleci/node:latest'
+    steps:
+      - checkout
+      - run:
+          name: Perform sync of labels.
+          command: yarn sync
+workflows:
+  version: 2
+  sync-labels:
+    jobs:
+      - install
+      - dryrun:
+          type: approval
+          requires:
+            - install
+      - sync:
+          requires:
+            - dryrun
