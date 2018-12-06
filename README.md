@@ -10,7 +10,7 @@
 
 ## Overview
 
-Label Sync helps you sync Github labels accross multiple repositories. Using an intuitive API you'll be able to customize repository configuration across all your projects in no time. Besides that, it also features a core package module which can be used to build highly customised workflows.
+Label Sync helps you sync Github labels across multiple repositories. Using an intuitive API you'll be able to customize repository configuration across all your projects in no time. Besides that, it also features a core package module which can be used to build highly customized workflows.
 
 ## Features
 
@@ -30,31 +30,74 @@ I suggest you use one of the prebuilt configurations as a starting point of your
 
 ## Configuration
 
-Besides using the core package and building the worklow on your own, you can use a set of preused builders which support JS, JSON and TS configuration options.
+Besides using the core package and building the workflow on your own, you can use a set of perused builders which support JS, JSON and TS configuration options.
 
 ### `JSON`
 
-JSON is the most opinionated option and the quickest to setup.
+> `json` template
+
+JSON is the most opinionated option and the quickest option to setup Label Sync.
+Every value can be configured `globaly` or later changed in each repository scope.
 
 ```json
 {
-  "strict": false,
+  "strict": true,
   "labels": {
     "FAQ": {
       "color": "purple",
       "description": "Frequently asked questions"
     }
   },
-  "repositories": ["maticzav/*"],
+  "repositories": [
+    "maticzav/*",
+    {
+      "paths": "maticzav/graphql-*",
+      "labels": {
+        "extra": "red"
+      },
+      "strict": false
+    }
+  ],
   "publish": {
     "branch": "master"
   }
 }
 ```
 
+##### `labels.config.json`
+
+| Parameter      | Type                    | Default | Required |
+| -------------- | ----------------------- | ------- | -------- |
+| `strict`       | boolean                 | false   | false    |
+| `labels`       | Map<name, string/label> | /       | true     |
+| `repositories` | Array<glob/repository>  | /       | true     |
+| `publish`      | { branch: string}       | /       | false    |
+
+##### `repository`
+
+| Parameter | Type             | Default | Required |
+| --------- | ---------------- | ------- | -------- |
+| `paths`   | glob string      | /       | true     |
+| `strict`  | boolean          | global  | false    |
+| `labels`  | Map<name, label> | /       | true     |
+
+##### `label`
+
+| Parameter     | Type   | Default | Required |
+| ------------- | ------ | ------- | -------- |
+| `color`       | string | /       | true     |
+| `description` | string | ""      | false    |
+
+> NOTE: Globs should always include organization name before repository definition, and global definitions can always be overwritten using repository specific configuration.
+
 ### `JavaScript`
 
-JavaScript
+> `javascript` template
+
+JavaScript configuration allows you to employ more complex file structure and perform calculations during setup.
+
+Compared to `JSON`, `JavaScript` doesn't feature globs. Instead, each repository has
+to be explicitly added to the sync.
 
 ```js
 const shield = require('./config/graphql-shield.js')
@@ -74,9 +117,33 @@ module.exports = {
 }
 ```
 
+#### Types
+
+```ts
+type LabelConfiguration =
+  | {
+      description?: string
+      color: string
+    }
+  | string
+
+export interface RepositoryConfig {
+  labels: { [name: string]: LabelConfiguration }
+  strict?: boolean
+}
+
+export interface Config {
+  [repository: string]: RepositoryConfig
+}
+```
+
 ### `TypeScript`
 
-TypeScript
+> `typescript` template
+
+TypeScript configuration is very similar to JavaScript one. Atop of gaining complete control over repositories, you also gain type annotations and smart suggestions.
+
+> NOTE: TypeScript configuration relies on `tsconfig.json` and requires a full-blown configuration or repository to run correctly.
 
 ```ts
 import { Config } from 'label-sync-core'
@@ -100,8 +167,36 @@ const config: Config = {
 export default config
 ```
 
+#### Types
+
+```ts
+type LabelConfiguration =
+  | {
+      description?: string
+      color: string
+    }
+  | string
+
+export interface RepositoryConfig {
+  labels: { [name: string]: LabelConfiguration }
+  strict?: boolean
+}
+
+export interface Config {
+  [repository: string]: RepositoryConfig
+}
+```
+
 ## Advanced
+
+Besides providing a delightful syncing tool, Label Sync also features a core package named `label-sync-core`. `label-sync-core` module is extensively used in `typescript`. It exposes two functions, `handleSync` and `generateSyncReport` which can help you build amazing syncing utilities from ground up.
+
+You can read more about them in the [`label-sync-core`](https://github.com/maticzav/label-sync/tree/master/packages/label-sync-core) package README.
 
 ## License
 
 MIT @ Matic Zavadlal
+
+```
+
+```
