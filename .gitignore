@@ -7,3 +7,5 @@ coverage
 *.log*
 .env*
 package-lock.json
+
+__tmp__
