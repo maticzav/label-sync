@@ -18,7 +18,7 @@ Label Sync helps you sync Github labels accross multiple repositories. Using an 
 - 🌈 **Easy to use:** Simply use one of the templates to start!
 - 🐶 **Friendly error messages:** Guides you through installation and sync, no magic involved!
 - 🌳 **Perfect test coverage:** Maintaining 100% test coverage.
-- 💪 **Used by giants:** Used in production by companies like (@prisma)[https://prisma.io] or (@graphcms)[https://graphcms.com]
+- 💪 **Used by giants:** Used in production by companies like [@prisma](https://prisma.io) or [@graphcms](https://graphcms.com)
 
 ## Installation
 
