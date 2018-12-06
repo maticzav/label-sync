@@ -1,4 +1,5 @@
 import { generateSyncReport } from '../'
+import { SyncReport } from '../handlers'
 
 describe('Reporters', () => {
   test('correctly build report for organization sync', async () => {
@@ -156,7 +157,7 @@ describe('Reporters', () => {
           message: 'Something horrific has occured.',
         },
       ],
-    })
+    } as SyncReport)
 
     expect(report).toMatchSnapshot()
   })
