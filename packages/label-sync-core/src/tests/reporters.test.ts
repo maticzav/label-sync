@@ -31,6 +31,12 @@ describe('Reporters', () => {
               color: 'color',
               default: false,
             },
+            {
+              name: 'simple',
+              description: '',
+              color: 'color',
+              default: false,
+            },
           ],
           updates: [
             {
