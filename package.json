@@ -5,7 +5,7 @@
     "bootstrap": "lerna exec 'yarn install --network-concurrency 1'",
     "test": "lerna run test",
     "coverage": "lerna run coverage",
-    "release": "lerna exec yarn publish"
+    "release": "lerna publish"
   },
   "devDependencies": {
     "create-label-sync": "file:packages/create-label-sync",
