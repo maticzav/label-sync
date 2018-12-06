@@ -46,9 +46,7 @@ workflows:
   version: 2
   test-and-publish:
     jobs:
-      - test:
-          requires:
-            - build
+      - test
       - coverage:
           requires:
             - test
