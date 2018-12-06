@@ -12,6 +12,20 @@ export interface GithubRepository {
  */
 export async function getRepositories(
   client: Octokit,
+  page: number = 1,
 ): Promise<GithubRepository[]> {
-  return client.repos.list({}).then(res => res.data)
+  const size = 100
+
+  return client.repos
+    .list({
+      page: page,
+      per_page: size,
+    })
+    .then(async res => {
+      if (res.data.length < size) {
+        return res.data
+      } else {
+        return [...res.data, ...(await getRepositories(client, page + 1))]
+      }
+    })
 }
