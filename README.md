@@ -26,7 +26,7 @@ Label Sync helps you sync Github labels accross multiple repositories. Using an 
 npm init label-sync
 ```
 
-I suggest you use one of the prebuilt configurations as a starting point of your project. You can find more about the templates in the (\examples)[https://github.com/maticzav/label-sync/tree/master/examples] folder.
+I suggest you use one of the prebuilt configurations as a starting point of your project. You can find more about the templates in the [/examples](https://github.com/maticzav/label-sync/tree/master/examples) folder.
 
 ## Configuration
 
