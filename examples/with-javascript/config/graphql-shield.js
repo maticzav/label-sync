@@ -4,7 +4,7 @@ module.exports = {
   labels: {
     ...commons,
     specific: {
-      color: 'red',
+      color: '222222',
       description: 'Specific to GraphQL Shield.',
     },
   },

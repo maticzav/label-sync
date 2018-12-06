@@ -5,7 +5,7 @@ export const prismaBinding = {
     ...common,
     'area/dataloader': {
       description: 'Dataloader related issues',
-      color: '#123456',
+      color: '123456',
     },
   },
 }

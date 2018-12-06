@@ -32,6 +32,8 @@ I suggest you use one of the prebuilt configurations as a starting point of your
 
 Besides using the core package and building the workflow on your own, you can use a set of perused builders which support JS, JSON and TS configuration options.
 
+> **NOTE:** Colors should be represented as hexadecimal color value without "#".
+
 ### `JSON`
 
 > `json` template
@@ -66,20 +68,20 @@ Every value can be configured `globaly` or later changed in each repository scop
 
 ##### `labels.config.json`
 
-| Parameter      | Type                    | Default | Required |
-| -------------- | ----------------------- | ------- | -------- |
-| `strict`       | boolean                 | false   | false    |
-| `labels`       | Map<name, string/label> | /       | true     |
-| `repositories` | Array<glob/repository>  | /       | true     |
-| `publish`      | { branch: string}       | /       | false    |
+| Parameter      | Type                   | Default | Required |
+| -------------- | ---------------------- | ------- | -------- |
+| `strict`       | boolean                | false   | false    |
+| `labels`       | Map<name, color/label> | /       | true     |
+| `repositories` | Array<glob/repository> | /       | true     |
+| `publish`      | { branch: string}      | /       | false    |
 
 ##### `repository`
 
-| Parameter | Type             | Default | Required |
-| --------- | ---------------- | ------- | -------- |
-| `paths`   | glob string      | /       | true     |
-| `strict`  | boolean          | global  | false    |
-| `labels`  | Map<name, label> | /       | true     |
+| Parameter | Type                   | Default | Required |
+| --------- | ---------------------- | ------- | -------- |
+| `paths`   | glob string            | /       | true     |
+| `strict`  | boolean                | global  | false    |
+| `labels`  | Map<name, color/label> | /       | true     |
 
 ##### `label`
 
@@ -89,6 +91,8 @@ Every value can be configured `globaly` or later changed in each repository scop
 | `description` | string | ""      | false    |
 
 > NOTE: Globs should always include organization name before repository definition, and global definitions can always be overwritten using repository specific configuration.
+
+> **NOTE:** Colors should be represented as hexadecimal value without "#".
 
 ---
 
@@ -101,6 +105,8 @@ JavaScript configuration allows you to employ more complex file structure and pe
 Compared to `JSON`, `JavaScript` doesn't feature globs. Instead, each repository has
 to be explicitly added to the sync.
 
+> **NOTE:** Colors should be configured as hexadecimal color values without "#".
+
 ```js
 const shield = require('./config/graphql-shield.js')
 
@@ -108,10 +114,10 @@ module.exports = {
   'maticzav/graphql-shield': shield,
   'maticzav/label-sync': {
     labels: {
-      bug: 'blue',
+      bug: '123abc',
       'kind/kudos': {
         description: 'Issues which simply thank for the project.',
-        color: 'red',
+        color: '456def',
       },
     },
     strict: true,
@@ -149,6 +155,8 @@ TypeScript configuration is very similar to JavaScript one. Atop of gaining comp
 
 > NOTE: TypeScript configuration relies on `tsconfig.json` and requires a full-blown configuration or repository to run correctly.
 
+> **NOTE:** Colors should be configured as hexadecimal color values without "#".
+
 ```ts
 import { Config } from 'label-sync-core'
 import { prismaBinding } from './repositories/prisma-binding'
@@ -158,10 +166,10 @@ const config: Config = {
   'prisma/prisma-binding': prismaBinding,
   'prisma/graphql-yoga': {
     labels: {
-      bug: 'blue',
+      bug: '2f6923',
       'kind/kudos': {
         description: 'Issues which simply thank for the project.',
-        color: 'red',
+        color: '123fff',
       },
     },
     strict: false,

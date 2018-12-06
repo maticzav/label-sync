@@ -1,3 +1,3 @@
 module.exports = {
-  FAQ: 'purple',
+  FAQ: '232323',
 }

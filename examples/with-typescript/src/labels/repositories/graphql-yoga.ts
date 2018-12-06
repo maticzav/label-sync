@@ -5,7 +5,7 @@ export const graphqlYoga = {
     ...common,
     'area/express': {
       description: 'Express.js related issues',
-      color: '#123456',
+      color: '123456',
     },
   },
 }
