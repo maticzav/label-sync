@@ -2,7 +2,7 @@
   "name": "label-sync",
   "private": true,
   "scripts": {
-    "bootstrap": "lerna exec yarn install",
+    "bootstrap": "lerna exec 'yarn install --network-concurrency 1'",
     "test": "lerna run test",
     "coverage": "lerna run coverage",
     "release": "lerna exec yarn publish"
