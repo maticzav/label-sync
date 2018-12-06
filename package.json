@@ -6,10 +6,12 @@
     "pretest": "yarn run build",
     "test": "yarn workspaces run test",
     "precoverage": "yarn run build",
-    "coverage": "yarn workspaces run test"
+    "coverage": "yarn workspaces run test",
+    "release": "lerna publish"
   },
   "devDependencies": {
     "husky": "^1.2.0",
+    "lerna": "^3.5.1",
     "prettier": "^1.15.3",
     "pretty-quick": "^1.8.0"
   },
