@@ -5,9 +5,10 @@
     "bootstrap": "lerna exec yarn install",
     "test": "lerna run test",
     "coverage": "lerna run coverage",
-    "release": "lerna publish"
+    "release": "lerna exec yarn publish"
   },
   "devDependencies": {
+    "create-label-sync": "file:packages/create-label-sync",
     "husky": "^1.2.0",
     "label-sync": "file:packages/label-sync",
     "label-sync-core": "file:packages/label-sync-core",
