@@ -143,9 +143,9 @@ To remove them, set ${chalk.bgBlueBright('strict')} property to true.
 
   function generateLabelSyncReport(label: GithubLabel): string {
     if (label.description === '') {
-      return ` - ${chalk.hex(label.color)(label.name)}`
+      return ` "\u002D" ${chalk.hex(label.color)(label.name)}`
     }
-    return ` - ${chalk.hex(label.color)(label.name)}\n     ${chalk.gray(
+    return ` "\u002D" ${chalk.hex(label.color)(label.name)}\n     ${chalk.gray(
       label.description,
     )}`
   }
