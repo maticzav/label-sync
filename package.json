@@ -2,18 +2,18 @@
   "name": "label-sync",
   "private": true,
   "scripts": {
-    "bootstrap": "lerna exec 'yarn install --network-concurrency 1'",
-    "test": "lerna run test",
-    "coverage": "lerna run coverage",
-    "release": "lerna publish"
+    "build": "yarn workspaces run build",
+    "pretest": "yarn run build",
+    "test": "yarn workspaces run test",
+    "precoverage": "yarn run build",
+    "coverage": "yarn workspaces run test"
   },
   "devDependencies": {
-    "create-label-sync": "file:packages/create-label-sync",
     "husky": "^1.2.0",
-    "label-sync": "file:packages/label-sync",
-    "label-sync-core": "file:packages/label-sync-core",
-    "lerna": "^3.5.1",
     "prettier": "^1.15.3",
     "pretty-quick": "^1.8.0"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }
