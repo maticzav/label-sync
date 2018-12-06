@@ -61,7 +61,11 @@ export async function handleSync(
    * Authentication
    */
 
-  const client = new Octokit()
+  const client = new Octokit({
+    headers: {
+      accept: 'application/vnd.github.symmetra-preview+json',
+    },
+  })
 
   client.authenticate({
     type: 'app',

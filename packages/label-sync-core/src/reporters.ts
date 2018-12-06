@@ -142,7 +142,7 @@ To remove them, set ${chalk.bgBlueBright('strict')} property to true.
   }
 
   function generateLabelSyncReport(label: GithubLabel): string {
-    return ` - ${chalk.hex(label.color)(label.name)}`
+    return ` - ${chalk.hex(label.color)(label.name)}   (${label.description})`
   }
 
   /**

@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "clean": "rimraf dist",
-    "test": "NODE_ENV=test jest -i",
+    "test": "NODE_ENV=test jest",
     "build": "tsc -d",
     "prepublish": "npm run build",
     "coverage": "jest --coverage | coveralls"

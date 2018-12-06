@@ -27,7 +27,7 @@ describe('Reporters', () => {
           additions: [
             {
               name: 'test',
-              description: 'description',
+              description: 'description-test',
               color: 'color',
               default: false,
             },

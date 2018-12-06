@@ -113,7 +113,12 @@ describe('bin', () => {
      */
     const dist = path.resolve(__dirname, './__tmp__/template')
 
-    mkdirp.sync(dist)
+    console.log({ dist })
+    try {
+      mkdirp.sync(dist)
+    } catch (err) {
+      console.warn(err)
+    }
 
     /**
      * Test
