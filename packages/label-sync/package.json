@@ -1,7 +1,7 @@
 {
   "name": "label-sync",
   "description": "A delightful Github Labels manager.",
-  "version": "0.0.6",
+  "version": "0.0.5",
   "main": "dist/index.js",
   "files": [
     "dist"
