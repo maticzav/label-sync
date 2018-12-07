@@ -3,7 +3,7 @@
 # label-sync
 
 [![CircleCI](https://circleci.com/gh/maticzav/label-sync/tree/master.svg?style=shield)](https://circleci.com/gh/maticzav/label-sync/tree/master)
-[![Coverage Status](https://coveralls.io/repos/github/maticzav/label-sync/badge.svg?branch=master)](https://coveralls.io/github/maticzav/label-sync?branch=master)
+[![codecov](https://codecov.io/gh/maticzav/label-sync/branch/master/graph/badge.svg)](https://codecov.io/gh/maticzav/label-sync)
 [![npm version](https://badge.fury.io/js/label-sync.svg)](https://badge.fury.io/js/label-sync)
 
 > A delightful companion to manage Github Labels across multiple repositories.

@@ -5,11 +5,12 @@
     "build": "yarn workspaces run build",
     "pretest": "yarn run build",
     "test": "yarn workspaces run test",
-    "coverage": "bash <(curl -s https://codecov.io/bash)",
+    "coverage": "yarn codecov",
     "prerelease": "yarn run build",
     "release": "lerna publish"
   },
   "devDependencies": {
+    "codecov": "^3.1.0",
     "husky": "^1.2.0",
     "lerna": "^3.5.1",
     "prettier": "^1.15.3",
