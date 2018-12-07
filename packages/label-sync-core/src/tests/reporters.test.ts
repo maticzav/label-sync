@@ -16,11 +16,11 @@ describe('Reporters', () => {
             labels: {
               test: {
                 description: 'description',
-                color: 'color',
+                color: '123fff',
               },
               bug: {
                 description: 'description',
-                color: 'color',
+                color: '123fff',
               },
             },
           },
@@ -28,13 +28,13 @@ describe('Reporters', () => {
             {
               name: 'test',
               description: 'description-test',
-              color: 'color',
+              color: '123fff',
               default: false,
             },
             {
               name: 'simple',
               description: '',
-              color: 'color',
+              color: '123fff',
               default: false,
             },
           ],
@@ -42,7 +42,7 @@ describe('Reporters', () => {
             {
               name: 'bug',
               description: 'description',
-              color: 'color',
+              color: '123fff',
               default: false,
             },
           ],
@@ -50,7 +50,7 @@ describe('Reporters', () => {
             {
               name: 'enchantment',
               description: 'description',
-              color: 'color',
+              color: '123fff',
               default: false,
             },
           ],
@@ -62,11 +62,11 @@ describe('Reporters', () => {
             labels: {
               test: {
                 description: 'description',
-                color: 'color',
+                color: '123fff',
               },
               bug: {
                 description: 'description',
-                color: 'color',
+                color: '123fff',
               },
             },
           },
@@ -74,7 +74,7 @@ describe('Reporters', () => {
             {
               name: 'test',
               description: 'description',
-              color: 'color',
+              color: '123fff',
               default: false,
             },
           ],
@@ -82,7 +82,7 @@ describe('Reporters', () => {
             {
               name: 'bug',
               description: 'description',
-              color: 'color',
+              color: '123fff',
               default: false,
             },
           ],
@@ -90,7 +90,7 @@ describe('Reporters', () => {
             {
               name: 'enchantment',
               description: 'description',
-              color: 'color',
+              color: '123fff',
               default: false,
             },
           ],
@@ -101,11 +101,11 @@ describe('Reporters', () => {
             labels: {
               test: {
                 description: 'description',
-                color: 'color',
+                color: '123fff',
               },
               bug: {
                 description: 'description',
-                color: 'color',
+                color: '123fff',
               },
             },
           },
@@ -119,11 +119,11 @@ describe('Reporters', () => {
             labels: {
               test: {
                 description: 'description',
-                color: 'color',
+                color: '123fff',
               },
               bug: {
                 description: 'description',
-                color: 'color',
+                color: '123fff',
               },
             },
           },
@@ -131,13 +131,13 @@ describe('Reporters', () => {
             {
               name: 'test',
               description: 'description',
-              color: 'color',
+              color: '123fff',
               default: false,
             },
             {
               name: 'test',
               description: 'description',
-              color: 'color',
+              color: '123fff',
               default: false,
             },
           ],
@@ -152,11 +152,11 @@ describe('Reporters', () => {
             labels: {
               test: {
                 description: 'description',
-                color: 'color',
+                color: '123fff',
               },
               bug: {
                 description: 'description',
-                color: 'color',
+                color: '123fff',
               },
             },
           },
@@ -165,6 +165,7 @@ describe('Reporters', () => {
       ],
     } as SyncReport)
 
+    expect(JSON.stringify(report)).toMatchSnapshot()
     expect(report).toMatchSnapshot()
   })
 
