@@ -1,4 +1,5 @@
 import chalk from 'chalk'
+import * as os from 'os'
 import {
   SyncReport,
   RepositorySyncSuccessReport,
@@ -42,7 +43,7 @@ ${generateRepositorySyncSuccessesReport(report.successes)}
 
     return `
 Successfully synced labels accross ${reports.length} repositories;
-${reports.map(generateRepositorySyncSuccessReport).join('\n')}
+${reports.map(generateRepositorySyncSuccessReport).join(os.EOL)}
     `
   }
 
@@ -55,7 +56,7 @@ ${reports.map(generateRepositorySyncSuccessReport).join('\n')}
 
     return `
 There were some issues with ${reports.length} repositories;
-${reports.map(generateRepositorySyncErrorReport).join('\n')}
+${reports.map(generateRepositorySyncErrorReport).join(os.EOL)}
     `
   }
 
@@ -104,7 +105,7 @@ ${codeBlock(JSON.stringify(report.config, null, 2), 'json')}
 
         return `
 Added ${options.labels.length} labels:
-${options.labels.map(generateLabelSyncReport).join('\n')}
+${options.labels.map(generateLabelSyncReport).join(os.EOL)}
         `
       }
 
@@ -115,7 +116,7 @@ ${options.labels.map(generateLabelSyncReport).join('\n')}
 
         return `
 Updated ${options.labels.length} labels:
-${options.labels.map(generateLabelSyncReport).join('\n')}
+${options.labels.map(generateLabelSyncReport).join(os.EOL)}
         `
       }
 
@@ -127,12 +128,12 @@ ${options.labels.map(generateLabelSyncReport).join('\n')}
         if (options.strict) {
           return `
 Removed ${options.labels.length} labels:
-${options.labels.map(generateLabelSyncReport).join('\n')}
+${options.labels.map(generateLabelSyncReport).join(os.EOL)}
                   `
         } else {
           return `
 ${options.labels.length} labels should be removed;
-${options.labels.map(generateLabelSyncReport).join('\n')}
+${options.labels.map(generateLabelSyncReport).join(os.EOL)}
 
 To remove them, set ${chalk.bgBlueBright('strict')} property to true.
     `
@@ -143,17 +144,17 @@ To remove them, set ${chalk.bgBlueBright('strict')} property to true.
 
   function generateLabelSyncReport(label: GithubLabel): string {
     if (label.description === '') {
-      return ` "\u002D" ${chalk.hex(label.color)(label.name)}`
+      return ` \u002D ${chalk.hex(label.color)(label.name)}`
     }
-    return ` "\u002D" ${chalk.hex(label.color)(label.name)}\n     ${chalk.gray(
-      label.description,
-    )}`
+    return ` \u002D ${chalk.hex(label.color)(label.name)}${
+      os.EOL
+    }     ${chalk.gray(label.description)}`
   }
 
   /**
    * Utils
    */
   function codeBlock(code: string, language: string): string {
-    return '```' + language + `\n` + code + '```'
+    return '```' + language + os.EOL + code + '```'
   }
 }
