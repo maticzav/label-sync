@@ -5,7 +5,6 @@
     "build": "yarn workspaces run build",
     "pretest": "yarn run build",
     "test": "yarn workspaces run test",
-    "precoverage": "yarn run build",
     "coverage": "yarn workspaces run coverage",
     "prerelease": "yarn run build",
     "release": "lerna publish"

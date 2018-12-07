@@ -11,17 +11,10 @@ jobs:
       - run:
           name: Test packages
           command: yarn test
-  coverage:
-    docker:
-      - image: 'circleci/node:11.3.0'
-    steps:
-      - checkout
-      - run:
-          name: Install monorepo
-          command: yarn install
       - run:
           name: Get coverage of packages
           command: yarn coverage
+
   publish:
     docker:
       - image: 'circleci/node:11.3.0'
@@ -38,13 +31,9 @@ workflows:
   test-and-publish:
     jobs:
       - test
-      - coverage:
-          requires:
-            - test
       - publish:
           requires:
             - test
-            - coverage
           filters:
             branches:
               only: master
