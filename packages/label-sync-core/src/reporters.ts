@@ -81,7 +81,7 @@ ${generateLabelsSyncReport({
     report: RepositorySyncErrorReport,
   ): string {
     const message = `
-Couldn't sync ${chalk.bgYellow(report.name)}:
+Couldn not sync ${chalk.bgYellow(report.name)}:
 
 ${report.message}
 
