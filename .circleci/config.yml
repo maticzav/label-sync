@@ -32,7 +32,7 @@ jobs:
           command: yarn install
       - run:
           name: Release packages
-          command: yarn publish
+          command: yarn release
 workflows:
   version: 2
   test-and-publish:
