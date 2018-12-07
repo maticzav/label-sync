@@ -2883,6 +2883,13 @@ has-ansi@^2.0.0:
   dependencies:
     ansi-regex "^2.0.0"
 
+has-ansi@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/has-ansi/-/has-ansi-3.0.0.tgz#36077ef1d15f333484aa7fa77a28606f1c655b37"
+  integrity sha1-Ngd+8dFfMzSEqn+neihgbxxlWzc=
+  dependencies:
+    ansi-regex "^3.0.0"
+
 has-flag@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/has-flag/-/has-flag-1.0.0.tgz#9d9e793165ce017a00f00418c43f942a7b1d11fa"
@@ -3789,6 +3796,15 @@ jest-runtime@^23.6.0:
     strip-bom "3.0.0"
     write-file-atomic "^2.1.0"
     yargs "^11.0.0"
+
+jest-serializer-ansi@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/jest-serializer-ansi/-/jest-serializer-ansi-1.0.3.tgz#b4303a48159f8f3a92bb38c3c9e5df18014e2905"
+  integrity sha512-WYxhEjUxuAvOrECAzIBy65OWLfEnVOxb7RerNFpBSXW2cf4u8YaC/j7688OgCQ4WD80dYx5KnPh2jFVnk91XTw==
+  dependencies:
+    has-ansi "^3.0.0"
+    lodash "^4.17.4"
+    strip-ansi "^4.0.0"
 
 jest-serializer@^23.0.1:
   version "23.0.1"

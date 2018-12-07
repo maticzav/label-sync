@@ -165,7 +165,6 @@ describe('Reporters', () => {
       ],
     } as SyncReport)
 
-    expect(JSON.stringify(report)).toMatchSnapshot()
     expect(report).toMatchSnapshot()
   })
 
