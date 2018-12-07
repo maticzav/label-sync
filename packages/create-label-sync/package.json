@@ -12,7 +12,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "dev": "ts-node src/index.ts",
-    "test": "NODE_ENV=test jest -i",
+    "test": "NODE_ENV=test jest",
     "build": "tsc -d",
     "prepublish": "npm run build",
     "coverage": "jest --coverage | coveralls"
