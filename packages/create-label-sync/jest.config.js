@@ -16,5 +16,5 @@ module.exports = {
   ],
   verbose: true,
   coverageDirectory: './coverage',
-  coverageReporters: ['json', 'lcov', 'text-lcov', 'text', 'clover', 'html'],
+  coverageReporters: ['json', 'lcov', 'text', 'clover', 'html'],
 }

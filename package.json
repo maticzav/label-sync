@@ -5,7 +5,7 @@
     "build": "yarn workspaces run build",
     "pretest": "yarn run build",
     "test": "yarn workspaces run test",
-    "coverage": "yarn workspaces run coverage",
+    "coverage": "bash <(curl -s https://codecov.io/bash)",
     "prerelease": "yarn run build",
     "release": "lerna publish"
   },
