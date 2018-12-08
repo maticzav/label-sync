@@ -1,5 +1,6 @@
 {
   "name": "label-sync",
+  "repository": "https://github.com/maticzav/label-sync.git",
   "private": true,
   "scripts": {
     "build": "yarn workspaces run build",

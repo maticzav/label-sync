@@ -25,7 +25,8 @@ export async function getRepositories(
       if (res.data.length < size) {
         return res.data
       } else {
-        return [...res.data, ...(await getRepositories(client, page + 1))]
+        const remainingRepositories = await getRepositories(client, page + 1)
+        return [...res.data, ...remainingRepositories]
       }
     })
 }

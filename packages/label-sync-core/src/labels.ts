@@ -149,10 +149,30 @@ export interface GithubLabel {
 export async function getRepostioryLabels(
   github: Octokit,
   repository: GithubRepository,
+  page: number = 1,
 ): Promise<GithubLabel[]> {
+  const size = 100
+
   return github.issues
-    .listLabelsForRepo({ repo: repository.repo, owner: repository.owner })
-    .then(res => res.data)
+    .listLabelsForRepo({
+      repo: repository.repo,
+      owner: repository.owner,
+      page: page,
+      per_page: size,
+    })
+    .then(async res => {
+      if (res.data.length < size) {
+        return res.data
+      } else {
+        const remainingLabels = await getRepostioryLabels(
+          github,
+          repository,
+          page + 1,
+        )
+
+        return [...res.data, ...remainingLabels]
+      }
+    })
 }
 
 /**

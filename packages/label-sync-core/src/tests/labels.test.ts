@@ -94,27 +94,39 @@ describe('Github function', () => {
    */
 
   test('getRepositoryLabels obtains correct repository labels', async () => {
-    const octokit = {
+    const client = {
       issues: {
         listLabelsForRepo: jest
           .fn()
-          .mockResolvedValue({ data: ['pass-1', 'pass-2'] }),
+          .mockResolvedValueOnce({
+            data: Array(100).map(() => 'pass'),
+          })
+          .mockResolvedValueOnce({
+            data: Array(50).map(() => 'pass'),
+          }),
       },
     }
 
-    const repository: labels.GithubRepository = {
-      owner: 'prisma',
-      repo: 'github-labels',
+    const repository = {
+      owner: 'matic',
+      repo: 'graphql-shield',
     }
 
-    const res = await labels.getRepostioryLabels(octokit as any, repository)
+    const res = await labels.getRepostioryLabels(client as any, repository)
 
-    expect(octokit.issues.listLabelsForRepo).toHaveBeenCalledWith({
-      owner: repository.owner,
+    expect(res).toEqual(Array(150).map(() => 'pass'))
+    expect(client.issues.listLabelsForRepo).toHaveBeenNthCalledWith(1, {
       repo: repository.repo,
+      owner: repository.owner,
+      page: 1,
+      per_page: 100,
     })
-
-    expect(res).toEqual(['pass-1', 'pass-2'])
+    expect(client.issues.listLabelsForRepo).toHaveBeenNthCalledWith(2, {
+      repo: repository.repo,
+      owner: repository.owner,
+      page: 2,
+      per_page: 100,
+    })
   })
 
   /**
