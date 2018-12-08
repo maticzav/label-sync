@@ -3,6 +3,7 @@
   "description": "A delightful Github Labels manager.",
   "version": "1.0.2",
   "main": "dist/index.js",
+  "repository": "https://github.com/maticzav/label-sync.git",
   "files": [
     "dist"
   ],

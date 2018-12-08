@@ -1,6 +1,6 @@
 {
   "name": "label-sync-core",
-  "description": "The core module of Github Labels manager.",
+  "description": "The core module of Label Sync manager.",
   "version": "1.0.2",
   "main": "dist/index.js",
   "repository": "https://github.com/maticzav/label-sync.git",

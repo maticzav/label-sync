@@ -1,7 +1,9 @@
 {
   "name": "create-label-sync",
+  "description": "Label Sync setup scaffolding tool.",
   "version": "1.0.1",
   "main": "dist/index.js",
+  "repository": "https://github.com/maticzav/label-sync.git",
   "bin": {
     "create-label-sync": "dist/index.js",
     "label-sync": "dist/index.js"
