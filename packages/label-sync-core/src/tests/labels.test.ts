@@ -406,4 +406,21 @@ describe('Utils function', () => {
       }),
     ).toBe(false)
   })
+  test('isLabel ignores unimportant keys', async () => {
+    expect(
+      labels.isLabel({
+        node_id: '2',
+        name: 'test-name',
+        description: 'test-description',
+        color: 'test-color',
+        default: true,
+      })({
+        node_id: '3',
+        name: 'test-name',
+        description: 'test-description',
+        color: 'test-color',
+        default: true,
+      }),
+    ).toBe(true)
+  })
 })

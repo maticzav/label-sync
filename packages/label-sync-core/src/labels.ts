@@ -391,13 +391,16 @@ export function withDefault<T>(fallback: T): (value: T | undefined) => T {
  *
  * @param label
  */
-export function isLabel(label: GithubLabel): (compare: GithubLabel) => boolean {
-  return compare => {
-    try {
-      assert.deepStrictEqual(label, compare)
-      return true
-    } catch (err) {
-      return false
-    }
+export function isLabel(local: GithubLabel): (remote: GithubLabel) => boolean {
+  const keys = ['name', 'description', 'color', 'default']
+
+  return remote => keys.every(key => get(local, key) === get(remote, key))
+
+  /* Helper functions */
+  function get<T>(
+    object: { [key: string]: T | any },
+    value: string,
+  ): T | undefined {
+    return object[value]
   }
 }
