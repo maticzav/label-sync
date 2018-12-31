@@ -19,7 +19,7 @@
     "chalk": "^2.4.1"
   },
   "devDependencies": {
-    "@types/jest": "23.3.10",
+    "@types/jest": "23.3.11",
     "@types/node": "10.12.18",
     "jest": "23.6.0",
     "jest-serializer-ansi": "1.0.3",
