@@ -1,6 +1,8 @@
 import * as assert from 'assert'
 import * as Octokit from '@octokit/rest'
 
+import { withDefault } from './utils'
+
 /**
  * Labels definition
  */
@@ -9,16 +11,17 @@ import * as Octokit from '@octokit/rest'
  * Configuration
  */
 
-type LabelConfiguration =
+export type LabelConfig =
   | {
       description?: string
       color: string
+      siblings?: string[]
     }
   | string
 
 export interface RepositoryConfig {
   strict?: boolean
-  labels: { [name: string]: LabelConfiguration }
+  labels: { [name: string]: LabelConfig }
 }
 
 export interface Config {
@@ -75,7 +78,7 @@ export function getGithubLabelsFromRepositoryConfig(
    */
   function hydrateLabel(
     labelName: string,
-    labelConfig: LabelConfiguration,
+    labelConfig: LabelConfig,
   ): GithubLabel {
     switch (typeof labelConfig) {
       case 'string': {
@@ -362,26 +365,6 @@ export function getLabelsDiff(
     label: GithubLabel,
   ): (compare: GithubLabel) => boolean {
     return compare => label.name === compare.name
-  }
-}
-
-/**
- * Utils
- */
-
-/**
- *
- * Returns fallback if value is undefined.
- *
- * @param fallback
- */
-export function withDefault<T>(fallback: T): (value: T | undefined) => T {
-  return value => {
-    if (value !== undefined) {
-      return value
-    } else {
-      return fallback
-    }
   }
 }
 

@@ -63,15 +63,12 @@ ${reports.map(generateRepositorySyncErrorReport).join(os.EOL)}
   function generateRepositorySyncSuccessReport(
     successReport: RepositorySyncSuccessReport,
   ): string {
+    /* prettier-ignore */
     const message = `
 Synced ${chalk.cyan(successReport.name)}:
 ${generateLabelsSyncReport({ action: 'add', labels: successReport.additions })}
 ${generateLabelsSyncReport({ action: 'update', labels: successReport.updates })}
-${generateLabelsSyncReport({
-      action: 'remove',
-      labels: successReport.removals,
-      strict: successReport.config.strict!,
-    })}
+${generateLabelsSyncReport({ action: 'remove', labels: successReport.removals, strict: successReport.config.strict!, })}
     `
 
     return message

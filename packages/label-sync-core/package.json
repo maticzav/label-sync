@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "@octokit/rest": "^16.1.0",
-    "chalk": "^2.4.1"
+    "chalk": "^2.4.1",
+    "probot": "^7.5.0"
   },
   "devDependencies": {
     "@types/jest": "23.3.12",

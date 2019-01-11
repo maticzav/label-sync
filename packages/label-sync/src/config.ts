@@ -4,7 +4,10 @@ import * as Ajv from 'ajv'
 import * as Octokit from '@octokit/rest'
 
 import { Config as CoreConfig } from 'label-sync-core'
-import { RepositoryConfig as CoreRepositoryConfig } from 'label-sync-core/dist/labels'
+import {
+  RepositoryConfig as CoreRepositoryConfig,
+  LabelConfig,
+} from 'label-sync-core/dist/labels'
 
 import { getRepositories, GithubRepository } from './github'
 
@@ -19,12 +22,9 @@ const validateSchema = ajv.compile(schema)
  * Labels
  */
 
-type LabelConfig =
-  | string
-  | {
-      color: string
-      description?: string
-    }
+interface PublishConfig {
+  branch: string
+}
 
 type RepositoryConfig =
   | string
@@ -33,10 +33,6 @@ type RepositoryConfig =
       labels?: { [name: string]: LabelConfig }
       strict?: boolean
     }
-
-interface PublishConfig {
-  branch: string
-}
 
 interface LabelsConfig {
   strict?: boolean

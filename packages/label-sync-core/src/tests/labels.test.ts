@@ -360,18 +360,6 @@ describe('Utils function', () => {
   })
 
   /**
-   * withDefault
-   */
-
-  test('withDefault returns value on value', async () => {
-    expect(labels.withDefault('fail')('pass')).toBe('pass')
-  })
-
-  test('withDefault returns fallback on undefined', async () => {
-    expect(labels.withDefault('pass')(undefined)).toBe('pass')
-  })
-
-  /**
    * isLabel
    */
 

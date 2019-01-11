@@ -13,6 +13,7 @@ module.exports = {
     '!**/node_modules/**',
     '!**/vendor/**',
     '!**/generated/**',
+    '!**/__fixtures__/**',
   ],
   snapshotSerializers: ['jest-serializer-ansi'],
   verbose: true,
