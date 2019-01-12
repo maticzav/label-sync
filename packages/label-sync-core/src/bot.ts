@@ -4,6 +4,7 @@ import { withDefault } from './utils'
 
 export function getGithubBot(
   config: Config,
+  logger: { log: (log: string) => any } = console,
 ):
   | { status: 'ok'; bot: (app: probot.Application) => void }
   | { status: 'err'; message: string } {
@@ -19,18 +20,28 @@ export function getGithubBot(
   /* Github bot */
 
   const bot = (app: probot.Application) => {
-    app.on('issue.labeled', async (context: probot.Context) => {
-      const { repo: repository, owner } = context.repo()
+    app.on('issues.labeled', async (context: probot.Context) => {
+      const { owner } = context.repo()
       const issue: { number: number } = context.issue()
-      const label = context.payload.label
+      const repository = context.payload.repository.full_name
+      const label = context.payload.label.name
 
       /* Check repository configuration */
       if (!Object.keys(manifest.manifest).includes(repository)) {
+        logger.log(`No such repository configuration, ${repository}.`)
         return
       }
 
+      console.log(
+        'EYY',
+        Object.keys(manifest.manifest[repository]),
+        label,
+        Object.keys(manifest.manifest[repository]).includes(label),
+      )
+
       /* Check label siblings configuration */
       if (!Object.keys(manifest.manifest[repository]).includes(label)) {
+        logger.log(`${repository}: No such label configuration, ${label}.`)
         return
       }
 
@@ -43,6 +54,11 @@ export function getGithubBot(
         number: issue.number,
         labels: siblings,
       })
+
+      logger.log(
+        /* prettier-ignore */
+        `${repository}: Added ${siblings.join(', ')} to ${issue.number}.`,
+      )
     })
   }
 
