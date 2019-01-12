@@ -32,13 +32,6 @@ export function getGithubBot(
         return
       }
 
-      console.log(
-        'EYY',
-        Object.keys(manifest.manifest[repository]),
-        label,
-        Object.keys(manifest.manifest[repository]).includes(label),
-      )
-
       /* Check label siblings configuration */
       if (!Object.keys(manifest.manifest[repository]).includes(label)) {
         logger.log(`${repository}: No such label configuration, ${label}.`)
