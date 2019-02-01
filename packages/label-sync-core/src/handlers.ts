@@ -1,17 +1,31 @@
 import Octokit from '@octokit/rest'
+
 import {
   Config,
-  RepositoryConfig,
-  GithubLabel,
-  getGithubLabelsFromRepositoryConfig,
   getRepositoriesFromConfiguration,
+  RepositoryConfig,
+} from './config'
+import {
+  GithubRepository,
+  getRepositoryLabels,
+  getRepositoryIssues,
   getRepositoryFromName,
-  getRepostioryLabels,
+  GithubIssue,
+  GithubLabel,
+} from './github'
+import {
+  getGithubLabelsFromRepositoryConfig,
   getLabelsDiff,
   addLabelsToRepository,
   updateLabelsInRepository,
   removeLabelsFromRepository,
 } from './labels'
+import { LabelSyncReport, SyncReport, SiblingSyncReport } from './reporters'
+import {
+  getRepositorySiblingsManifest,
+  assignSiblingsToIssue,
+  RepositorySiblingsManifest,
+} from './siblings'
 
 /**
  * Handlers
@@ -21,37 +35,6 @@ export interface SyncOptions {
   dryRun: boolean
   githubToken: string
 }
-
-export interface SyncReport {
-  config: Config
-  options: SyncOptions
-  successes: RepositorySyncSuccessReport[]
-  errors: RepositorySyncErrorReport[]
-}
-
-export interface RepositorySyncSuccessReport {
-  name: string
-  config: RepositoryConfig
-  additions: GithubLabel[]
-  updates: GithubLabel[]
-  removals: GithubLabel[]
-}
-
-export interface RepositorySyncErrorReport {
-  name: string
-  config: RepositoryConfig
-  message: string
-}
-
-export type RepositorySyncReport =
-  | {
-      status: 'success'
-      report: RepositorySyncSuccessReport
-    }
-  | {
-      status: 'error'
-      report: RepositorySyncErrorReport
-    }
 
 export async function handleSync(
   config: Config,
@@ -112,81 +95,206 @@ export async function handleSync(
       }
     }
 
-    /**
-     * Labels
-     */
+    const labelSync = await handleLabelSync(client, repository, config, options)
+    const siblingsSync = handleSiblingSync(client, repository, config, options)
 
-    // Github
-    const currentLabels = await getRepostioryLabels(client, repository)
+    return labelSync
+  }
 
-    // Local
-    const newLabels = getGithubLabelsFromRepositoryConfig(config)
-
-    /**
-     * Diff
-     */
-
-    const diff = getLabelsDiff(currentLabels, newLabels)
-
-    /**
-     * Sync
-     */
-
-    if (options.dryRun) {
-      return {
-        status: 'success',
-        report: {
-          name,
-          config,
-          additions: diff.add,
-          updates: diff.update,
-          removals: diff.remove,
-        },
-      }
-    } else {
-      /**
-       * Sync
-       */
-      try {
-        const additions = await addLabelsToRepository(
-          client,
-          diff.add,
-          repository,
-        )
-        const updates = await updateLabelsInRepository(
-          client,
-          diff.update,
-          repository,
-        )
-        const removals = config.strict
-          ? await removeLabelsFromRepository(client, diff.remove, repository)
-          : diff.remove
-
-        return {
-          status: 'success',
-          report: {
-            name,
-            config,
-            additions,
-            updates,
-            removals,
-          },
+  /**
+   *
+   * Merges multiple reports into one.
+   *
+   * @param repositoryReports
+   */
+  function generateSyncReport(
+    repositoryReports: RepositorySyncReport[],
+  ): {
+    successes: RepositorySyncSuccessReport[]
+    errors: RepositorySyncErrorReport[]
+  } {
+    const report = repositoryReports.reduce<{
+      successes: RepositorySyncSuccessReport[]
+      errors: RepositorySyncErrorReport[]
+    }>(
+      (acc, report) => {
+        switch (report.status) {
+          case 'success':
+            return { ...acc, successes: [...acc.successes, report.report] }
+          case 'error':
+            return { ...acc, errors: [...acc.errors, report.report] }
         }
-      } catch (err) {
-        return {
-          status: 'error',
-          report: {
-            name: name,
-            config: config,
-            message: err.message,
-          },
-        }
-      }
+      },
+      { successes: [], errors: [] },
+    )
+
+    return report
+  }
+}
+
+export interface LabelSyncOptions {
+  dryRun: boolean
+}
+
+/**
+ *
+ * Handles Label Sync in a repository.
+ *
+ * @param client
+ * @param repository
+ * @param config
+ * @param options
+ */
+async function handleLabelSync(
+  client: Octokit,
+  repository: GithubRepository,
+  config: RepositoryConfig,
+  options: LabelSyncOptions,
+): Promise<LabelSyncReport> {
+  /**
+   * Label Sync handler firstly loads current labels from Github,
+   * and new labels from local configuration.
+   *
+   * After that it generates a diff and creates, updates or deletes
+   * label definitions in a particular repository.
+   */
+
+  const currentLabels = await getRepositoryLabels(client, repository)
+  const newLabels = getGithubLabelsFromRepositoryConfig(config)
+
+  const diff = getLabelsDiff(currentLabels, newLabels)
+
+  /* Sync */
+
+  if (options.dryRun) {
+    return {
+      status: 'success',
+      report: {
+        name,
+        config,
+        additions: diff.add,
+        updates: diff.update,
+        removals: diff.remove,
+      },
+    }
+  }
+  try {
+    const additions = await addLabelsToRepository(client, diff.add, repository)
+    const updates = await updateLabelsInRepository(
+      client,
+      diff.update,
+      repository,
+    )
+    const removals = config.strict
+      ? await removeLabelsFromRepository(client, diff.remove, repository)
+      : diff.remove
+
+    return {
+      status: 'success',
+      report: {
+        name,
+        config,
+        additions,
+        updates,
+        removals,
+      },
+    }
+  } catch (err) {
+    return {
+      status: 'error',
+      report: {
+        name: name,
+        config: config,
+        message: err.message,
+      },
+    }
+  }
+}
+
+export interface SiblingSyncOptions {}
+
+/**
+ *
+ * Handles Sibling Sync in a repository.
+ *
+ * @param client
+ * @param repository
+ * @param config
+ * @param options
+ */
+export async function handleSiblingSync(
+  client: Octokit,
+  repository: GithubRepository,
+  config: RepositoryConfig,
+  options: SiblingSyncOptions,
+): Promise<SiblingSyncReport> {
+  /**
+   * Sibling Sync handler firstly verifies the configuration and
+   * generates manifest of the configuration.
+   *
+   * Once configuration is validated, it queries all
+   * pull requests and issues and applies siblings to existing
+   * labels according to the manifest.
+   */
+
+  const manifest = await getRepositorySiblingsManifest(
+    client,
+    repository,
+    config,
+  )
+
+  if (manifest.status === 'err') {
+    return {
+      status: 'err',
+      message: manifest.message,
     }
   }
 
-  function generateSyncReport(
-    repositoryReports: RepositorySyncReport[],
+  /* Sync */
+
+  const issues = await getRepositoryIssues(client, repository)
+  const issuesSync = await Promise.all(
+    issues.reduce<
+      Promise<
+        (
+          | { status: 'ok'; siblings: GithubLabel[] }
+          | { status: 'err'; message: string })[]
+      >[]
+    >((acc, issue) => {
+      return [...acc, handleSiblings(issue)]
+    }, []),
+  )
+
+  return {}
+
+  /* Helper functions */
+
+  function handleSiblings(
+    issue: GithubIssue,
+  ): Promise<
+    (
+      | { status: 'ok'; siblings: GithubLabel[] }
+      | { status: 'err'; message: string })[]
+  > {
+    const siblings = Promise.all(
+      issue.labels.map(label =>
+        assignSiblingsToIssue(
+          client,
+          repository,
+          issue,
+          (manifest as { manifest: RepositorySiblingsManifest }).manifest,
+          label.name,
+        ),
+      ),
+    )
+
+    return siblings
+  }
+
+  function generateSiblingSyncReport(
+    repositoryReports: (
+      | { status: 'ok'; siblings: GithubLabel[] }
+      | { status: 'err'; message: string })[][],
   ): {
     successes: RepositorySyncSuccessReport[]
     errors: RepositorySyncErrorReport[]

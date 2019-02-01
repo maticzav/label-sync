@@ -1,7 +1,7 @@
 import * as path from 'path'
 import * as fs from 'fs'
-import * as Ajv from 'ajv'
-import * as Octokit from '@octokit/rest'
+import Ajv from 'ajv'
+import Octokit from '@octokit/rest'
 
 import { Config as CoreConfig, SyncOptions } from 'label-sync-core'
 import {
@@ -11,6 +11,7 @@ import {
 } from 'label-sync-core/dist/labels'
 
 import { getRepositories, GithubRepository } from './github'
+import { withDefault, filterMap } from './utils'
 
 /** Schema */
 
@@ -248,161 +249,5 @@ export async function generateConfigurationFromJSONLabelsConfiguration(
     })
 
     return hydratedConigurations
-  }
-}
-
-export interface ConfigurationOptions {
-  dryrun?: boolean
-}
-
-/**
- *
- * Obtains the configuration file from relative path.
- *
- * @param relativeConfigPath
- */
-export async function getConfigurationFile(
-  relativeConfigPath: string,
-  options: ConfigurationOptions = {},
-): Promise<
-  | { status: 'ok'; config: Config; options: SyncOptions }
-  | { status: 'err'; message: string }
-> {
-  const absoluteConfigPath = path.resolve(process.cwd(), relativeConfigPath)
-
-  if (absoluteConfigPath.endsWith('.js')) {
-    /** JavaScript configuration file */
-    const config = getGithubLabelsJSConfiguration(absoluteConfigPath)
-
-    if (config === null) {
-      return {
-        status: 'err',
-        message: `Couldn't find a valid configuration file at ${absoluteConfigPath}`,
-      }
-    }
-
-    return {
-      status: 'ok',
-      config,
-      options: {
-        githubToken: process.env.GITHUB_TOKEN!,
-        dryRun: withDefault(false)(options.dryrun),
-      },
-    }
-  } else if (absoluteConfigPath.endsWith('.json')) {
-    /** JSON configuration file */
-    const configFile = getGithubLabelsJSONConfiguration(absoluteConfigPath)
-
-    if (configFile === null) {
-      return {
-        status: 'err',
-        message: `Couldn't find a valid configuration file at ${absoluteConfigPath}`,
-      }
-    }
-
-    /** Parse configuration file */
-    const config = await generateConfigurationFromJSONLabelsConfiguration(
-      configFile,
-      {
-        githubToken: process.env.GITHUB_TOKEN!,
-      },
-    )
-
-    if (config.status === 'err') {
-      return {
-        status: 'err',
-        message: config.message,
-      }
-    }
-
-    /** Report missing GITHUB_BRANCH environment */
-    if (get(configFile, 'publish.branch') && !process.env.GITHUB_BRANCH) {
-      return {
-        status: 'err',
-        message: 'Missing GITHUB_BRANCH environment variable.',
-      }
-    }
-
-    /**
-     * Override dryrun if specified in flags.
-     */
-    const dryRun = withDefault(
-      get(configFile, 'publish.branch')
-        ? get(configFile, 'publish.branch') !== process.env.GITHUB_BRANCH
-        : false,
-    )(options.dryrun)
-
-    return {
-      status: 'ok',
-      config: config.config,
-      options: {
-        githubToken: process.env.GITHUB_TOKEN!,
-        dryRun: dryRun,
-      },
-    }
-  } else {
-    /** Unsupported cases */
-    return {
-      status: 'err',
-      message: `Unsupported configuration type ${relativeConfigPath}`,
-    }
-  }
-}
-
-/**
- * Utils
- */
-
-/**
- *
- * Maps through the values and removes the ones which returned null.
- *
- * @param xs
- * @param fn
- */
-function filterMap<X, Y>(xs: X[], fn: (x: X) => Y | null): Y[] {
-  return xs.reduce<Y[]>((acc, x) => {
-    const res = fn(x)
-    if (res !== null) {
-      return [...acc, res]
-    } else {
-      return acc
-    }
-  }, [])
-}
-
-/**
- *
- * Returns fallback if value is undefined.
- *
- * @param fallback
- */
-function withDefault<T>(fallback: T): (value: T | undefined) => T {
-  return value => {
-    if (value !== undefined) {
-      return value
-    } else {
-      return fallback
-    }
-  }
-}
-
-/**
- *
- * Recursively gets a poroperty from the path.
- *
- * @param obj
- * @param path
- */
-function get(obj: any, path: string): any {
-  const [head, ...tail] = path.split('.')
-  if (obj.hasOwnProperty(head)) {
-    if (tail.length === 0) {
-      return obj[head]
-    } else {
-      return get(obj[head], tail.join('.'))
-    }
-  } else {
-    return undefined
   }
 }

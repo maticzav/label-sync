@@ -53,6 +53,40 @@ export function getGithubBot(
         `${repository}: Added ${siblings.join(', ')} to ${issue.number}.`,
       )
     })
+
+    app.on('pull_request.labeled', async (context: probot.Context) => {
+      const { owner } = context.repo()
+      const issue: { number: number } = context.issue()
+      const repository = context.payload.repository.full_name
+      const label = context.payload.label.name
+
+      /* Check repository configuration */
+      if (!Object.keys(manifest.manifest).includes(repository)) {
+        logger.log(`No such repository configuration, ${repository}.`)
+        return
+      }
+
+      /* Check label siblings configuration */
+      if (!Object.keys(manifest.manifest[repository]).includes(label)) {
+        logger.log(`${repository}: No such label configuration, ${label}.`)
+        return
+      }
+
+      /* Assign labels */
+      const siblings = manifest.manifest[repository][label]
+
+      context.github.issues.addLabels({
+        repo: repository,
+        owner: owner,
+        number: issue.number,
+        labels: siblings,
+      })
+
+      logger.log(
+        /* prettier-ignore */
+        `${repository}: Added ${siblings.join(', ')} to ${issue.number}.`,
+      )
+    })
   }
 
   return { status: 'ok', bot: bot }

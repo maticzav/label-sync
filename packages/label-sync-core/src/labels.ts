@@ -1,53 +1,10 @@
-import * as assert from 'assert'
 import * as Octokit from '@octokit/rest'
 
 import { withDefault } from './utils'
+import { GithubLabel, GithubRepository } from './github'
+import { RepositoryConfig, LabelConfig } from './config'
 
-/**
- * Labels definition
- */
-
-/**
- * Configuration
- */
-
-export type LabelConfig =
-  | {
-      description?: string
-      color: string
-      siblings?: string[]
-    }
-  | string
-
-export interface RepositoryConfig {
-  strict?: boolean
-  labels: { [name: string]: LabelConfig }
-}
-
-export interface Config {
-  [repository: string]: RepositoryConfig
-}
-
-export function getRepositoriesFromConfiguration(
-  configuration: Config,
-): { name: string; config: RepositoryConfig }[] {
-  const repositories = Object.keys(configuration).map(repository => ({
-    name: repository,
-    config: hydrateRepositoryConfig(configuration[repository]),
-  }))
-
-  return repositories
-
-  /**
-   * Helpers
-   */
-  function hydrateRepositoryConfig(config: RepositoryConfig) {
-    return {
-      strict: withDefault(false)(config.strict),
-      labels: config.labels,
-    }
-  }
-}
+/* Config */
 
 /**
  *
@@ -102,85 +59,14 @@ export function getGithubLabelsFromRepositoryConfig(
 }
 
 /**
- * Github functions
+ *
+ * Label Sync
+ *
  */
-
-export interface GithubRepository {
-  owner: string
-  repo: string
-}
 
 /**
  *
- * Converts Github repository name to GithubRepository
- *
- * @param name
- */
-export function getRepositoryFromName(name: string): GithubRepository | null {
-  try {
-    const [owner, repo] = name.split('/')
-
-    assert.ok(typeof owner === 'string')
-    assert.ok(typeof repo === 'string')
-
-    return {
-      owner,
-      repo,
-    }
-  } catch (err) {
-    return null
-  }
-}
-
-export interface GithubLabel {
-  id?: number
-  node_id?: string
-  url?: string
-  name: string
-  description: string
-  color: string
-  default: boolean
-}
-
-/**
- *
- * Obtains all labels used in particular repository.
- *
- * @param github
- * @param repository
- */
-export async function getRepostioryLabels(
-  github: Octokit,
-  repository: GithubRepository,
-  page: number = 1,
-): Promise<GithubLabel[]> {
-  const size = 100
-
-  return github.issues
-    .listLabelsForRepo({
-      repo: repository.repo,
-      owner: repository.owner,
-      page: page,
-      per_page: size,
-    })
-    .then(async res => {
-      if (res.data.length < size) {
-        return res.data
-      } else {
-        const remainingLabels = await getRepostioryLabels(
-          github,
-          repository,
-          page + 1,
-        )
-
-        return [...res.data, ...remainingLabels]
-      }
-    })
-}
-
-/**
- *
- * Creates new labels in a repository.
+ * Create new labels in a repository.
  *
  * @param github
  * @param labels
@@ -204,8 +90,8 @@ export async function addLabelsToRepository(
   ): Promise<GithubLabel> {
     return github.issues
       .createLabel({
-        owner: repository.owner,
-        repo: repository.repo,
+        owner: repository.owner.login,
+        repo: repository.name,
         name: label.name,
         description: label.description,
         color: label.color,
@@ -241,8 +127,8 @@ export async function updateLabelsInRepository(
     return github.issues
       .updateLabel({
         current_name: label.name,
-        owner: repository.owner,
-        repo: repository.repo,
+        owner: repository.owner.login,
+        repo: repository.name,
         name: label.name,
         description: label.description,
         color: label.color,
@@ -277,8 +163,8 @@ export async function removeLabelsFromRepository(
   ): Promise<Octokit.IssuesDeleteLabelResponse> {
     return github.issues
       .deleteLabel({
-        owner: repository.owner,
-        repo: repository.repo,
+        owner: repository.owner.login,
+        repo: repository.name,
         name: label.name,
       })
       .then(res => res.data)
