@@ -23,6 +23,33 @@ export type SyncReport = {
   errors: RepositorySyncErrorReport[]
 }
 
+export type RepositorySyncReport =
+  | {
+      status: 'success'
+      report: RepositorySyncSuccessReport
+    }
+  | {
+      status: 'error'
+      report: RepositorySyncErrorReport
+    }
+
+export type RepositorySyncSuccessReport = {
+  repository: GithubRepository
+  config: RepositoryConfig
+  manifest: RepositoryManifest
+  additions: GithubLabel[]
+  updates: GithubLabel[]
+  removals: GithubLabel[]
+  siblingsSucesses: SiblingSyncSuccessIssueSyncReport[]
+  siblingsErrors: SiblingSyncErrorIssueSyncReport[]
+}
+
+export type RepositorySyncErrorReport = {
+  repository: GithubRepository
+  config: RepositoryConfig
+  message: string
+}
+
 /* Label Sync */
 
 export type LabelSyncReport =
@@ -139,7 +166,7 @@ export function generateSyncReport(report: SyncReport): string {
     successReport: RepositorySyncSuccessReport,
   ): string {
     const message = mls`
-    | Synced ${chalk.cyan(successReport.name)}:
+    | Synced ${chalk.cyan(successReport.repository.name)}:
     | ${generateLabelsSyncReport({
       action: 'add',
       labels: successReport.additions,
@@ -162,7 +189,7 @@ export function generateSyncReport(report: SyncReport): string {
     report: RepositorySyncErrorReport,
   ): string {
     const message = mls`
-    | Couldn not sync ${chalk.bgYellow(report.name)}:
+    | Couldn not sync ${chalk.bgYellow(report.repository.name)}:
     | ${report.message}
     | ### Configuration
     | ${codeBlock(JSON.stringify(report.config, null, 2), 'json')}

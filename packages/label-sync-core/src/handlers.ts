@@ -27,6 +27,9 @@ import {
   SiblingSyncIssueSyncReport,
   SiblingSyncSuccessIssueSyncReport,
   SiblingSyncErrorIssueSyncReport,
+  RepositorySyncReport,
+  RepositorySyncSuccessReport,
+  RepositorySyncErrorReport,
 } from './reporters'
 import {
   getRepositorySiblingsManifest,
@@ -95,7 +98,7 @@ export async function handleSync(
       return {
         status: 'error',
         report: {
-          name: name,
+          repository: {} as any, // TODO:
           config: config,
           message: `Cannot decode the provided repository name ${name}`,
         },
@@ -103,9 +106,49 @@ export async function handleSync(
     }
 
     const labelSync = await handleLabelSync(client, repository, config, options)
-    const siblingsSync = handleSiblingSync(client, repository, config, options)
 
-    return labelSync
+    if (labelSync.status === 'error') {
+      return {
+        status: 'error',
+        report: {
+          repository: repository,
+          config: config,
+          message: labelSync.report.message,
+        },
+      }
+    }
+
+    const siblingsSync = await handleSiblingSync(
+      client,
+      repository,
+      config,
+      options,
+    )
+
+    if (siblingsSync.status === 'error') {
+      return {
+        status: 'error',
+        report: {
+          repository: repository,
+          config: config,
+          message: siblingsSync.message,
+        },
+      }
+    }
+
+    return {
+      status: 'success',
+      report: {
+        repository: repository,
+        config: config,
+        manifest: siblingsSync.manifest,
+        additions: labelSync.report.additions,
+        updates: labelSync.report.updates,
+        removals: labelSync.report.removals,
+        siblingsSucesses: siblingsSync.successes,
+        siblingsErrors: siblingsSync.errors,
+      },
+    }
   }
 
   /**
