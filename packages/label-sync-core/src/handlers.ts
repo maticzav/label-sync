@@ -20,11 +20,18 @@ import {
   updateLabelsInRepository,
   removeLabelsFromRepository,
 } from './labels'
-import { LabelSyncReport, SyncReport, SiblingSyncReport } from './reporters'
+import {
+  LabelSyncReport,
+  SyncReport,
+  SiblingSyncReport,
+  SiblingSyncIssueSyncReport,
+  SiblingSyncSuccessIssueSyncReport,
+  SiblingSyncErrorIssueSyncReport,
+} from './reporters'
 import {
   getRepositorySiblingsManifest,
   assignSiblingsToIssue,
-  RepositorySiblingsManifest,
+  RepositoryManifest,
 } from './siblings'
 
 /**
@@ -170,7 +177,7 @@ async function handleLabelSync(
     return {
       status: 'success',
       report: {
-        name,
+        repository: repository,
         config,
         additions: diff.add,
         updates: diff.update,
@@ -192,7 +199,7 @@ async function handleLabelSync(
     return {
       status: 'success',
       report: {
-        name,
+        repository: repository,
         config,
         additions,
         updates,
@@ -203,7 +210,7 @@ async function handleLabelSync(
     return {
       status: 'error',
       report: {
-        name: name,
+        repository: repository,
         config: config,
         message: err.message,
       },
@@ -245,7 +252,7 @@ export async function handleSiblingSync(
 
   if (manifest.status === 'err') {
     return {
-      status: 'err',
+      status: 'error',
       message: manifest.message,
     }
   }
@@ -253,55 +260,69 @@ export async function handleSiblingSync(
   /* Sync */
 
   const issues = await getRepositoryIssues(client, repository)
-  const issuesSync = await Promise.all(
-    issues.reduce<
-      Promise<
-        (
-          | { status: 'ok'; siblings: GithubLabel[] }
-          | { status: 'err'; message: string })[]
-      >[]
-    >((acc, issue) => {
-      return [...acc, handleSiblings(issue)]
-    }, []),
-  )
+  const issuesSync = await Promise.all(issues.map(handleIssue))
 
-  return {}
+  const report = generateReport(issuesSync)
 
-  /* Helper functions */
-
-  function handleSiblings(
-    issue: GithubIssue,
-  ): Promise<
-    (
-      | { status: 'ok'; siblings: GithubLabel[] }
-      | { status: 'err'; message: string })[]
-  > {
-    const siblings = Promise.all(
-      issue.labels.map(label =>
-        assignSiblingsToIssue(
-          client,
-          repository,
-          issue,
-          (manifest as { manifest: RepositorySiblingsManifest }).manifest,
-          label.name,
-        ),
-      ),
-    )
-
-    return siblings
+  return {
+    status: 'success',
+    repository: repository,
+    config: config,
+    manifest: manifest.manifest,
+    successes: report.successes,
+    errors: report.errors,
   }
 
-  function generateSiblingSyncReport(
-    repositoryReports: (
-      | { status: 'ok'; siblings: GithubLabel[] }
-      | { status: 'err'; message: string })[][],
+  /*
+   *
+   * Helper functions
+   *
+   */
+
+  async function handleIssue(
+    issue: GithubIssue,
+  ): Promise<SiblingSyncIssueSyncReport> {
+    const siblings = await assignSiblingsToIssue(
+      client,
+      repository,
+      issue,
+      (manifest as { manifest: RepositoryManifest }).manifest,
+    )
+
+    if (siblings.status === 'err') {
+      return {
+        status: 'error',
+        report: {
+          issue: issue,
+          message: siblings.message,
+        },
+      }
+    }
+
+    return {
+      status: 'success',
+      report: {
+        issue: issue,
+        siblings: siblings.siblings,
+      },
+    }
+  }
+
+  /**
+   *
+   * Merges multiple reports into one.
+   *
+   * @param repositoryReports
+   */
+  function generateReport(
+    repositoryReports: SiblingSyncIssueSyncReport[],
   ): {
-    successes: RepositorySyncSuccessReport[]
-    errors: RepositorySyncErrorReport[]
+    successes: SiblingSyncSuccessIssueSyncReport[]
+    errors: SiblingSyncErrorIssueSyncReport[]
   } {
     const report = repositoryReports.reduce<{
-      successes: RepositorySyncSuccessReport[]
-      errors: RepositorySyncErrorReport[]
+      successes: SiblingSyncSuccessIssueSyncReport[]
+      errors: SiblingSyncErrorIssueSyncReport[]
     }>(
       (acc, report) => {
         switch (report.status) {

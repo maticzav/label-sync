@@ -13,3 +13,13 @@ export function withDefault<T>(fallback: T): (value: T | undefined) => T {
     }
   }
 }
+
+/**
+ *
+ * Flatten array of arrays.
+ *
+ * @param xss
+ */
+export function flatten<T>(xss: T[][]): T[] {
+  return xss.reduce<T[]>((acc, xs) => [...acc, ...xs], [])
+}

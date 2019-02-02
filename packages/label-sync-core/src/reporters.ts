@@ -2,9 +2,10 @@ import chalk from 'chalk'
 import mls from 'multilines'
 import * as os from 'os'
 
-import { GithubLabel } from './github'
+import { GithubLabel, GithubRepository, GithubIssue } from './github'
 import { Config, RepositoryConfig } from './config'
 import { SyncOptions } from './handlers'
+import { RepositoryManifest } from './siblings'
 
 const theme = {
   title: chalk.bold,
@@ -35,7 +36,7 @@ export type LabelSyncReport =
     }
 
 export type LabelSyncSuccessReport = {
-  name: string
+  repository: GithubRepository
   config: RepositoryConfig
   additions: GithubLabel[]
   updates: GithubLabel[]
@@ -43,14 +44,43 @@ export type LabelSyncSuccessReport = {
 }
 
 export type LabelSyncErrorReport = {
-  name: string
+  repository: GithubRepository
   config: RepositoryConfig
   message: string
 }
 
 /* Siblings Sync */
 
-export type SiblingSyncReport = {}
+export type SiblingSyncReport =
+  | {
+      status: 'success'
+      repository: GithubRepository
+      config: RepositoryConfig
+      manifest: RepositoryManifest
+      successes: SiblingSyncSuccessIssueSyncReport[]
+      errors: SiblingSyncErrorIssueSyncReport[]
+    }
+  | { status: 'error'; message: string }
+
+export type SiblingSyncIssueSyncReport =
+  | {
+      status: 'success'
+      report: SiblingSyncSuccessIssueSyncReport
+    }
+  | {
+      status: 'error'
+      report: SiblingSyncErrorIssueSyncReport
+    }
+
+export type SiblingSyncSuccessIssueSyncReport = {
+  issue: GithubIssue
+  siblings: GithubLabel[]
+}
+
+export type SiblingSyncErrorIssueSyncReport = {
+  issue: GithubIssue
+  message: string
+}
 
 /**
  *

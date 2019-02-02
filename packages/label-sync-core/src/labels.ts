@@ -4,7 +4,11 @@ import { withDefault } from './utils'
 import { GithubLabel, GithubRepository } from './github'
 import { RepositoryConfig, LabelConfig } from './config'
 
-/* Config */
+/*
+ *
+ * Config
+ *
+ */
 
 /**
  *
@@ -58,7 +62,7 @@ export function getGithubLabelsFromRepositoryConfig(
   }
 }
 
-/**
+/*
  *
  * Label Sync
  *

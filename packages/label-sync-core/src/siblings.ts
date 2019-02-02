@@ -7,11 +7,21 @@ import {
   GithubIssue,
 } from './github'
 import { withDefault } from './utils'
+import { isLabel } from './labels'
 
-/* Config */
+/*
+ *
+ * Config
+ *
+ */
 
-export interface RepositorySiblingsManifest {
-  [label: string]: Sibling[]
+export type RepositoryManifest = {
+  [name: string]: LabelManifest
+}
+
+export type LabelManifest = {
+  label: GithubLabel
+  siblings: Sibling[]
 }
 
 /**
@@ -29,7 +39,7 @@ export async function getRepositorySiblingsManifest(
 ): Promise<
   | {
       status: 'ok'
-      manifest: RepositorySiblingsManifest
+      manifest: RepositoryManifest
     }
   | { status: 'err'; message: string }
 > {
@@ -53,7 +63,7 @@ export async function getRepositorySiblingsManifest(
 
   /* Generate manifest */
 
-  const manifest = generateManifest(config)
+  const manifest = generateManifest(config, labels)
 
   return { status: 'ok', manifest: manifest }
 
@@ -85,21 +95,35 @@ export async function getRepositorySiblingsManifest(
 
   /**
    *
-   * Generates repository manifest.
+   * Generates repository manifest from labels and siblings.
    *
    * @param repository
+   * @param labels
    */
   function generateManifest(
     repository: RepositoryConfig,
-  ): { [label: string]: string[] } {
-    const manifest = Object.keys(repository.labels).reduce((acc, labelName) => {
-      const label = repository.labels[labelName]
+    labels: GithubLabel[],
+  ): RepositoryManifest {
+    const manifest = labels.reduce((acc, label) => {
+      const labelConfig = repository.labels[label.name]
 
-      switch (typeof label) {
+      switch (typeof labelConfig) {
         case 'object': {
           return {
             ...acc,
-            [labelName]: withDefault<string[]>([])(label.siblings),
+            [label.name]: {
+              label: label,
+              siblings: withDefault<string[]>([])(labelConfig.siblings),
+            },
+          }
+        }
+        case 'string': {
+          return {
+            ...acc,
+            [label.name]: {
+              label: label,
+              siblings: [],
+            },
           }
         }
         default: {
@@ -112,7 +136,11 @@ export async function getRepositorySiblingsManifest(
   }
 }
 
-/* Sibling Sync */
+/*
+ *
+ * Sibling Sync
+ *
+ */
 
 /**
  *
@@ -127,27 +155,90 @@ export async function assignSiblingsToIssue(
   github: Octokit,
   repository: GithubRepository,
   issue: GithubIssue,
-  manifest: RepositorySiblingsManifest,
-  label: string,
+  manifest: RepositoryManifest,
 ): Promise<
   { status: 'ok'; siblings: GithubLabel[] } | { status: 'err'; message: string }
 > {
-  const siblings = manifest[label]
-
-  if (!siblings) {
-    return { status: 'ok', siblings: [] }
-  }
+  /* Find all the siblings */
+  const siblings = getSiblings(issue.labels, issue.labels)
 
   try {
     const res = await github.issues.addLabels({
       repo: repository.name,
       owner: repository.owner.login,
       number: issue.number,
-      labels: siblings,
+      labels: siblings.map(label => label.name),
     })
 
-    return { status: 'ok', siblings: res.data }
+    if (res.status === 200) {
+      return { status: 'ok', siblings: siblings }
+    } else {
+      return { status: 'err', message: "Couldn't sync siblings." }
+    }
   } catch (err) {
     return { status: 'err', message: err.message }
+  }
+
+  /* Helper functions */
+
+  /**
+   *
+   * Get siblings recursively finds siblings of labels in a particular Github
+   * issue.
+   *
+   * @param labels
+   * @param pool
+   */
+  function getSiblings(
+    labels: GithubLabel[],
+    pool: GithubLabel[],
+    path: GithubLabel[] = [],
+  ): GithubLabel[] {
+    /**
+     * For each label in the label definitions we try to find its siblings. Each
+     * sibling is then checked to be included in the calculation path. If
+     * we already came accross a particular label we skip calculation to prevent
+     * circular dependencies.
+     *
+     * Once we find the dependencies we add only the ones missing in the pool
+     * to prevent duplication.
+     */
+    const missingSiblings = labels.reduce<GithubLabel[]>((acc, label) => {
+      const combinedPool = [...acc, ...pool]
+
+      /* Skip ciruclar dependencies */
+      if (path.some(isLabel(label))) {
+        return acc
+      }
+
+      /* Find manifest definition */
+      const labelManifest = manifest[label.name]
+
+      /* Filter siblings of this label */
+      const newLabels = hydrateSiblings(labelManifest.siblings).filter(
+        newLabel => !combinedPool.some(isLabel(newLabel)),
+      )
+
+      /* Find siblings of this label's siblings */
+      const labels = getSiblings(
+        hydrateSiblings(labelManifest.siblings),
+        [...combinedPool, ...newLabels],
+        [...path, label],
+      )
+
+      return [...acc, ...newLabels, ...labels]
+    }, [])
+
+    return missingSiblings
+  }
+
+  /**
+   *
+   * Hydrates siblings to Github Labels from the manifest.
+   *
+   * @param siblings
+   */
+  function hydrateSiblings(siblings: Sibling[]): GithubLabel[] {
+    return siblings.map(sibling => manifest[sibling].label)
   }
 }
