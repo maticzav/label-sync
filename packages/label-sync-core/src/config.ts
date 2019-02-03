@@ -1,3 +1,4 @@
+import { GithubRepository, getRepositoryFromName } from './github'
 import { withDefault } from './utils'
 
 /**
@@ -27,13 +28,37 @@ export interface Config {
   [repository: string]: RepositoryConfig
 }
 
+/**
+ *
+ * Hydrates repositories from configuration file.
+ *
+ * @param configuration
+ */
 export function getRepositoriesFromConfiguration(
   configuration: Config,
-): { name: string; config: RepositoryConfig }[] {
-  const repositories = Object.keys(configuration).map(repository => ({
-    name: repository,
-    config: hydrateRepositoryConfig(configuration[repository]),
-  }))
+): (
+  | { status: 'ok'; repository: GithubRepository; config: RepositoryConfig }
+  | { status: 'err'; message: string; config: RepositoryConfig })[] {
+  const repositories = Object.keys(configuration).map<
+    | { status: 'ok'; repository: GithubRepository; config: RepositoryConfig }
+    | { status: 'err'; message: string; config: RepositoryConfig }
+  >(repositoryName => {
+    const repository = getRepositoryFromName(repositoryName)
+
+    if (!repository) {
+      return {
+        status: 'err',
+        message: `Cannot decode the provided repository name ${name}`,
+        config: configuration[repositoryName],
+      }
+    }
+
+    return {
+      status: 'ok',
+      repository: repository,
+      config: hydrateRepositoryConfig(configuration[repositoryName]),
+    }
+  })
 
   return repositories
 

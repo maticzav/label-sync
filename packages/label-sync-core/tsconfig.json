@@ -8,6 +8,7 @@
     "outDir": "dist",
     "strict": true,
     "lib": ["esnext", "dom"],
+    "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "skipDefaultLibCheck": true

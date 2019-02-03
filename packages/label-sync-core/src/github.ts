@@ -1,5 +1,5 @@
 import * as assert from 'assert'
-import * as Octokit from '@octokit/rest'
+import Octokit from '@octokit/rest'
 
 /**
  *

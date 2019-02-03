@@ -15,7 +15,6 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "@octokit/rest": "^16.1.0",
     "chalk": "^2.4.1",
     "multilines": "^1.0.2",
     "probot": "^7.5.0"

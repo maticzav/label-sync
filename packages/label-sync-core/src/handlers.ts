@@ -9,9 +9,7 @@ import {
   GithubRepository,
   getRepositoryLabels,
   getRepositoryIssues,
-  getRepositoryFromName,
   GithubIssue,
-  GithubLabel,
 } from './github'
 import {
   getGithubLabelsFromRepositoryConfig,
@@ -30,6 +28,7 @@ import {
   RepositorySyncReport,
   RepositorySyncSuccessReport,
   RepositorySyncErrorReport,
+  RepositorySyncConfigurationErrorReport,
 } from './reporters'
 import {
   getRepositorySiblingsManifest,
@@ -46,6 +45,14 @@ export interface SyncOptions {
   githubToken: string
 }
 
+/**
+ *
+ * Handles repository sync by performing Label Sync first,
+ * and Siblings Sync later.
+ *
+ * @param config
+ * @param options
+ */
 export async function handleSync(
   config: Config,
   options: SyncOptions,
@@ -70,9 +77,19 @@ export async function handleSync(
    */
 
   const repositories = getRepositoriesFromConfiguration(config)
-  const repositoryHandlers = repositories.map(repository =>
-    handleRepository(repository.name, repository.config),
-  )
+  const repositoryHandlers = repositories.map(async repository => {
+    if (repository.status === 'ok') {
+      return handleRepository(repository.repository, repository.config)
+    }
+
+    return {
+      status: 'config' as 'config',
+      report: {
+        config: repository.config,
+        message: repository.message,
+      },
+    }
+  })
 
   const repositoryReports = await Promise.all(repositoryHandlers)
 
@@ -83,28 +100,16 @@ export async function handleSync(
     options: options,
     successes: report.successes,
     errors: report.errors,
+    configs: report.configs,
   }
 
   /**
    * Helper functions
    */
   async function handleRepository(
-    name: string,
+    repository: GithubRepository,
     config: RepositoryConfig,
   ): Promise<RepositorySyncReport> {
-    const repository = getRepositoryFromName(name)
-
-    if (!repository) {
-      return {
-        status: 'error',
-        report: {
-          repository: {} as any, // TODO:
-          config: config,
-          message: `Cannot decode the provided repository name ${name}`,
-        },
-      }
-    }
-
     const labelSync = await handleLabelSync(client, repository, config, options)
 
     if (labelSync.status === 'error') {
@@ -162,10 +167,12 @@ export async function handleSync(
   ): {
     successes: RepositorySyncSuccessReport[]
     errors: RepositorySyncErrorReport[]
+    configs: RepositorySyncConfigurationErrorReport[]
   } {
     const report = repositoryReports.reduce<{
       successes: RepositorySyncSuccessReport[]
       errors: RepositorySyncErrorReport[]
+      configs: RepositorySyncConfigurationErrorReport[]
     }>(
       (acc, report) => {
         switch (report.status) {
@@ -173,9 +180,11 @@ export async function handleSync(
             return { ...acc, successes: [...acc.successes, report.report] }
           case 'error':
             return { ...acc, errors: [...acc.errors, report.report] }
+          case 'config':
+            return { ...acc, configs: [...acc.configs, report.report] }
         }
       },
-      { successes: [], errors: [] },
+      { successes: [], errors: [], configs: [] },
     )
 
     return report
