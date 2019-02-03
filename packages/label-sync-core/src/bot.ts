@@ -11,10 +11,6 @@ import {
 } from './siblings'
 import { withDefault } from './utils'
 
-export type LabelSyncBotManifest = {
-  [repository: string]: RepositoryManifest
-}
-
 export interface BotOptions {
   logger: Console
   githubToken: string
@@ -127,7 +123,7 @@ export async function getGithubBot(
   async function generateBotManifest(
     github: Octokit,
     config: Config,
-  ): Promise<LabelSyncBotManifest> {
+  ): Promise<{ [repository: string]: RepositoryManifest }> {
     const repositories = getRepositoriesFromConfiguration(config)
 
     const manifests = await Promise.all(

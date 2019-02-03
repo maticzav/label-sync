@@ -204,7 +204,7 @@ export interface LabelSyncOptions {
  * @param config
  * @param options
  */
-async function handleLabelSync(
+export async function handleLabelSync(
   client: Octokit,
   repository: GithubRepository,
   config: RepositoryConfig,

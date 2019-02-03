@@ -1,4 +1,18 @@
-export { getGithubBot, generateManifest, LabelSyncManifest } from './bot'
-export { handleSync, SyncOptions, SyncReport } from './handlers'
-export { Config, RepositoryConfig, LabelConfig } from './labels'
+export { getGithubBot, BotOptions } from './bot'
+export {
+  LabelConfig,
+  Sibling,
+  RepositoryConfig,
+  Config,
+  getRepositoriesFromConfiguration,
+} from './config'
+export {
+  GithubIssue,
+  GithubLabel,
+  GithubRepository,
+  getRepositoryFromName,
+  getRepositoryIssues,
+  getRepositoryLabels,
+} from './github'
+export { handleSync, handleSiblingSync, handleLabelSync } from './handlers'
 export { generateSyncReport } from './reporters'

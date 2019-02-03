@@ -540,3 +540,15 @@ describe('Sync handler', () => {
     removeLabelsFromRepositoryMock.mockRestore()
   })
 })
+
+describe('Label Sync handler', () => {
+  beforeEach(() => {
+    jest.restoreAllMocks()
+  })
+})
+
+describe('Sibling Sync handler', () => {
+  beforeEach(() => {
+    jest.restoreAllMocks()
+  })
+})
