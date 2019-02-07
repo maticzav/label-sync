@@ -1,5 +1,4 @@
-import { generateSyncReport } from '../'
-import { SyncReport } from '../handlers'
+import { generateSyncReport } from '../src/reporters'
 
 describe('Reporters', () => {
   test('correctly build report for organization sync', async () => {
@@ -177,6 +176,7 @@ describe('Reporters', () => {
       },
       successes: [],
       errors: [],
+      configs: [],
     })
 
     expect(report).toMatchSnapshot()

@@ -1,6 +1,6 @@
-import { GithubLabel, getRepositoryFromName, GithubIssue } from '../github'
-import * as siblings from '../siblings'
-import { RepositoryConfig } from '../config'
+import { RepositoryConfig } from '../src/config'
+import { GithubLabel, getRepositoryFromName, GithubIssue } from '../src/github'
+import * as siblings from '../src/siblings'
 
 describe('getRepositorySiblingsManifest', () => {
   test('correctly generates manifest', async () => {

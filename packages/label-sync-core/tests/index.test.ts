@@ -1,6 +1,6 @@
 test('I can import index.', () => {
   try {
-    require('../')
+    require('../src')
   } catch (err) {
     fail("Couldn't load index")
   }

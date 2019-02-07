@@ -1,5 +1,5 @@
 import * as probot from 'probot'
-import { generateManifest, getGithubBot, Config } from '../'
+import { generateManifest, getGithubBot, Config } from '../src'
 import * as events from './__fixtures__/webhook'
 
 describe('bot', () => {

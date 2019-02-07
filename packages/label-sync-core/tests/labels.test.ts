@@ -1,5 +1,5 @@
-import * as github from '../github'
-import * as labels from '../labels'
+import * as github from '../src/github'
+import * as labels from '../src/labels'
 
 beforeEach(() => {
   jest.clearAllMocks()

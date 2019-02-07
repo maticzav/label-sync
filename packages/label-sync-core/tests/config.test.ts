@@ -1,4 +1,4 @@
-import * as config from '../config'
+import * as config from '../src/config'
 
 describe('getRepositoriesFromConfiguration', () => {
   beforeEach(() => {

@@ -1,4 +1,4 @@
-import * as github from '../github'
+import * as github from '../src/github'
 
 function pagianateTest() {
   return

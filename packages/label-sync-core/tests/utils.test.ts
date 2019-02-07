@@ -1,4 +1,4 @@
-import { withDefault, flatten } from '../utils'
+import { withDefault, flatten } from '../src/utils'
 
 describe('withDefault', () => {
   test('returns value on value', async () => {

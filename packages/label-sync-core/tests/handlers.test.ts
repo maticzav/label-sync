@@ -1,9 +1,9 @@
-import { handleSync, Config } from '../'
-import * as github from '../github'
-import * as labels from '../labels'
-import { RepositoryConfig } from '../config'
-import { LabelSyncOptions, handleLabelSync } from '../handlers'
-import { LabelSyncReport } from '../reporters'
+import { handleSync, Config } from '../src/'
+import * as github from '../src/github'
+import * as labels from '../src/labels'
+import { RepositoryConfig } from '../src/config'
+import { LabelSyncOptions, handleLabelSync } from '../src/handlers'
+import { LabelSyncReport } from '../src/reporters'
 
 describe('Label Sync', () => {
   beforeEach(() => {
