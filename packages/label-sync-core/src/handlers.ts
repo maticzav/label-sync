@@ -230,7 +230,8 @@ export async function handleLabelSync(
       status: 'success',
       report: {
         repository: repository,
-        config,
+        config: config,
+        options: options,
         additions: diff.add,
         updates: diff.update,
         removals: diff.remove,
@@ -253,6 +254,7 @@ export async function handleLabelSync(
       report: {
         repository: repository,
         config,
+        options: options,
         additions,
         updates,
         removals,
@@ -264,6 +266,7 @@ export async function handleLabelSync(
       report: {
         repository: repository,
         config: config,
+        options: options,
         message: err.message,
       },
     }

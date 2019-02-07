@@ -4,7 +4,7 @@ import * as os from 'os'
 
 import { GithubLabel, GithubRepository, GithubIssue } from './github'
 import { Config, RepositoryConfig } from './config'
-import { SyncOptions } from './handlers'
+import { SyncOptions, LabelSyncOptions } from './handlers'
 import { RepositoryManifest } from './siblings'
 
 const theme = {
@@ -75,6 +75,7 @@ export type LabelSyncReport =
 export type LabelSyncSuccessReport = {
   repository: GithubRepository
   config: RepositoryConfig
+  options: LabelSyncOptions
   additions: GithubLabel[]
   updates: GithubLabel[]
   removals: GithubLabel[]
@@ -83,6 +84,7 @@ export type LabelSyncSuccessReport = {
 export type LabelSyncErrorReport = {
   repository: GithubRepository
   config: RepositoryConfig
+  options: LabelSyncOptions
   message: string
 }
 

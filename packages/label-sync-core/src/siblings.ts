@@ -57,7 +57,7 @@ export async function getRepositorySiblingsManifest(
   if (undefinedSiblings.length !== 0) {
     return {
       status: 'err',
-      message: `${undefinedSiblings.join(', ')} are not defined`,
+      message: `Labels ${undefinedSiblings.join(', ')} are not defined`,
     }
   }
 
@@ -162,21 +162,17 @@ export async function assignSiblingsToIssue(
   /* Find all the siblings */
   const siblings = getSiblings(issue.labels, issue.labels)
 
-  try {
-    const res = await github.issues.addLabels({
-      repo: repository.name,
-      owner: repository.owner.login,
-      number: issue.number,
-      labels: siblings.map(label => label.name),
-    })
+  const res = await github.issues.addLabels({
+    repo: repository.name,
+    owner: repository.owner.login,
+    number: issue.number,
+    labels: siblings.map(label => label.name),
+  })
 
-    if (res.status === 200) {
-      return { status: 'ok', siblings: siblings }
-    } else {
-      return { status: 'err', message: "Couldn't sync siblings." }
-    }
-  } catch (err) {
-    return { status: 'err', message: err.message }
+  if (res.status === 200) {
+    return { status: 'ok', siblings: siblings }
+  } else {
+    return { status: 'err', message: "Couldn't sync siblings." }
   }
 
   /* Helper functions */

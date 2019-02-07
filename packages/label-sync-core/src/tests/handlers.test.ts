@@ -1,25 +1,19 @@
-import { handleSync, Config, SyncReport, SyncOptions } from '../'
+import { handleSync, Config } from '../'
+import * as github from '../github'
 import * as labels from '../labels'
+import { RepositoryConfig } from '../config'
+import { LabelSyncOptions, handleLabelSync } from '../handlers'
+import { LabelSyncReport } from '../reporters'
 
-describe('Sync handler', () => {
+describe('Label Sync', () => {
   beforeEach(() => {
     jest.restoreAllMocks()
   })
 
   test('correctly performs dry run', async () => {
-    /**
-     * Mocks
-     */
-    const getRepositoriesFromConfigurationMock = jest.spyOn(
-      labels,
-      'getRepositoriesFromConfiguration',
-    )
-    const getRepositoryFromNameMock = jest.spyOn(
-      labels,
-      'getRepositoryFromName',
-    )
+    /* Mocks */
     const getRepositoryLabelsMock = jest
-      .spyOn(labels, 'getRepostioryLabels')
+      .spyOn(github, 'getRepositoryLabels')
       .mockResolvedValue([])
     const getLabelsDiffMock = jest.spyOn(labels, 'getLabelsDiff')
     const addLabelsToRepositoryMock = jest.spyOn(
@@ -37,148 +31,62 @@ describe('Sync handler', () => {
       'removeLabelsFromRepository',
     )
 
-    /**
-     * Execution
-     */
-    const configuration: Config = {
-      'prisma/github-labels': {
-        labels: {
-          test: {
-            description: 'Testing sync.',
-            color: '#123456',
-          },
-        },
-      },
-      'prisma/prisma-binding': {
-        labels: {
-          test: {
-            description: 'Testing sync.',
-            color: '#123456',
-          },
-        },
-        strict: true,
-      },
-      'wrong-name': {
-        labels: {
-          test: {
-            description: 'Testing sync.',
-            color: '#123456',
-          },
+    /* Execution */
+
+    const repository = github.getRepositoryFromName('maticzav/label-sync')!
+
+    const configuration: RepositoryConfig = {
+      labels: {
+        test: {
+          description: 'Testing sync.',
+          color: '#123456',
         },
       },
     }
 
-    const options: SyncOptions = {
-      githubToken: 'token',
+    const options: LabelSyncOptions = {
       dryRun: true,
     }
 
-    const res = await handleSync(configuration, options)
+    const res = await handleLabelSync(
+      {} as any,
+      repository,
+      configuration,
+      options,
+    )
 
-    /**
-     * Tests
-     */
+    /* Test */
 
-    expect(getRepositoriesFromConfigurationMock).toHaveBeenCalledTimes(1)
-    expect(getRepositoryFromNameMock).toHaveBeenCalledTimes(3)
-    expect(getRepositoryLabelsMock).toHaveBeenCalledTimes(2)
-    expect(getLabelsDiffMock).toHaveBeenCalledTimes(2)
+    expect(getRepositoryLabelsMock).toHaveBeenCalledTimes(1)
+    expect(getLabelsDiffMock).toHaveBeenCalledTimes(1)
     expect(addLabelsToRepositoryMock).toHaveBeenCalledTimes(0)
     expect(updateLabelsInRepositoryMock).toHaveBeenCalledTimes(0)
     expect(removeLabelsFromRepositoryMock).toHaveBeenCalledTimes(0)
     expect(res).toEqual({
-      config: configuration,
-      options: options,
-      successes: [
-        {
-          name: 'prisma/github-labels',
-          config: {
-            labels: {
-              test: {
-                color: '#123456',
-                description: 'Testing sync.',
-              },
-            },
-            strict: false,
+      status: 'success',
+      report: {
+        repository: repository,
+        config: configuration,
+        options: options,
+        additions: [
+          {
+            color: '#123456',
+            default: false,
+            description: 'Testing sync.',
+            name: 'test',
           },
-          additions: [
-            {
-              color: '#123456',
-              default: false,
-              description: 'Testing sync.',
-              name: 'test',
-            },
-          ],
-          removals: [],
-          updates: [],
-        },
-        {
-          name: 'prisma/prisma-binding',
-          config: {
-            labels: {
-              test: {
-                color: '#123456',
-                description: 'Testing sync.',
-              },
-            },
-            strict: true,
-          },
-          additions: [
-            {
-              color: '#123456',
-              default: false,
-              description: 'Testing sync.',
-              name: 'test',
-            },
-          ],
-          removals: [],
-          updates: [],
-        },
-      ],
-      errors: [
-        {
-          config: {
-            labels: {
-              test: {
-                color: '#123456',
-                description: 'Testing sync.',
-              },
-            },
-            strict: false,
-          },
-          message: 'Cannot decode the provided repository name wrong-name',
-          name: 'wrong-name',
-        },
-      ],
-    } as SyncReport)
-
-    /**
-     * Clearings
-     */
-
-    getRepositoriesFromConfigurationMock.mockRestore()
-    getRepositoryFromNameMock.mockRestore()
-    getRepositoryLabelsMock.mockRestore()
-    getLabelsDiffMock.mockRestore()
-    addLabelsToRepositoryMock.mockRestore()
-    updateLabelsInRepositoryMock.mockRestore()
-    removeLabelsFromRepositoryMock.mockRestore()
+        ],
+        removals: [],
+        updates: [],
+      },
+    } as LabelSyncReport)
   })
 
   test('correctly handles sync', async () => {
-    /**
-     * Mocks
-     */
-    const getRepositoriesFromConfigurationMock = jest.spyOn(
-      labels,
-      'getRepositoriesFromConfiguration',
-    )
-    const getRepositoryFromNameMock = jest.spyOn(
-      labels,
-      'getRepositoryFromName',
-    )
+    /* Mocks */
+
     const getRepositoryLabelsMock = jest
-      .spyOn(labels, 'getRepostioryLabels')
+      .spyOn(github, 'getRepositoryLabels')
       .mockResolvedValue([])
     const getLabelsDiffMock = jest.spyOn(labels, 'getLabelsDiff')
     const addLabelsToRepositoryMock = jest
@@ -191,118 +99,56 @@ describe('Sync handler', () => {
       .spyOn(labels, 'removeLabelsFromRepository')
       .mockResolvedValue([])
 
-    /**
-     * Execution
-     */
-    const configuration: Config = {
-      'prisma/github-labels': {
-        labels: {
-          test: {
-            description: 'Testing sync.',
-            color: '#123456',
-          },
-        },
-      },
-      'prisma/prisma-binding': {
-        labels: {
-          test: {
-            description: 'Testing sync.',
-            color: '#123456',
-          },
-        },
-        strict: true,
-      },
-      'wrong-name': {
-        labels: {
-          test: {
-            description: 'Testing sync.',
-            color: '#123456',
-          },
+    /* Execution */
+    const repository = github.getRepositoryFromName('maticzav/label-sync')!
+
+    const configuration: RepositoryConfig = {
+      labels: {
+        test: {
+          description: 'Testing sync.',
+          color: '#123456',
         },
       },
     }
 
-    const options: SyncOptions = {
-      githubToken: 'token',
+    const options: LabelSyncOptions = {
       dryRun: false,
     }
 
-    const res = await handleSync(configuration, options)
+    const res = await handleLabelSync(
+      {} as any,
+      repository,
+      configuration,
+      options,
+    )
 
     /**
      * Tests
      */
 
-    expect(getRepositoriesFromConfigurationMock).toHaveBeenCalledTimes(1)
-    expect(getRepositoryFromNameMock).toHaveBeenCalledTimes(3)
-    expect(getRepositoryLabelsMock).toHaveBeenCalledTimes(2)
-    expect(getLabelsDiffMock).toHaveBeenCalledTimes(2)
-    expect(addLabelsToRepositoryMock).toHaveBeenCalledTimes(2)
-    expect(updateLabelsInRepositoryMock).toHaveBeenCalledTimes(2)
+    expect(getRepositoryLabelsMock).toHaveBeenCalledTimes(1)
+    expect(getLabelsDiffMock).toHaveBeenCalledTimes(1)
+    expect(addLabelsToRepositoryMock).toHaveBeenCalledTimes(1)
+    expect(updateLabelsInRepositoryMock).toHaveBeenCalledTimes(1)
     expect(removeLabelsFromRepositoryMock).toHaveBeenCalledTimes(1)
     expect(res).toEqual({
-      config: configuration,
-      options: options,
-      successes: [
-        {
-          name: 'prisma/github-labels',
-          config: {
-            labels: {
-              test: {
-                color: '#123456',
-                description: 'Testing sync.',
-              },
-            },
-            strict: false,
+      status: 'success',
+      report: {
+        repository: repository,
+        config: configuration,
+        options: options,
+        additions: [
+          {
+            color: '#123456',
+            default: false,
+            description: 'Testing sync.',
+            name: 'test',
           },
-          additions: [],
-          removals: [],
-          updates: [],
-        },
-        {
-          name: 'prisma/prisma-binding',
-          config: {
-            labels: {
-              test: {
-                color: '#123456',
-                description: 'Testing sync.',
-              },
-            },
-            strict: true,
-          },
-          additions: [],
-          removals: [],
-          updates: [],
-        },
-      ],
-      errors: [
-        {
-          config: {
-            labels: {
-              test: {
-                color: '#123456',
-                description: 'Testing sync.',
-              },
-            },
-            strict: false,
-          },
-          message: 'Cannot decode the provided repository name wrong-name',
-          name: 'wrong-name',
-        },
-      ],
-    } as SyncReport)
-
-    /**
-     * Clearings
-     */
-
-    getRepositoriesFromConfigurationMock.mockRestore()
-    getRepositoryFromNameMock.mockRestore()
-    getRepositoryLabelsMock.mockRestore()
-    getLabelsDiffMock.mockRestore()
-    addLabelsToRepositoryMock.mockRestore()
-    updateLabelsInRepositoryMock.mockRestore()
-    removeLabelsFromRepositoryMock.mockRestore()
+        ],
+        removals: [],
+        updates: [],
+      },
+    } as LabelSyncReport)
   })
 
   test('correctly reports non-strict repositories with deletions', async () => {
@@ -389,18 +235,6 @@ describe('Sync handler', () => {
       ],
       errors: [],
     } as SyncReport)
-
-    /**
-     * Clearings
-     */
-
-    getRepositoriesFromConfigurationMock.mockRestore()
-    getRepositoryFromNameMock.mockRestore()
-    getRepositoryLabelsMock.mockRestore()
-    getLabelsDiffMock.mockRestore()
-    addLabelsToRepositoryMock.mockRestore()
-    updateLabelsInRepositoryMock.mockRestore()
-    removeLabelsFromRepositoryMock.mockRestore()
   })
 
   test('correctly handles errors in repository sync', async () => {

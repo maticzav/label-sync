@@ -145,7 +145,7 @@ function paginate<T>(
     fn(github, repository, page).then(async res => {
       /* Handle error case */
       if (res.status !== 200) {
-        return Promise.reject()
+        throw new Error("Couldn't load data from Github.")
       }
 
       /**

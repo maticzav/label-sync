@@ -48,7 +48,7 @@ export function getRepositoriesFromConfiguration(
     if (!repository) {
       return {
         status: 'err',
-        message: `Cannot decode the provided repository name ${name}`,
+        message: `Cannot decode the provided repository name ${repositoryName}`,
         config: configuration[repositoryName],
       }
     }

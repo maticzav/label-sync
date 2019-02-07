@@ -1,15 +1,11 @@
 import * as config from '../config'
 
-describe('Configuration function', () => {
+describe('getRepositoriesFromConfiguration', () => {
   beforeEach(() => {
     jest.restoreAllMocks()
   })
 
-  /**
-   * getRepositoriesFromConfiguration
-   */
-
-  test('getRepositoriesFromConfiguration finds configuration', async () => {
+  test('finds configuration', async () => {
     expect(
       config.getRepositoriesFromConfiguration({
         'prisma/github-labels': {
@@ -23,47 +19,38 @@ describe('Configuration function', () => {
       }),
     ).toEqual([
       {
-        name: 'prisma/github-labels',
         config: {
+          labels: { test: { color: '#123456', description: 'Testing sync.' } },
+          strict: false,
+        },
+        repository: {
+          full_name: 'prisma/github-labels',
+          name: 'github-labels',
+          owner: { login: 'prisma' },
+        },
+        status: 'ok',
+      },
+    ])
+  })
+  test('errors on invalid', async () => {
+    expect(
+      config.getRepositoriesFromConfiguration({
+        'github-labels': {
           labels: {
             test: {
               description: 'Testing sync.',
               color: '#123456',
             },
           },
-          strict: false,
-        },
-      },
-    ])
-  })
-
-  /**
-   * getGithubLabelsFromRepositoryConfig
-   */
-  test('getGithubLabelsFromRepositoryConfig hydrates the labels correctly', async () => {
-    expect(
-      config.getGithubLabelsFromRepositoryConfig({
-        strict: true,
-        labels: {
-          'label-name': 'label-color',
-          'label-advanced': {
-            description: 'label-advanced-description',
-            color: 'label-advanced-color',
-          },
         },
       }),
     ).toEqual([
       {
-        name: 'label-name',
-        description: '',
-        color: 'label-color',
-        default: false,
-      },
-      {
-        name: 'label-advanced',
-        description: 'label-advanced-description',
-        color: 'label-advanced-color',
-        default: false,
+        config: {
+          labels: { test: { color: '#123456', description: 'Testing sync.' } },
+        },
+        message: 'Cannot decode the provided repository name github-labels',
+        status: 'err',
       },
     ])
   })
