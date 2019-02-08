@@ -1,0 +1,1 @@
+export { handleSync } from './sync'

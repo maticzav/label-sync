@@ -1,5 +1,5 @@
 import { LabelSyncOptions } from './sync'
-import { RepositoryConfig } from '../../config'
+import { RepositoryConfig } from '../../types'
 import { GithubLabel, GithubRepository } from '../../github'
 
 export type LabelSyncReport = {

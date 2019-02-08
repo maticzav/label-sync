@@ -1,4 +1,4 @@
-import * as config from '../src/config'
+import * as config from '../../../src/tools/ci/config'
 
 describe('getRepositoriesFromConfiguration', () => {
   beforeEach(() => {
@@ -17,20 +17,24 @@ describe('getRepositoriesFromConfiguration', () => {
           },
         },
       }),
-    ).toEqual([
-      {
-        config: {
-          labels: { test: { color: '#123456', description: 'Testing sync.' } },
-          strict: false,
+    ).toEqual({
+      configurations: [
+        {
+          config: {
+            labels: {
+              test: { color: '#123456', description: 'Testing sync.' },
+            },
+            strict: false,
+          },
+          repository: {
+            full_name: 'prisma/github-labels',
+            name: 'github-labels',
+            owner: { login: 'prisma' },
+          },
         },
-        repository: {
-          full_name: 'prisma/github-labels',
-          name: 'github-labels',
-          owner: { login: 'prisma' },
-        },
-        status: 'ok',
-      },
-    ])
+      ],
+      errors: [],
+    })
   })
   test('errors on invalid', async () => {
     expect(
@@ -44,14 +48,14 @@ describe('getRepositoriesFromConfiguration', () => {
           },
         },
       }),
-    ).toEqual([
-      {
-        config: {
-          labels: { test: { color: '#123456', description: 'Testing sync.' } },
+    ).toEqual({
+      configurations: [],
+      errors: [
+        {
+          message: 'Cannot decode the provided repository name github-labels',
+          repository: 'github-labels',
         },
-        message: 'Cannot decode the provided repository name github-labels',
-        status: 'err',
-      },
-    ])
+      ],
+    })
   })
 })

@@ -1,5 +1,5 @@
 import * as Octokit from '@octokit/rest'
-import { Sibling, RepositoryConfig } from './config'
+import { Sibling, RepositoryConfig } from './types'
 import { GithubLabel, getRepositoryLabels, GithubRepository } from './github'
 import { withDefault } from './utils'
 

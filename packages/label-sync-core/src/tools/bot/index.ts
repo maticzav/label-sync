@@ -2,7 +2,7 @@ import mls from 'multilines'
 import Octokit from '@octokit/rest'
 import * as probot from 'probot'
 
-import { Config, getRepositoriesFromConfiguration } from '../../config'
+import { Config, getRepositoriesFromConfiguration } from '../../types'
 import { GithubIssue, GithubRepository } from '../../github'
 import { assignSiblingsToIssue } from '../../handlers/siblings/siblings'
 import { withDefault } from '../../utils'

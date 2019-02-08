@@ -1,5 +1,5 @@
 import * as siblings from './siblings'
-import * as reporter from './reporter'
+import { SiblingSyncReport } from './reporter'
 import { handleSiblingSync } from './sync'
 
-export { handleSiblingSync }
+export { handleSiblingSync, SiblingSyncReport }
