@@ -161,3 +161,23 @@ function paginate<T>(
       }
     })
 }
+
+/**
+ *
+ * Compares two labels by comparing all of their keys.
+ *
+ * @param label
+ */
+export function isLabel(local: GithubLabel): (remote: GithubLabel) => boolean {
+  const keys = ['name', 'description', 'color', 'default']
+
+  return remote => keys.every(key => get(local, key) === get(remote, key))
+
+  /* Helper functions */
+  function get<T>(
+    object: { [key: string]: T | any },
+    value: string,
+  ): T | undefined {
+    return object[value]
+  }
+}

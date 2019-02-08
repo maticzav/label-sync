@@ -2,14 +2,11 @@ import mls from 'multilines'
 import Octokit from '@octokit/rest'
 import * as probot from 'probot'
 
-import { Config, getRepositoriesFromConfiguration } from './config'
-import { GithubIssue, GithubRepository } from './github'
-import {
-  RepositoryManifest,
-  assignSiblingsToIssue,
-  getRepositorySiblingsManifest,
-} from './siblings'
-import { withDefault } from './utils'
+import { Config, getRepositoriesFromConfiguration } from '../../config'
+import { GithubIssue, GithubRepository } from '../../github'
+import { assignSiblingsToIssue } from '../../handlers/siblings/siblings'
+import { withDefault } from '../../utils'
+import { RepositoryManifest, getRepositoryManifest } from '../../manifest'
 
 export interface BotOptions {
   logger: Console
@@ -68,16 +65,12 @@ export async function getGithubBot(
         manifest[repository.full_name],
       )
 
-      if (res.status === 'ok') {
-        logger.log(
-          mls`
+      context.log.info(
+        mls`
           | Successfully applied siblings to issue ${issue.number}: 
-          | ${res.siblings}
+          | ${res}
           `,
-        )
-      } else {
-        logger.log(`Something went wrong: ${res.message}`)
-      }
+      )
     })
 
     app.on('pull_request.labeled', async (context: probot.Context) => {
@@ -86,7 +79,7 @@ export async function getGithubBot(
 
       /* Check repository configuration */
       if (!Object.keys(manifest).includes(repository.full_name)) {
-        logger.log(`No such repository configuration, ${repository}.`)
+        context.log.info(`No such repository configuration, ${repository}.`)
         return
       }
 
@@ -97,16 +90,12 @@ export async function getGithubBot(
         manifest[repository.full_name],
       )
 
-      if (res.status === 'ok') {
-        logger.log(
-          mls`
+      context.log.info(
+        mls`
           | Successfully applied siblings to ${pr.number} pull request: 
-          | ${res.siblings}
+          | ${res}
           `,
-        )
-      } else {
-        logger.log(`Something went wrong: ${res.message}`)
-      }
+      )
     })
   }
 
@@ -132,7 +121,7 @@ export async function getGithubBot(
           throw new Error(`Couldn't find repository: ${repository.message}.`)
         }
 
-        const manifest = await getRepositorySiblingsManifest(
+        const manifest = await getRepositoryManifest(
           github,
           repository.repository,
           repository.config,

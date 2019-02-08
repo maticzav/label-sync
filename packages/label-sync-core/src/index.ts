@@ -1,4 +1,4 @@
-export { getGithubBot, BotOptions } from './bot'
+export { getGithubBot, BotOptions } from './tools/bot'
 export {
   LabelConfig,
   Sibling,
@@ -14,5 +14,6 @@ export {
   getRepositoryIssues,
   getRepositoryLabels,
 } from './github'
-export { handleSync, handleSiblingSync, handleLabelSync } from './handlers'
-export { generateSyncReport } from './reporters'
+export { handleLabelSync } from './handlers/labels/sync'
+export { handleSiblingSync } from './handlers/siblings/sync'
+export { handleSync } from './tools/sync'

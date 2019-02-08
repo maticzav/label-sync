@@ -1,5 +1,7 @@
-import * as github from '../src/github'
-import * as labels from '../src/labels'
+import * as github from '../../../src/github'
+import * as labels from '../../../src/handlers/labels/labels'
+
+import * as fixtures from '../../__fixtures__/github'
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -34,16 +36,12 @@ test('getGithubLabelsFromRepositoryConfig hydrates the labels correctly', async 
 })
 
 test('addLabelsToRepository create labels', async () => {
-  const octokit = {
-    issues: {
-      createLabel: jest.fn().mockResolvedValue({ data: 'pass' }),
-    },
-  }
+  const client = fixtures.githubClient()
 
   const repository = github.getRepositoryFromName('maticzav/label-sync')!
 
   const res = await labels.addLabelsToRepository(
-    octokit as any,
+    client as any,
     [
       {
         name: 'label-name',
@@ -61,14 +59,14 @@ test('addLabelsToRepository create labels', async () => {
     repository,
   )
 
-  expect(octokit.issues.createLabel).toHaveBeenNthCalledWith(1, {
+  expect(client.issues.createLabel).toHaveBeenNthCalledWith(1, {
     owner: repository.owner.login,
     repo: repository.name,
     name: 'label-name',
     description: '',
     color: 'label-color',
   })
-  expect(octokit.issues.createLabel).toHaveBeenNthCalledWith(2, {
+  expect(client.issues.createLabel).toHaveBeenNthCalledWith(2, {
     owner: repository.owner.login,
     repo: repository.name,
     name: 'label-advanced',
@@ -78,16 +76,12 @@ test('addLabelsToRepository create labels', async () => {
 })
 
 test('updateLabelsInRepository updates labels', async () => {
-  const octokit = {
-    issues: {
-      updateLabel: jest.fn().mockResolvedValue({ data: 'pass' }),
-    },
-  }
+  const client = fixtures.githubClient()
 
   const repository = github.getRepositoryFromName('maticzav/label-sync')!
 
   const res = await labels.updateLabelsInRepository(
-    octokit as any,
+    client as any,
     [
       {
         name: 'label-name',
@@ -105,7 +99,7 @@ test('updateLabelsInRepository updates labels', async () => {
     repository,
   )
 
-  expect(octokit.issues.updateLabel).toHaveBeenNthCalledWith(1, {
+  expect(client.issues.updateLabel).toHaveBeenNthCalledWith(1, {
     current_name: 'label-name',
     owner: repository.owner.login,
     repo: repository.name,
@@ -113,7 +107,7 @@ test('updateLabelsInRepository updates labels', async () => {
     description: '',
     color: 'label-color',
   })
-  expect(octokit.issues.updateLabel).toHaveBeenNthCalledWith(2, {
+  expect(client.issues.updateLabel).toHaveBeenNthCalledWith(2, {
     current_name: 'label-advanced',
     owner: repository.owner.login,
     repo: repository.name,
@@ -124,16 +118,12 @@ test('updateLabelsInRepository updates labels', async () => {
 })
 
 test('deleteLabelsFromRepository deletes labels', async () => {
-  const octokit = {
-    issues: {
-      deleteLabel: jest.fn().mockResolvedValue({ data: 'pass' }),
-    },
-  }
+  const client = fixtures.githubClient()
 
   const repository = github.getRepositoryFromName('maticzav/label-sync')!
 
   const res = await labels.removeLabelsFromRepository(
-    octokit as any,
+    client as any,
     [
       {
         name: 'label-name',
@@ -151,12 +141,12 @@ test('deleteLabelsFromRepository deletes labels', async () => {
     repository,
   )
 
-  expect(octokit.issues.deleteLabel).toHaveBeenNthCalledWith(1, {
+  expect(client.issues.deleteLabel).toHaveBeenNthCalledWith(1, {
     owner: repository.owner.login,
     repo: repository.name,
     name: 'label-name',
   })
-  expect(octokit.issues.deleteLabel).toHaveBeenNthCalledWith(2, {
+  expect(client.issues.deleteLabel).toHaveBeenNthCalledWith(2, {
     owner: repository.owner.login,
     repo: repository.name,
     name: 'label-advanced',
@@ -231,55 +221,4 @@ test('getLabelsDiff generates correct diff', async () => {
       default: true,
     },
   ])
-})
-
-describe('isLabel', () => {
-  test('evalutes true on equal labels', async () => {
-    expect(
-      labels.isLabel({
-        name: 'test-name',
-        description: 'test-description',
-        color: 'test-color',
-        default: false,
-      })({
-        name: 'test-name',
-        description: 'test-description',
-        color: 'test-color',
-        default: false,
-      }),
-    ).toBe(true)
-  })
-
-  test('evalutes false on different labels', async () => {
-    expect(
-      labels.isLabel({
-        name: 'test-name',
-        description: 'test-description',
-        color: 'test-color',
-        default: false,
-      })({
-        name: 'test-',
-        description: 'test-description',
-        color: 'test-',
-        default: true,
-      }),
-    ).toBe(false)
-  })
-  test('ignores unimportant keys', async () => {
-    expect(
-      labels.isLabel({
-        node_id: '2',
-        name: 'test-name',
-        description: 'test-description',
-        color: 'test-color',
-        default: true,
-      })({
-        node_id: '3',
-        name: 'test-name',
-        description: 'test-description',
-        color: 'test-color',
-        default: true,
-      }),
-    ).toBe(true)
-  })
 })

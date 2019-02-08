@@ -157,3 +157,54 @@ describe('getRepositoryIssues', () => {
     })
   })
 })
+
+describe('isLabel', () => {
+  test('evalutes true on equal labels', async () => {
+    expect(
+      github.isLabel({
+        name: 'test-name',
+        description: 'test-description',
+        color: 'test-color',
+        default: false,
+      })({
+        name: 'test-name',
+        description: 'test-description',
+        color: 'test-color',
+        default: false,
+      }),
+    ).toBe(true)
+  })
+
+  test('evalutes false on different labels', async () => {
+    expect(
+      github.isLabel({
+        name: 'test-name',
+        description: 'test-description',
+        color: 'test-color',
+        default: false,
+      })({
+        name: 'test-',
+        description: 'test-description',
+        color: 'test-',
+        default: true,
+      }),
+    ).toBe(false)
+  })
+  test('ignores unimportant keys', async () => {
+    expect(
+      github.isLabel({
+        node_id: '2',
+        name: 'test-name',
+        description: 'test-description',
+        color: 'test-color',
+        default: true,
+      })({
+        node_id: '3',
+        name: 'test-name',
+        description: 'test-description',
+        color: 'test-color',
+        default: true,
+      }),
+    ).toBe(true)
+  })
+})

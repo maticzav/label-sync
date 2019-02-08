@@ -1,8 +1,7 @@
 import * as Octokit from '@octokit/rest'
-
-import { withDefault } from './utils'
-import { GithubLabel, GithubRepository } from './github'
-import { RepositoryConfig, LabelConfig } from './config'
+import { RepositoryConfig, LabelConfig } from '../../config'
+import { GithubLabel, GithubRepository, isLabel } from '../../github'
+import { withDefault } from '../../utils'
 
 /*
  *
@@ -255,25 +254,5 @@ export function getLabelsDiff(
     label: GithubLabel,
   ): (compare: GithubLabel) => boolean {
     return compare => label.name === compare.name
-  }
-}
-
-/**
- *
- * Compares two labels by comparing all of their keys.
- *
- * @param label
- */
-export function isLabel(local: GithubLabel): (remote: GithubLabel) => boolean {
-  const keys = ['name', 'description', 'color', 'default']
-
-  return remote => keys.every(key => get(local, key) === get(remote, key))
-
-  /* Helper functions */
-  function get<T>(
-    object: { [key: string]: T | any },
-    value: string,
-  ): T | undefined {
-    return object[value]
   }
 }
