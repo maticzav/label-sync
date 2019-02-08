@@ -2,11 +2,12 @@ import mls from 'multilines'
 import Octokit from '@octokit/rest'
 import * as probot from 'probot'
 
-import { Config, getRepositoriesFromConfiguration } from '../../types'
+import { Config } from '../ci'
 import { GithubIssue, GithubRepository } from '../../github'
+import { RepositoryManifest, getRepositoryManifest } from '../../manifest'
 import { assignSiblingsToIssue } from '../../handlers/siblings/siblings'
 import { withDefault } from '../../utils'
-import { RepositoryManifest, getRepositoryManifest } from '../../manifest'
+import { getRepositoriesFromConfiguration } from '../ci/config'
 
 export interface BotOptions {
   logger: Console
@@ -115,12 +116,12 @@ export async function getGithubBot(
   ): Promise<{ [repository: string]: RepositoryManifest }> {
     const repositories = getRepositoriesFromConfiguration(config)
 
-    const manifests = await Promise.all(
-      repositories.map(async repository => {
-        if (repository.status === 'err') {
-          throw new Error(`Couldn't find repository: ${repository.message}.`)
-        }
+    if (repositories.errors.length !== 0) {
+      throw new Error(`Couldn't generate manifest!`)
+    }
 
+    const manifests = await Promise.all(
+      repositories.configurations.map(async repository => {
         const manifest = await getRepositoryManifest(
           github,
           repository.repository,

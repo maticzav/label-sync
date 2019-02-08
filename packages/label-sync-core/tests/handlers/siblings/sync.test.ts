@@ -1,4 +1,4 @@
-import { handleSiblingSync } from '../../../src/handlers/siblings/'
+import { handleSiblingSync } from '../../../src/handlers/siblings/sync'
 import * as fixtures from '../../__fixtures__/github'
 import { getRepositoryFromName, RepositoryConfig } from '../../../src'
 import { getRepositoryManifest } from '../../../src/manifest'
@@ -26,7 +26,7 @@ describe('siblings sync', () => {
       return fail(manifest.message)
     }
 
-    const res = handleSiblingSync(
+    const res = await handleSiblingSync(
       client as any,
       repository,
       manifest.manifest,
