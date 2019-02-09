@@ -1,5 +1,6 @@
+import * as Octokit from '@octokit/rest'
 import * as meow from 'meow'
-import { handleSync, generateSyncReport } from 'label-sync-core'
+import { handleSync, createCISyncTerminalReport } from 'label-sync-core'
 
 /** Labels import */
 import labels from './labels'
@@ -31,12 +32,22 @@ async function main(cli: meow.Result): Promise<void> {
     throw new Error('Missing Github credentials.')
   }
 
-  const report = await handleSync(labels, {
-    githubToken: process.env.GITHUB_TOKEN,
+  const client = new Octokit({
+    headers: {
+      accept: 'application/vnd.github.symmetra-preview+json',
+    },
+  })
+
+  client.authenticate({
+    type: 'app',
+    token: process.env.GITHUB_TOKEN,
+  })
+
+  const report = await handleSync(client, labels, {
     dryRun: cli.flags.dryrun,
   })
 
-  const humanReadableReport = generateSyncReport(report)
+  const humanReadableReport = createCISyncTerminalReport(report)
 
   console.log(humanReadableReport)
 }
