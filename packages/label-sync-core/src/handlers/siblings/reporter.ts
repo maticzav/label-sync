@@ -35,16 +35,14 @@ export function createTerminalReport(report: SiblingSyncReport): string {
     | Hey ✌️ we synced issues in your repository. Check the changes we made:
     |
     | ${issuesList(report.issues)}
-    |
-    | We used this manifest:
-    | ${JSON.stringify(report.manifest, null, 2)}
   `
 
   function issuesList(issues: SiblingSyncIssueReport[]): string {
     return issues
+      .filter(issue => issue.siblings.length > 0)
       .map(
         issue => mls`
-          | ${chalk.bgCyan(issue.issue.title)}
+          | ${chalk.bgBlue(issue.issue.title)}
           | ${chalk.gray(`Issue number: ${issue.issue.number}`)}
           |
           | Added ${issue.siblings.map(l => l.name).join(', ')}.
