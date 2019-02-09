@@ -98,6 +98,12 @@ describe('assignSiblingsToIssue', () => {
         description: '',
         default: false,
       },
+      {
+        name: 'kind/old-undefined',
+        color: '333333',
+        description: '',
+        default: false,
+      },
     ]
 
     const client = fixtures.githubClient()

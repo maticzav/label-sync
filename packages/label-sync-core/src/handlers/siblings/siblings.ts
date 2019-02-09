@@ -87,8 +87,10 @@ export async function assignSiblingsToIssue(
       /* Find manifest definition */
       const labelManifest = manifest[label.name]
 
+      /*
+       * Because of dryrun (there might be some issue with undeleted labels).
+       */
       if (!labelManifest) {
-        console.log({ label, issue })
         return acc
       }
 
