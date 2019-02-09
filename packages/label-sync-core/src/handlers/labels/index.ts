@@ -1,3 +1,8 @@
-export * from './labels'
-export * from './reporter'
-export * from './sync'
+export {
+  getLabelsDiff,
+  addLabelsToRepository,
+  updateLabelsInRepository,
+  removeLabelsFromRepository,
+} from './labels'
+export { createTerminalReport, LabelSyncReport } from './reporter'
+export { handleLabelSync, LabelSyncOptions } from './sync'

@@ -1,5 +1,10 @@
 import * as github from '../../../src/github'
-import * as labels from '../../../src/handlers/labels/labels'
+import {
+  addLabelsToRepository,
+  updateLabelsInRepository,
+  removeLabelsFromRepository,
+  getLabelsDiff,
+} from '../../../src/handlers/labels'
 
 import * as fixtures from '../../__fixtures__/github'
 
@@ -12,7 +17,7 @@ test('addLabelsToRepository create labels', async () => {
 
   const repository = github.getRepositoryFromName('maticzav/label-sync')!
 
-  const res = await labels.addLabelsToRepository(
+  const res = await addLabelsToRepository(
     client as any,
     [
       {
@@ -52,7 +57,7 @@ test('updateLabelsInRepository updates labels', async () => {
 
   const repository = github.getRepositoryFromName('maticzav/label-sync')!
 
-  const res = await labels.updateLabelsInRepository(
+  const res = await updateLabelsInRepository(
     client as any,
     [
       {
@@ -94,7 +99,7 @@ test('deleteLabelsFromRepository deletes labels', async () => {
 
   const repository = github.getRepositoryFromName('maticzav/label-sync')!
 
-  const res = await labels.removeLabelsFromRepository(
+  const res = await removeLabelsFromRepository(
     client as any,
     [
       {
@@ -167,7 +172,7 @@ test('getLabelsDiff generates correct diff', async () => {
     },
   ]
 
-  const diff = labels.getLabelsDiff(currentLabels, newLabels)
+  const diff = getLabelsDiff(currentLabels, newLabels)
 
   expect(diff.add).toEqual([
     {
