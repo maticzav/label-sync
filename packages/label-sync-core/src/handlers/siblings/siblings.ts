@@ -87,6 +87,11 @@ export async function assignSiblingsToIssue(
       /* Find manifest definition */
       const labelManifest = manifest[label.name]
 
+      if (!labelManifest) {
+        console.log({ label, issue })
+        return acc
+      }
+
       /* Filter siblings of this label */
       const newLabels = hydrateSiblings(labelManifest.siblings).filter(
         newLabel => !combinedPool.some(isLabel(newLabel)),
