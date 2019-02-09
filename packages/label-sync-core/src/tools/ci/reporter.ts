@@ -9,8 +9,8 @@ import { SiblingSyncReport } from '../../handlers/siblings'
 export type SyncReport = {
   config: Config
   options: SyncOptions
-  errors: ConfigError[]
   syncs: RepositorySyncReport[]
+  configErrors: ConfigError[]
 }
 
 export type RepositorySyncReport =
@@ -27,5 +27,4 @@ export type RepositorySyncReport =
       message: string
       repository: GithubRepository
       config: RepositoryConfig
-      labels: LabelSyncReport
     }

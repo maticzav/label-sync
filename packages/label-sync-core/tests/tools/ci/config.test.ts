@@ -1,4 +1,4 @@
-import * as config from '../../../src/tools/ci/config'
+import { getRepositoriesFromConfiguration } from '../../../src/tools/ci/'
 
 describe('getRepositoriesFromConfiguration', () => {
   beforeEach(() => {
@@ -7,7 +7,7 @@ describe('getRepositoriesFromConfiguration', () => {
 
   test('finds configuration', async () => {
     expect(
-      config.getRepositoriesFromConfiguration({
+      getRepositoriesFromConfiguration({
         'prisma/github-labels': {
           labels: {
             test: {
@@ -38,7 +38,7 @@ describe('getRepositoriesFromConfiguration', () => {
   })
   test('errors on invalid', async () => {
     expect(
-      config.getRepositoriesFromConfiguration({
+      getRepositoriesFromConfiguration({
         'github-labels': {
           labels: {
             test: {

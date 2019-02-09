@@ -1,0 +1,741 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ci perform successful sync 1`] = `
+Object {
+  "config": Object {
+    "maticzav/graphql-shield": Object {
+      "labels": Object {
+        "basic": "234234",
+        "bug/0-no-reproduction": Object {
+          "color": "00ff00",
+          "description": "No reproduction available.",
+        },
+        "kind/bug": Object {
+          "color": "ff0000",
+          "siblings": Array [
+            "bug/0-no-reproduction",
+          ],
+        },
+      },
+      "strict": false,
+    },
+    "maticzav/label-sync": Object {
+      "labels": Object {
+        "basic": "123123",
+      },
+      "strict": false,
+    },
+  },
+  "configErrors": Array [],
+  "options": Object {
+    "dryRun": false,
+  },
+  "syncs": Array [
+    Object {
+      "config": Object {
+        "labels": Object {
+          "basic": "123123",
+        },
+        "strict": false,
+      },
+      "labels": Object {
+        "additions": Array [],
+        "config": Object {
+          "labels": Object {
+            "basic": "123123",
+          },
+          "strict": false,
+        },
+        "options": Object {
+          "dryRun": false,
+        },
+        "removals": Array [
+          Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "bug/no-reproduction",
+          },
+          Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "kind/bug",
+          },
+        ],
+        "repository": Object {
+          "full_name": "maticzav/label-sync",
+          "name": "label-sync",
+          "owner": Object {
+            "login": "maticzav",
+          },
+        },
+        "updates": Array [
+          Array [
+            Object {
+              "color": "333333",
+              "default": false,
+              "description": "",
+              "name": "bug/no-reproduction",
+            },
+            Object {
+              "color": "f266f4",
+              "default": false,
+              "description": "",
+              "name": "basic",
+            },
+            Object {
+              "color": "333333",
+              "default": false,
+              "description": "",
+              "name": "kind/bug",
+            },
+          ],
+        ],
+      },
+      "manifest": Object {
+        "basic": Object {
+          "label": Object {
+            "color": "f266f4",
+            "default": false,
+            "description": "",
+            "name": "basic",
+          },
+          "siblings": Array [],
+        },
+        "bug/no-reproduction": Object {
+          "label": Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "bug/no-reproduction",
+          },
+          "siblings": Array [],
+        },
+        "kind/bug": Object {
+          "label": Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "kind/bug",
+          },
+          "siblings": Array [],
+        },
+      },
+      "repository": Object {
+        "full_name": "maticzav/label-sync",
+        "name": "label-sync",
+        "owner": Object {
+          "login": "maticzav",
+        },
+      },
+      "siblings": Object {
+        "issues": Array [
+          Object {
+            "issue": Object {
+              "body": "Very serious issue.",
+              "id": 1421,
+              "labels": Array [
+                Object {
+                  "color": "333333",
+                  "default": false,
+                  "description": "",
+                  "name": "bug/no-reproduction",
+                },
+                Object {
+                  "color": "f266f4",
+                  "default": false,
+                  "description": "",
+                  "name": "basic",
+                },
+                Object {
+                  "color": "333333",
+                  "default": false,
+                  "description": "",
+                  "name": "kind/bug",
+                },
+              ],
+              "number": 1,
+              "state": "",
+              "title": "Issue Title",
+            },
+            "siblings": Array [],
+          },
+          Object {
+            "issue": Object {
+              "body": "Not so serious issue.",
+              "id": 1123,
+              "labels": Array [
+                Object {
+                  "color": "333333",
+                  "default": false,
+                  "description": "",
+                  "name": "bug/no-reproduction",
+                },
+                Object {
+                  "color": "f266f4",
+                  "default": false,
+                  "description": "",
+                  "name": "basic",
+                },
+                Object {
+                  "color": "333333",
+                  "default": false,
+                  "description": "",
+                  "name": "kind/bug",
+                },
+              ],
+              "number": 5,
+              "state": "",
+              "title": "Another Issue Title",
+            },
+            "siblings": Array [],
+          },
+        ],
+        "manifest": Object {
+          "basic": Object {
+            "label": Object {
+              "color": "f266f4",
+              "default": false,
+              "description": "",
+              "name": "basic",
+            },
+            "siblings": Array [],
+          },
+          "bug/no-reproduction": Object {
+            "label": Object {
+              "color": "333333",
+              "default": false,
+              "description": "",
+              "name": "bug/no-reproduction",
+            },
+            "siblings": Array [],
+          },
+          "kind/bug": Object {
+            "label": Object {
+              "color": "333333",
+              "default": false,
+              "description": "",
+              "name": "kind/bug",
+            },
+            "siblings": Array [],
+          },
+        },
+        "options": Object {
+          "dryRun": false,
+        },
+        "repository": Object {
+          "full_name": "maticzav/label-sync",
+          "name": "label-sync",
+          "owner": Object {
+            "login": "maticzav",
+          },
+        },
+      },
+      "status": "success",
+    },
+    Object {
+      "config": Object {
+        "labels": Object {
+          "basic": "234234",
+          "bug/0-no-reproduction": Object {
+            "color": "00ff00",
+            "description": "No reproduction available.",
+          },
+          "kind/bug": Object {
+            "color": "ff0000",
+            "siblings": Array [
+              "bug/0-no-reproduction",
+            ],
+          },
+        },
+        "strict": false,
+      },
+      "labels": Object {
+        "additions": Array [
+          Array [
+            Object {
+              "color": "333333",
+              "default": false,
+              "description": "",
+              "name": "bug/no-reproduction",
+            },
+            Object {
+              "color": "f266f4",
+              "default": false,
+              "description": "",
+              "name": "basic",
+            },
+            Object {
+              "color": "333333",
+              "default": false,
+              "description": "",
+              "name": "kind/bug",
+            },
+          ],
+        ],
+        "config": Object {
+          "labels": Object {
+            "basic": "234234",
+            "bug/0-no-reproduction": Object {
+              "color": "00ff00",
+              "description": "No reproduction available.",
+            },
+            "kind/bug": Object {
+              "color": "ff0000",
+              "siblings": Array [
+                "bug/0-no-reproduction",
+              ],
+            },
+          },
+          "strict": false,
+        },
+        "options": Object {
+          "dryRun": false,
+        },
+        "removals": Array [
+          Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "bug/no-reproduction",
+          },
+        ],
+        "repository": Object {
+          "full_name": "maticzav/graphql-shield",
+          "name": "graphql-shield",
+          "owner": Object {
+            "login": "maticzav",
+          },
+        },
+        "updates": Array [
+          Array [
+            Object {
+              "color": "333333",
+              "default": false,
+              "description": "",
+              "name": "bug/no-reproduction",
+            },
+            Object {
+              "color": "f266f4",
+              "default": false,
+              "description": "",
+              "name": "basic",
+            },
+            Object {
+              "color": "333333",
+              "default": false,
+              "description": "",
+              "name": "kind/bug",
+            },
+          ],
+          Array [
+            Object {
+              "color": "333333",
+              "default": false,
+              "description": "",
+              "name": "bug/no-reproduction",
+            },
+            Object {
+              "color": "f266f4",
+              "default": false,
+              "description": "",
+              "name": "basic",
+            },
+            Object {
+              "color": "333333",
+              "default": false,
+              "description": "",
+              "name": "kind/bug",
+            },
+          ],
+        ],
+      },
+      "manifest": Object {
+        "basic": Object {
+          "label": Object {
+            "color": "f266f4",
+            "default": false,
+            "description": "",
+            "name": "basic",
+          },
+          "siblings": Array [],
+        },
+        "bug/0-no-reproduction": Object {
+          "label": Object {
+            "color": "00ff00",
+            "default": false,
+            "description": "No reproduction available.",
+            "name": "bug/0-no-reproduction",
+          },
+          "siblings": Array [],
+        },
+        "bug/no-reproduction": Object {
+          "label": Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "bug/no-reproduction",
+          },
+          "siblings": Array [],
+        },
+        "kind/bug": Object {
+          "label": Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "kind/bug",
+          },
+          "siblings": Array [
+            "bug/0-no-reproduction",
+          ],
+        },
+      },
+      "repository": Object {
+        "full_name": "maticzav/graphql-shield",
+        "name": "graphql-shield",
+        "owner": Object {
+          "login": "maticzav",
+        },
+      },
+      "siblings": Object {
+        "issues": Array [
+          Object {
+            "issue": Object {
+              "body": "Very serious issue.",
+              "id": 1421,
+              "labels": Array [
+                Object {
+                  "color": "333333",
+                  "default": false,
+                  "description": "",
+                  "name": "bug/no-reproduction",
+                },
+                Object {
+                  "color": "f266f4",
+                  "default": false,
+                  "description": "",
+                  "name": "basic",
+                },
+                Object {
+                  "color": "333333",
+                  "default": false,
+                  "description": "",
+                  "name": "kind/bug",
+                },
+              ],
+              "number": 1,
+              "state": "",
+              "title": "Issue Title",
+            },
+            "siblings": Array [
+              Object {
+                "color": "00ff00",
+                "default": false,
+                "description": "No reproduction available.",
+                "name": "bug/0-no-reproduction",
+              },
+            ],
+          },
+          Object {
+            "issue": Object {
+              "body": "Not so serious issue.",
+              "id": 1123,
+              "labels": Array [
+                Object {
+                  "color": "333333",
+                  "default": false,
+                  "description": "",
+                  "name": "bug/no-reproduction",
+                },
+                Object {
+                  "color": "f266f4",
+                  "default": false,
+                  "description": "",
+                  "name": "basic",
+                },
+                Object {
+                  "color": "333333",
+                  "default": false,
+                  "description": "",
+                  "name": "kind/bug",
+                },
+              ],
+              "number": 5,
+              "state": "",
+              "title": "Another Issue Title",
+            },
+            "siblings": Array [
+              Object {
+                "color": "00ff00",
+                "default": false,
+                "description": "No reproduction available.",
+                "name": "bug/0-no-reproduction",
+              },
+            ],
+          },
+        ],
+        "manifest": Object {
+          "basic": Object {
+            "label": Object {
+              "color": "f266f4",
+              "default": false,
+              "description": "",
+              "name": "basic",
+            },
+            "siblings": Array [],
+          },
+          "bug/0-no-reproduction": Object {
+            "label": Object {
+              "color": "00ff00",
+              "default": false,
+              "description": "No reproduction available.",
+              "name": "bug/0-no-reproduction",
+            },
+            "siblings": Array [],
+          },
+          "bug/no-reproduction": Object {
+            "label": Object {
+              "color": "333333",
+              "default": false,
+              "description": "",
+              "name": "bug/no-reproduction",
+            },
+            "siblings": Array [],
+          },
+          "kind/bug": Object {
+            "label": Object {
+              "color": "333333",
+              "default": false,
+              "description": "",
+              "name": "kind/bug",
+            },
+            "siblings": Array [
+              "bug/0-no-reproduction",
+            ],
+          },
+        },
+        "options": Object {
+          "dryRun": false,
+        },
+        "repository": Object {
+          "full_name": "maticzav/graphql-shield",
+          "name": "graphql-shield",
+          "owner": Object {
+            "login": "maticzav",
+          },
+        },
+      },
+      "status": "success",
+    },
+  ],
+}
+`;
+
+exports[`ci performs successful dryrun 1`] = `
+Object {
+  "config": Object {
+    "maticzav/label-sync": Object {
+      "labels": Object {
+        "basic": "123123",
+      },
+      "strict": false,
+    },
+  },
+  "configErrors": Array [],
+  "options": Object {
+    "dryRun": true,
+  },
+  "syncs": Array [
+    Object {
+      "config": Object {
+        "labels": Object {
+          "basic": "123123",
+        },
+        "strict": false,
+      },
+      "labels": Object {
+        "additions": Array [],
+        "config": Object {
+          "labels": Object {
+            "basic": "123123",
+          },
+          "strict": false,
+        },
+        "options": Object {
+          "dryRun": true,
+        },
+        "removals": Array [
+          Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "bug/no-reproduction",
+          },
+          Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "kind/bug",
+          },
+        ],
+        "repository": Object {
+          "full_name": "maticzav/label-sync",
+          "name": "label-sync",
+          "owner": Object {
+            "login": "maticzav",
+          },
+        },
+        "updates": Array [
+          Object {
+            "color": "123123",
+            "default": false,
+            "description": "",
+            "name": "basic",
+          },
+        ],
+      },
+      "manifest": Object {
+        "basic": Object {
+          "label": Object {
+            "color": "f266f4",
+            "default": false,
+            "description": "",
+            "name": "basic",
+          },
+          "siblings": Array [],
+        },
+        "bug/no-reproduction": Object {
+          "label": Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "bug/no-reproduction",
+          },
+          "siblings": Array [],
+        },
+        "kind/bug": Object {
+          "label": Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "kind/bug",
+          },
+          "siblings": Array [],
+        },
+      },
+      "repository": Object {
+        "full_name": "maticzav/label-sync",
+        "name": "label-sync",
+        "owner": Object {
+          "login": "maticzav",
+        },
+      },
+      "siblings": Object {
+        "issues": Array [
+          Object {
+            "issue": Object {
+              "body": "Very serious issue.",
+              "id": 1421,
+              "labels": Array [
+                Object {
+                  "color": "333333",
+                  "default": false,
+                  "description": "",
+                  "name": "bug/no-reproduction",
+                },
+                Object {
+                  "color": "f266f4",
+                  "default": false,
+                  "description": "",
+                  "name": "basic",
+                },
+                Object {
+                  "color": "333333",
+                  "default": false,
+                  "description": "",
+                  "name": "kind/bug",
+                },
+              ],
+              "number": 1,
+              "state": "",
+              "title": "Issue Title",
+            },
+            "siblings": Array [],
+          },
+          Object {
+            "issue": Object {
+              "body": "Not so serious issue.",
+              "id": 1123,
+              "labels": Array [
+                Object {
+                  "color": "333333",
+                  "default": false,
+                  "description": "",
+                  "name": "bug/no-reproduction",
+                },
+                Object {
+                  "color": "f266f4",
+                  "default": false,
+                  "description": "",
+                  "name": "basic",
+                },
+                Object {
+                  "color": "333333",
+                  "default": false,
+                  "description": "",
+                  "name": "kind/bug",
+                },
+              ],
+              "number": 5,
+              "state": "",
+              "title": "Another Issue Title",
+            },
+            "siblings": Array [],
+          },
+        ],
+        "manifest": Object {
+          "basic": Object {
+            "label": Object {
+              "color": "f266f4",
+              "default": false,
+              "description": "",
+              "name": "basic",
+            },
+            "siblings": Array [],
+          },
+          "bug/no-reproduction": Object {
+            "label": Object {
+              "color": "333333",
+              "default": false,
+              "description": "",
+              "name": "bug/no-reproduction",
+            },
+            "siblings": Array [],
+          },
+          "kind/bug": Object {
+            "label": Object {
+              "color": "333333",
+              "default": false,
+              "description": "",
+              "name": "kind/bug",
+            },
+            "siblings": Array [],
+          },
+        },
+        "options": Object {
+          "dryRun": true,
+        },
+        "repository": Object {
+          "full_name": "maticzav/label-sync",
+          "name": "label-sync",
+          "owner": Object {
+            "login": "maticzav",
+          },
+        },
+      },
+      "status": "success",
+    },
+  ],
+}
+`;

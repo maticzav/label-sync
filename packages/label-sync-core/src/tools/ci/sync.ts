@@ -10,7 +10,6 @@ import { getRepositoryManifest } from '../../manifest'
 
 export interface SyncOptions {
   dryRun: boolean
-  githubToken: string
 }
 
 /**
@@ -22,53 +21,29 @@ export interface SyncOptions {
  * @param options
  */
 export async function handleSync(
+  client: Octokit,
   config: Config,
   options: SyncOptions,
 ): Promise<SyncReport> {
-  /* Authentication */
-
-  const client = new Octokit({
-    headers: {
-      accept: 'application/vnd.github.symmetra-preview+json',
-    },
-  })
-
-  client.authenticate({
-    type: 'app',
-    token: options.githubToken,
-  })
-
-  /* Sync */
-
   const { configurations, errors } = getRepositoriesFromConfiguration(config)
-
   const syncs = await Promise.all(configurations.map(handleRepository))
 
   return {
     config: config,
     options: options,
     syncs: syncs,
-    errors: errors,
+    configErrors: errors,
   }
 
-  /**
-   * Helper functions
-   */
+  /* Helper functions */
   async function handleRepository(configuration: {
     repository: GithubRepository
     config: RepositoryConfig
   }): Promise<RepositorySyncReport> {
     /**
-     * Firstly, perform sync labels. After that obtain a manifest of the
-     * repository and perform siblings sync.
+     * Firstly, verify configuration. After that, sync labels and then
+     * add missing siblings to existing issues.
      */
-
-    const labelSync = await handleLabelSync(
-      client,
-      configuration.repository,
-      configuration.config,
-      options,
-    )
 
     const manifest = await getRepositoryManifest(
       client,
@@ -83,9 +58,15 @@ export async function handleSync(
         message: `Error generating manifest: ${manifest.message}`,
         repository: configuration.repository,
         config: configuration.config,
-        labels: labelSync,
       }
     }
+
+    const labelSync = await handleLabelSync(
+      client,
+      configuration.repository,
+      configuration.config,
+      options,
+    )
 
     const siblingsSync = await handleSiblingSync(
       client,

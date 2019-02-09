@@ -13,6 +13,9 @@ describe('getRepositoryManifest', () => {
     const repository = getRepositoryFromName('maticzav/label-sync')!
     const config: RepositoryConfig = {
       labels: {
+        'kind/no-siblings': {
+          color: '123123',
+        },
         'kind/bug': {
           color: '333333',
           siblings: ['bug/no-reproduction'],
@@ -52,6 +55,15 @@ describe('getRepositoryManifest', () => {
           },
           siblings: ['bug/no-reproduction'],
         },
+        'kind/no-siblings': {
+          label: {
+            color: '123123',
+            default: false,
+            description: '',
+            name: 'kind/no-siblings',
+          },
+          siblings: [],
+        },
       },
       status: 'ok',
     })
@@ -62,6 +74,9 @@ describe('getRepositoryManifest', () => {
     const repository = getRepositoryFromName('maticzav/label-sync')!
     const config: RepositoryConfig = {
       labels: {
+        'kind/no-siblings': {
+          color: '123123',
+        },
         'kind/bug': {
           color: '333333',
           siblings: ['basic'],
@@ -74,7 +89,6 @@ describe('getRepositoryManifest', () => {
     const res = await getRepositoryManifest(client as any, repository, config)
 
     expect(res).toEqual({
-      status: 'ok',
       manifest: {
         basic: {
           label: {
@@ -94,7 +108,17 @@ describe('getRepositoryManifest', () => {
           },
           siblings: ['basic'],
         },
+        'kind/no-siblings': {
+          label: {
+            color: '123123',
+            default: false,
+            description: '',
+            name: 'kind/no-siblings',
+          },
+          siblings: [],
+        },
       },
+      status: 'ok',
     })
   })
 

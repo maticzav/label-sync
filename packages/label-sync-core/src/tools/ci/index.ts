@@ -1,2 +1,2 @@
-export { Config } from './config'
+export { Config, getRepositoriesFromConfiguration } from './config'
 export { handleSync } from './sync'
