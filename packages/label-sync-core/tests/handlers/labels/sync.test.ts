@@ -14,7 +14,7 @@ test('correctly performs dry run', async () => {
     labels: {
       test: {
         description: 'Testing sync.',
-        color: '#123456',
+        color: '123456',
       },
     },
   }
@@ -40,7 +40,7 @@ test('correctly performs dry run', async () => {
     options: options,
     additions: [
       {
-        color: '#123456',
+        color: '123456',
         default: false,
         description: 'Testing sync.',
         name: 'test',
@@ -89,32 +89,27 @@ test('correctly handles sync', async () => {
   expect(client.issues.updateLabel).toHaveBeenCalledTimes(1)
   expect(client.issues.deleteLabel).toHaveBeenCalledTimes(0)
   expect(res).toEqual({
-    repository: repository,
     config: configuration,
-    options: options,
+    repository: repository,
+    options: { dryRun: false },
     additions: [
-      [
-        {
-          color: '333333',
-          default: false,
-          description: '',
-          name: 'bug/no-reproduction',
-        },
-        { color: 'f266f4', default: false, description: '', name: 'basic' },
-        { color: '333333', default: false, description: '', name: 'kind/bug' },
-      ],
+      {
+        color: '123456',
+        description: 'Testing sync.',
+        name: 'test',
+        owner: 'maticzav',
+        repo: 'label-sync',
+      },
     ],
     updates: [
-      [
-        {
-          color: '333333',
-          default: false,
-          description: '',
-          name: 'bug/no-reproduction',
-        },
-        { color: 'f266f4', default: false, description: '', name: 'basic' },
-        { color: '333333', default: false, description: '', name: 'kind/bug' },
-      ],
+      {
+        color: '654321',
+        current_name: 'kind/bug',
+        description: '',
+        name: 'kind/bug',
+        owner: 'maticzav',
+        repo: 'label-sync',
+      },
     ],
     removals: [
       {
@@ -157,20 +152,17 @@ test('correctly handles strict option', async () => {
   expect(client.issues.updateLabel).toHaveBeenCalledTimes(0)
   expect(client.issues.deleteLabel).toHaveBeenCalledTimes(3)
   expect(res).toEqual({
-    repository: repository,
     config: configuration,
-    options: options,
+    options: { dryRun: false },
+    repository: repository,
     additions: [
-      [
-        {
-          color: '333333',
-          default: false,
-          description: '',
-          name: 'bug/no-reproduction',
-        },
-        { color: 'f266f4', default: false, description: '', name: 'basic' },
-        { color: '333333', default: false, description: '', name: 'kind/bug' },
-      ],
+      {
+        color: '#123456',
+        description: 'Testing sync.',
+        name: 'test',
+        owner: 'maticzav',
+        repo: 'label-sync',
+      },
     ],
     updates: [],
     removals: [

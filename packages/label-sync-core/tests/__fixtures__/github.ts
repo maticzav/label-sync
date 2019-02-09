@@ -57,15 +57,24 @@ export const githubClient = (providedOptions?: GithubClientMockOptions) => {
 
   return {
     issues: {
-      createLabel: jest
-        .fn()
-        .mockResolvedValue({ status: options.status, data: options.labels }),
-      updateLabel: jest
-        .fn()
-        .mockResolvedValue({ status: options.status, data: options.labels }),
-      deleteLabel: jest
-        .fn()
-        .mockResolvedValue({ status: options.status, data: options.labels }),
+      createLabel: jest.fn().mockImplementation((label: GithubLabel) =>
+        Promise.resolve({
+          status: options.status,
+          data: label,
+        }),
+      ),
+      updateLabel: jest.fn().mockImplementation((label: GithubLabel) =>
+        Promise.resolve({
+          status: options.status,
+          data: label,
+        }),
+      ),
+      deleteLabel: jest.fn().mockImplementation((label: GithubLabel) =>
+        Promise.resolve({
+          status: options.status,
+          data: label,
+        }),
+      ),
       listLabelsForRepo: jest
         .fn()
         .mockResolvedValue({ status: options.status, data: options.labels }),

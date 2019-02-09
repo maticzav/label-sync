@@ -71,26 +71,14 @@ Object {
           },
         },
         "updates": Array [
-          Array [
-            Object {
-              "color": "333333",
-              "default": false,
-              "description": "",
-              "name": "bug/no-reproduction",
-            },
-            Object {
-              "color": "f266f4",
-              "default": false,
-              "description": "",
-              "name": "basic",
-            },
-            Object {
-              "color": "333333",
-              "default": false,
-              "description": "",
-              "name": "kind/bug",
-            },
-          ],
+          Object {
+            "color": "123123",
+            "current_name": "basic",
+            "description": "",
+            "name": "basic",
+            "owner": "maticzav",
+            "repo": "label-sync",
+          },
         ],
       },
       "manifest": Object {
@@ -253,26 +241,13 @@ Object {
       },
       "labels": Object {
         "additions": Array [
-          Array [
-            Object {
-              "color": "333333",
-              "default": false,
-              "description": "",
-              "name": "bug/no-reproduction",
-            },
-            Object {
-              "color": "f266f4",
-              "default": false,
-              "description": "",
-              "name": "basic",
-            },
-            Object {
-              "color": "333333",
-              "default": false,
-              "description": "",
-              "name": "kind/bug",
-            },
-          ],
+          Object {
+            "color": "00ff00",
+            "description": "No reproduction available.",
+            "name": "bug/0-no-reproduction",
+            "owner": "maticzav",
+            "repo": "graphql-shield",
+          },
         ],
         "config": Object {
           "labels": Object {
@@ -309,46 +284,22 @@ Object {
           },
         },
         "updates": Array [
-          Array [
-            Object {
-              "color": "333333",
-              "default": false,
-              "description": "",
-              "name": "bug/no-reproduction",
-            },
-            Object {
-              "color": "f266f4",
-              "default": false,
-              "description": "",
-              "name": "basic",
-            },
-            Object {
-              "color": "333333",
-              "default": false,
-              "description": "",
-              "name": "kind/bug",
-            },
-          ],
-          Array [
-            Object {
-              "color": "333333",
-              "default": false,
-              "description": "",
-              "name": "bug/no-reproduction",
-            },
-            Object {
-              "color": "f266f4",
-              "default": false,
-              "description": "",
-              "name": "basic",
-            },
-            Object {
-              "color": "333333",
-              "default": false,
-              "description": "",
-              "name": "kind/bug",
-            },
-          ],
+          Object {
+            "color": "234234",
+            "current_name": "basic",
+            "description": "",
+            "name": "basic",
+            "owner": "maticzav",
+            "repo": "graphql-shield",
+          },
+          Object {
+            "color": "ff0000",
+            "current_name": "kind/bug",
+            "description": "",
+            "name": "kind/bug",
+            "owner": "maticzav",
+            "repo": "graphql-shield",
+          },
         ],
       },
       "manifest": Object {
