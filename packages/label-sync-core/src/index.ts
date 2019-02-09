@@ -20,6 +20,7 @@ export {
   createTerminalReport as createSiblingSyncTerminalReport,
 } from './handlers/siblings'
 export {
+  Config,
   handleSync,
   SyncOptions,
   SyncReport,

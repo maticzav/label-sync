@@ -1,3 +1,3 @@
 # label-sync
 
-> A delightful assistant for syncing Github Labels across your fleet.
+> This is a legacy feature. Refer to the `/examples` folder for spec.
