@@ -62,9 +62,9 @@ export const getRepositoryIssues = paginate<GithubIssue>(
       repo: repository.name,
       owner: repository.owner.login,
       page: page,
-      per_page: 100,
+      per_page: 50,
     }),
-  100,
+  50,
 )
 
 // export interface GithubPullRequest {
@@ -118,9 +118,9 @@ export const getRepositoryLabels = paginate<GithubLabel>(
       repo: repository.name,
       owner: repository.owner.login,
       page: page,
-      per_page: 100,
+      per_page: 50,
     }),
-  100,
+  50,
 )
 
 /* Helper functions */

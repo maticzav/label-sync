@@ -26,11 +26,11 @@ describe('getRepositoryLabels', () => {
           .fn()
           .mockResolvedValueOnce({
             status: 200,
-            data: Array(100).map(() => 'pass'),
+            data: Array(50).map(() => 'pass'),
           })
           .mockResolvedValueOnce({
             status: 200,
-            data: Array(50).map(() => 'pass'),
+            data: Array(30).map(() => 'pass'),
           }),
       },
     }
@@ -38,18 +38,18 @@ describe('getRepositoryLabels', () => {
     const repository = github.getRepositoryFromName('maticzav/github-labels')!
     const res = await github.getRepositoryLabels(client as any, repository)
 
-    expect(res).toEqual(Array(150).map(() => 'pass'))
+    expect(res).toEqual(Array(80).map(() => 'pass'))
     expect(client.issues.listLabelsForRepo).toHaveBeenNthCalledWith(1, {
       repo: repository.name,
       owner: repository.owner.login,
       page: 1,
-      per_page: 100,
+      per_page: 50,
     })
     expect(client.issues.listLabelsForRepo).toHaveBeenNthCalledWith(2, {
       repo: repository.name,
       owner: repository.owner.login,
       page: 2,
-      per_page: 100,
+      per_page: 50,
     })
   })
 
@@ -60,11 +60,11 @@ describe('getRepositoryLabels', () => {
           .fn()
           .mockResolvedValueOnce({
             status: 200,
-            data: Array(100).map(() => 'pass'),
+            data: Array(50).map(() => 'pass'),
           })
           .mockResolvedValueOnce({
             status: 400,
-            data: Array(50).map(() => 'pass'),
+            data: Array(30).map(() => 'pass'),
           }),
       },
     }
@@ -77,13 +77,13 @@ describe('getRepositoryLabels', () => {
       repo: repository.name,
       owner: repository.owner.login,
       page: 1,
-      per_page: 100,
+      per_page: 50,
     })
     expect(client.issues.listLabelsForRepo).toHaveBeenNthCalledWith(2, {
       repo: repository.name,
       owner: repository.owner.login,
       page: 2,
-      per_page: 100,
+      per_page: 50,
     })
   })
 })
@@ -96,11 +96,11 @@ describe('getRepositoryIssues', () => {
           .fn()
           .mockResolvedValueOnce({
             status: 200,
-            data: Array(100).map(() => 'pass'),
+            data: Array(50).map(() => 'pass'),
           })
           .mockResolvedValueOnce({
             status: 200,
-            data: Array(50).map(() => 'pass'),
+            data: Array(30).map(() => 'pass'),
           }),
       },
     }
@@ -108,18 +108,18 @@ describe('getRepositoryIssues', () => {
     const repository = github.getRepositoryFromName('maticzav/github-labels')!
     const res = await github.getRepositoryIssues(client as any, repository)
 
-    expect(res).toEqual(Array(150).map(() => 'pass'))
+    expect(res).toEqual(Array(80).map(() => 'pass'))
     expect(client.issues.listForRepo).toHaveBeenNthCalledWith(1, {
       repo: repository.name,
       owner: repository.owner.login,
       page: 1,
-      per_page: 100,
+      per_page: 50,
     })
     expect(client.issues.listForRepo).toHaveBeenNthCalledWith(2, {
       repo: repository.name,
       owner: repository.owner.login,
       page: 2,
-      per_page: 100,
+      per_page: 50,
     })
   })
 
@@ -130,11 +130,11 @@ describe('getRepositoryIssues', () => {
           .fn()
           .mockResolvedValueOnce({
             status: 200,
-            data: Array(100).map(() => 'pass'),
+            data: Array(50).map(() => 'pass'),
           })
           .mockResolvedValueOnce({
             status: 400,
-            data: Array(50).map(() => 'pass'),
+            data: Array(30).map(() => 'pass'),
           }),
       },
     }
@@ -147,13 +147,13 @@ describe('getRepositoryIssues', () => {
       repo: repository.name,
       owner: repository.owner.login,
       page: 1,
-      per_page: 100,
+      per_page: 50,
     })
     expect(client.issues.listForRepo).toHaveBeenNthCalledWith(2, {
       repo: repository.name,
       owner: repository.owner.login,
       page: 2,
-      per_page: 100,
+      per_page: 50,
     })
   })
 })

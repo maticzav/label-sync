@@ -222,4 +222,31 @@ describe('ci sync reporter', () => {
 
     expect(createTerminalReport(report)).toMatchSnapshot()
   })
+
+  test('correctly creates an empty report', async () => {
+    const report: SyncReport = {
+      config: {
+        'maticzav/label-sync': { labels: { basic: '123123' }, strict: false },
+        'maticzav/graphql-shield': {
+          labels: {
+            basic: '234234',
+            'kind/bug': {
+              color: 'ff0000',
+              siblings: ['bug/0-no-reproduction'],
+            },
+            'bug/0-no-reproduction': {
+              color: '00ff00',
+              description: 'No reproduction available.',
+            },
+          },
+          strict: false,
+        },
+      },
+      options: { dryRun: false },
+      syncs: [],
+      configErrors: [],
+    }
+
+    expect(createTerminalReport(report)).toMatchSnapshot()
+  })
 })

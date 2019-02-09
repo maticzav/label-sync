@@ -86,6 +86,7 @@ export function createTerminalReport(report: SyncReport): string {
   }
 
   function configErrorsList(reports: ConfigError[]): string {
+    if (reports.length === 0) return 'No problems!'
     return reports.map(report => report.message).join('\n')
   }
 }
