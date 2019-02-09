@@ -1,4 +1,4 @@
-import { GithubLabel } from '../../src'
+import { GithubLabel, GithubIssue } from '../../src'
 
 export const githubLabels: GithubLabel[] = [
   {
@@ -21,14 +21,35 @@ export const githubLabels: GithubLabel[] = [
   },
 ]
 
+export const githubIssues: GithubIssue[] = [
+  {
+    id: 1421,
+    title: 'Issue Title',
+    body: 'Very serious issue.',
+    state: '',
+    labels: githubLabels,
+    number: 1,
+  },
+  {
+    id: 1123,
+    title: 'Another Issue Title',
+    body: 'Not so serious issue.',
+    state: '',
+    labels: githubLabels,
+    number: 5,
+  },
+]
+
 export interface GithubClientMockOptions {
   status?: number
   labels?: GithubLabel[]
+  issues?: GithubIssue[]
 }
 
 const defaultClientMock: GithubClientMockOptions = {
   status: 200,
   labels: githubLabels,
+  issues: githubIssues,
 }
 
 export const githubClient = (providedOptions?: GithubClientMockOptions) => {
@@ -51,6 +72,9 @@ export const githubClient = (providedOptions?: GithubClientMockOptions) => {
       addLabels: jest
         .fn()
         .mockResolvedValue({ status: options.status, data: options.labels }),
+      listForRepo: jest
+        .fn()
+        .mockResolvedValue({ status: options.status, data: options.issues }),
     },
   }
 }

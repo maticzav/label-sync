@@ -1,6 +1,5 @@
 import Octokit from '@octokit/rest'
-import { SiblingSyncIssueReport, SiblingSyncReport } from './reporter'
-import { assignSiblingsToIssue } from './siblings'
+
 import {
   GithubRepository,
   getRepositoryIssues,
@@ -8,7 +7,12 @@ import {
 } from '../../github'
 import { RepositoryManifest } from '../../manifest'
 
-export interface SiblingSyncOptions {}
+import { SiblingSyncIssueReport, SiblingSyncReport } from './reporter'
+import { assignSiblingsToIssue } from './siblings'
+
+export interface SiblingSyncOptions {
+  dryRun: boolean
+}
 
 /**
  *
@@ -54,6 +58,7 @@ export async function handleSiblingSync(
       repository,
       issue,
       manifest,
+      options,
     )
 
     return {

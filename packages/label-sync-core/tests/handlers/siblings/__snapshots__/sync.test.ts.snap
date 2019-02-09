@@ -1,0 +1,241 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`siblings sync correctly performs dryrun 1`] = `
+Object {
+  "issues": Array [
+    Object {
+      "issue": Object {
+        "body": "Very serious issue.",
+        "id": 1421,
+        "labels": Array [
+          Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "bug/no-reproduction",
+          },
+          Object {
+            "color": "f266f4",
+            "default": false,
+            "description": "",
+            "name": "basic",
+          },
+          Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "kind/bug",
+          },
+        ],
+        "number": 1,
+        "state": "",
+        "title": "Issue Title",
+      },
+      "siblings": Array [],
+    },
+    Object {
+      "issue": Object {
+        "body": "Not so serious issue.",
+        "id": 1123,
+        "labels": Array [
+          Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "bug/no-reproduction",
+          },
+          Object {
+            "color": "f266f4",
+            "default": false,
+            "description": "",
+            "name": "basic",
+          },
+          Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "kind/bug",
+          },
+        ],
+        "number": 5,
+        "state": "",
+        "title": "Another Issue Title",
+      },
+      "siblings": Array [],
+    },
+  ],
+  "manifest": Object {
+    "basic": Object {
+      "label": Object {
+        "color": "f266f4",
+        "default": false,
+        "description": "",
+        "name": "basic",
+      },
+      "siblings": Array [],
+    },
+    "bug/no-reproduction": Object {
+      "label": Object {
+        "color": "333333",
+        "default": false,
+        "description": "",
+        "name": "bug/no-reproduction",
+      },
+      "siblings": Array [],
+    },
+    "kind/bug": Object {
+      "label": Object {
+        "color": "333333",
+        "default": false,
+        "description": "",
+        "name": "kind/bug",
+      },
+      "siblings": Array [
+        "bug/no-reproduction",
+      ],
+    },
+  },
+  "options": Object {
+    "dryRun": true,
+  },
+  "repository": Object {
+    "full_name": "maticzav/label-sync",
+    "name": "label-sync",
+    "owner": Object {
+      "login": "maticzav",
+    },
+  },
+}
+`;
+
+exports[`siblings sync handles sync correctly 1`] = `
+Object {
+  "issues": Array [
+    Object {
+      "issue": Object {
+        "body": "Very serious issue.",
+        "id": 1421,
+        "labels": Array [
+          Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "bug/no-reproduction",
+          },
+          Object {
+            "color": "f266f4",
+            "default": false,
+            "description": "",
+            "name": "basic",
+          },
+          Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "kind/bug",
+          },
+        ],
+        "number": 1,
+        "state": "",
+        "title": "Issue Title",
+      },
+      "siblings": Array [
+        Object {
+          "color": "123123",
+          "default": false,
+          "description": "",
+          "name": "kind/sibling",
+        },
+      ],
+    },
+    Object {
+      "issue": Object {
+        "body": "Not so serious issue.",
+        "id": 1123,
+        "labels": Array [
+          Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "bug/no-reproduction",
+          },
+          Object {
+            "color": "f266f4",
+            "default": false,
+            "description": "",
+            "name": "basic",
+          },
+          Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "kind/bug",
+          },
+        ],
+        "number": 5,
+        "state": "",
+        "title": "Another Issue Title",
+      },
+      "siblings": Array [
+        Object {
+          "color": "123123",
+          "default": false,
+          "description": "",
+          "name": "kind/sibling",
+        },
+      ],
+    },
+  ],
+  "manifest": Object {
+    "basic": Object {
+      "label": Object {
+        "color": "f266f4",
+        "default": false,
+        "description": "",
+        "name": "basic",
+      },
+      "siblings": Array [],
+    },
+    "bug/no-reproduction": Object {
+      "label": Object {
+        "color": "333333",
+        "default": false,
+        "description": "",
+        "name": "bug/no-reproduction",
+      },
+      "siblings": Array [],
+    },
+    "kind/bug": Object {
+      "label": Object {
+        "color": "333333",
+        "default": false,
+        "description": "",
+        "name": "kind/bug",
+      },
+      "siblings": Array [
+        "bug/no-reproduction",
+        "kind/sibling",
+      ],
+    },
+    "kind/sibling": Object {
+      "label": Object {
+        "color": "123123",
+        "default": false,
+        "description": "",
+        "name": "kind/sibling",
+      },
+      "siblings": Array [],
+    },
+  },
+  "options": Object {
+    "dryRun": false,
+  },
+  "repository": Object {
+    "full_name": "maticzav/label-sync",
+    "name": "label-sync",
+    "owner": Object {
+      "login": "maticzav",
+    },
+  },
+}
+`;

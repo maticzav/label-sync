@@ -7,34 +7,6 @@ beforeEach(() => {
   jest.clearAllMocks()
 })
 
-test('getGithubLabelsFromRepositoryConfig hydrates the labels correctly', async () => {
-  expect(
-    labels.getGithubLabelsFromRepositoryConfig({
-      strict: true,
-      labels: {
-        'label-name': 'label-color',
-        'label-advanced': {
-          description: 'label-advanced-description',
-          color: 'label-advanced-color',
-        },
-      },
-    }),
-  ).toEqual([
-    {
-      name: 'label-name',
-      description: '',
-      color: 'label-color',
-      default: false,
-    },
-    {
-      name: 'label-advanced',
-      description: 'label-advanced-description',
-      color: 'label-advanced-color',
-      default: false,
-    },
-  ])
-})
-
 test('addLabelsToRepository create labels', async () => {
   const client = fixtures.githubClient()
 

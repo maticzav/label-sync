@@ -1,5 +1,5 @@
 import * as Octokit from '@octokit/rest'
-import { Sibling } from '../../config'
+
 import {
   GithubLabel,
   GithubRepository,
@@ -7,6 +7,11 @@ import {
   isLabel,
 } from '../../github'
 import { RepositoryManifest } from '../../manifest'
+import { Sibling } from '../../types'
+
+export type AssignSiblingsToIssueOptions = {
+  dryRun: boolean
+}
 
 /**
  *
@@ -22,10 +27,17 @@ export async function assignSiblingsToIssue(
   repository: GithubRepository,
   issue: GithubIssue,
   manifest: RepositoryManifest,
+  options: AssignSiblingsToIssueOptions,
 ): Promise<GithubLabel[]> {
   /* Find all the siblings */
   const siblings = getSiblings(issue.labels, issue.labels)
 
+  /* Only perform calculation on dryRun */
+  if (options.dryRun) {
+    return siblings
+  }
+
+  /* Commit changes on sync */
   const res = await github.issues.addLabels({
     repo: repository.name,
     owner: repository.owner.login,

@@ -1,5 +1,3 @@
-import * as labels from './labels'
-import { LabelSyncReport } from './reporter'
-import { handleLabelSync } from './sync'
-
-export { handleLabelSync, LabelSyncReport }
+export * from './labels'
+export * from './reporter'
+export * from './sync'

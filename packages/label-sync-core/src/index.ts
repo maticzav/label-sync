@@ -10,4 +10,4 @@ export {
 } from './github'
 export { handleLabelSync } from './handlers/labels/sync'
 export { handleSiblingSync } from './handlers/siblings/sync'
-export { handleSync } from './tools/ci'
+export { handleSync } from './tools/ci/sync'

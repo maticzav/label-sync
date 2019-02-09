@@ -1,9 +1,10 @@
 import Octokit from '@octokit/rest'
 
-import { RepositoryConfig } from '../../config'
 import { GithubRepository, getRepositoryLabels } from '../../github'
+import { getLabelsInConfiguration } from '../../manifest'
+import { RepositoryConfig } from '../../types'
+
 import {
-  getGithubLabelsFromRepositoryConfig,
   getLabelsDiff,
   addLabelsToRepository,
   updateLabelsInRepository,
@@ -39,7 +40,7 @@ export async function handleLabelSync(
    */
 
   const currentLabels = await getRepositoryLabels(client, repository)
-  const newLabels = getGithubLabelsFromRepositoryConfig(config)
+  const newLabels = getLabelsInConfiguration(config)
 
   const diff = getLabelsDiff(currentLabels, newLabels)
 

@@ -1,6 +1,9 @@
-import { RepositoryConfig } from '../../../src/config'
+import { RepositoryConfig } from '../../../src/types'
 import * as github from '../../../src/github'
-import { LabelSyncOptions, handleLabelSync } from '../../../src/handlers/labels'
+import {
+  LabelSyncOptions,
+  handleLabelSync,
+} from '../../../src/handlers/labels/sync'
 import * as fixtures from '../../__fixtures__/github'
 
 test('correctly performs dry run', async () => {
