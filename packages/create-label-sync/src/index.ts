@@ -7,8 +7,8 @@ import * as ora from 'ora'
 import * as inquirer from 'inquirer'
 import * as mkdirp from 'mkdirp'
 
-import { loadLabelSyncTemplate } from './loader'
-import { templates, Template } from './templates'
+import { loadTemplate, Template } from 'creato'
+import { templates } from './templates'
 
 const cli = meow(
   `
@@ -65,7 +65,7 @@ export async function main(cli: meow.Result): Promise<void> {
     text: `Loading ${template.name} template.`,
   }).start()
 
-  const res = await loadLabelSyncTemplate(template, absoluteDist)
+  const res = await loadTemplate(template, absoluteDist)
 
   if (res.status === 'ok') {
     spinner.succeed()
