@@ -1,1 +1,2 @@
-import {} from '@label-sync/core'
+import ls from '@label-sync/core'
+ls.core
