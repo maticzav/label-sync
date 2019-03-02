@@ -13,7 +13,7 @@ npm init label-sync
 or
 
 ```bash
-yarn global add create-label-sync
+yarn global add @label-sync/create
 label-sync
 ```
 
