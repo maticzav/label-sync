@@ -3,6 +3,7 @@
   "repository": "https://github.com/maticzav/label-sync.git",
   "private": true,
   "scripts": {
+    "bootstrap": "lerna bootstrap",
     "build": "yarn workspaces run build",
     "pretest": "yarn run build",
     "test": "yarn workspaces run test",

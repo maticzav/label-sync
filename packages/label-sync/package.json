@@ -1,0 +1,13 @@
+{
+  "name": "@label-sync/cli",
+  "version": "0.0.0",
+  "description": "CLI tool for Label Sync",
+  "main": "dist/index.js",
+  "repository": "https://github.com/matizav/label-sync",
+  "author": "Matic Zavadlal <matic.zavadlal@gmail.com>",
+  "dependencies": {
+    "@label-sync/core": "0.0.0"
+  },
+  "devDependencies": {},
+  "license": "MIT"
+}

@@ -1,8 +1,0 @@
-{
-  "name": "action",
-  "version": "1.0.0",
-  "dependencies": {
-    "label-sync": "latest"
-  },
-  "license": "MIT"
-}
