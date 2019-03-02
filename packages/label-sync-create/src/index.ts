@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
-import * as path from 'path'
-import * as fs from 'fs'
-import * as meow from 'meow'
-import * as ora from 'ora'
-import * as inquirer from 'inquirer'
-import * as mkdirp from 'mkdirp'
+import path from 'path'
+import fs from 'fs'
+import meow from 'meow'
+import ora from 'ora'
+import inquirer from 'inquirer'
+import mkdirp from 'mkdirp'
 
 import { loadTemplate, Template } from 'creato'
 import { templates } from './templates'
 
-const cli = meow(
+meow(
   `
     create-label-sync
 
@@ -20,12 +20,12 @@ const cli = meow(
 )
 
 /* istanbul ignore next */
-if (process.env.NODE_ENV !== 'test') main(cli)
+if (process.env.NODE_ENV !== 'test') main()
 
 /**
  * Main
  */
-export async function main(cli: meow.Result): Promise<void> {
+export async function main(): Promise<void> {
   /**
    * Inquier about template
    */

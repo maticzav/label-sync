@@ -3,22 +3,29 @@
   "repository": "https://github.com/maticzav/label-sync.git",
   "private": true,
   "scripts": {
-    "bootstrap": "lerna bootstrap",
     "build": "yarn workspaces run build",
-    "pretest": "yarn run build",
-    "test": "yarn workspaces run test",
+    "build-clean": "rm -rf ./packages/*/dist",
+    "clean-all": "rm -rf ./node_modules && rm -rf ./packages/*/node_modules && yarn build-clean",
     "coverage": "yarn codecov",
-    "prerelease": "yarn run build",
-    "release": "lerna publish"
+    "postinstall": "yarn build",
+    "publish": "yarn build-clean && yarn build && lerna publish --silent",
+    "test": "yarn run build; yarn jest"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.9",
     "codecov": "3.1.0",
     "husky": "1.3.1",
+    "jest": "^24.1.0",
+    "jest-serializer-ansi": "^1.0.3",
     "lerna": "3.10.5",
     "prettier": "1.15.3",
-    "pretty-quick": "1.8.0"
+    "pretty-quick": "1.8.0",
+    "ts-jest": "^24.0.0",
+    "ts-node": "^8.0.2"
   },
-  "workspaces": [
-    "packages/*"
-  ]
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  }
 }

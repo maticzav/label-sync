@@ -1,18 +1,5 @@
 coverage:
   status:
     project:
-      default: off
-      label-sync-core:
+      default:
         target: 100%
-        flags: label-sync-core
-      create-label-sync:
-        target: 100%
-        flags: create-label-sync
-
-flags:
-  label-sync-core:
-    paths:
-      - packages/label-sync-core/
-  create-label-sync:
-    paths:
-      - packages/create-label-sync/

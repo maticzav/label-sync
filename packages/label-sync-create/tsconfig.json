@@ -1,14 +1,8 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "noUnusedLocals": true,
     "rootDir": "src",
-    "outDir": "dist",
-    "sourceMap": true,
-    "strict": true
+    "outDir": "dist"
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist"]
+  "references": []
 }

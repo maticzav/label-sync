@@ -14,27 +14,25 @@ describe('bin', () => {
   test('returns on existing directory', async () => {
     const dist = path.resolve(__dirname, 'folder')
 
-    /**
-     * Mocks
-     */
+    /* Mocks */
     const inquirerPromptMock = jest
       .spyOn(inquirer, 'prompt')
       .mockResolvedValueOnce({ template: 'template' })
       .mockResolvedValueOnce({ dist: dist })
     const fsExistsSyncMock = jest.spyOn(fs, 'existsSync').mockReturnValue(true)
-    const fsMkdirSync = jest.spyOn(mkdirp, 'sync')
-    const consoleLogMock = jest.spyOn(console, 'log').mockReturnValue({})
+    const fsMkdirSync = jest
+      .spyOn(mkdirp, 'sync')
+      .mockImplementation((() => {}) as any)
+    const consoleLogMock = jest
+      .spyOn(console, 'log')
+      .mockImplementation((() => {}) as any)
     const loadTemplateMock = jest.spyOn(creato, 'loadTemplate')
 
-    /**
-     * Execution
-     */
+    /* Execution */
 
-    await main({} as any)
+    await main()
 
-    /**
-     * Tests
-     */
+    /* Tests */
 
     expect(inquirerPromptMock).toHaveBeenCalledTimes(2)
     expect(fsExistsSyncMock).toHaveBeenCalledTimes(1)
@@ -59,17 +57,17 @@ describe('bin', () => {
     const fsExistsSyncMock = jest.spyOn(fs, 'existsSync').mockReturnValue(false)
     const fsMkdirSync = jest
       .spyOn(mkdirp, 'sync')
-      .mockImplementation(() => false)
-    const consoleLogMock = jest.spyOn(console, 'log').mockReturnValue({})
+      .mockImplementation((() => {}) as any)
+    const consoleLogMock = jest
+      .spyOn(console, 'log')
+      .mockImplementation((() => {}) as any)
     const loadTemplateMock = jest
       .spyOn(creato, 'loadTemplate')
       .mockResolvedValue({ status: 'ok', message: 'pass' })
 
-    /**
-     * Execution
-     */
+    /* Execution */
 
-    await main({} as any)
+    await main()
 
     /**
      * Tests
@@ -96,22 +94,23 @@ describe('bin', () => {
     const fsExistsSyncMock = jest.spyOn(fs, 'existsSync').mockReturnValue(false)
     const fsMkdirSync = jest
       .spyOn(mkdirp, 'sync')
-      .mockImplementation(() => false)
-    const consoleLogMock = jest.spyOn(console, 'log').mockReturnValue({})
-    const consoleWarnMock = jest.spyOn(console, 'warn').mockReturnValue({})
+      .mockImplementation((() => {}) as any)
+    const consoleLogMock = jest
+      .spyOn(console, 'log')
+      .mockImplementation((() => {}) as any)
+    const consoleWarnMock = jest
+      .spyOn(console, 'warn')
+      .mockImplementation((() => {}) as any)
+
     const loadTemplateMock = jest
       .spyOn(creato, 'loadTemplate')
       .mockResolvedValue({ status: 'err', message: 'pass' })
 
-    /**
-     * Execution
-     */
+    /* Execution */
 
-    await main({} as any)
+    await main()
 
-    /**
-     * Tests
-     */
+    /* Tests */
 
     expect(inquirerPromptMock).toHaveBeenCalledTimes(2)
     expect(fsExistsSyncMock).toHaveBeenCalledTimes(1)

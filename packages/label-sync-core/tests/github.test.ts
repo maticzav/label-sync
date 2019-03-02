@@ -1,9 +1,5 @@
 import * as github from '../src/github'
 
-function pagianateTest() {
-  return
-}
-
 describe('getRepositoryFromName', () => {
   test('getRepositoryFromName correctly extracts repository', async () => {
     expect(github.getRepositoryFromName('maticzav/github-labels')).toEqual({

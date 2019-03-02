@@ -1,5 +1,5 @@
 module.exports = {
-  roots: ['<rootDir>/src', '<rootDir>/tests'],
+  roots: ['<rootDir>/packages/'],
   testEnvironment: 'node',
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
@@ -9,11 +9,14 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   collectCoverage: true,
   collectCoverageFrom: [
-    '**/*.{ts,tsx}',
+    '**/*.ts',
+    '!**/dist/**',
     '!**/node_modules/**',
     '!**/vendor/**',
     '!**/generated/**',
+    '!**/__fixtures__/**',
   ],
+  snapshotSerializers: ['jest-serializer-ansi'],
   verbose: true,
   coverageDirectory: './coverage',
   coverageReporters: ['json', 'lcov', 'text', 'clover', 'html'],

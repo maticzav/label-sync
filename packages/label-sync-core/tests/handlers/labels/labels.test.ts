@@ -17,7 +17,7 @@ test('addLabelsToRepository create labels', async () => {
 
   const repository = github.getRepositoryFromName('maticzav/label-sync')!
 
-  const res = await addLabelsToRepository(
+  await addLabelsToRepository(
     client as any,
     [
       {
@@ -57,7 +57,7 @@ test('updateLabelsInRepository updates labels', async () => {
 
   const repository = github.getRepositoryFromName('maticzav/label-sync')!
 
-  const res = await updateLabelsInRepository(
+  await updateLabelsInRepository(
     client as any,
     [
       {
@@ -99,7 +99,7 @@ test('deleteLabelsFromRepository deletes labels', async () => {
 
   const repository = github.getRepositoryFromName('maticzav/label-sync')!
 
-  const res = await removeLabelsFromRepository(
+  await removeLabelsFromRepository(
     client as any,
     [
       {

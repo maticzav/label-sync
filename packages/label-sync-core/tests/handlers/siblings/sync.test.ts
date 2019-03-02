@@ -24,18 +24,18 @@ describe('siblings sync', () => {
     )
 
     if (manifest.status === 'err') {
-      return fail(manifest.message)
+      fail(manifest.message)
+    } else {
+      const res = await handleSiblingSync(
+        client as any,
+        repository,
+        manifest.manifest,
+        { dryRun: false },
+      )
+
+      expect(client.issues.addLabels).toBeCalledTimes(2)
+      expect(res).toMatchSnapshot()
     }
-
-    const res = await handleSiblingSync(
-      client as any,
-      repository,
-      manifest.manifest,
-      { dryRun: false },
-    )
-
-    expect(client.issues.addLabels).toBeCalledTimes(2)
-    expect(res).toMatchSnapshot()
   })
 
   test('correctly performs dryrun', async () => {
@@ -57,17 +57,17 @@ describe('siblings sync', () => {
     )
 
     if (manifest.status === 'err') {
-      return fail(manifest.message)
+      fail(manifest.message)
+    } else {
+      const res = await handleSiblingSync(
+        client as any,
+        repository,
+        manifest.manifest,
+        { dryRun: true },
+      )
+
+      expect(client.issues.addLabels).toBeCalledTimes(0)
+      expect(res).toMatchSnapshot()
     }
-
-    const res = await handleSiblingSync(
-      client as any,
-      repository,
-      manifest.manifest,
-      { dryRun: true },
-    )
-
-    expect(client.issues.addLabels).toBeCalledTimes(0)
-    expect(res).toMatchSnapshot()
   })
 })
