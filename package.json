@@ -32,7 +32,8 @@
   },
   "workspaces": {
     "packages": [
-      "packages/*"
+      "packages/*",
+      "server"
     ]
   }
 }

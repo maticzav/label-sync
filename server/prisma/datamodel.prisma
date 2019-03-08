@@ -1,0 +1,24 @@
+type User {
+  id: ID! @unique
+
+  githubUserId: String! @unique
+  # stripeConnectId: String!
+}
+
+type Repository {
+  id: ID! @unique
+
+  name: String!
+  owner: String!
+
+  labels: [Label!]!
+}
+
+type Label {
+  id: ID! @unique
+
+  githubId: String! @unique
+  name: String!
+  color: String!
+  description: String
+}

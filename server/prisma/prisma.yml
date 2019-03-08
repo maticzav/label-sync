@@ -1,0 +1,14 @@
+#endpoint: ""
+endpoint: https://eu1.prisma.sh/matic-zavadlal-03c51f/label-sync/dev
+
+datamodel: datamodel.prisma
+
+generate:
+  - generator: typescript-client
+    output: ../src/generated/prisma-client/
+
+hooks:
+  post-deploy:
+    - prisma generate
+    - nexus-prisma-generate --client ./src/generated/prisma-client --output ./src/generated/nexus-prisma # Runs the codegen tool from nexus-prisma.
+
