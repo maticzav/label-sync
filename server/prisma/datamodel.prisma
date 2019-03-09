@@ -1,10 +1,28 @@
+# User only holds information about the user login information
+# derived from Github. Users are not connected to repositories -
+# their write permissions are checked during configuration time.
 type User {
   id: ID! @unique
 
   githubUserId: String! @unique
-  # stripeConnectId: String!
 }
 
+# Organisation billing is entirely separated from repositories and
+# users. Anyone can add a billing method to the organisation if they have
+# write permissions to the organisation repositories
+#
+# TODO: Maybe this would be better if only organisation ADMINS could
+# add billing method.
+type Organisation {
+  id: ID! @unique
+  stripeConnectId: String!
+
+  repositories: [Repository!]!
+}
+
+# Repository holds information about repository configuration. Repositories
+# are not connected to users but rather to Organisations to ensure billing
+# permissions.
 type Repository {
   id: ID! @unique
 

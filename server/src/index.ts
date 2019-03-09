@@ -1,4 +1,4 @@
-import { ApolloServer } from 'apollo-server'
+import { GraphQLServer } from 'graphql-yoga'
 import { makePrismaSchema } from 'nexus-prisma'
 import * as path from 'path'
 
@@ -40,7 +40,7 @@ const schema = makePrismaSchema({
   },
 })
 
-const server = new ApolloServer({
+const server = new GraphQLServer({
   schema,
   context: request => {
     return {
@@ -50,4 +50,4 @@ const server = new ApolloServer({
   },
 })
 
-server.listen(() => console.log(`🚀 Server ready at http://localhost:4000`))
+server.start(() => console.log(`🚀 Server ready at http://localhost:4000`))
