@@ -14,6 +14,7 @@ export interface NexusGenInputs {}
 export interface NexusGenEnums {}
 
 export interface NexusGenRootTypes {
+  Mutation: {}
   Query: {}
   String: string
   Int: number
@@ -25,6 +26,10 @@ export interface NexusGenRootTypes {
 export interface NexusGenAllTypes extends NexusGenRootTypes {}
 
 export interface NexusGenFieldTypes {
+  Mutation: {
+    // field return type
+    requestAuthenticationTicket: string | null // String
+  }
   Query: {
     // field return type
     hello: string | null // String
@@ -37,7 +42,7 @@ export interface NexusGenAbstractResolveReturnTypes {}
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = 'Query'
+export type NexusGenObjectNames = 'Mutation' | 'Query'
 
 export type NexusGenInputNames = never
 

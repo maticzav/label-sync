@@ -1,0 +1,21 @@
+{
+  "public": false,
+  "name": "label-sync",
+  "version": 2,
+  "alias": "label-sync.com",
+  "builds": [
+    { "src": "server/src/graphql/index.ts", "use": "@now/node-server@canary" },
+    { "src": "server/src/webhooks/index.ts", "use": "@now/node-server@canary" }
+  ],
+  "routes": [{ "src": "/.*", "dest": "server/src/index.ts" }],
+  "env": {
+    "APP_ID": "@ocb-app-id",
+    "WEBHOOK_SECRET": "@ocb-webhook-secret",
+    "PRIVATE_KEY": "@ocb-private-key",
+    "SENTRY_DSN": "@ocb-sentry-dsn"
+  },
+  "github": {
+    "enabled": true,
+    "autoAlias": true
+  }
+}

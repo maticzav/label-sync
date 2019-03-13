@@ -15,6 +15,7 @@ export type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> &
 
 export interface Exists {
   label: (where?: LabelWhereInput) => Promise<boolean>
+  organisation: (where?: OrganisationWhereInput) => Promise<boolean>
   repository: (where?: RepositoryWhereInput) => Promise<boolean>
   user: (where?: UserWhereInput) => Promise<boolean>
 }
@@ -61,6 +62,29 @@ export interface Prisma {
       last?: Int
     },
   ) => LabelConnectionPromise
+  organisation: (where: OrganisationWhereUniqueInput) => OrganisationPromise
+  organisations: (
+    args?: {
+      where?: OrganisationWhereInput
+      orderBy?: OrganisationOrderByInput
+      skip?: Int
+      after?: String
+      before?: String
+      first?: Int
+      last?: Int
+    },
+  ) => FragmentableArray<Organisation>
+  organisationsConnection: (
+    args?: {
+      where?: OrganisationWhereInput
+      orderBy?: OrganisationOrderByInput
+      skip?: Int
+      after?: String
+      before?: String
+      first?: Int
+      last?: Int
+    },
+  ) => OrganisationConnectionPromise
   repository: (where: RepositoryWhereUniqueInput) => RepositoryPromise
   repositories: (
     args?: {
@@ -129,6 +153,32 @@ export interface Prisma {
   ) => LabelPromise
   deleteLabel: (where: LabelWhereUniqueInput) => LabelPromise
   deleteManyLabels: (where?: LabelWhereInput) => BatchPayloadPromise
+  createOrganisation: (data: OrganisationCreateInput) => OrganisationPromise
+  updateOrganisation: (
+    args: {
+      data: OrganisationUpdateInput
+      where: OrganisationWhereUniqueInput
+    },
+  ) => OrganisationPromise
+  updateManyOrganisations: (
+    args: {
+      data: OrganisationUpdateManyMutationInput
+      where?: OrganisationWhereInput
+    },
+  ) => BatchPayloadPromise
+  upsertOrganisation: (
+    args: {
+      where: OrganisationWhereUniqueInput
+      create: OrganisationCreateInput
+      update: OrganisationUpdateInput
+    },
+  ) => OrganisationPromise
+  deleteOrganisation: (
+    where: OrganisationWhereUniqueInput,
+  ) => OrganisationPromise
+  deleteManyOrganisations: (
+    where?: OrganisationWhereInput,
+  ) => BatchPayloadPromise
   createRepository: (data: RepositoryCreateInput) => RepositoryPromise
   updateRepository: (
     args: { data: RepositoryUpdateInput; where: RepositoryWhereUniqueInput },
@@ -176,6 +226,9 @@ export interface Subscription {
   label: (
     where?: LabelSubscriptionWhereInput,
   ) => LabelSubscriptionPayloadSubscription
+  organisation: (
+    where?: OrganisationSubscriptionWhereInput,
+  ) => OrganisationSubscriptionPayloadSubscription
   repository: (
     where?: RepositorySubscriptionWhereInput,
   ) => RepositorySubscriptionPayloadSubscription
@@ -208,6 +261,23 @@ export type LabelOrderByInput =
   | 'updatedAt_ASC'
   | 'updatedAt_DESC'
 
+export type BillingPlan =
+  | 'OSS'
+  | 'PERSONAL'
+  | 'ORGANISATION_STARTER'
+  | 'ORGANISATION_MEDIUM'
+  | 'ORGANISATION_LARGE'
+
+export type OrganisationOrderByInput =
+  | 'id_ASC'
+  | 'id_DESC'
+  | 'billingPlan_ASC'
+  | 'billingPlan_DESC'
+  | 'createdAt_ASC'
+  | 'createdAt_DESC'
+  | 'updatedAt_ASC'
+  | 'updatedAt_DESC'
+
 export type RepositoryOrderByInput =
   | 'id_ASC'
   | 'id_DESC'
@@ -232,28 +302,174 @@ export type UserOrderByInput =
 
 export type MutationType = 'CREATED' | 'UPDATED' | 'DELETED'
 
-export interface LabelUpdateInput {
-  githubId?: String
-  name?: String
-  color?: String
-  description?: String
-}
-
 export type LabelWhereUniqueInput = AtLeastOne<{
   id: ID_Input
   githubId?: String
 }>
 
-export interface LabelUpdateManyWithWhereNestedInput {
-  where: LabelScalarWhereInput
-  data: LabelUpdateManyDataInput
+export interface LabelWhereInput {
+  id?: ID_Input
+  id_not?: ID_Input
+  id_in?: ID_Input[] | ID_Input
+  id_not_in?: ID_Input[] | ID_Input
+  id_lt?: ID_Input
+  id_lte?: ID_Input
+  id_gt?: ID_Input
+  id_gte?: ID_Input
+  id_contains?: ID_Input
+  id_not_contains?: ID_Input
+  id_starts_with?: ID_Input
+  id_not_starts_with?: ID_Input
+  id_ends_with?: ID_Input
+  id_not_ends_with?: ID_Input
+  githubId?: String
+  githubId_not?: String
+  githubId_in?: String[] | String
+  githubId_not_in?: String[] | String
+  githubId_lt?: String
+  githubId_lte?: String
+  githubId_gt?: String
+  githubId_gte?: String
+  githubId_contains?: String
+  githubId_not_contains?: String
+  githubId_starts_with?: String
+  githubId_not_starts_with?: String
+  githubId_ends_with?: String
+  githubId_not_ends_with?: String
+  name?: String
+  name_not?: String
+  name_in?: String[] | String
+  name_not_in?: String[] | String
+  name_lt?: String
+  name_lte?: String
+  name_gt?: String
+  name_gte?: String
+  name_contains?: String
+  name_not_contains?: String
+  name_starts_with?: String
+  name_not_starts_with?: String
+  name_ends_with?: String
+  name_not_ends_with?: String
+  color?: String
+  color_not?: String
+  color_in?: String[] | String
+  color_not_in?: String[] | String
+  color_lt?: String
+  color_lte?: String
+  color_gt?: String
+  color_gte?: String
+  color_contains?: String
+  color_not_contains?: String
+  color_starts_with?: String
+  color_not_starts_with?: String
+  color_ends_with?: String
+  color_not_ends_with?: String
+  description?: String
+  description_not?: String
+  description_in?: String[] | String
+  description_not_in?: String[] | String
+  description_lt?: String
+  description_lte?: String
+  description_gt?: String
+  description_gte?: String
+  description_contains?: String
+  description_not_contains?: String
+  description_starts_with?: String
+  description_not_starts_with?: String
+  description_ends_with?: String
+  description_not_ends_with?: String
+  AND?: LabelWhereInput[] | LabelWhereInput
+  OR?: LabelWhereInput[] | LabelWhereInput
+  NOT?: LabelWhereInput[] | LabelWhereInput
 }
 
-export interface RepositoryCreateInput {
-  name: String
-  owner: String
-  labels?: LabelCreateManyInput
+export type OrganisationWhereUniqueInput = AtLeastOne<{
+  id: ID_Input
+}>
+
+export interface OrganisationWhereInput {
+  id?: ID_Input
+  id_not?: ID_Input
+  id_in?: ID_Input[] | ID_Input
+  id_not_in?: ID_Input[] | ID_Input
+  id_lt?: ID_Input
+  id_lte?: ID_Input
+  id_gt?: ID_Input
+  id_gte?: ID_Input
+  id_contains?: ID_Input
+  id_not_contains?: ID_Input
+  id_starts_with?: ID_Input
+  id_not_starts_with?: ID_Input
+  id_ends_with?: ID_Input
+  id_not_ends_with?: ID_Input
+  billingPlan?: BillingPlan
+  billingPlan_not?: BillingPlan
+  billingPlan_in?: BillingPlan[] | BillingPlan
+  billingPlan_not_in?: BillingPlan[] | BillingPlan
+  AND?: OrganisationWhereInput[] | OrganisationWhereInput
+  OR?: OrganisationWhereInput[] | OrganisationWhereInput
+  NOT?: OrganisationWhereInput[] | OrganisationWhereInput
 }
+
+export type RepositoryWhereUniqueInput = AtLeastOne<{
+  id: ID_Input
+}>
+
+export interface RepositoryWhereInput {
+  id?: ID_Input
+  id_not?: ID_Input
+  id_in?: ID_Input[] | ID_Input
+  id_not_in?: ID_Input[] | ID_Input
+  id_lt?: ID_Input
+  id_lte?: ID_Input
+  id_gt?: ID_Input
+  id_gte?: ID_Input
+  id_contains?: ID_Input
+  id_not_contains?: ID_Input
+  id_starts_with?: ID_Input
+  id_not_starts_with?: ID_Input
+  id_ends_with?: ID_Input
+  id_not_ends_with?: ID_Input
+  name?: String
+  name_not?: String
+  name_in?: String[] | String
+  name_not_in?: String[] | String
+  name_lt?: String
+  name_lte?: String
+  name_gt?: String
+  name_gte?: String
+  name_contains?: String
+  name_not_contains?: String
+  name_starts_with?: String
+  name_not_starts_with?: String
+  name_ends_with?: String
+  name_not_ends_with?: String
+  owner?: String
+  owner_not?: String
+  owner_in?: String[] | String
+  owner_not_in?: String[] | String
+  owner_lt?: String
+  owner_lte?: String
+  owner_gt?: String
+  owner_gte?: String
+  owner_contains?: String
+  owner_not_contains?: String
+  owner_starts_with?: String
+  owner_not_starts_with?: String
+  owner_ends_with?: String
+  owner_not_ends_with?: String
+  labels_every?: LabelWhereInput
+  labels_some?: LabelWhereInput
+  labels_none?: LabelWhereInput
+  AND?: RepositoryWhereInput[] | RepositoryWhereInput
+  OR?: RepositoryWhereInput[] | RepositoryWhereInput
+  NOT?: RepositoryWhereInput[] | RepositoryWhereInput
+}
+
+export type UserWhereUniqueInput = AtLeastOne<{
+  id: ID_Input
+  githubUserId?: String
+}>
 
 export interface UserWhereInput {
   id?: ID_Input
@@ -289,11 +505,90 @@ export interface UserWhereInput {
   NOT?: UserWhereInput[] | UserWhereInput
 }
 
+export interface LabelCreateInput {
+  githubId: String
+  name: String
+  color: String
+  description?: String
+}
+
+export interface LabelUpdateInput {
+  githubId?: String
+  name?: String
+  color?: String
+  description?: String
+}
+
 export interface LabelUpdateManyMutationInput {
   githubId?: String
   name?: String
   color?: String
   description?: String
+}
+
+export interface OrganisationCreateInput {
+  billingPlan: BillingPlan
+}
+
+export interface OrganisationUpdateInput {
+  billingPlan?: BillingPlan
+}
+
+export interface OrganisationUpdateManyMutationInput {
+  billingPlan?: BillingPlan
+}
+
+export interface RepositoryCreateInput {
+  name: String
+  owner: String
+  labels?: LabelCreateManyInput
+}
+
+export interface LabelCreateManyInput {
+  create?: LabelCreateInput[] | LabelCreateInput
+  connect?: LabelWhereUniqueInput[] | LabelWhereUniqueInput
+}
+
+export interface RepositoryUpdateInput {
+  name?: String
+  owner?: String
+  labels?: LabelUpdateManyInput
+}
+
+export interface LabelUpdateManyInput {
+  create?: LabelCreateInput[] | LabelCreateInput
+  update?:
+    | LabelUpdateWithWhereUniqueNestedInput[]
+    | LabelUpdateWithWhereUniqueNestedInput
+  upsert?:
+    | LabelUpsertWithWhereUniqueNestedInput[]
+    | LabelUpsertWithWhereUniqueNestedInput
+  delete?: LabelWhereUniqueInput[] | LabelWhereUniqueInput
+  connect?: LabelWhereUniqueInput[] | LabelWhereUniqueInput
+  set?: LabelWhereUniqueInput[] | LabelWhereUniqueInput
+  disconnect?: LabelWhereUniqueInput[] | LabelWhereUniqueInput
+  deleteMany?: LabelScalarWhereInput[] | LabelScalarWhereInput
+  updateMany?:
+    | LabelUpdateManyWithWhereNestedInput[]
+    | LabelUpdateManyWithWhereNestedInput
+}
+
+export interface LabelUpdateWithWhereUniqueNestedInput {
+  where: LabelWhereUniqueInput
+  data: LabelUpdateDataInput
+}
+
+export interface LabelUpdateDataInput {
+  githubId?: String
+  name?: String
+  color?: String
+  description?: String
+}
+
+export interface LabelUpsertWithWhereUniqueNestedInput {
+  where: LabelWhereUniqueInput
+  update: LabelUpdateDataInput
+  create: LabelCreateInput
 }
 
 export interface LabelScalarWhereInput {
@@ -372,6 +667,35 @@ export interface LabelScalarWhereInput {
   NOT?: LabelScalarWhereInput[] | LabelScalarWhereInput
 }
 
+export interface LabelUpdateManyWithWhereNestedInput {
+  where: LabelScalarWhereInput
+  data: LabelUpdateManyDataInput
+}
+
+export interface LabelUpdateManyDataInput {
+  githubId?: String
+  name?: String
+  color?: String
+  description?: String
+}
+
+export interface RepositoryUpdateManyMutationInput {
+  name?: String
+  owner?: String
+}
+
+export interface UserCreateInput {
+  githubUserId: String
+}
+
+export interface UserUpdateInput {
+  githubUserId?: String
+}
+
+export interface UserUpdateManyMutationInput {
+  githubUserId?: String
+}
+
 export interface LabelSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType
   updatedFields_contains?: String
@@ -383,88 +707,19 @@ export interface LabelSubscriptionWhereInput {
   NOT?: LabelSubscriptionWhereInput[] | LabelSubscriptionWhereInput
 }
 
-export interface LabelUpsertWithWhereUniqueNestedInput {
-  where: LabelWhereUniqueInput
-  update: LabelUpdateDataInput
-  create: LabelCreateInput
-}
-
-export type RepositoryWhereUniqueInput = AtLeastOne<{
-  id: ID_Input
-}>
-
-export interface LabelUpdateDataInput {
-  githubId?: String
-  name?: String
-  color?: String
-  description?: String
-}
-
-export interface RepositoryWhereInput {
-  id?: ID_Input
-  id_not?: ID_Input
-  id_in?: ID_Input[] | ID_Input
-  id_not_in?: ID_Input[] | ID_Input
-  id_lt?: ID_Input
-  id_lte?: ID_Input
-  id_gt?: ID_Input
-  id_gte?: ID_Input
-  id_contains?: ID_Input
-  id_not_contains?: ID_Input
-  id_starts_with?: ID_Input
-  id_not_starts_with?: ID_Input
-  id_ends_with?: ID_Input
-  id_not_ends_with?: ID_Input
-  name?: String
-  name_not?: String
-  name_in?: String[] | String
-  name_not_in?: String[] | String
-  name_lt?: String
-  name_lte?: String
-  name_gt?: String
-  name_gte?: String
-  name_contains?: String
-  name_not_contains?: String
-  name_starts_with?: String
-  name_not_starts_with?: String
-  name_ends_with?: String
-  name_not_ends_with?: String
-  owner?: String
-  owner_not?: String
-  owner_in?: String[] | String
-  owner_not_in?: String[] | String
-  owner_lt?: String
-  owner_lte?: String
-  owner_gt?: String
-  owner_gte?: String
-  owner_contains?: String
-  owner_not_contains?: String
-  owner_starts_with?: String
-  owner_not_starts_with?: String
-  owner_ends_with?: String
-  owner_not_ends_with?: String
-  labels_every?: LabelWhereInput
-  labels_some?: LabelWhereInput
-  labels_none?: LabelWhereInput
-  AND?: RepositoryWhereInput[] | RepositoryWhereInput
-  OR?: RepositoryWhereInput[] | RepositoryWhereInput
-  NOT?: RepositoryWhereInput[] | RepositoryWhereInput
-}
-
-export interface LabelUpdateWithWhereUniqueNestedInput {
-  where: LabelWhereUniqueInput
-  data: LabelUpdateDataInput
-}
-
-export interface UserCreateInput {
-  githubUserId: String
-}
-
-export interface LabelUpdateManyDataInput {
-  githubId?: String
-  name?: String
-  color?: String
-  description?: String
+export interface OrganisationSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType
+  updatedFields_contains?: String
+  updatedFields_contains_every?: String[] | String
+  updatedFields_contains_some?: String[] | String
+  node?: OrganisationWhereInput
+  AND?:
+    | OrganisationSubscriptionWhereInput[]
+    | OrganisationSubscriptionWhereInput
+  OR?: OrganisationSubscriptionWhereInput[] | OrganisationSubscriptionWhereInput
+  NOT?:
+    | OrganisationSubscriptionWhereInput[]
+    | OrganisationSubscriptionWhereInput
 }
 
 export interface RepositorySubscriptionWhereInput {
@@ -478,46 +733,6 @@ export interface RepositorySubscriptionWhereInput {
   NOT?: RepositorySubscriptionWhereInput[] | RepositorySubscriptionWhereInput
 }
 
-export interface LabelCreateInput {
-  githubId: String
-  name: String
-  color: String
-  description?: String
-}
-
-export interface UserUpdateInput {
-  githubUserId?: String
-}
-
-export interface LabelCreateManyInput {
-  create?: LabelCreateInput[] | LabelCreateInput
-  connect?: LabelWhereUniqueInput[] | LabelWhereUniqueInput
-}
-
-export interface RepositoryUpdateInput {
-  name?: String
-  owner?: String
-  labels?: LabelUpdateManyInput
-}
-
-export interface LabelUpdateManyInput {
-  create?: LabelCreateInput[] | LabelCreateInput
-  update?:
-    | LabelUpdateWithWhereUniqueNestedInput[]
-    | LabelUpdateWithWhereUniqueNestedInput
-  upsert?:
-    | LabelUpsertWithWhereUniqueNestedInput[]
-    | LabelUpsertWithWhereUniqueNestedInput
-  delete?: LabelWhereUniqueInput[] | LabelWhereUniqueInput
-  connect?: LabelWhereUniqueInput[] | LabelWhereUniqueInput
-  set?: LabelWhereUniqueInput[] | LabelWhereUniqueInput
-  disconnect?: LabelWhereUniqueInput[] | LabelWhereUniqueInput
-  deleteMany?: LabelScalarWhereInput[] | LabelScalarWhereInput
-  updateMany?:
-    | LabelUpdateManyWithWhereNestedInput[]
-    | LabelUpdateManyWithWhereNestedInput
-}
-
 export interface UserSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType
   updatedFields_contains?: String
@@ -529,182 +744,34 @@ export interface UserSubscriptionWhereInput {
   NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput
 }
 
-export interface LabelWhereInput {
-  id?: ID_Input
-  id_not?: ID_Input
-  id_in?: ID_Input[] | ID_Input
-  id_not_in?: ID_Input[] | ID_Input
-  id_lt?: ID_Input
-  id_lte?: ID_Input
-  id_gt?: ID_Input
-  id_gte?: ID_Input
-  id_contains?: ID_Input
-  id_not_contains?: ID_Input
-  id_starts_with?: ID_Input
-  id_not_starts_with?: ID_Input
-  id_ends_with?: ID_Input
-  id_not_ends_with?: ID_Input
-  githubId?: String
-  githubId_not?: String
-  githubId_in?: String[] | String
-  githubId_not_in?: String[] | String
-  githubId_lt?: String
-  githubId_lte?: String
-  githubId_gt?: String
-  githubId_gte?: String
-  githubId_contains?: String
-  githubId_not_contains?: String
-  githubId_starts_with?: String
-  githubId_not_starts_with?: String
-  githubId_ends_with?: String
-  githubId_not_ends_with?: String
-  name?: String
-  name_not?: String
-  name_in?: String[] | String
-  name_not_in?: String[] | String
-  name_lt?: String
-  name_lte?: String
-  name_gt?: String
-  name_gte?: String
-  name_contains?: String
-  name_not_contains?: String
-  name_starts_with?: String
-  name_not_starts_with?: String
-  name_ends_with?: String
-  name_not_ends_with?: String
-  color?: String
-  color_not?: String
-  color_in?: String[] | String
-  color_not_in?: String[] | String
-  color_lt?: String
-  color_lte?: String
-  color_gt?: String
-  color_gte?: String
-  color_contains?: String
-  color_not_contains?: String
-  color_starts_with?: String
-  color_not_starts_with?: String
-  color_ends_with?: String
-  color_not_ends_with?: String
-  description?: String
-  description_not?: String
-  description_in?: String[] | String
-  description_not_in?: String[] | String
-  description_lt?: String
-  description_lte?: String
-  description_gt?: String
-  description_gte?: String
-  description_contains?: String
-  description_not_contains?: String
-  description_starts_with?: String
-  description_not_starts_with?: String
-  description_ends_with?: String
-  description_not_ends_with?: String
-  AND?: LabelWhereInput[] | LabelWhereInput
-  OR?: LabelWhereInput[] | LabelWhereInput
-  NOT?: LabelWhereInput[] | LabelWhereInput
-}
-
-export interface UserUpdateManyMutationInput {
-  githubUserId?: String
-}
-
-export type UserWhereUniqueInput = AtLeastOne<{
-  id: ID_Input
-  githubUserId?: String
-}>
-
-export interface RepositoryUpdateManyMutationInput {
-  name?: String
-  owner?: String
-}
-
 export interface NodeNode {
   id: ID_Output
 }
 
-export interface RepositorySubscriptionPayload {
-  mutation: MutationType
-  node: Repository
-  updatedFields: String[]
-  previousValues: RepositoryPreviousValues
-}
-
-export interface RepositorySubscriptionPayloadPromise
-  extends Promise<RepositorySubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>
-  node: <T = RepositoryPromise>() => T
-  updatedFields: () => Promise<String[]>
-  previousValues: <T = RepositoryPreviousValuesPromise>() => T
-}
-
-export interface RepositorySubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<RepositorySubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>
-  node: <T = RepositorySubscription>() => T
-  updatedFields: () => Promise<AsyncIterator<String[]>>
-  previousValues: <T = RepositoryPreviousValuesSubscription>() => T
-}
-
-export interface RepositoryEdge {
-  node: Repository
-  cursor: String
-}
-
-export interface RepositoryEdgePromise
-  extends Promise<RepositoryEdge>,
-    Fragmentable {
-  node: <T = RepositoryPromise>() => T
-  cursor: () => Promise<String>
-}
-
-export interface RepositoryEdgeSubscription
-  extends Promise<AsyncIterator<RepositoryEdge>>,
-    Fragmentable {
-  node: <T = RepositorySubscription>() => T
-  cursor: () => Promise<AsyncIterator<String>>
-}
-
-export interface UserPreviousValues {
+export interface Label {
   id: ID_Output
-  githubUserId: String
+  githubId: String
+  name: String
+  color: String
+  description?: String
 }
 
-export interface UserPreviousValuesPromise
-  extends Promise<UserPreviousValues>,
-    Fragmentable {
+export interface LabelPromise extends Promise<Label>, Fragmentable {
   id: () => Promise<ID_Output>
-  githubUserId: () => Promise<String>
+  githubId: () => Promise<String>
+  name: () => Promise<String>
+  color: () => Promise<String>
+  description: () => Promise<String>
 }
 
-export interface UserPreviousValuesSubscription
-  extends Promise<AsyncIterator<UserPreviousValues>>,
+export interface LabelSubscription
+  extends Promise<AsyncIterator<Label>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>
-  githubUserId: () => Promise<AsyncIterator<String>>
-}
-
-export interface RepositoryConnection {
-  pageInfo: PageInfo
-  edges: RepositoryEdge[]
-}
-
-export interface RepositoryConnectionPromise
-  extends Promise<RepositoryConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T
-  edges: <T = FragmentableArray<RepositoryEdge>>() => T
-  aggregate: <T = AggregateRepositoryPromise>() => T
-}
-
-export interface RepositoryConnectionSubscription
-  extends Promise<AsyncIterator<RepositoryConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T
-  edges: <T = Promise<AsyncIterator<RepositoryEdgeSubscription>>>() => T
-  aggregate: <T = AggregateRepositorySubscription>() => T
+  githubId: () => Promise<AsyncIterator<String>>
+  name: () => Promise<AsyncIterator<String>>
+  color: () => Promise<AsyncIterator<String>>
+  description: () => Promise<AsyncIterator<String>>
 }
 
 export interface LabelConnection {
@@ -726,6 +793,137 @@ export interface LabelConnectionSubscription
   pageInfo: <T = PageInfoSubscription>() => T
   edges: <T = Promise<AsyncIterator<LabelEdgeSubscription>>>() => T
   aggregate: <T = AggregateLabelSubscription>() => T
+}
+
+export interface PageInfo {
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+  startCursor?: String
+  endCursor?: String
+}
+
+export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
+  hasNextPage: () => Promise<Boolean>
+  hasPreviousPage: () => Promise<Boolean>
+  startCursor: () => Promise<String>
+  endCursor: () => Promise<String>
+}
+
+export interface PageInfoSubscription
+  extends Promise<AsyncIterator<PageInfo>>,
+    Fragmentable {
+  hasNextPage: () => Promise<AsyncIterator<Boolean>>
+  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>
+  startCursor: () => Promise<AsyncIterator<String>>
+  endCursor: () => Promise<AsyncIterator<String>>
+}
+
+export interface LabelEdge {
+  node: Label
+  cursor: String
+}
+
+export interface LabelEdgePromise extends Promise<LabelEdge>, Fragmentable {
+  node: <T = LabelPromise>() => T
+  cursor: () => Promise<String>
+}
+
+export interface LabelEdgeSubscription
+  extends Promise<AsyncIterator<LabelEdge>>,
+    Fragmentable {
+  node: <T = LabelSubscription>() => T
+  cursor: () => Promise<AsyncIterator<String>>
+}
+
+export interface AggregateLabel {
+  count: Int
+}
+
+export interface AggregateLabelPromise
+  extends Promise<AggregateLabel>,
+    Fragmentable {
+  count: () => Promise<Int>
+}
+
+export interface AggregateLabelSubscription
+  extends Promise<AsyncIterator<AggregateLabel>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>
+}
+
+export interface Organisation {
+  id: ID_Output
+  billingPlan: BillingPlan
+}
+
+export interface OrganisationPromise
+  extends Promise<Organisation>,
+    Fragmentable {
+  id: () => Promise<ID_Output>
+  billingPlan: () => Promise<BillingPlan>
+}
+
+export interface OrganisationSubscription
+  extends Promise<AsyncIterator<Organisation>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>
+  billingPlan: () => Promise<AsyncIterator<BillingPlan>>
+}
+
+export interface OrganisationConnection {
+  pageInfo: PageInfo
+  edges: OrganisationEdge[]
+}
+
+export interface OrganisationConnectionPromise
+  extends Promise<OrganisationConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T
+  edges: <T = FragmentableArray<OrganisationEdge>>() => T
+  aggregate: <T = AggregateOrganisationPromise>() => T
+}
+
+export interface OrganisationConnectionSubscription
+  extends Promise<AsyncIterator<OrganisationConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T
+  edges: <T = Promise<AsyncIterator<OrganisationEdgeSubscription>>>() => T
+  aggregate: <T = AggregateOrganisationSubscription>() => T
+}
+
+export interface OrganisationEdge {
+  node: Organisation
+  cursor: String
+}
+
+export interface OrganisationEdgePromise
+  extends Promise<OrganisationEdge>,
+    Fragmentable {
+  node: <T = OrganisationPromise>() => T
+  cursor: () => Promise<String>
+}
+
+export interface OrganisationEdgeSubscription
+  extends Promise<AsyncIterator<OrganisationEdge>>,
+    Fragmentable {
+  node: <T = OrganisationSubscription>() => T
+  cursor: () => Promise<AsyncIterator<String>>
+}
+
+export interface AggregateOrganisation {
+  count: Int
+}
+
+export interface AggregateOrganisationPromise
+  extends Promise<AggregateOrganisation>,
+    Fragmentable {
+  count: () => Promise<Int>
+}
+
+export interface AggregateOrganisationSubscription
+  extends Promise<AsyncIterator<AggregateOrganisation>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>
 }
 
 export interface Repository {
@@ -770,103 +968,44 @@ export interface RepositorySubscription
   ) => T
 }
 
-export interface PageInfo {
-  hasNextPage: Boolean
-  hasPreviousPage: Boolean
-  startCursor?: String
-  endCursor?: String
+export interface RepositoryConnection {
+  pageInfo: PageInfo
+  edges: RepositoryEdge[]
 }
 
-export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
-  hasNextPage: () => Promise<Boolean>
-  hasPreviousPage: () => Promise<Boolean>
-  startCursor: () => Promise<String>
-  endCursor: () => Promise<String>
-}
-
-export interface PageInfoSubscription
-  extends Promise<AsyncIterator<PageInfo>>,
+export interface RepositoryConnectionPromise
+  extends Promise<RepositoryConnection>,
     Fragmentable {
-  hasNextPage: () => Promise<AsyncIterator<Boolean>>
-  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>
-  startCursor: () => Promise<AsyncIterator<String>>
-  endCursor: () => Promise<AsyncIterator<String>>
+  pageInfo: <T = PageInfoPromise>() => T
+  edges: <T = FragmentableArray<RepositoryEdge>>() => T
+  aggregate: <T = AggregateRepositoryPromise>() => T
 }
 
-export interface AggregateLabel {
-  count: Int
-}
-
-export interface AggregateLabelPromise
-  extends Promise<AggregateLabel>,
+export interface RepositoryConnectionSubscription
+  extends Promise<AsyncIterator<RepositoryConnection>>,
     Fragmentable {
-  count: () => Promise<Int>
+  pageInfo: <T = PageInfoSubscription>() => T
+  edges: <T = Promise<AsyncIterator<RepositoryEdgeSubscription>>>() => T
+  aggregate: <T = AggregateRepositorySubscription>() => T
 }
 
-export interface AggregateLabelSubscription
-  extends Promise<AsyncIterator<AggregateLabel>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>
-}
-
-export interface UserEdge {
-  node: User
+export interface RepositoryEdge {
+  node: Repository
   cursor: String
 }
 
-export interface UserEdgePromise extends Promise<UserEdge>, Fragmentable {
-  node: <T = UserPromise>() => T
+export interface RepositoryEdgePromise
+  extends Promise<RepositoryEdge>,
+    Fragmentable {
+  node: <T = RepositoryPromise>() => T
   cursor: () => Promise<String>
 }
 
-export interface UserEdgeSubscription
-  extends Promise<AsyncIterator<UserEdge>>,
+export interface RepositoryEdgeSubscription
+  extends Promise<AsyncIterator<RepositoryEdge>>,
     Fragmentable {
-  node: <T = UserSubscription>() => T
+  node: <T = RepositorySubscription>() => T
   cursor: () => Promise<AsyncIterator<String>>
-}
-
-export interface LabelEdge {
-  node: Label
-  cursor: String
-}
-
-export interface LabelEdgePromise extends Promise<LabelEdge>, Fragmentable {
-  node: <T = LabelPromise>() => T
-  cursor: () => Promise<String>
-}
-
-export interface LabelEdgeSubscription
-  extends Promise<AsyncIterator<LabelEdge>>,
-    Fragmentable {
-  node: <T = LabelSubscription>() => T
-  cursor: () => Promise<AsyncIterator<String>>
-}
-
-export interface Label {
-  id: ID_Output
-  githubId: String
-  name: String
-  color: String
-  description?: String
-}
-
-export interface LabelPromise extends Promise<Label>, Fragmentable {
-  id: () => Promise<ID_Output>
-  githubId: () => Promise<String>
-  name: () => Promise<String>
-  color: () => Promise<String>
-  description: () => Promise<String>
-}
-
-export interface LabelSubscription
-  extends Promise<AsyncIterator<Label>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>
-  githubId: () => Promise<AsyncIterator<String>>
-  name: () => Promise<AsyncIterator<String>>
-  color: () => Promise<AsyncIterator<String>>
-  description: () => Promise<AsyncIterator<String>>
 }
 
 export interface AggregateRepository {
@@ -883,122 +1022,6 @@ export interface AggregateRepositorySubscription
   extends Promise<AsyncIterator<AggregateRepository>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>
-}
-
-export interface UserSubscriptionPayload {
-  mutation: MutationType
-  node: User
-  updatedFields: String[]
-  previousValues: UserPreviousValues
-}
-
-export interface UserSubscriptionPayloadPromise
-  extends Promise<UserSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>
-  node: <T = UserPromise>() => T
-  updatedFields: () => Promise<String[]>
-  previousValues: <T = UserPreviousValuesPromise>() => T
-}
-
-export interface UserSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<UserSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>
-  node: <T = UserSubscription>() => T
-  updatedFields: () => Promise<AsyncIterator<String[]>>
-  previousValues: <T = UserPreviousValuesSubscription>() => T
-}
-
-export interface LabelPreviousValues {
-  id: ID_Output
-  githubId: String
-  name: String
-  color: String
-  description?: String
-}
-
-export interface LabelPreviousValuesPromise
-  extends Promise<LabelPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>
-  githubId: () => Promise<String>
-  name: () => Promise<String>
-  color: () => Promise<String>
-  description: () => Promise<String>
-}
-
-export interface LabelPreviousValuesSubscription
-  extends Promise<AsyncIterator<LabelPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>
-  githubId: () => Promise<AsyncIterator<String>>
-  name: () => Promise<AsyncIterator<String>>
-  color: () => Promise<AsyncIterator<String>>
-  description: () => Promise<AsyncIterator<String>>
-}
-
-export interface LabelSubscriptionPayload {
-  mutation: MutationType
-  node: Label
-  updatedFields: String[]
-  previousValues: LabelPreviousValues
-}
-
-export interface LabelSubscriptionPayloadPromise
-  extends Promise<LabelSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>
-  node: <T = LabelPromise>() => T
-  updatedFields: () => Promise<String[]>
-  previousValues: <T = LabelPreviousValuesPromise>() => T
-}
-
-export interface LabelSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<LabelSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>
-  node: <T = LabelSubscription>() => T
-  updatedFields: () => Promise<AsyncIterator<String[]>>
-  previousValues: <T = LabelPreviousValuesSubscription>() => T
-}
-
-export interface RepositoryPreviousValues {
-  id: ID_Output
-  name: String
-  owner: String
-}
-
-export interface RepositoryPreviousValuesPromise
-  extends Promise<RepositoryPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>
-  name: () => Promise<String>
-  owner: () => Promise<String>
-}
-
-export interface RepositoryPreviousValuesSubscription
-  extends Promise<AsyncIterator<RepositoryPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>
-  name: () => Promise<AsyncIterator<String>>
-  owner: () => Promise<AsyncIterator<String>>
-}
-
-export interface BatchPayload {
-  count: Long
-}
-
-export interface BatchPayloadPromise
-  extends Promise<BatchPayload>,
-    Fragmentable {
-  count: () => Promise<Long>
-}
-
-export interface BatchPayloadSubscription
-  extends Promise<AsyncIterator<BatchPayload>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Long>>
 }
 
 export interface User {
@@ -1039,6 +1062,23 @@ export interface UserConnectionSubscription
   aggregate: <T = AggregateUserSubscription>() => T
 }
 
+export interface UserEdge {
+  node: User
+  cursor: String
+}
+
+export interface UserEdgePromise extends Promise<UserEdge>, Fragmentable {
+  node: <T = UserPromise>() => T
+  cursor: () => Promise<String>
+}
+
+export interface UserEdgeSubscription
+  extends Promise<AsyncIterator<UserEdge>>,
+    Fragmentable {
+  node: <T = UserSubscription>() => T
+  cursor: () => Promise<AsyncIterator<String>>
+}
+
 export interface AggregateUser {
   count: Int
 }
@@ -1055,17 +1095,209 @@ export interface AggregateUserSubscription
   count: () => Promise<AsyncIterator<Int>>
 }
 
-export type Long = string
+export interface BatchPayload {
+  count: Long
+}
 
-/*
-The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. 
-*/
-export type Int = number
+export interface BatchPayloadPromise
+  extends Promise<BatchPayload>,
+    Fragmentable {
+  count: () => Promise<Long>
+}
 
-/*
-The `Boolean` scalar type represents `true` or `false`.
-*/
-export type Boolean = boolean
+export interface BatchPayloadSubscription
+  extends Promise<AsyncIterator<BatchPayload>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Long>>
+}
+
+export interface LabelSubscriptionPayload {
+  mutation: MutationType
+  node: Label
+  updatedFields: String[]
+  previousValues: LabelPreviousValues
+}
+
+export interface LabelSubscriptionPayloadPromise
+  extends Promise<LabelSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>
+  node: <T = LabelPromise>() => T
+  updatedFields: () => Promise<String[]>
+  previousValues: <T = LabelPreviousValuesPromise>() => T
+}
+
+export interface LabelSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<LabelSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>
+  node: <T = LabelSubscription>() => T
+  updatedFields: () => Promise<AsyncIterator<String[]>>
+  previousValues: <T = LabelPreviousValuesSubscription>() => T
+}
+
+export interface LabelPreviousValues {
+  id: ID_Output
+  githubId: String
+  name: String
+  color: String
+  description?: String
+}
+
+export interface LabelPreviousValuesPromise
+  extends Promise<LabelPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>
+  githubId: () => Promise<String>
+  name: () => Promise<String>
+  color: () => Promise<String>
+  description: () => Promise<String>
+}
+
+export interface LabelPreviousValuesSubscription
+  extends Promise<AsyncIterator<LabelPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>
+  githubId: () => Promise<AsyncIterator<String>>
+  name: () => Promise<AsyncIterator<String>>
+  color: () => Promise<AsyncIterator<String>>
+  description: () => Promise<AsyncIterator<String>>
+}
+
+export interface OrganisationSubscriptionPayload {
+  mutation: MutationType
+  node: Organisation
+  updatedFields: String[]
+  previousValues: OrganisationPreviousValues
+}
+
+export interface OrganisationSubscriptionPayloadPromise
+  extends Promise<OrganisationSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>
+  node: <T = OrganisationPromise>() => T
+  updatedFields: () => Promise<String[]>
+  previousValues: <T = OrganisationPreviousValuesPromise>() => T
+}
+
+export interface OrganisationSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<OrganisationSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>
+  node: <T = OrganisationSubscription>() => T
+  updatedFields: () => Promise<AsyncIterator<String[]>>
+  previousValues: <T = OrganisationPreviousValuesSubscription>() => T
+}
+
+export interface OrganisationPreviousValues {
+  id: ID_Output
+  billingPlan: BillingPlan
+}
+
+export interface OrganisationPreviousValuesPromise
+  extends Promise<OrganisationPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>
+  billingPlan: () => Promise<BillingPlan>
+}
+
+export interface OrganisationPreviousValuesSubscription
+  extends Promise<AsyncIterator<OrganisationPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>
+  billingPlan: () => Promise<AsyncIterator<BillingPlan>>
+}
+
+export interface RepositorySubscriptionPayload {
+  mutation: MutationType
+  node: Repository
+  updatedFields: String[]
+  previousValues: RepositoryPreviousValues
+}
+
+export interface RepositorySubscriptionPayloadPromise
+  extends Promise<RepositorySubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>
+  node: <T = RepositoryPromise>() => T
+  updatedFields: () => Promise<String[]>
+  previousValues: <T = RepositoryPreviousValuesPromise>() => T
+}
+
+export interface RepositorySubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<RepositorySubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>
+  node: <T = RepositorySubscription>() => T
+  updatedFields: () => Promise<AsyncIterator<String[]>>
+  previousValues: <T = RepositoryPreviousValuesSubscription>() => T
+}
+
+export interface RepositoryPreviousValues {
+  id: ID_Output
+  name: String
+  owner: String
+}
+
+export interface RepositoryPreviousValuesPromise
+  extends Promise<RepositoryPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>
+  name: () => Promise<String>
+  owner: () => Promise<String>
+}
+
+export interface RepositoryPreviousValuesSubscription
+  extends Promise<AsyncIterator<RepositoryPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>
+  name: () => Promise<AsyncIterator<String>>
+  owner: () => Promise<AsyncIterator<String>>
+}
+
+export interface UserSubscriptionPayload {
+  mutation: MutationType
+  node: User
+  updatedFields: String[]
+  previousValues: UserPreviousValues
+}
+
+export interface UserSubscriptionPayloadPromise
+  extends Promise<UserSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>
+  node: <T = UserPromise>() => T
+  updatedFields: () => Promise<String[]>
+  previousValues: <T = UserPreviousValuesPromise>() => T
+}
+
+export interface UserSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<UserSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>
+  node: <T = UserSubscription>() => T
+  updatedFields: () => Promise<AsyncIterator<String[]>>
+  previousValues: <T = UserPreviousValuesSubscription>() => T
+}
+
+export interface UserPreviousValues {
+  id: ID_Output
+  githubUserId: String
+}
+
+export interface UserPreviousValuesPromise
+  extends Promise<UserPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>
+  githubUserId: () => Promise<String>
+}
+
+export interface UserPreviousValuesSubscription
+  extends Promise<AsyncIterator<UserPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>
+  githubUserId: () => Promise<AsyncIterator<String>>
+}
 
 /*
 The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
@@ -1078,6 +1310,18 @@ The `String` scalar type represents textual data, represented as UTF-8 character
 */
 export type String = string
 
+/*
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. 
+*/
+export type Int = number
+
+/*
+The `Boolean` scalar type represents `true` or `false`.
+*/
+export type Boolean = boolean
+
+export type Long = string
+
 /**
  * Model Metadata
  */
@@ -1085,6 +1329,14 @@ export type String = string
 export const models: Model[] = [
   {
     name: 'User',
+    embedded: false,
+  },
+  {
+    name: 'Organisation',
+    embedded: false,
+  },
+  {
+    name: 'BillingPlan',
     embedded: false,
   },
   {

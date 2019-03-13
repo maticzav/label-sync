@@ -6,6 +6,10 @@ export const typeDefs = /* GraphQL */ `type AggregateLabel {
   count: Int!
 }
 
+type AggregateOrganisation {
+  count: Int!
+}
+
 type AggregateRepository {
   count: Int!
 }
@@ -16,6 +20,14 @@ type AggregateUser {
 
 type BatchPayload {
   count: Long!
+}
+
+enum BillingPlan {
+  OSS
+  PERSONAL
+  ORGANISATION_STARTER
+  ORGANISATION_MEDIUM
+  ORGANISATION_LARGE
 }
 
 type Label {
@@ -314,6 +326,12 @@ type Mutation {
   upsertLabel(where: LabelWhereUniqueInput!, create: LabelCreateInput!, update: LabelUpdateInput!): Label!
   deleteLabel(where: LabelWhereUniqueInput!): Label
   deleteManyLabels(where: LabelWhereInput): BatchPayload!
+  createOrganisation(data: OrganisationCreateInput!): Organisation!
+  updateOrganisation(data: OrganisationUpdateInput!, where: OrganisationWhereUniqueInput!): Organisation
+  updateManyOrganisations(data: OrganisationUpdateManyMutationInput!, where: OrganisationWhereInput): BatchPayload!
+  upsertOrganisation(where: OrganisationWhereUniqueInput!, create: OrganisationCreateInput!, update: OrganisationUpdateInput!): Organisation!
+  deleteOrganisation(where: OrganisationWhereUniqueInput!): Organisation
+  deleteManyOrganisations(where: OrganisationWhereInput): BatchPayload!
   createRepository(data: RepositoryCreateInput!): Repository!
   updateRepository(data: RepositoryUpdateInput!, where: RepositoryWhereUniqueInput!): Repository
   updateManyRepositories(data: RepositoryUpdateManyMutationInput!, where: RepositoryWhereInput): BatchPayload!
@@ -338,6 +356,96 @@ interface Node {
   id: ID!
 }
 
+type Organisation {
+  id: ID!
+  billingPlan: BillingPlan!
+}
+
+type OrganisationConnection {
+  pageInfo: PageInfo!
+  edges: [OrganisationEdge]!
+  aggregate: AggregateOrganisation!
+}
+
+input OrganisationCreateInput {
+  billingPlan: BillingPlan!
+}
+
+type OrganisationEdge {
+  node: Organisation!
+  cursor: String!
+}
+
+enum OrganisationOrderByInput {
+  id_ASC
+  id_DESC
+  billingPlan_ASC
+  billingPlan_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type OrganisationPreviousValues {
+  id: ID!
+  billingPlan: BillingPlan!
+}
+
+type OrganisationSubscriptionPayload {
+  mutation: MutationType!
+  node: Organisation
+  updatedFields: [String!]
+  previousValues: OrganisationPreviousValues
+}
+
+input OrganisationSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: OrganisationWhereInput
+  AND: [OrganisationSubscriptionWhereInput!]
+  OR: [OrganisationSubscriptionWhereInput!]
+  NOT: [OrganisationSubscriptionWhereInput!]
+}
+
+input OrganisationUpdateInput {
+  billingPlan: BillingPlan
+}
+
+input OrganisationUpdateManyMutationInput {
+  billingPlan: BillingPlan
+}
+
+input OrganisationWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  billingPlan: BillingPlan
+  billingPlan_not: BillingPlan
+  billingPlan_in: [BillingPlan!]
+  billingPlan_not_in: [BillingPlan!]
+  AND: [OrganisationWhereInput!]
+  OR: [OrganisationWhereInput!]
+  NOT: [OrganisationWhereInput!]
+}
+
+input OrganisationWhereUniqueInput {
+  id: ID
+}
+
 type PageInfo {
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
@@ -349,6 +457,9 @@ type Query {
   label(where: LabelWhereUniqueInput!): Label
   labels(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Label]!
   labelsConnection(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LabelConnection!
+  organisation(where: OrganisationWhereUniqueInput!): Organisation
+  organisations(where: OrganisationWhereInput, orderBy: OrganisationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Organisation]!
+  organisationsConnection(where: OrganisationWhereInput, orderBy: OrganisationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OrganisationConnection!
   repository(where: RepositoryWhereUniqueInput!): Repository
   repositories(where: RepositoryWhereInput, orderBy: RepositoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Repository]!
   repositoriesConnection(where: RepositoryWhereInput, orderBy: RepositoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RepositoryConnection!
@@ -487,6 +598,7 @@ input RepositoryWhereUniqueInput {
 
 type Subscription {
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
+  organisation(where: OrganisationSubscriptionWhereInput): OrganisationSubscriptionPayload
   repository(where: RepositorySubscriptionWhereInput): RepositorySubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }

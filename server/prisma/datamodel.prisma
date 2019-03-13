@@ -3,21 +3,23 @@
 # their write permissions are checked during configuration time.
 type User {
   id: ID! @unique
-
   githubUserId: String! @unique
 }
 
 # Organisation billing is entirely separated from repositories and
 # users. Anyone can add a billing method to the organisation if they have
 # write permissions to the organisation repositories
-#
-# TODO: Maybe this would be better if only organisation ADMINS could
-# add billing method.
 type Organisation {
   id: ID! @unique
-  stripeConnectId: String!
+  billingPlan: BillingPlan!
+}
 
-  repositories: [Repository!]!
+enum BillingPlan {
+  OSS
+  PERSONAL
+  ORGANISATION_STARTER
+  ORGANISATION_MEDIUM
+  ORGANISATION_LARGE
 }
 
 # Repository holds information about repository configuration. Repositories
@@ -25,16 +27,13 @@ type Organisation {
 # permissions.
 type Repository {
   id: ID! @unique
-
   name: String!
   owner: String!
-
   labels: [Label!]!
 }
 
 type Label {
   id: ID! @unique
-
   githubId: String! @unique
   name: String!
   color: String!

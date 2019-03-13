@@ -6,6 +6,8 @@
 export default {
   uniqueFieldsByModel: {
     User: ['id', 'githubUserId'],
+    Organisation: ['id'],
+    BillingPlan: [],
     Repository: ['id'],
     Label: ['id', 'githubId'],
   },
@@ -227,6 +229,211 @@ export default {
                 ofType: {
                   kind: 'OBJECT',
                   name: 'UserConnection',
+                  ofType: null,
+                },
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'organisation',
+              description: null,
+              args: [
+                {
+                  name: 'where',
+                  description: null,
+                  type: {
+                    kind: 'NON_NULL',
+                    name: null,
+                    ofType: {
+                      kind: 'INPUT_OBJECT',
+                      name: 'OrganisationWhereUniqueInput',
+                      ofType: null,
+                    },
+                  },
+                  defaultValue: null,
+                },
+              ],
+              type: {
+                kind: 'OBJECT',
+                name: 'Organisation',
+                ofType: null,
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'organisations',
+              description: null,
+              args: [
+                {
+                  name: 'where',
+                  description: null,
+                  type: {
+                    kind: 'INPUT_OBJECT',
+                    name: 'OrganisationWhereInput',
+                    ofType: null,
+                  },
+                  defaultValue: null,
+                },
+                {
+                  name: 'orderBy',
+                  description: null,
+                  type: {
+                    kind: 'ENUM',
+                    name: 'OrganisationOrderByInput',
+                    ofType: null,
+                  },
+                  defaultValue: null,
+                },
+                {
+                  name: 'skip',
+                  description: null,
+                  type: {
+                    kind: 'SCALAR',
+                    name: 'Int',
+                    ofType: null,
+                  },
+                  defaultValue: null,
+                },
+                {
+                  name: 'after',
+                  description: null,
+                  type: {
+                    kind: 'SCALAR',
+                    name: 'String',
+                    ofType: null,
+                  },
+                  defaultValue: null,
+                },
+                {
+                  name: 'before',
+                  description: null,
+                  type: {
+                    kind: 'SCALAR',
+                    name: 'String',
+                    ofType: null,
+                  },
+                  defaultValue: null,
+                },
+                {
+                  name: 'first',
+                  description: null,
+                  type: {
+                    kind: 'SCALAR',
+                    name: 'Int',
+                    ofType: null,
+                  },
+                  defaultValue: null,
+                },
+                {
+                  name: 'last',
+                  description: null,
+                  type: {
+                    kind: 'SCALAR',
+                    name: 'Int',
+                    ofType: null,
+                  },
+                  defaultValue: null,
+                },
+              ],
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: {
+                  kind: 'LIST',
+                  name: null,
+                  ofType: {
+                    kind: 'OBJECT',
+                    name: 'Organisation',
+                    ofType: null,
+                  },
+                },
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'organisationsConnection',
+              description: null,
+              args: [
+                {
+                  name: 'where',
+                  description: null,
+                  type: {
+                    kind: 'INPUT_OBJECT',
+                    name: 'OrganisationWhereInput',
+                    ofType: null,
+                  },
+                  defaultValue: null,
+                },
+                {
+                  name: 'orderBy',
+                  description: null,
+                  type: {
+                    kind: 'ENUM',
+                    name: 'OrganisationOrderByInput',
+                    ofType: null,
+                  },
+                  defaultValue: null,
+                },
+                {
+                  name: 'skip',
+                  description: null,
+                  type: {
+                    kind: 'SCALAR',
+                    name: 'Int',
+                    ofType: null,
+                  },
+                  defaultValue: null,
+                },
+                {
+                  name: 'after',
+                  description: null,
+                  type: {
+                    kind: 'SCALAR',
+                    name: 'String',
+                    ofType: null,
+                  },
+                  defaultValue: null,
+                },
+                {
+                  name: 'before',
+                  description: null,
+                  type: {
+                    kind: 'SCALAR',
+                    name: 'String',
+                    ofType: null,
+                  },
+                  defaultValue: null,
+                },
+                {
+                  name: 'first',
+                  description: null,
+                  type: {
+                    kind: 'SCALAR',
+                    name: 'Int',
+                    ofType: null,
+                  },
+                  defaultValue: null,
+                },
+                {
+                  name: 'last',
+                  description: null,
+                  type: {
+                    kind: 'SCALAR',
+                    name: 'Int',
+                    ofType: null,
+                  },
+                  defaultValue: null,
+                },
+              ],
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: {
+                  kind: 'OBJECT',
+                  name: 'OrganisationConnection',
                   ofType: null,
                 },
               },
@@ -1406,6 +1613,580 @@ export default {
         {
           kind: 'OBJECT',
           name: 'AggregateUser',
+          description: null,
+          fields: [
+            {
+              name: 'count',
+              description: null,
+              args: [],
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: {
+                  kind: 'SCALAR',
+                  name: 'Int',
+                  ofType: null,
+                },
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+          ],
+          inputFields: null,
+          interfaces: [],
+          enumValues: null,
+          possibleTypes: null,
+        },
+        {
+          kind: 'INPUT_OBJECT',
+          name: 'OrganisationWhereUniqueInput',
+          description: null,
+          fields: null,
+          inputFields: [
+            {
+              name: 'id',
+              description: null,
+              type: {
+                kind: 'SCALAR',
+                name: 'ID',
+                ofType: null,
+              },
+              defaultValue: null,
+            },
+          ],
+          interfaces: null,
+          enumValues: null,
+          possibleTypes: null,
+        },
+        {
+          kind: 'OBJECT',
+          name: 'Organisation',
+          description: null,
+          fields: [
+            {
+              name: 'id',
+              description: null,
+              args: [],
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: {
+                  kind: 'SCALAR',
+                  name: 'ID',
+                  ofType: null,
+                },
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'billingPlan',
+              description: null,
+              args: [],
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: {
+                  kind: 'ENUM',
+                  name: 'BillingPlan',
+                  ofType: null,
+                },
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+          ],
+          inputFields: null,
+          interfaces: [],
+          enumValues: null,
+          possibleTypes: null,
+        },
+        {
+          kind: 'ENUM',
+          name: 'BillingPlan',
+          description: null,
+          fields: null,
+          inputFields: null,
+          interfaces: null,
+          enumValues: [
+            {
+              name: 'OSS',
+              description: null,
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'PERSONAL',
+              description: null,
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'ORGANISATION_STARTER',
+              description: null,
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'ORGANISATION_MEDIUM',
+              description: null,
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'ORGANISATION_LARGE',
+              description: null,
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+          ],
+          possibleTypes: null,
+        },
+        {
+          kind: 'INPUT_OBJECT',
+          name: 'OrganisationWhereInput',
+          description: null,
+          fields: null,
+          inputFields: [
+            {
+              name: 'id',
+              description: null,
+              type: {
+                kind: 'SCALAR',
+                name: 'ID',
+                ofType: null,
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'id_not',
+              description: null,
+              type: {
+                kind: 'SCALAR',
+                name: 'ID',
+                ofType: null,
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'id_in',
+              description: null,
+              type: {
+                kind: 'LIST',
+                name: null,
+                ofType: {
+                  kind: 'NON_NULL',
+                  name: null,
+                  ofType: {
+                    kind: 'SCALAR',
+                    name: 'ID',
+                    ofType: null,
+                  },
+                },
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'id_not_in',
+              description: null,
+              type: {
+                kind: 'LIST',
+                name: null,
+                ofType: {
+                  kind: 'NON_NULL',
+                  name: null,
+                  ofType: {
+                    kind: 'SCALAR',
+                    name: 'ID',
+                    ofType: null,
+                  },
+                },
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'id_lt',
+              description: null,
+              type: {
+                kind: 'SCALAR',
+                name: 'ID',
+                ofType: null,
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'id_lte',
+              description: null,
+              type: {
+                kind: 'SCALAR',
+                name: 'ID',
+                ofType: null,
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'id_gt',
+              description: null,
+              type: {
+                kind: 'SCALAR',
+                name: 'ID',
+                ofType: null,
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'id_gte',
+              description: null,
+              type: {
+                kind: 'SCALAR',
+                name: 'ID',
+                ofType: null,
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'id_contains',
+              description: null,
+              type: {
+                kind: 'SCALAR',
+                name: 'ID',
+                ofType: null,
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'id_not_contains',
+              description: null,
+              type: {
+                kind: 'SCALAR',
+                name: 'ID',
+                ofType: null,
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'id_starts_with',
+              description: null,
+              type: {
+                kind: 'SCALAR',
+                name: 'ID',
+                ofType: null,
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'id_not_starts_with',
+              description: null,
+              type: {
+                kind: 'SCALAR',
+                name: 'ID',
+                ofType: null,
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'id_ends_with',
+              description: null,
+              type: {
+                kind: 'SCALAR',
+                name: 'ID',
+                ofType: null,
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'id_not_ends_with',
+              description: null,
+              type: {
+                kind: 'SCALAR',
+                name: 'ID',
+                ofType: null,
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'billingPlan',
+              description: null,
+              type: {
+                kind: 'ENUM',
+                name: 'BillingPlan',
+                ofType: null,
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'billingPlan_not',
+              description: null,
+              type: {
+                kind: 'ENUM',
+                name: 'BillingPlan',
+                ofType: null,
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'billingPlan_in',
+              description: null,
+              type: {
+                kind: 'LIST',
+                name: null,
+                ofType: {
+                  kind: 'NON_NULL',
+                  name: null,
+                  ofType: {
+                    kind: 'ENUM',
+                    name: 'BillingPlan',
+                    ofType: null,
+                  },
+                },
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'billingPlan_not_in',
+              description: null,
+              type: {
+                kind: 'LIST',
+                name: null,
+                ofType: {
+                  kind: 'NON_NULL',
+                  name: null,
+                  ofType: {
+                    kind: 'ENUM',
+                    name: 'BillingPlan',
+                    ofType: null,
+                  },
+                },
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'AND',
+              description: null,
+              type: {
+                kind: 'LIST',
+                name: null,
+                ofType: {
+                  kind: 'NON_NULL',
+                  name: null,
+                  ofType: {
+                    kind: 'INPUT_OBJECT',
+                    name: 'OrganisationWhereInput',
+                    ofType: null,
+                  },
+                },
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'OR',
+              description: null,
+              type: {
+                kind: 'LIST',
+                name: null,
+                ofType: {
+                  kind: 'NON_NULL',
+                  name: null,
+                  ofType: {
+                    kind: 'INPUT_OBJECT',
+                    name: 'OrganisationWhereInput',
+                    ofType: null,
+                  },
+                },
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'NOT',
+              description: null,
+              type: {
+                kind: 'LIST',
+                name: null,
+                ofType: {
+                  kind: 'NON_NULL',
+                  name: null,
+                  ofType: {
+                    kind: 'INPUT_OBJECT',
+                    name: 'OrganisationWhereInput',
+                    ofType: null,
+                  },
+                },
+              },
+              defaultValue: null,
+            },
+          ],
+          interfaces: null,
+          enumValues: null,
+          possibleTypes: null,
+        },
+        {
+          kind: 'ENUM',
+          name: 'OrganisationOrderByInput',
+          description: null,
+          fields: null,
+          inputFields: null,
+          interfaces: null,
+          enumValues: [
+            {
+              name: 'id_ASC',
+              description: null,
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'id_DESC',
+              description: null,
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'billingPlan_ASC',
+              description: null,
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'billingPlan_DESC',
+              description: null,
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'createdAt_ASC',
+              description: null,
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'createdAt_DESC',
+              description: null,
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'updatedAt_ASC',
+              description: null,
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'updatedAt_DESC',
+              description: null,
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+          ],
+          possibleTypes: null,
+        },
+        {
+          kind: 'OBJECT',
+          name: 'OrganisationConnection',
+          description: null,
+          fields: [
+            {
+              name: 'pageInfo',
+              description: null,
+              args: [],
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: {
+                  kind: 'OBJECT',
+                  name: 'PageInfo',
+                  ofType: null,
+                },
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'edges',
+              description: null,
+              args: [],
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: {
+                  kind: 'LIST',
+                  name: null,
+                  ofType: {
+                    kind: 'OBJECT',
+                    name: 'OrganisationEdge',
+                    ofType: null,
+                  },
+                },
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'aggregate',
+              description: null,
+              args: [],
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: {
+                  kind: 'OBJECT',
+                  name: 'AggregateOrganisation',
+                  ofType: null,
+                },
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+          ],
+          inputFields: null,
+          interfaces: [],
+          enumValues: null,
+          possibleTypes: null,
+        },
+        {
+          kind: 'OBJECT',
+          name: 'OrganisationEdge',
+          description: null,
+          fields: [
+            {
+              name: 'node',
+              description: null,
+              args: [],
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: {
+                  kind: 'OBJECT',
+                  name: 'Organisation',
+                  ofType: null,
+                },
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'cursor',
+              description: null,
+              args: [],
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: {
+                  kind: 'SCALAR',
+                  name: 'String',
+                  ofType: null,
+                },
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+          ],
+          inputFields: null,
+          interfaces: [],
+          enumValues: null,
+          possibleTypes: null,
+        },
+        {
+          kind: 'OBJECT',
+          name: 'AggregateOrganisation',
           description: null,
           fields: [
             {
@@ -3818,6 +4599,232 @@ export default {
               deprecationReason: null,
             },
             {
+              name: 'createOrganisation',
+              description: null,
+              args: [
+                {
+                  name: 'data',
+                  description: null,
+                  type: {
+                    kind: 'NON_NULL',
+                    name: null,
+                    ofType: {
+                      kind: 'INPUT_OBJECT',
+                      name: 'OrganisationCreateInput',
+                      ofType: null,
+                    },
+                  },
+                  defaultValue: null,
+                },
+              ],
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: {
+                  kind: 'OBJECT',
+                  name: 'Organisation',
+                  ofType: null,
+                },
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'updateOrganisation',
+              description: null,
+              args: [
+                {
+                  name: 'data',
+                  description: null,
+                  type: {
+                    kind: 'NON_NULL',
+                    name: null,
+                    ofType: {
+                      kind: 'INPUT_OBJECT',
+                      name: 'OrganisationUpdateInput',
+                      ofType: null,
+                    },
+                  },
+                  defaultValue: null,
+                },
+                {
+                  name: 'where',
+                  description: null,
+                  type: {
+                    kind: 'NON_NULL',
+                    name: null,
+                    ofType: {
+                      kind: 'INPUT_OBJECT',
+                      name: 'OrganisationWhereUniqueInput',
+                      ofType: null,
+                    },
+                  },
+                  defaultValue: null,
+                },
+              ],
+              type: {
+                kind: 'OBJECT',
+                name: 'Organisation',
+                ofType: null,
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'updateManyOrganisations',
+              description: null,
+              args: [
+                {
+                  name: 'data',
+                  description: null,
+                  type: {
+                    kind: 'NON_NULL',
+                    name: null,
+                    ofType: {
+                      kind: 'INPUT_OBJECT',
+                      name: 'OrganisationUpdateManyMutationInput',
+                      ofType: null,
+                    },
+                  },
+                  defaultValue: null,
+                },
+                {
+                  name: 'where',
+                  description: null,
+                  type: {
+                    kind: 'INPUT_OBJECT',
+                    name: 'OrganisationWhereInput',
+                    ofType: null,
+                  },
+                  defaultValue: null,
+                },
+              ],
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: {
+                  kind: 'OBJECT',
+                  name: 'BatchPayload',
+                  ofType: null,
+                },
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'upsertOrganisation',
+              description: null,
+              args: [
+                {
+                  name: 'where',
+                  description: null,
+                  type: {
+                    kind: 'NON_NULL',
+                    name: null,
+                    ofType: {
+                      kind: 'INPUT_OBJECT',
+                      name: 'OrganisationWhereUniqueInput',
+                      ofType: null,
+                    },
+                  },
+                  defaultValue: null,
+                },
+                {
+                  name: 'create',
+                  description: null,
+                  type: {
+                    kind: 'NON_NULL',
+                    name: null,
+                    ofType: {
+                      kind: 'INPUT_OBJECT',
+                      name: 'OrganisationCreateInput',
+                      ofType: null,
+                    },
+                  },
+                  defaultValue: null,
+                },
+                {
+                  name: 'update',
+                  description: null,
+                  type: {
+                    kind: 'NON_NULL',
+                    name: null,
+                    ofType: {
+                      kind: 'INPUT_OBJECT',
+                      name: 'OrganisationUpdateInput',
+                      ofType: null,
+                    },
+                  },
+                  defaultValue: null,
+                },
+              ],
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: {
+                  kind: 'OBJECT',
+                  name: 'Organisation',
+                  ofType: null,
+                },
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'deleteOrganisation',
+              description: null,
+              args: [
+                {
+                  name: 'where',
+                  description: null,
+                  type: {
+                    kind: 'NON_NULL',
+                    name: null,
+                    ofType: {
+                      kind: 'INPUT_OBJECT',
+                      name: 'OrganisationWhereUniqueInput',
+                      ofType: null,
+                    },
+                  },
+                  defaultValue: null,
+                },
+              ],
+              type: {
+                kind: 'OBJECT',
+                name: 'Organisation',
+                ofType: null,
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'deleteManyOrganisations',
+              description: null,
+              args: [
+                {
+                  name: 'where',
+                  description: null,
+                  type: {
+                    kind: 'INPUT_OBJECT',
+                    name: 'OrganisationWhereInput',
+                    ofType: null,
+                  },
+                  defaultValue: null,
+                },
+              ],
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: {
+                  kind: 'OBJECT',
+                  name: 'BatchPayload',
+                  ofType: null,
+                },
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
               name: 'createRepository',
               description: null,
               args: [
@@ -4375,6 +5382,73 @@ export default {
           description: null,
           fields: null,
           inputFields: null,
+          interfaces: null,
+          enumValues: null,
+          possibleTypes: null,
+        },
+        {
+          kind: 'INPUT_OBJECT',
+          name: 'OrganisationCreateInput',
+          description: null,
+          fields: null,
+          inputFields: [
+            {
+              name: 'billingPlan',
+              description: null,
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: {
+                  kind: 'ENUM',
+                  name: 'BillingPlan',
+                  ofType: null,
+                },
+              },
+              defaultValue: null,
+            },
+          ],
+          interfaces: null,
+          enumValues: null,
+          possibleTypes: null,
+        },
+        {
+          kind: 'INPUT_OBJECT',
+          name: 'OrganisationUpdateInput',
+          description: null,
+          fields: null,
+          inputFields: [
+            {
+              name: 'billingPlan',
+              description: null,
+              type: {
+                kind: 'ENUM',
+                name: 'BillingPlan',
+                ofType: null,
+              },
+              defaultValue: null,
+            },
+          ],
+          interfaces: null,
+          enumValues: null,
+          possibleTypes: null,
+        },
+        {
+          kind: 'INPUT_OBJECT',
+          name: 'OrganisationUpdateManyMutationInput',
+          description: null,
+          fields: null,
+          inputFields: [
+            {
+              name: 'billingPlan',
+              description: null,
+              type: {
+                kind: 'ENUM',
+                name: 'BillingPlan',
+                ofType: null,
+              },
+              defaultValue: null,
+            },
+          ],
           interfaces: null,
           enumValues: null,
           possibleTypes: null,
@@ -5992,6 +7066,29 @@ export default {
               deprecationReason: null,
             },
             {
+              name: 'organisation',
+              description: null,
+              args: [
+                {
+                  name: 'where',
+                  description: null,
+                  type: {
+                    kind: 'INPUT_OBJECT',
+                    name: 'OrganisationSubscriptionWhereInput',
+                    ofType: null,
+                  },
+                  defaultValue: null,
+                },
+              ],
+              type: {
+                kind: 'OBJECT',
+                name: 'OrganisationSubscriptionPayload',
+                ofType: null,
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
               name: 'repository',
               description: null,
               args: [
@@ -6313,6 +7410,259 @@ export default {
                 ofType: {
                   kind: 'SCALAR',
                   name: 'String',
+                  ofType: null,
+                },
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+          ],
+          inputFields: null,
+          interfaces: [],
+          enumValues: null,
+          possibleTypes: null,
+        },
+        {
+          kind: 'INPUT_OBJECT',
+          name: 'OrganisationSubscriptionWhereInput',
+          description: null,
+          fields: null,
+          inputFields: [
+            {
+              name: 'mutation_in',
+              description: null,
+              type: {
+                kind: 'LIST',
+                name: null,
+                ofType: {
+                  kind: 'NON_NULL',
+                  name: null,
+                  ofType: {
+                    kind: 'ENUM',
+                    name: 'MutationType',
+                    ofType: null,
+                  },
+                },
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'updatedFields_contains',
+              description: null,
+              type: {
+                kind: 'SCALAR',
+                name: 'String',
+                ofType: null,
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'updatedFields_contains_every',
+              description: null,
+              type: {
+                kind: 'LIST',
+                name: null,
+                ofType: {
+                  kind: 'NON_NULL',
+                  name: null,
+                  ofType: {
+                    kind: 'SCALAR',
+                    name: 'String',
+                    ofType: null,
+                  },
+                },
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'updatedFields_contains_some',
+              description: null,
+              type: {
+                kind: 'LIST',
+                name: null,
+                ofType: {
+                  kind: 'NON_NULL',
+                  name: null,
+                  ofType: {
+                    kind: 'SCALAR',
+                    name: 'String',
+                    ofType: null,
+                  },
+                },
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'node',
+              description: null,
+              type: {
+                kind: 'INPUT_OBJECT',
+                name: 'OrganisationWhereInput',
+                ofType: null,
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'AND',
+              description: null,
+              type: {
+                kind: 'LIST',
+                name: null,
+                ofType: {
+                  kind: 'NON_NULL',
+                  name: null,
+                  ofType: {
+                    kind: 'INPUT_OBJECT',
+                    name: 'OrganisationSubscriptionWhereInput',
+                    ofType: null,
+                  },
+                },
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'OR',
+              description: null,
+              type: {
+                kind: 'LIST',
+                name: null,
+                ofType: {
+                  kind: 'NON_NULL',
+                  name: null,
+                  ofType: {
+                    kind: 'INPUT_OBJECT',
+                    name: 'OrganisationSubscriptionWhereInput',
+                    ofType: null,
+                  },
+                },
+              },
+              defaultValue: null,
+            },
+            {
+              name: 'NOT',
+              description: null,
+              type: {
+                kind: 'LIST',
+                name: null,
+                ofType: {
+                  kind: 'NON_NULL',
+                  name: null,
+                  ofType: {
+                    kind: 'INPUT_OBJECT',
+                    name: 'OrganisationSubscriptionWhereInput',
+                    ofType: null,
+                  },
+                },
+              },
+              defaultValue: null,
+            },
+          ],
+          interfaces: null,
+          enumValues: null,
+          possibleTypes: null,
+        },
+        {
+          kind: 'OBJECT',
+          name: 'OrganisationSubscriptionPayload',
+          description: null,
+          fields: [
+            {
+              name: 'mutation',
+              description: null,
+              args: [],
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: {
+                  kind: 'ENUM',
+                  name: 'MutationType',
+                  ofType: null,
+                },
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'node',
+              description: null,
+              args: [],
+              type: {
+                kind: 'OBJECT',
+                name: 'Organisation',
+                ofType: null,
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'updatedFields',
+              description: null,
+              args: [],
+              type: {
+                kind: 'LIST',
+                name: null,
+                ofType: {
+                  kind: 'NON_NULL',
+                  name: null,
+                  ofType: {
+                    kind: 'SCALAR',
+                    name: 'String',
+                    ofType: null,
+                  },
+                },
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'previousValues',
+              description: null,
+              args: [],
+              type: {
+                kind: 'OBJECT',
+                name: 'OrganisationPreviousValues',
+                ofType: null,
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+          ],
+          inputFields: null,
+          interfaces: [],
+          enumValues: null,
+          possibleTypes: null,
+        },
+        {
+          kind: 'OBJECT',
+          name: 'OrganisationPreviousValues',
+          description: null,
+          fields: [
+            {
+              name: 'id',
+              description: null,
+              args: [],
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: {
+                  kind: 'SCALAR',
+                  name: 'ID',
+                  ofType: null,
+                },
+              },
+              isDeprecated: false,
+              deprecationReason: null,
+            },
+            {
+              name: 'billingPlan',
+              description: null,
+              args: [],
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: {
+                  kind: 'ENUM',
+                  name: 'BillingPlan',
                   ofType: null,
                 },
               },

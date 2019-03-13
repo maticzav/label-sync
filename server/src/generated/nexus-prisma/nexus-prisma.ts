@@ -20,6 +20,10 @@ export interface NexusPrismaTypes {
       PageInfo: PageInfoObject
       UserEdge: UserEdgeObject
       AggregateUser: AggregateUserObject
+      Organisation: OrganisationObject
+      OrganisationConnection: OrganisationConnectionObject
+      OrganisationEdge: OrganisationEdgeObject
+      AggregateOrganisation: AggregateOrganisationObject
       Repository: RepositoryObject
       Label: LabelObject
       RepositoryConnection: RepositoryConnectionObject
@@ -33,6 +37,8 @@ export interface NexusPrismaTypes {
       Subscription: SubscriptionObject
       UserSubscriptionPayload: UserSubscriptionPayloadObject
       UserPreviousValues: UserPreviousValuesObject
+      OrganisationSubscriptionPayload: OrganisationSubscriptionPayloadObject
+      OrganisationPreviousValues: OrganisationPreviousValuesObject
       RepositorySubscriptionPayload: RepositorySubscriptionPayloadObject
       RepositoryPreviousValues: RepositoryPreviousValuesObject
       LabelSubscriptionPayload: LabelSubscriptionPayloadObject
@@ -45,6 +51,10 @@ export interface NexusPrismaTypes {
       PageInfo: PageInfoFieldDetails
       UserEdge: UserEdgeFieldDetails
       AggregateUser: AggregateUserFieldDetails
+      Organisation: OrganisationFieldDetails
+      OrganisationConnection: OrganisationConnectionFieldDetails
+      OrganisationEdge: OrganisationEdgeFieldDetails
+      AggregateOrganisation: AggregateOrganisationFieldDetails
       Repository: RepositoryFieldDetails
       Label: LabelFieldDetails
       RepositoryConnection: RepositoryConnectionFieldDetails
@@ -58,6 +68,8 @@ export interface NexusPrismaTypes {
       Subscription: SubscriptionFieldDetails
       UserSubscriptionPayload: UserSubscriptionPayloadFieldDetails
       UserPreviousValues: UserPreviousValuesFieldDetails
+      OrganisationSubscriptionPayload: OrganisationSubscriptionPayloadFieldDetails
+      OrganisationPreviousValues: OrganisationPreviousValuesFieldDetails
       RepositorySubscriptionPayload: RepositorySubscriptionPayloadFieldDetails
       RepositoryPreviousValues: RepositoryPreviousValuesFieldDetails
       LabelSubscriptionPayload: LabelSubscriptionPayloadFieldDetails
@@ -68,6 +80,8 @@ export interface NexusPrismaTypes {
     fields: {
       UserWhereUniqueInput: UserWhereUniqueInputInputObject
       UserWhereInput: UserWhereInputInputObject
+      OrganisationWhereUniqueInput: OrganisationWhereUniqueInputInputObject
+      OrganisationWhereInput: OrganisationWhereInputInputObject
       RepositoryWhereUniqueInput: RepositoryWhereUniqueInputInputObject
       LabelWhereInput: LabelWhereInputInputObject
       RepositoryWhereInput: RepositoryWhereInputInputObject
@@ -75,6 +89,9 @@ export interface NexusPrismaTypes {
       UserCreateInput: UserCreateInputInputObject
       UserUpdateInput: UserUpdateInputInputObject
       UserUpdateManyMutationInput: UserUpdateManyMutationInputInputObject
+      OrganisationCreateInput: OrganisationCreateInputInputObject
+      OrganisationUpdateInput: OrganisationUpdateInputInputObject
+      OrganisationUpdateManyMutationInput: OrganisationUpdateManyMutationInputInputObject
       RepositoryCreateInput: RepositoryCreateInputInputObject
       LabelCreateManyInput: LabelCreateManyInputInputObject
       LabelCreateInput: LabelCreateInputInputObject
@@ -90,12 +107,15 @@ export interface NexusPrismaTypes {
       LabelUpdateInput: LabelUpdateInputInputObject
       LabelUpdateManyMutationInput: LabelUpdateManyMutationInputInputObject
       UserSubscriptionWhereInput: UserSubscriptionWhereInputInputObject
+      OrganisationSubscriptionWhereInput: OrganisationSubscriptionWhereInputInputObject
       RepositorySubscriptionWhereInput: RepositorySubscriptionWhereInputInputObject
       LabelSubscriptionWhereInput: LabelSubscriptionWhereInputInputObject
     }
   }
   enumTypes: {
     UserOrderByInput: UserOrderByInputValues
+    BillingPlan: BillingPlanValues
+    OrganisationOrderByInput: OrganisationOrderByInputValues
     LabelOrderByInput: LabelOrderByInputValues
     RepositoryOrderByInput: RepositoryOrderByInputValues
     MutationType: MutationTypeValues
@@ -111,6 +131,21 @@ type QueryObject =
   | {
       name: 'usersConnection'
       args?: QueryUsersConnectionArgs[] | false
+      alias?: string
+    }
+  | {
+      name: 'organisation'
+      args?: QueryOrganisationArgs[] | false
+      alias?: string
+    }
+  | {
+      name: 'organisations'
+      args?: QueryOrganisationsArgs[] | false
+      alias?: string
+    }
+  | {
+      name: 'organisationsConnection'
+      args?: QueryOrganisationsConnectionArgs[] | false
       alias?: string
     }
   | { name: 'repository'; args?: QueryRepositoryArgs[] | false; alias?: string }
@@ -136,6 +171,9 @@ type QueryFields =
   | 'user'
   | 'users'
   | 'usersConnection'
+  | 'organisation'
+  | 'organisations'
+  | 'organisationsConnection'
   | 'repository'
   | 'repositories'
   | 'repositoriesConnection'
@@ -153,6 +191,23 @@ type QueryUsersArgs =
   | 'first'
   | 'last'
 type QueryUsersConnectionArgs =
+  | 'where'
+  | 'orderBy'
+  | 'skip'
+  | 'after'
+  | 'before'
+  | 'first'
+  | 'last'
+type QueryOrganisationArgs = 'where'
+type QueryOrganisationsArgs =
+  | 'where'
+  | 'orderBy'
+  | 'skip'
+  | 'after'
+  | 'before'
+  | 'first'
+  | 'last'
+type QueryOrganisationsConnectionArgs =
   | 'where'
   | 'orderBy'
   | 'skip'
@@ -250,6 +305,61 @@ export interface QueryFieldDetails {
       context: core.GetGen<'context'>,
       info?: GraphQLResolveInfo,
     ) => Promise<prisma.UserConnection> | prisma.UserConnection
+  }
+  organisation: {
+    type: 'Organisation'
+    args: Record<QueryOrganisationArgs, core.NexusArgDef<string>>
+    description: string
+    list: undefined
+    nullable: true
+    resolve: (
+      root: core.RootValue<'Query'>,
+      args: { where: OrganisationWhereUniqueInput },
+      context: core.GetGen<'context'>,
+      info?: GraphQLResolveInfo,
+    ) => Promise<prisma.Organisation | null> | prisma.Organisation | null
+  }
+  organisations: {
+    type: 'Organisation'
+    args: Record<QueryOrganisationsArgs, core.NexusArgDef<string>>
+    description: string
+    list: true
+    nullable: false
+    resolve: (
+      root: core.RootValue<'Query'>,
+      args: {
+        where?: OrganisationWhereInput | null
+        orderBy?: prisma.OrganisationOrderByInput | null
+        skip?: number | null
+        after?: string | null
+        before?: string | null
+        first?: number | null
+        last?: number | null
+      },
+      context: core.GetGen<'context'>,
+      info?: GraphQLResolveInfo,
+    ) => Promise<prisma.Organisation[]> | prisma.Organisation[]
+  }
+  organisationsConnection: {
+    type: 'OrganisationConnection'
+    args: Record<QueryOrganisationsConnectionArgs, core.NexusArgDef<string>>
+    description: string
+    list: undefined
+    nullable: false
+    resolve: (
+      root: core.RootValue<'Query'>,
+      args: {
+        where?: OrganisationWhereInput | null
+        orderBy?: prisma.OrganisationOrderByInput | null
+        skip?: number | null
+        after?: string | null
+        before?: string | null
+        first?: number | null
+        last?: number | null
+      },
+      context: core.GetGen<'context'>,
+      info?: GraphQLResolveInfo,
+    ) => Promise<prisma.OrganisationConnection> | prisma.OrganisationConnection
   }
   repository: {
     type: 'Repository'
@@ -535,6 +645,143 @@ type AggregateUserObject =
 type AggregateUserFields = 'count'
 
 export interface AggregateUserFieldDetails {
+  count: {
+    type: 'Int'
+    args: {}
+    description: string
+    list: undefined
+    nullable: false
+    resolve: undefined
+  }
+}
+
+// Types for Organisation
+
+type OrganisationObject =
+  | OrganisationFields
+  | { name: 'id'; args?: [] | false; alias?: string }
+  | { name: 'billingPlan'; args?: [] | false; alias?: string }
+
+type OrganisationFields = 'id' | 'billingPlan'
+
+export interface OrganisationFieldDetails {
+  id: {
+    type: 'ID'
+    args: {}
+    description: string
+    list: undefined
+    nullable: false
+    resolve: undefined
+  }
+  billingPlan: {
+    type: 'BillingPlan'
+    args: {}
+    description: string
+    list: undefined
+    nullable: false
+    resolve: (
+      root: core.RootValue<'Organisation'>,
+      args: {},
+      context: core.GetGen<'context'>,
+      info?: GraphQLResolveInfo,
+    ) => Promise<prisma.BillingPlan> | prisma.BillingPlan
+  }
+}
+
+// Types for OrganisationConnection
+
+type OrganisationConnectionObject =
+  | OrganisationConnectionFields
+  | { name: 'pageInfo'; args?: [] | false; alias?: string }
+  | { name: 'edges'; args?: [] | false; alias?: string }
+  | { name: 'aggregate'; args?: [] | false; alias?: string }
+
+type OrganisationConnectionFields = 'pageInfo' | 'edges' | 'aggregate'
+
+export interface OrganisationConnectionFieldDetails {
+  pageInfo: {
+    type: 'PageInfo'
+    args: {}
+    description: string
+    list: undefined
+    nullable: false
+    resolve: (
+      root: core.RootValue<'OrganisationConnection'>,
+      args: {},
+      context: core.GetGen<'context'>,
+      info?: GraphQLResolveInfo,
+    ) => Promise<prisma.PageInfo> | prisma.PageInfo
+  }
+  edges: {
+    type: 'OrganisationEdge'
+    args: {}
+    description: string
+    list: true
+    nullable: false
+    resolve: (
+      root: core.RootValue<'OrganisationConnection'>,
+      args: {},
+      context: core.GetGen<'context'>,
+      info?: GraphQLResolveInfo,
+    ) => Promise<prisma.OrganisationEdge[]> | prisma.OrganisationEdge[]
+  }
+  aggregate: {
+    type: 'AggregateOrganisation'
+    args: {}
+    description: string
+    list: undefined
+    nullable: false
+    resolve: (
+      root: core.RootValue<'OrganisationConnection'>,
+      args: {},
+      context: core.GetGen<'context'>,
+      info?: GraphQLResolveInfo,
+    ) => Promise<prisma.AggregateOrganisation> | prisma.AggregateOrganisation
+  }
+}
+
+// Types for OrganisationEdge
+
+type OrganisationEdgeObject =
+  | OrganisationEdgeFields
+  | { name: 'node'; args?: [] | false; alias?: string }
+  | { name: 'cursor'; args?: [] | false; alias?: string }
+
+type OrganisationEdgeFields = 'node' | 'cursor'
+
+export interface OrganisationEdgeFieldDetails {
+  node: {
+    type: 'Organisation'
+    args: {}
+    description: string
+    list: undefined
+    nullable: false
+    resolve: (
+      root: core.RootValue<'OrganisationEdge'>,
+      args: {},
+      context: core.GetGen<'context'>,
+      info?: GraphQLResolveInfo,
+    ) => Promise<prisma.Organisation> | prisma.Organisation
+  }
+  cursor: {
+    type: 'String'
+    args: {}
+    description: string
+    list: undefined
+    nullable: false
+    resolve: undefined
+  }
+}
+
+// Types for AggregateOrganisation
+
+type AggregateOrganisationObject =
+  | AggregateOrganisationFields
+  | { name: 'count'; args?: [] | false; alias?: string }
+
+type AggregateOrganisationFields = 'count'
+
+export interface AggregateOrganisationFieldDetails {
   count: {
     type: 'Int'
     args: {}
@@ -911,6 +1158,36 @@ type MutationObject =
       alias?: string
     }
   | {
+      name: 'createOrganisation'
+      args?: MutationCreateOrganisationArgs[] | false
+      alias?: string
+    }
+  | {
+      name: 'updateOrganisation'
+      args?: MutationUpdateOrganisationArgs[] | false
+      alias?: string
+    }
+  | {
+      name: 'updateManyOrganisations'
+      args?: MutationUpdateManyOrganisationsArgs[] | false
+      alias?: string
+    }
+  | {
+      name: 'upsertOrganisation'
+      args?: MutationUpsertOrganisationArgs[] | false
+      alias?: string
+    }
+  | {
+      name: 'deleteOrganisation'
+      args?: MutationDeleteOrganisationArgs[] | false
+      alias?: string
+    }
+  | {
+      name: 'deleteManyOrganisations'
+      args?: MutationDeleteManyOrganisationsArgs[] | false
+      alias?: string
+    }
+  | {
       name: 'createRepository'
       args?: MutationCreateRepositoryArgs[] | false
       alias?: string
@@ -978,6 +1255,12 @@ type MutationFields =
   | 'upsertUser'
   | 'deleteUser'
   | 'deleteManyUsers'
+  | 'createOrganisation'
+  | 'updateOrganisation'
+  | 'updateManyOrganisations'
+  | 'upsertOrganisation'
+  | 'deleteOrganisation'
+  | 'deleteManyOrganisations'
   | 'createRepository'
   | 'updateRepository'
   | 'updateManyRepositories'
@@ -997,6 +1280,12 @@ type MutationUpdateManyUsersArgs = 'data' | 'where'
 type MutationUpsertUserArgs = 'where' | 'create' | 'update'
 type MutationDeleteUserArgs = 'where'
 type MutationDeleteManyUsersArgs = 'where'
+type MutationCreateOrganisationArgs = 'data'
+type MutationUpdateOrganisationArgs = 'data' | 'where'
+type MutationUpdateManyOrganisationsArgs = 'data' | 'where'
+type MutationUpsertOrganisationArgs = 'where' | 'create' | 'update'
+type MutationDeleteOrganisationArgs = 'where'
+type MutationDeleteManyOrganisationsArgs = 'where'
 type MutationCreateRepositoryArgs = 'data'
 type MutationUpdateRepositoryArgs = 'data' | 'where'
 type MutationUpdateManyRepositoriesArgs = 'data' | 'where'
@@ -1092,6 +1381,94 @@ export interface MutationFieldDetails {
     resolve: (
       root: core.RootValue<'Mutation'>,
       args: { where?: UserWhereInput | null },
+      context: core.GetGen<'context'>,
+      info?: GraphQLResolveInfo,
+    ) => Promise<prisma.BatchPayload> | prisma.BatchPayload
+  }
+  createOrganisation: {
+    type: 'Organisation'
+    args: Record<MutationCreateOrganisationArgs, core.NexusArgDef<string>>
+    description: string
+    list: undefined
+    nullable: false
+    resolve: (
+      root: core.RootValue<'Mutation'>,
+      args: { data: OrganisationCreateInput },
+      context: core.GetGen<'context'>,
+      info?: GraphQLResolveInfo,
+    ) => Promise<prisma.Organisation> | prisma.Organisation
+  }
+  updateOrganisation: {
+    type: 'Organisation'
+    args: Record<MutationUpdateOrganisationArgs, core.NexusArgDef<string>>
+    description: string
+    list: undefined
+    nullable: true
+    resolve: (
+      root: core.RootValue<'Mutation'>,
+      args: {
+        data: OrganisationUpdateInput
+        where: OrganisationWhereUniqueInput
+      },
+      context: core.GetGen<'context'>,
+      info?: GraphQLResolveInfo,
+    ) => Promise<prisma.Organisation | null> | prisma.Organisation | null
+  }
+  updateManyOrganisations: {
+    type: 'BatchPayload'
+    args: Record<MutationUpdateManyOrganisationsArgs, core.NexusArgDef<string>>
+    description: string
+    list: undefined
+    nullable: false
+    resolve: (
+      root: core.RootValue<'Mutation'>,
+      args: {
+        data: OrganisationUpdateManyMutationInput
+        where?: OrganisationWhereInput | null
+      },
+      context: core.GetGen<'context'>,
+      info?: GraphQLResolveInfo,
+    ) => Promise<prisma.BatchPayload> | prisma.BatchPayload
+  }
+  upsertOrganisation: {
+    type: 'Organisation'
+    args: Record<MutationUpsertOrganisationArgs, core.NexusArgDef<string>>
+    description: string
+    list: undefined
+    nullable: false
+    resolve: (
+      root: core.RootValue<'Mutation'>,
+      args: {
+        where: OrganisationWhereUniqueInput
+        create: OrganisationCreateInput
+        update: OrganisationUpdateInput
+      },
+      context: core.GetGen<'context'>,
+      info?: GraphQLResolveInfo,
+    ) => Promise<prisma.Organisation> | prisma.Organisation
+  }
+  deleteOrganisation: {
+    type: 'Organisation'
+    args: Record<MutationDeleteOrganisationArgs, core.NexusArgDef<string>>
+    description: string
+    list: undefined
+    nullable: true
+    resolve: (
+      root: core.RootValue<'Mutation'>,
+      args: { where: OrganisationWhereUniqueInput },
+      context: core.GetGen<'context'>,
+      info?: GraphQLResolveInfo,
+    ) => Promise<prisma.Organisation | null> | prisma.Organisation | null
+  }
+  deleteManyOrganisations: {
+    type: 'BatchPayload'
+    args: Record<MutationDeleteManyOrganisationsArgs, core.NexusArgDef<string>>
+    description: string
+    list: undefined
+    nullable: false
+    resolve: (
+      root: core.RootValue<'Mutation'>,
+      args: { where?: OrganisationWhereInput | null },
       context: core.GetGen<'context'>,
       info?: GraphQLResolveInfo,
     ) => Promise<prisma.BatchPayload> | prisma.BatchPayload
@@ -1293,15 +1670,21 @@ type SubscriptionObject =
   | SubscriptionFields
   | { name: 'user'; args?: SubscriptionUserArgs[] | false; alias?: string }
   | {
+      name: 'organisation'
+      args?: SubscriptionOrganisationArgs[] | false
+      alias?: string
+    }
+  | {
       name: 'repository'
       args?: SubscriptionRepositoryArgs[] | false
       alias?: string
     }
   | { name: 'label'; args?: SubscriptionLabelArgs[] | false; alias?: string }
 
-type SubscriptionFields = 'user' | 'repository' | 'label'
+type SubscriptionFields = 'user' | 'organisation' | 'repository' | 'label'
 
 type SubscriptionUserArgs = 'where'
+type SubscriptionOrganisationArgs = 'where'
 type SubscriptionRepositoryArgs = 'where'
 type SubscriptionLabelArgs = 'where'
 
@@ -1320,6 +1703,22 @@ export interface SubscriptionFieldDetails {
     ) =>
       | Promise<prisma.UserSubscriptionPayload | null>
       | prisma.UserSubscriptionPayload
+      | null
+  }
+  organisation: {
+    type: 'OrganisationSubscriptionPayload'
+    args: Record<SubscriptionOrganisationArgs, core.NexusArgDef<string>>
+    description: string
+    list: undefined
+    nullable: true
+    resolve: (
+      root: core.RootValue<'Subscription'>,
+      args: { where?: OrganisationSubscriptionWhereInput | null },
+      context: core.GetGen<'context'>,
+      info?: GraphQLResolveInfo,
+    ) =>
+      | Promise<prisma.OrganisationSubscriptionPayload | null>
+      | prisma.OrganisationSubscriptionPayload
       | null
   }
   repository: {
@@ -1449,6 +1848,107 @@ export interface UserPreviousValuesFieldDetails {
     list: undefined
     nullable: false
     resolve: undefined
+  }
+}
+
+// Types for OrganisationSubscriptionPayload
+
+type OrganisationSubscriptionPayloadObject =
+  | OrganisationSubscriptionPayloadFields
+  | { name: 'mutation'; args?: [] | false; alias?: string }
+  | { name: 'node'; args?: [] | false; alias?: string }
+  | { name: 'updatedFields'; args?: [] | false; alias?: string }
+  | { name: 'previousValues'; args?: [] | false; alias?: string }
+
+type OrganisationSubscriptionPayloadFields =
+  | 'mutation'
+  | 'node'
+  | 'updatedFields'
+  | 'previousValues'
+
+export interface OrganisationSubscriptionPayloadFieldDetails {
+  mutation: {
+    type: 'MutationType'
+    args: {}
+    description: string
+    list: undefined
+    nullable: false
+    resolve: (
+      root: core.RootValue<'OrganisationSubscriptionPayload'>,
+      args: {},
+      context: core.GetGen<'context'>,
+      info?: GraphQLResolveInfo,
+    ) => Promise<prisma.MutationType> | prisma.MutationType
+  }
+  node: {
+    type: 'Organisation'
+    args: {}
+    description: string
+    list: undefined
+    nullable: true
+    resolve: (
+      root: core.RootValue<'OrganisationSubscriptionPayload'>,
+      args: {},
+      context: core.GetGen<'context'>,
+      info?: GraphQLResolveInfo,
+    ) => Promise<prisma.Organisation | null> | prisma.Organisation | null
+  }
+  updatedFields: {
+    type: 'String'
+    args: {}
+    description: string
+    list: true
+    nullable: false
+    resolve: undefined
+  }
+  previousValues: {
+    type: 'OrganisationPreviousValues'
+    args: {}
+    description: string
+    list: undefined
+    nullable: true
+    resolve: (
+      root: core.RootValue<'OrganisationSubscriptionPayload'>,
+      args: {},
+      context: core.GetGen<'context'>,
+      info?: GraphQLResolveInfo,
+    ) =>
+      | Promise<prisma.OrganisationPreviousValues | null>
+      | prisma.OrganisationPreviousValues
+      | null
+  }
+}
+
+// Types for OrganisationPreviousValues
+
+type OrganisationPreviousValuesObject =
+  | OrganisationPreviousValuesFields
+  | { name: 'id'; args?: [] | false; alias?: string }
+  | { name: 'billingPlan'; args?: [] | false; alias?: string }
+
+type OrganisationPreviousValuesFields = 'id' | 'billingPlan'
+
+export interface OrganisationPreviousValuesFieldDetails {
+  id: {
+    type: 'ID'
+    args: {}
+    description: string
+    list: undefined
+    nullable: false
+    resolve: undefined
+  }
+  billingPlan: {
+    type: 'BillingPlan'
+    args: {}
+    description: string
+    list: undefined
+    nullable: false
+    resolve: (
+      root: core.RootValue<'OrganisationPreviousValues'>,
+      args: {},
+      context: core.GetGen<'context'>,
+      info?: GraphQLResolveInfo,
+    ) => Promise<prisma.BillingPlan> | prisma.BillingPlan
   }
 }
 
@@ -1761,6 +2261,60 @@ export type UserWhereInputInputObject =
   | { name: 'OR'; alias?: string }
   | { name: 'NOT'; alias?: string }
 
+export interface OrganisationWhereUniqueInput {
+  id?: string | null
+}
+export type OrganisationWhereUniqueInputInputObject =
+  | Extract<keyof OrganisationWhereUniqueInput, string>
+  | { name: 'id'; alias?: string }
+
+export interface OrganisationWhereInput {
+  id?: string | null
+  id_not?: string | null
+  id_in?: string[]
+  id_not_in?: string[]
+  id_lt?: string | null
+  id_lte?: string | null
+  id_gt?: string | null
+  id_gte?: string | null
+  id_contains?: string | null
+  id_not_contains?: string | null
+  id_starts_with?: string | null
+  id_not_starts_with?: string | null
+  id_ends_with?: string | null
+  id_not_ends_with?: string | null
+  billingPlan?: prisma.BillingPlan | null
+  billingPlan_not?: prisma.BillingPlan | null
+  billingPlan_in?: prisma.BillingPlan[]
+  billingPlan_not_in?: prisma.BillingPlan[]
+  AND?: OrganisationWhereInput[]
+  OR?: OrganisationWhereInput[]
+  NOT?: OrganisationWhereInput[]
+}
+export type OrganisationWhereInputInputObject =
+  | Extract<keyof OrganisationWhereInput, string>
+  | { name: 'id'; alias?: string }
+  | { name: 'id_not'; alias?: string }
+  | { name: 'id_in'; alias?: string }
+  | { name: 'id_not_in'; alias?: string }
+  | { name: 'id_lt'; alias?: string }
+  | { name: 'id_lte'; alias?: string }
+  | { name: 'id_gt'; alias?: string }
+  | { name: 'id_gte'; alias?: string }
+  | { name: 'id_contains'; alias?: string }
+  | { name: 'id_not_contains'; alias?: string }
+  | { name: 'id_starts_with'; alias?: string }
+  | { name: 'id_not_starts_with'; alias?: string }
+  | { name: 'id_ends_with'; alias?: string }
+  | { name: 'id_not_ends_with'; alias?: string }
+  | { name: 'billingPlan'; alias?: string }
+  | { name: 'billingPlan_not'; alias?: string }
+  | { name: 'billingPlan_in'; alias?: string }
+  | { name: 'billingPlan_not_in'; alias?: string }
+  | { name: 'AND'; alias?: string }
+  | { name: 'OR'; alias?: string }
+  | { name: 'NOT'; alias?: string }
+
 export interface RepositoryWhereUniqueInput {
   id?: string | null
 }
@@ -2049,6 +2603,27 @@ export interface UserUpdateManyMutationInput {
 export type UserUpdateManyMutationInputInputObject =
   | Extract<keyof UserUpdateManyMutationInput, string>
   | { name: 'githubUserId'; alias?: string }
+
+export interface OrganisationCreateInput {
+  billingPlan?: prisma.BillingPlan
+}
+export type OrganisationCreateInputInputObject =
+  | Extract<keyof OrganisationCreateInput, string>
+  | { name: 'billingPlan'; alias?: string }
+
+export interface OrganisationUpdateInput {
+  billingPlan?: prisma.BillingPlan | null
+}
+export type OrganisationUpdateInputInputObject =
+  | Extract<keyof OrganisationUpdateInput, string>
+  | { name: 'billingPlan'; alias?: string }
+
+export interface OrganisationUpdateManyMutationInput {
+  billingPlan?: prisma.BillingPlan | null
+}
+export type OrganisationUpdateManyMutationInputInputObject =
+  | Extract<keyof OrganisationUpdateManyMutationInput, string>
+  | { name: 'billingPlan'; alias?: string }
 
 export interface RepositoryCreateInput {
   name?: string
@@ -2379,6 +2954,27 @@ export type UserSubscriptionWhereInputInputObject =
   | { name: 'OR'; alias?: string }
   | { name: 'NOT'; alias?: string }
 
+export interface OrganisationSubscriptionWhereInput {
+  mutation_in?: prisma.MutationType[]
+  updatedFields_contains?: string | null
+  updatedFields_contains_every?: string[]
+  updatedFields_contains_some?: string[]
+  node?: OrganisationWhereInput | null
+  AND?: OrganisationSubscriptionWhereInput[]
+  OR?: OrganisationSubscriptionWhereInput[]
+  NOT?: OrganisationSubscriptionWhereInput[]
+}
+export type OrganisationSubscriptionWhereInputInputObject =
+  | Extract<keyof OrganisationSubscriptionWhereInput, string>
+  | { name: 'mutation_in'; alias?: string }
+  | { name: 'updatedFields_contains'; alias?: string }
+  | { name: 'updatedFields_contains_every'; alias?: string }
+  | { name: 'updatedFields_contains_some'; alias?: string }
+  | { name: 'node'; alias?: string }
+  | { name: 'AND'; alias?: string }
+  | { name: 'OR'; alias?: string }
+  | { name: 'NOT'; alias?: string }
+
 export interface RepositorySubscriptionWhereInput {
   mutation_in?: prisma.MutationType[]
   updatedFields_contains?: string | null
@@ -2426,6 +3022,23 @@ export type UserOrderByInputValues =
   | 'id_DESC'
   | 'githubUserId_ASC'
   | 'githubUserId_DESC'
+  | 'createdAt_ASC'
+  | 'createdAt_DESC'
+  | 'updatedAt_ASC'
+  | 'updatedAt_DESC'
+
+export type BillingPlanValues =
+  | 'OSS'
+  | 'PERSONAL'
+  | 'ORGANISATION_STARTER'
+  | 'ORGANISATION_MEDIUM'
+  | 'ORGANISATION_LARGE'
+
+export type OrganisationOrderByInputValues =
+  | 'id_ASC'
+  | 'id_DESC'
+  | 'billingPlan_ASC'
+  | 'billingPlan_DESC'
   | 'createdAt_ASC'
   | 'createdAt_DESC'
   | 'updatedAt_ASC'
