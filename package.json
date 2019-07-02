@@ -8,7 +8,7 @@
     "test": "yarn workspaces run test",
     "coverage": "yarn codecov",
     "prerelease": "yarn run build",
-    "release": "lerna publish"
+    "release": "lerna publish --yes"
   },
   "devDependencies": {
     "codecov": "3.1.0",
