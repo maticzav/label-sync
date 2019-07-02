@@ -28,7 +28,7 @@
     "update-notifier": "^2.5.0"
   },
   "devDependencies": {
-    "@types/inquirer": "0.0.43",
+    "@types/inquirer": "6.0.3",
     "@types/jest": "23.3.12",
     "@types/meow": "5.0.0",
     "@types/mkdirp": "0.5.2",
