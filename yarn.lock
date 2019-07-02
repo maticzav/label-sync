@@ -1186,7 +1186,7 @@
   dependencies:
     "@types/jest-diff" "*"
 
-"@types/lodash.uniq@^4.5.6":
+"@types/lodash.uniq@4.5.6":
   version "4.5.6"
   resolved "https://registry.yarnpkg.com/@types/lodash.uniq/-/lodash.uniq-4.5.6.tgz#adb052f6c7eeb38b920c13166e7a972dd960b4c5"
   integrity sha512-XHNMXBtiwsWZstZMyxOYjr0e8YYWv0RgPlzIHblTuwBBiWo2MzWVaTBihtBpslb5BglgAWIeBv69qt1+RTRW1A==
