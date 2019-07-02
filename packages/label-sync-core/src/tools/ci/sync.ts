@@ -9,6 +9,7 @@ import { RepositoryConfig } from '../../types'
 import { getRepositoryManifest } from '../../manifest'
 
 export interface SyncOptions {
+  skipSiblingSync: boolean
   dryRun: boolean
 }
 
@@ -67,6 +68,17 @@ export async function handleSync(
       configuration.config,
       options,
     )
+
+    if (options.skipSiblingSync) {
+      return {
+        status: 'success',
+        repository: configuration.repository,
+        config: configuration.config,
+        manifest: manifest.manifest,
+        labels: labelSync,
+        siblings: null,
+      }
+    }
 
     const siblingsSync = await handleSiblingSync(
       client,

@@ -14,7 +14,10 @@ describe('ci', () => {
       },
     }
 
-    const res = await handleSync(client as any, config, { dryRun: true })
+    const res = await handleSync(client as any, config, {
+      dryRun: true,
+      skipSiblingSync: false,
+    })
 
     expect(client.issues.createLabel).toBeCalledTimes(0)
     expect(client.issues.updateLabel).toBeCalledTimes(0)
@@ -48,12 +51,52 @@ describe('ci', () => {
       },
     }
 
-    const res = await handleSync(client as any, config, { dryRun: false })
+    const res = await handleSync(client as any, config, {
+      dryRun: false,
+      skipSiblingSync: false,
+    })
 
     expect(client.issues.createLabel).toBeCalledTimes(1)
     expect(client.issues.updateLabel).toBeCalledTimes(3)
     expect(client.issues.deleteLabel).toBeCalledTimes(0)
     expect(client.issues.addLabels).toBeCalledTimes(4)
+    expect(res).toMatchSnapshot()
+  })
+
+  test('perform successful sync and skips siblings', async () => {
+    const client = fixtures.githubClient()
+    const config: Config = {
+      'maticzav/label-sync': {
+        labels: {
+          basic: '123123',
+        },
+        strict: false,
+      },
+      'maticzav/graphql-shield': {
+        labels: {
+          basic: '234234',
+          'kind/bug': {
+            color: 'ff0000',
+            siblings: ['bug/0-no-reproduction'],
+          },
+          'bug/0-no-reproduction': {
+            color: '00ff00',
+            description: 'No reproduction available.',
+          },
+        },
+        strict: false,
+      },
+    }
+
+    const res = await handleSync(client as any, config, {
+      dryRun: false,
+      skipSiblingSync: true,
+    })
+
+    expect(client.issues.createLabel).toBeCalledTimes(1)
+    expect(client.issues.updateLabel).toBeCalledTimes(3)
+    expect(client.issues.deleteLabel).toBeCalledTimes(0)
+    expect(client.issues.addLabels).toBeCalledTimes(0)
     expect(res).toMatchSnapshot()
   })
 
@@ -72,7 +115,10 @@ describe('ci', () => {
       },
     }
 
-    const res = await handleSync(client as any, config, { dryRun: true })
+    const res = await handleSync(client as any, config, {
+      dryRun: true,
+      skipSiblingSync: false,
+    })
 
     expect(client.issues.createLabel).toBeCalledTimes(0)
     expect(client.issues.updateLabel).toBeCalledTimes(0)
@@ -86,7 +132,7 @@ describe('ci', () => {
           repository: 'label-sync',
         },
       ],
-      options: { dryRun: true },
+      options: { dryRun: true, skipSiblingSync: false },
       syncs: [],
     })
   })
@@ -106,7 +152,10 @@ describe('ci', () => {
       },
     }
 
-    const res = await handleSync(client as any, config, { dryRun: true })
+    const res = await handleSync(client as any, config, {
+      dryRun: true,
+      skipSiblingSync: false,
+    })
 
     expect(client.issues.createLabel).toBeCalledTimes(0)
     expect(client.issues.updateLabel).toBeCalledTimes(0)
@@ -126,7 +175,7 @@ describe('ci', () => {
         },
       },
       configErrors: [],
-      options: { dryRun: true },
+      options: { dryRun: true, skipSiblingSync: false },
       syncs: [
         {
           config: {

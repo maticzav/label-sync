@@ -30,7 +30,7 @@ export type RepositorySyncReport =
       config: RepositoryConfig
       manifest: RepositoryManifest
       labels: LabelSyncReport
-      siblings: SiblingSyncReport
+      siblings: SiblingSyncReport | null
     }
   | {
       status: 'error'
@@ -67,11 +67,17 @@ export function createTerminalReport(report: SyncReport): string {
       .map(report => {
         switch (report.status) {
           case 'success': {
-            return mls`
+            if (report.siblings) {
+              return mls`
               | ${createLabelSyncReport(report.labels)}
               |
               | ${createSiblingSyncReport(report.siblings)}
-            `
+              `
+            } else {
+              return mls`
+              | ${createLabelSyncReport(report.labels)}
+              `
+            }
           }
 
           case 'error': {

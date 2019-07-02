@@ -29,6 +29,7 @@ Object {
   "configErrors": Array [],
   "options": Object {
     "dryRun": false,
+    "skipSiblingSync": false,
   },
   "syncs": Array [
     Object {
@@ -48,6 +49,7 @@ Object {
         },
         "options": Object {
           "dryRun": false,
+          "skipSiblingSync": false,
         },
         "removals": Array [
           Object {
@@ -211,6 +213,7 @@ Object {
         },
         "options": Object {
           "dryRun": false,
+          "skipSiblingSync": false,
         },
         "repository": Object {
           "full_name": "maticzav/label-sync",
@@ -267,6 +270,7 @@ Object {
         },
         "options": Object {
           "dryRun": false,
+          "skipSiblingSync": false,
         },
         "removals": Array [
           Object {
@@ -468,6 +472,7 @@ Object {
         },
         "options": Object {
           "dryRun": false,
+          "skipSiblingSync": false,
         },
         "repository": Object {
           "full_name": "maticzav/graphql-shield",
@@ -477,6 +482,263 @@ Object {
           },
         },
       },
+      "status": "success",
+    },
+  ],
+}
+`;
+
+exports[`ci perform successful sync and skips siblings 1`] = `
+Object {
+  "config": Object {
+    "maticzav/graphql-shield": Object {
+      "labels": Object {
+        "basic": "234234",
+        "bug/0-no-reproduction": Object {
+          "color": "00ff00",
+          "description": "No reproduction available.",
+        },
+        "kind/bug": Object {
+          "color": "ff0000",
+          "siblings": Array [
+            "bug/0-no-reproduction",
+          ],
+        },
+      },
+      "strict": false,
+    },
+    "maticzav/label-sync": Object {
+      "labels": Object {
+        "basic": "123123",
+      },
+      "strict": false,
+    },
+  },
+  "configErrors": Array [],
+  "options": Object {
+    "dryRun": false,
+    "skipSiblingSync": true,
+  },
+  "syncs": Array [
+    Object {
+      "config": Object {
+        "labels": Object {
+          "basic": "123123",
+        },
+        "strict": false,
+      },
+      "labels": Object {
+        "additions": Array [],
+        "config": Object {
+          "labels": Object {
+            "basic": "123123",
+          },
+          "strict": false,
+        },
+        "options": Object {
+          "dryRun": false,
+          "skipSiblingSync": true,
+        },
+        "removals": Array [
+          Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "bug/no-reproduction",
+          },
+          Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "kind/bug",
+          },
+        ],
+        "repository": Object {
+          "full_name": "maticzav/label-sync",
+          "name": "label-sync",
+          "owner": Object {
+            "login": "maticzav",
+          },
+        },
+        "updates": Array [
+          Object {
+            "color": "123123",
+            "current_name": "basic",
+            "description": "",
+            "name": "basic",
+            "owner": "maticzav",
+            "repo": "label-sync",
+          },
+        ],
+      },
+      "manifest": Object {
+        "basic": Object {
+          "label": Object {
+            "color": "f266f4",
+            "default": false,
+            "description": "",
+            "name": "basic",
+          },
+          "siblings": Array [],
+        },
+        "bug/no-reproduction": Object {
+          "label": Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "bug/no-reproduction",
+          },
+          "siblings": Array [],
+        },
+        "kind/bug": Object {
+          "label": Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "kind/bug",
+          },
+          "siblings": Array [],
+        },
+      },
+      "repository": Object {
+        "full_name": "maticzav/label-sync",
+        "name": "label-sync",
+        "owner": Object {
+          "login": "maticzav",
+        },
+      },
+      "siblings": null,
+      "status": "success",
+    },
+    Object {
+      "config": Object {
+        "labels": Object {
+          "basic": "234234",
+          "bug/0-no-reproduction": Object {
+            "color": "00ff00",
+            "description": "No reproduction available.",
+          },
+          "kind/bug": Object {
+            "color": "ff0000",
+            "siblings": Array [
+              "bug/0-no-reproduction",
+            ],
+          },
+        },
+        "strict": false,
+      },
+      "labels": Object {
+        "additions": Array [
+          Object {
+            "color": "00ff00",
+            "description": "No reproduction available.",
+            "name": "bug/0-no-reproduction",
+            "owner": "maticzav",
+            "repo": "graphql-shield",
+          },
+        ],
+        "config": Object {
+          "labels": Object {
+            "basic": "234234",
+            "bug/0-no-reproduction": Object {
+              "color": "00ff00",
+              "description": "No reproduction available.",
+            },
+            "kind/bug": Object {
+              "color": "ff0000",
+              "siblings": Array [
+                "bug/0-no-reproduction",
+              ],
+            },
+          },
+          "strict": false,
+        },
+        "options": Object {
+          "dryRun": false,
+          "skipSiblingSync": true,
+        },
+        "removals": Array [
+          Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "bug/no-reproduction",
+          },
+        ],
+        "repository": Object {
+          "full_name": "maticzav/graphql-shield",
+          "name": "graphql-shield",
+          "owner": Object {
+            "login": "maticzav",
+          },
+        },
+        "updates": Array [
+          Object {
+            "color": "234234",
+            "current_name": "basic",
+            "description": "",
+            "name": "basic",
+            "owner": "maticzav",
+            "repo": "graphql-shield",
+          },
+          Object {
+            "color": "ff0000",
+            "current_name": "kind/bug",
+            "description": "",
+            "name": "kind/bug",
+            "owner": "maticzav",
+            "repo": "graphql-shield",
+          },
+        ],
+      },
+      "manifest": Object {
+        "basic": Object {
+          "label": Object {
+            "color": "f266f4",
+            "default": false,
+            "description": "",
+            "name": "basic",
+          },
+          "siblings": Array [],
+        },
+        "bug/0-no-reproduction": Object {
+          "label": Object {
+            "color": "00ff00",
+            "default": false,
+            "description": "No reproduction available.",
+            "name": "bug/0-no-reproduction",
+          },
+          "siblings": Array [],
+        },
+        "bug/no-reproduction": Object {
+          "label": Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "bug/no-reproduction",
+          },
+          "siblings": Array [],
+        },
+        "kind/bug": Object {
+          "label": Object {
+            "color": "333333",
+            "default": false,
+            "description": "",
+            "name": "kind/bug",
+          },
+          "siblings": Array [
+            "bug/0-no-reproduction",
+          ],
+        },
+      },
+      "repository": Object {
+        "full_name": "maticzav/graphql-shield",
+        "name": "graphql-shield",
+        "owner": Object {
+          "login": "maticzav",
+        },
+      },
+      "siblings": null,
       "status": "success",
     },
   ],
@@ -496,6 +758,7 @@ Object {
   "configErrors": Array [],
   "options": Object {
     "dryRun": true,
+    "skipSiblingSync": false,
   },
   "syncs": Array [
     Object {
@@ -515,6 +778,7 @@ Object {
         },
         "options": Object {
           "dryRun": true,
+          "skipSiblingSync": false,
         },
         "removals": Array [
           Object {
@@ -676,6 +940,7 @@ Object {
         },
         "options": Object {
           "dryRun": true,
+          "skipSiblingSync": false,
         },
         "repository": Object {
           "full_name": "maticzav/label-sync",
