@@ -1,9 +1,5 @@
 version: 2.0
 
-dependencies:
-  pre:
-    - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-
 jobs:
   test:
     docker:
@@ -28,12 +24,15 @@ jobs:
           name: Install monorepo
           command: yarn install
       - run:
-          name: Release packages
+          name: Setup NPM and Github credentials
           command: |
+            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
             git config --global github.token $GH_TOKEN
             git config --global user.email $GH_EMAIL
             git config --global user.name $GH_USER
-            yarn release
+      - run:
+          name: Release packages
+          command: yarn release
 
 workflows:
   version: 2
