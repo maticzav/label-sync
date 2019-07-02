@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@types/inquirer": "0.0.43",
-    "@types/jest": "23.3.12",
+    "@types/jest": "23.3.14",
     "@types/meow": "5.0.0",
     "@types/mkdirp": "0.5.2",
     "@types/node": "10.12.18",
