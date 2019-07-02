@@ -11,7 +11,7 @@
     "release": "lerna publish --yes"
   },
   "devDependencies": {
-    "codecov": "3.1.0",
+    "codecov": "3.5.0",
     "husky": "1.3.1",
     "lerna": "3.10.5",
     "prettier": "1.15.3",
