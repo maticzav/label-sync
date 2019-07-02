@@ -1,4 +1,4 @@
-import lodash from 'lodash'
+import lodash from 'lodash.uniq'
 import * as Octokit from '@octokit/rest'
 import { Sibling, RepositoryConfig, LabelConfig } from './types'
 import {
