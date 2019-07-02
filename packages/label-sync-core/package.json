@@ -15,25 +15,25 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
+    "@octokit/rest": "^16.28.2",
     "chalk": "^2.4.1",
     "lodash.uniq": "^4.5.0",
-    "multilines": "^1.0.2",
-    "probot": "^7.5.0"
+    "multilines": "^1.0.2"
   },
   "devDependencies": {
-    "@types/jest": "23.3.12",
-    "@types/lodash.uniq": "^4.5.4",
-    "@types/node": "10.12.18",
-    "jest": "23.6.0",
+    "@types/jest": "24.0.15",
+    "@types/lodash.uniq": "^4.5.6",
+    "@types/node": "12.0.10",
+    "jest": "24.8.0",
     "jest-serializer-ansi": "1.0.3",
     "npm-run-all": "4.1.5",
     "rimraf": "2.6.3",
-    "ts-jest": "23.10.5",
-    "ts-node": "7.0.1",
-    "tslint": "5.12.1",
-    "tslint-config-prettier": "1.17.0",
+    "ts-jest": "24.0.2",
+    "ts-node": "8.3.0",
+    "tslint": "5.18.0",
+    "tslint-config-prettier": "1.18.0",
     "tslint-config-standard": "8.0.1",
-    "typescript": "3.2.2"
+    "typescript": "3.5.2"
   },
   "license": "MIT"
 }

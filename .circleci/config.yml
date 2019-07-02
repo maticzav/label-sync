@@ -8,13 +8,13 @@ jobs:
       - checkout
       - run:
           name: Install monorepo
-          command: yarn install
+          command: npm install
       - run:
           name: Test packages
-          command: yarn test
+          command: npm run test
       - run:
           name: Get coverage of packages
-          command: yarn coverage
+          command: npm run coverage
   publish:
     docker:
       - image: 'circleci/node:11.3.0'
@@ -22,7 +22,7 @@ jobs:
       - checkout
       - run:
           name: Install monorepo
-          command: yarn install
+          command: npm install
       - run:
           name: Setup NPM and Github credentials
           command: |
@@ -32,7 +32,7 @@ jobs:
             git config --global user.name $GH_USER
       - run:
           name: Release packages
-          command: yarn release
+          command: npm run release
 
 workflows:
   version: 2

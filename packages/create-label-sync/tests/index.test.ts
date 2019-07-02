@@ -23,7 +23,9 @@ describe('bin', () => {
       .mockResolvedValueOnce({ dist: dist })
     const fsExistsSyncMock = jest.spyOn(fs, 'existsSync').mockReturnValue(true)
     const fsMkdirSync = jest.spyOn(mkdirp, 'sync')
-    const consoleLogMock = jest.spyOn(console, 'log').mockReturnValue({})
+    const consoleLogMock = jest
+      .spyOn(console, 'log')
+      .mockImplementation(() => {})
     const loadTemplateMock = jest.spyOn(creato, 'loadTemplate')
 
     /**
@@ -57,10 +59,10 @@ describe('bin', () => {
       .mockResolvedValueOnce({ template: 'template' })
       .mockResolvedValueOnce({ dist: dist })
     const fsExistsSyncMock = jest.spyOn(fs, 'existsSync').mockReturnValue(false)
-    const fsMkdirSync = jest
-      .spyOn(mkdirp, 'sync')
-      .mockImplementation(() => false)
-    const consoleLogMock = jest.spyOn(console, 'log').mockReturnValue({})
+    const fsMkdirSync = jest.spyOn(mkdirp, 'sync').mockImplementation(() => '')
+    const consoleLogMock = jest
+      .spyOn(console, 'log')
+      .mockImplementation(() => {})
     const loadTemplateMock = jest
       .spyOn(creato, 'loadTemplate')
       .mockResolvedValue({ status: 'ok', message: 'pass' })
@@ -94,11 +96,13 @@ describe('bin', () => {
       .mockResolvedValueOnce({ template: 'template' })
       .mockResolvedValueOnce({ dist: dist })
     const fsExistsSyncMock = jest.spyOn(fs, 'existsSync').mockReturnValue(false)
-    const fsMkdirSync = jest
-      .spyOn(mkdirp, 'sync')
-      .mockImplementation(() => false)
-    const consoleLogMock = jest.spyOn(console, 'log').mockReturnValue({})
-    const consoleWarnMock = jest.spyOn(console, 'warn').mockReturnValue({})
+    const fsMkdirSync = jest.spyOn(mkdirp, 'sync').mockImplementation(() => '')
+    const consoleLogMock = jest
+      .spyOn(console, 'log')
+      .mockImplementation(() => {})
+    const consoleWarnMock = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
     const loadTemplateMock = jest
       .spyOn(creato, 'loadTemplate')
       .mockResolvedValue({ status: 'err', message: 'pass' })

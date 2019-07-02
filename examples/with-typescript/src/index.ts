@@ -1,5 +1,5 @@
-import * as Octokit from '@octokit/rest'
-import * as meow from 'meow'
+import Octokit from '@octokit/rest'
+import meow from 'meow'
 import { handleSync, createCISyncTerminalReport } from 'label-sync-core'
 
 /** Labels import */
@@ -17,6 +17,10 @@ const cli = meow(
         type: 'boolean',
         default: false,
       },
+      skipSiblings: {
+        type: 'boolean',
+        default: false,
+      },
     },
   },
 )
@@ -24,27 +28,39 @@ const cli = meow(
 main(cli)
 
 /**
- * Main
+ * Used to prevent hiting Github's abuse detection systems.
  */
+const OctokitWithThrottling = Octokit.plugin(
+  require('@octokit/plugin-throttling'),
+)
 
 async function main(cli: meow.Result): Promise<void> {
   if (!process.env.GITHUB_TOKEN) {
     throw new Error('Missing Github credentials.')
   }
 
-  const client = new Octokit({
+  const client = new OctokitWithThrottling({
+    auth: process.env.GITHUB_TOKEN,
     headers: {
       accept: 'application/vnd.github.symmetra-preview+json',
     },
-  })
-
-  client.authenticate({
-    type: 'app',
-    token: process.env.GITHUB_TOKEN,
+    throttle: {
+      onRateLimit: () => true,
+      onAbuseLimit: (
+        retryAfter: number,
+        options: { method: string; url: string },
+      ) => {
+        console.warn(
+          `Abuse detected for request ${options.method} ${options.url}`,
+        )
+        return true
+      },
+    },
   })
 
   const report = await handleSync(client, labels, {
     dryRun: cli.flags.dryrun,
+    skipSiblingSync: cli.flags.skipSiblings,
   })
 
   const humanReadableReport = createCISyncTerminalReport(report)

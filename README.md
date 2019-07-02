@@ -26,6 +26,8 @@ Label Sync helps you sync Github labels across multiple repositories. Using an i
 npm init label-sync
 ```
 
+> `label-sync-core` creates multiple requests at once which might trigger Github's abuse detection systems. I encourage you to use https://github.com/octokit/plugin-throttling.js when setting up your client to prevent hiting abuse limits.
+
 I suggest you use one of the prebuilt configurations as a starting point of your project. You can find more about the templates in the [/examples](https://github.com/maticzav/label-sync/tree/master/examples) folder.
 
 ## Configuration
