@@ -18,7 +18,7 @@
     "chalk": "^2.4.1",
     "lodash.uniq": "^4.5.0",
     "multilines": "^1.0.2",
-    "probot": "^7.5.0"
+    "probot": "^9.0.0"
   },
   "devDependencies": {
     "@types/jest": "23.3.12",
