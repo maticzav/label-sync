@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.5](https://github.com/maticzav/label-sync/compare/v2.3.4...v2.3.5) (2019-07-03)
+
+
+### Bug Fixes
+
+* Make clearer reports ([60fa991](https://github.com/maticzav/label-sync/commit/60fa991))
+
+
+
+
+
 ## [2.3.4](https://github.com/maticzav/label-sync/compare/v2.3.3...v2.3.4) (2019-07-03)
 
 
