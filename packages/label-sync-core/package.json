@@ -17,12 +17,10 @@
   "dependencies": {
     "@octokit/rest": "^16.28.2",
     "chalk": "^2.4.1",
-    "lodash.uniq": "^4.5.0",
     "multilines": "^1.0.2"
   },
   "devDependencies": {
     "@types/jest": "24.0.15",
-    "@types/lodash.uniq": "^4.5.6",
     "@types/node": "12.0.10",
     "jest": "24.8.0",
     "jest-serializer-ansi": "1.0.3",

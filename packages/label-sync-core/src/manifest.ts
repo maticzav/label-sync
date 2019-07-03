@@ -1,4 +1,3 @@
-import lodash from 'lodash.uniq'
 import * as Octokit from '@octokit/rest'
 import { Sibling, RepositoryConfig, LabelConfig } from './types'
 import {
@@ -169,7 +168,7 @@ export function getSiblingsInConfiguration(
     [],
   )
 
-  return lodash.uniq(siblings)
+  return [...new Set(siblings)]
 }
 
 /**
