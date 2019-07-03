@@ -32,6 +32,11 @@ export async function assignSiblingsToIssue(
   /* Find all the siblings */
   const siblings = getSiblings(issue.labels, issue.labels)
 
+  /* Skip sync on no-siblings. */
+  if (siblings.length === 0) {
+    return siblings
+  }
+
   /* Only perform calculation on dryRun */
   if (options.dryRun) {
     return siblings

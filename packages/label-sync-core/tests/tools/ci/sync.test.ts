@@ -59,7 +59,7 @@ describe('ci', () => {
     expect(client.issues.createLabel).toBeCalledTimes(1)
     expect(client.issues.updateLabel).toBeCalledTimes(3)
     expect(client.issues.deleteLabel).toBeCalledTimes(0)
-    expect(client.issues.addLabels).toBeCalledTimes(4)
+    expect(client.issues.addLabels).toBeCalledTimes(2)
     expect(res).toMatchSnapshot()
   })
 
