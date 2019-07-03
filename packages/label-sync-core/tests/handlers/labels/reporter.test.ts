@@ -28,6 +28,99 @@ describe('label sync reporter', () => {
     expect(message).toMatchSnapshot()
   })
 
+  test('correctly generates empty additions report', async () => {
+    const report: LabelSyncReport = {
+      config: {
+        labels: {
+          test: {
+            description: 'Testing sync.',
+            color: '#123456',
+          },
+        },
+        strict: true,
+      },
+      options: { dryRun: false },
+      repository: {
+        name: 'label-sync',
+        owner: {
+          login: 'maticzav',
+        },
+        full_name: 'maticzav/label-sync',
+      },
+      additions: [],
+      updates: [
+        { color: 'f266f4', default: false, description: '', name: 'basic' },
+      ],
+      removals: [
+        { color: 'f266f4', default: false, description: '', name: 'basic' },
+      ],
+    }
+
+    expect(createTerminalReport(report)).toMatchSnapshot()
+  })
+
+  test('correctly generates empty updates report', async () => {
+    const report: LabelSyncReport = {
+      config: {
+        labels: {
+          test: {
+            description: 'Testing sync.',
+            color: '#123456',
+          },
+        },
+        strict: true,
+      },
+      options: { dryRun: false },
+      repository: {
+        name: 'label-sync',
+        owner: {
+          login: 'maticzav',
+        },
+        full_name: 'maticzav/label-sync',
+      },
+      additions: [
+        { color: 'f266f4', default: false, description: '', name: 'basic' },
+      ],
+      updates: [],
+      removals: [
+        { color: 'f266f4', default: false, description: '', name: 'basic' },
+      ],
+    }
+
+    expect(createTerminalReport(report)).toMatchSnapshot()
+  })
+
+  test('correctly generates empty removals report', async () => {
+    const report: LabelSyncReport = {
+      config: {
+        labels: {
+          test: {
+            description: 'Testing sync.',
+            color: '#123456',
+          },
+        },
+        strict: true,
+      },
+      options: { dryRun: false },
+      repository: {
+        name: 'label-sync',
+        owner: {
+          login: 'maticzav',
+        },
+        full_name: 'maticzav/label-sync',
+      },
+      additions: [
+        { color: 'f266f4', default: false, description: '', name: 'basic' },
+      ],
+      updates: [
+        { color: 'f266f4', default: false, description: '', name: 'basic' },
+      ],
+      removals: [],
+    }
+
+    expect(createTerminalReport(report)).toMatchSnapshot()
+  })
+
   test('correctly generates report', async () => {
     const report: LabelSyncReport = {
       config: {
