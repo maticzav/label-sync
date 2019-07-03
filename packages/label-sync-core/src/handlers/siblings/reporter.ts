@@ -26,8 +26,10 @@ export type SiblingSyncIssueReport = {
  * @param report
  */
 export function createTerminalReport(report: SiblingSyncReport): string {
+  const issues = report.issues.filter(issue => issue.siblings.length > 0)
+
   /* Clean the report. */
-  if (report.issues.length === 0) {
+  if (issues.length === 0) {
     return ml`
     | No changes to siblings in the repository.
     `
@@ -38,12 +40,11 @@ export function createTerminalReport(report: SiblingSyncReport): string {
     | (dry run: "${report.options.dryRun}")
     |
     | ${chalk.bgMagenta('Created siblings:')}
-    | ${issuesList(report.issues)}
+    | ${issuesList(issues)}
   `
 
   function issuesList(issues: SiblingSyncIssueReport[]): string {
     return issues
-      .filter(issue => issue.siblings.length > 0)
       .map(
         issue => ml`
           | - ${issue.issue.title} (${issue.issue.number})
