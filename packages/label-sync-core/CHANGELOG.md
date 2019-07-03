@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.1](https://github.com/maticzav/label-sync/compare/v2.3.0...v2.3.1) (2019-07-03)
+
+
+### Bug Fixes
+
+* Skip add labels call when no siblings need to be added to the issue ([5f1b920](https://github.com/maticzav/label-sync/commit/5f1b920))
+
+
+
+
+
 # [2.3.0](https://github.com/maticzav/label-sync/compare/v2.2.2...v2.3.0) (2019-07-03)
 
 
