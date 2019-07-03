@@ -68,11 +68,13 @@ export function createTerminalReport(report: SyncReport): string {
               | ${createLabelSyncReport(report.labels)}
               |
               | ${createSiblingSyncReport(report.siblings)}
+              |
               `
             } else {
               return ml`
               | ${chalk.bgGreen(report.repository.full_name)}
               | ${createLabelSyncReport(report.labels)}
+              |
               `
             }
           }
@@ -81,6 +83,7 @@ export function createTerminalReport(report: SyncReport): string {
             return ml`
               | ${chalk.bgRed(report.repository.full_name)}
               | ${report.message}
+              |
             `
           }
         }
