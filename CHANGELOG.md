@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.3.0](https://github.com/maticzav/label-sync/compare/v2.2.2...v2.3.0) (2019-07-03)
+
+
+### Features
+
+* Unify reports of multiple handlers ([634706b](https://github.com/maticzav/label-sync/commit/634706b))
+
+
+
+
+
 ## [2.2.2](https://github.com/maticzav/label-sync/compare/v2.2.1...v2.2.2) (2019-07-03)
 
 
