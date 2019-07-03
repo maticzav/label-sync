@@ -41,7 +41,7 @@ export async function assignSiblingsToIssue(
   const res = await github.issues.addLabels({
     repo: repository.name,
     owner: repository.owner.login,
-    number: issue.number,
+    issue_number: issue.number,
     labels: siblings.map(label => label.name),
   })
 
