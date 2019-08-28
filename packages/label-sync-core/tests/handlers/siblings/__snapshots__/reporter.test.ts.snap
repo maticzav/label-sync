@@ -5,7 +5,7 @@ exports[`sibling sync reporter correctly generates report 1`] = `
 (dry run: "false")
 
 Created siblings:
-- Another Issue Title (5)
+- "Another Issue Title" (#5)
 Added basic, kind/bug."
 `;
 
