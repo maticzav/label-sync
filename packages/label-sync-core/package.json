@@ -1,7 +1,7 @@
 {
   "name": "label-sync-core",
   "description": "The core module of Label Sync manager.",
-  "version": "2.3.10",
+  "version": "2.3.11",
   "main": "dist/index.js",
   "repository": "https://github.com/maticzav/label-sync.git",
   "author": "Matic Zavadlal <matic.zavadlal@gmail.com>",
