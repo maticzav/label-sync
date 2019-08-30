@@ -47,7 +47,7 @@ export function createTerminalReport(report: SiblingSyncReport): string {
     return issues
       .map(
         issue => ml`
-          | - ${issue.issue.title} (${issue.issue.number})
+          | - "${issue.issue.title}" (#${issue.issue.number})
           | Added ${issue.siblings.map(l => l.name).join(', ')}.
         `,
       )
