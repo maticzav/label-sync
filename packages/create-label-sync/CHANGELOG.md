@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.15](https://github.com/maticzav/label-sync/compare/v2.3.14...v2.3.15) (2019-09-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency inquirer to v7 ([b35c3fc](https://github.com/maticzav/label-sync/commit/b35c3fc))
+
+
+
+
+
 ## [2.3.14](https://github.com/maticzav/label-sync/compare/v2.3.13...v2.3.14) (2019-09-03)
 
 **Note:** Version bump only for package create-label-sync
