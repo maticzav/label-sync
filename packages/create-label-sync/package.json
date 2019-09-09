@@ -21,7 +21,7 @@
   "dependencies": {
     "chalk": "^2.4.1",
     "creato": "^1.0.5",
-    "inquirer": "^6.4.1",
+    "inquirer": "^7.0.0",
     "meow": "^5.0.0",
     "mkdirp": "^0.5.1",
     "ora": "^3.4.0",
