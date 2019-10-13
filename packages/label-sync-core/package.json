@@ -15,11 +15,11 @@
     "chalk": "^2.4.1",
     "lodash.uniq": "^4.5.0",
     "multilines": "^1.0.2",
-    "probot": "^7.5.0"
+    "probot": "^9.5.3"
   },
   "devDependencies": {
     "@types/lodash.uniq": "^4.5.4",
-    "@types/node": "10.12.18"
+    "@types/node": "12.7.12"
   },
   "license": "MIT"
 }

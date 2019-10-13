@@ -1,25 +1,14 @@
 {
   "name": "server",
   "version": "0.0.0",
-  "scripts": {
-    "dev:graphql": "ts-node-dev --no-notify --respawn --transpileOnly ./src/graphql"
-  },
+  "scripts": {},
   "dependencies": {
-    "graphql": "^14.1.1",
-    "graphql-shield": "^5.3.0",
-    "graphql-yoga": "^1.17.4",
     "jsonwebtoken": "^8.5.0",
-    "nexus": "^0.11.1",
-    "nexus-prisma": "^0.3.4",
-    "prisma-client-lib": "^1.28.1",
     "probot": "^9.0.0"
   },
   "devDependencies": {
-    "@types/graphql": "^14.0.7",
     "@types/jsonwebtoken": "^8.3.2",
-    "@types/node": "^11.10.5",
-    "nexus-prisma-generate": "^0.3.4",
-    "prisma": "^1.28.1",
+    "@types/node": "^12.7.12",
     "ts-node-dev": "^1.0.0-pre.32"
   },
   "license": "MIT"
