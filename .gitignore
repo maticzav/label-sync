@@ -5,6 +5,7 @@ coverage
 .DS_Store
 *.log*
 .env*
+*.tsbuildinfo
 package-lock.json
 
 __tmp__

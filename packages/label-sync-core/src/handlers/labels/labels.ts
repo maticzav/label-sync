@@ -97,7 +97,7 @@ export async function removeLabelsFromRepository(
    */
   async function removeLabelFromRepository(
     label: GithubLabel,
-  ): Promise<Octokit.IssuesDeleteLabelResponse> {
+  ): Promise<Octokit.IssuesDeleteLabelParams> {
     return github.issues
       .deleteLabel({
         owner: repository.owner.login,
