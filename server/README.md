@@ -2,9 +2,39 @@
 
 > Pricing: we only care about configured repositories. Depending on the number of configured repositories you have in the labelsync.yml, you have to subscribe to a matching plan. (This way, we don't have to store any information about the installed repositories.)
 
+## Milestones
+
+### Version 0.1 (31.10.2019)
+
+> LabelSyncing, Configuration verification.
+
+- [ ] `CLI`
+- [ ] `push` event
+- [ ] `checks_run`
+
+### Version 0.2
+
+- [ ] `issues.labeled` event
+- [ ] `label.created` event
+
+### Version 0.3
+
+- [ ] `siblings`
+- [ ] `hooks`
+
 !TODO: Figure out how a Github app can check which repositories it can access.
 
-### Events we'll be listening to:
+https://developer.github.com/v3/apps/installations/#list-repositories
+
+## CLI
+
+> LabelSync will come with a CLI tool and library, which will help organisations sync their labels across repositories.
+
+### Features
+
+- `typesafe configuration`
+
+## Events we'll be listening to:
 
 #### `push`
 
