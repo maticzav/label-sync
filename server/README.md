@@ -72,6 +72,51 @@ _*Uses:*_
 1. `validateConfiguration` to load configuration from master repository. (Should skip any action if the configuration is invalid.)
 2. `handleSiblingsSync` to sync siblings of a particular label.
 
+#### `label.created`, `label.deleted`, `label.edited`
+
+> Triggered when a repository's label is created, edited, or deleted.
+
+We should make sure no new label is created in `strict` repositories, and that no label
+specified in the `labelsync.yml` is missing from a repository.
+
+TODO: What should we do if a label is deleted? Should we eventually have evidence of
+all labels internally and reassign a particular label to all issues it was removed from?
+
+#### `marketplace_purchase`
+
+> Triggered when someone purchases a GitHub Marketplace plan, cancels their plan, upgrades their plan (effective immediately), downgrades a plan that remains pending until the end of the billing cycle, or cancels a pending plan change.
+
+We should store information about the plan of each particular subscribed organisation.
+This information would come in play when validating a configuration.
+
+_*Useful links:*_
+
+- https://developer.github.com/marketplace/integrating-with-the-github-marketplace-api/github-marketplace-webhook-events/
+
+#### `membership`
+
+> Triggered when a user is added or removed from a team. Organization hooks only.
+
+Eventually, we should differentiate plans depending on the number of members a particular organization has. When membership event is triggered we should determine whether the current plan still matches
+the requirements of the organisation and create issues accordingly.
+
+#### `organization`
+
+> Triggered when an organization is deleted and renamed, and when a user is added, removed, or invited to an organization. Organization hooks only.
+
+Related to `membership` event.
+
+#### `pull_request.opened`, `pull_request.labeled`
+
+>     Triggered when a pull request is assigned, unassigned, labeled, unlabeled, opened, edited, closed, reopened, synchronize, ready_for_review, locked, unlocked or when a pull request review is requested or removed.
+
+We should check configuration and create a message indicating whether a pull request brings valid changes to existing configuration, and what these changes are.
+
+_*Uses:*_
+
+1. `configurationValidation` to determine the validity of a configuration.
+2. `createCheckRun`/`createComment` to provide feedback.
+
 #### `github_app_authorization`
 
 > Triggered when someone revokes their authorization of a GitHub App.
