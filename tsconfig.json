@@ -10,6 +10,7 @@
     // "isolatedModules": true,
 
     "strict": true,
+    "strictNullChecks": true,
 
     /* Additional Checks */
     "noUnusedLocals": true,
