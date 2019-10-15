@@ -14,12 +14,16 @@ export type LSConfiguration = {
   repos: Map<LSRepositoryName, LSRepository>
 }
 
-export type LSRepositoryName = string
-
+/**
+ * Repository represents a single Github repository.
+ * When configured as `strict` it will delete any surplus of labels
+ * in the repository.
+ */
 export type LSRepository = {
   strict: boolean
   labels: Map<LSLabelName, LSLabel>
 }
+export type LSRepositoryName = string
 
 /**
  * Label represents the central unit of LabelSync. Each label
@@ -32,6 +36,10 @@ export type LSLabelDefinition = {
   color: string
   siblings?: LSSibling[]
   hooks?: LSHook[]
+  // oldName?: string -- TODO: renaming
+  // perhaps it would be better if renamings were noted in a separate file
+  // or through dialogue to skip the unnecessary field deletion step.
+  // * PR message: "I have renamed these labels: - old:new"
 }
 export type LSLabelName = string
 export type LSLabelColor = string
@@ -55,6 +63,8 @@ export function lsLabelDefinition(label: LSLabel): LSLabelDefinition {
 /**
  * Sibling represents a label that LabelSync should add whenever
  * a parent label is assigned to issues or pull request.
+ * Siblings can only refer to labels also defined in LabelSync repository
+ * configuration.
  */
 export type LSSibling = string
 
