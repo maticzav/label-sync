@@ -3,6 +3,7 @@ const path = require('path')
 
 const chalk = require('chalk')
 const execa = require('execa')
+const ml = require('multilines').default
 
 /* Constants */
 
@@ -19,10 +20,22 @@ const packagesWithTs = packages.filter(p =>
   fs.existsSync(path.resolve(p, 'tsconfig.json')),
 )
 
-const args = ['-b', ...packagesWithTs, ...process.argv.slice(2)]
+/* Server module */
 
-console.log(chalk.inverse('Building TypeScript definition files'))
-process.stdout.write('Building\n')
+const server = path.resolve(__dirname, '../server')
+
+/* Build */
+
+const builds = [server, ...packagesWithTs]
+
+console.log(ml`
+  | ${chalk.reset.inverse.bold.cyan(' BUILDING ')}
+  | ${builds.map(build => `- ${build}`).join('\n')}
+`)
+
+const args = ['-b', server, ...packagesWithTs, ...process.argv.slice(2)]
+
+console.log(chalk.inverse('Building TypeScript definition files\n'))
 
 try {
   execa.sync('tsc', args, { stdio: 'inherit' })

@@ -1,5 +1,5 @@
 {
-  "name": "@label-sync/cli",
+  "name": "@labelsync/cli",
   "version": "0.0.0",
   "description": "CLI tool for Label Sync",
   "main": "dist/index.js",

@@ -2,7 +2,8 @@ import fs from 'fs'
 import path from 'path'
 import { stringify } from 'yaml'
 
-import * as constants from './constants'
+import * as constants from '@labelsync/core/src/constants'
+
 import { Either, right, left, maybe } from './utils'
 import { findFolderUp } from './fs'
 
@@ -123,7 +124,7 @@ export async function save(
  * @param errors
  */
 function reportValidationErrors(errors: ValidationError[]): string {
-  return 'many errors'
+  return `many errors ${errors.length}`
 }
 
 /**
