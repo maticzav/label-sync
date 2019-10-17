@@ -1,8 +1,10 @@
 import yaml from 'yaml'
 import { Application } from 'probot'
 
-import * as cons from './constants'
+import * as cons from './data/constants'
 import { log } from './loggers'
+import { validateYAMLConfiguration } from './configuration'
+import { loadYAMLLSConfiguration } from './data/labelsync/configuration'
 
 /**
  * Probot webhook.
@@ -25,31 +27,7 @@ export default (app: Application) => {
      * labels sync.
      */
 
-    const rawConfig = await context.github.repos.getContents({
-      owner: owner,
-      path: cons.labelSyncConfigurationFilePath,
-      repo: repo,
-      ref: ref,
-    })
-
-    switch (rawConfig.status) {
-      case 200: {
-        /* Validate configuration file. */
-        if (Array.isArray(rawConfig.data) || !rawConfig.data.content) {
-          log.uservalidation(`received a list instead of a file.`)
-        } else {
-          const buffer = Buffer.from(
-            rawConfig.data.content,
-            'base64',
-          ).toString()
-          const yamlConfig = yaml.parse(buffer, {})
-        }
-      }
-      default: {
-        /* Process the error status. */
-        log.uservalidation(config.data)
-      }
-    }
+    const config = loadYAMLLSConfiguration(context.github, { owner, repo, ref })
 
     /* Process configuration file. */
   })

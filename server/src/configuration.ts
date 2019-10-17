@@ -1,7 +1,7 @@
-import joi from '@hapi/joi'
+import joi, { ValidationError } from '@hapi/joi'
 
-import * as either from './data/either'
-import * as ls from './data/labelsync'
+import { Either, left, right } from './data/either'
+import { LSConfiguration } from './data/labelsync/configuration'
 
 /* Schema */
 
@@ -68,7 +68,11 @@ const lsConfiguration = joi.object().keys({
  *
  * @param yaml
  */
-export function validateYAMLConfiguration(yaml: object): ls.LSConfiguration {
-  const { error, errors, warnings, value } = lsConfiguration.validate(yaml)
-  return
+export function validateYAMLConfiguration(
+  yaml: object,
+): Either<ValidationError, LSConfiguration> {
+  const { error, errors, value } = lsConfiguration.validate(yaml)
+
+  if (error) return left(error)
+  return right(value)
 }

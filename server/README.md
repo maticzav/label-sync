@@ -1,5 +1,9 @@
 # server
 
+## Open questions:
+
+1. Is `check_suite.requested` event retriggered on each push to a particular branch, or should we look out for `push` events on that branch.
+
 > Pricing: we only care about configured repositories. Depending on the number of configured repositories you have in the labelsync.yml, you have to subscribe to a matching plan. (This way, we don't have to store any information about the installed repositories.)
 
 ## Milestones
@@ -8,8 +12,8 @@
 
 > LabelSyncing, Configuration verification.
 
-- [ ] `CLI`
 - [ ] `push` event
+- [ ] `CLI`
 - [ ] `checks_run`
 
 ### Version 0.2

@@ -12,10 +12,6 @@ import {
 } from './labels'
 import { LabelSyncReport } from './reporter'
 
-export interface LabelSyncOptions {
-  dryRun: boolean
-}
-
 /**
  *
  * Handles Label Sync in a repository.
@@ -29,7 +25,6 @@ export async function handleLabelSync(
   client: Octokit,
   repository: GithubRepository,
   config: RepositoryConfig,
-  options: LabelSyncOptions,
 ): Promise<LabelSyncReport> {
   /**
    * Label Sync handler firstly loads current labels from Github,
@@ -44,19 +39,6 @@ export async function handleLabelSync(
 
   const diff = getLabelsDiff(currentLabels, newLabels)
 
-  /* Sync */
-
-  if (options.dryRun) {
-    return {
-      repository: repository,
-      config: config,
-      options: options,
-      additions: diff.add,
-      updates: diff.update,
-      removals: diff.remove,
-    }
-  }
-
   const additions = await addLabelsToRepository(client, diff.add, repository)
   const updates = await updateLabelsInRepository(
     client,
@@ -70,7 +52,6 @@ export async function handleLabelSync(
   return {
     repository: repository,
     config,
-    options: options,
     additions,
     updates,
     removals,
