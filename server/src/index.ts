@@ -1,14 +1,13 @@
-import yaml from 'yaml'
 import { Application } from 'probot'
 
-import * as cons from './data/constants'
-import { log } from './loggers'
-import { validateYAMLConfiguration } from './configuration'
-import { loadYAMLLSConfiguration } from './data/labelsync/configuration'
+import { either } from 'fp-ts/lib/Either'
 
-/**
- * Probot webhook.
- */
+import * as consts from './data/constants'
+import {
+  loadYAMLConfigFile,
+  validateYAMLConfiguration,
+} from './data/labelsync/configuration'
+
 export default (app: Application) => {
   app.on('push', async context => {
     const owner = context.payload.repository.owner.login
@@ -16,7 +15,7 @@ export default (app: Application) => {
     const ref = context.payload.ref
     const masterRef = `refs/heads/${context.payload.repository.master_branch}`
 
-    const configurationRepo = cons.labelSyncConfigurationRepository(owner)
+    const configurationRepo = consts.labelSyncConfigurationRepository(owner)
 
     /* Ignore changes in non-configuration repositories. */
     if (configurationRepo === repo) return
@@ -27,7 +26,8 @@ export default (app: Application) => {
      * labels sync.
      */
 
-    const config = loadYAMLLSConfiguration(context.github, { owner, repo, ref })
+    const yamlConfig = loadYAMLConfigFile(context.github, { owner, repo, ref })
+    const lsConfig = either.map(validateYAMLConfiguration())
 
     /* Process configuration file. */
   })

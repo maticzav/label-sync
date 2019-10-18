@@ -7,6 +7,7 @@ import { Octokit } from 'probot'
 import yaml from 'yaml'
 
 import { labelSyncConfigurationFilePath } from '../constants'
+import { filterMap, none, some } from 'fp-ts/lib/Option'
 
 /* File logger. */
 
@@ -33,22 +34,23 @@ export type LSSibling = t.TypeOf<typeof LSSibling>
  * Represents a label hook. LabelSync triggers a label hook
  * every time a hook is added to an issues or a pull request.
  */
-const LSHook = t.type({
-  integration: t.string,
-})
+const LSHook = t.union([
+  t.type({
+    integration: t.literal('webhook'),
+    endpoint: t.string,
+  }),
+  t.type({
+    integration: t.literal('slack'),
+    action: t.literal('notify'),
+    users: t.array(t.string),
+    channels: t.array(t.string),
+  }),
+  t.type({
+    integration: t.literal('pr'),
+    action: t.union([t.literal('merge'), t.literal('close')]),
+  }),
+])
 export type LSHook = t.TypeOf<typeof LSHook>
-
-// export type LSHook =
-//   /* webhooks */
-//   | {
-//       integration: 'webhook'
-//       endpoint: string
-//     }
-//   /* slack */
-//   | { integration: 'slack'; action: 'notify'; user: string }
-//   /* pull requests */
-//   | { integration: 'pr'; action: 'merge' }
-//   | { integration: 'pr'; action: 'close' }
 
 /**
  * Label represents the central unit of LabelSync. Each label
@@ -102,7 +104,13 @@ export interface ILSConfiguration extends LSConfiguration {}
 export function validateYAMLConfiguration(
   yaml: object,
 ): Either<t.Errors, LSConfiguration> {
-  return chain(validateConfiguration)(LSConfiguration.decode(yaml))
+  return LSConfiguration.decode(yaml)
+}
+
+export interface ConfigurationValidationError {
+  path: string[]
+  value: string[]
+  message: string
 }
 
 /**
@@ -111,7 +119,7 @@ export function validateYAMLConfiguration(
  */
 function validateConfiguration(
   config: LSConfiguration,
-): Either<t.Errors, LSConfiguration> {
+): Either<Array<ConfigurationValidationError>, LSConfiguration> {
   /* Helper functions */
   const repos = Object.keys(config.repos)
   const repo = (name: string): LSRepository => config.repos[name]!
@@ -123,27 +131,32 @@ function validateConfiguration(
     const label = (name: string): LSLabel => repoConfig.labels[name]!
 
     /* Check whether repository configuration defines all siblings. */
-    const labelsWithMissingSiblings = labels.filterMap<SiblingsValidationError>(
-      labelName => {
-        const labelConfig = label(labelName)
-        const missingSiblings = maybe([], labelConfig.siblings).filter(
-          sibling => labels.some(label => label === sibling),
-        )
+    const labelsWithMissingSiblings = filterMap<
+      string,
+      ConfigurationValidationError
+    >(labelName => {
+      const labelConfig = label(labelName)
+      const missingSiblings = labelConfig.siblings.filter(sibling =>
+        labels.some(label => label === sibling),
+      )
 
-        if (missingSiblings.length > 0) {
-          return {
-            repository: repoName,
-            label: labelName,
-            siblings: missingSiblings,
-          }
-        } else {
-          return null
-        }
-      },
-    )
+      if (missingSiblings.length > 0) {
+        return some({
+          path: [repoName, labelName],
+          value: missingSiblings,
+          message: `Some of the labels are missing in configuration.`,
+        })
+      } else {
+        return none
+      }
+    })
 
     return acc.concat(labelsWithMissingSiblings)
   }, [])
+
+  if (errors.length > 0) {
+    return left(errors)
+  }
 
   return right(config)
 }
@@ -162,7 +175,7 @@ export type LSConfigurationParams = {
  * @param octokit
  * @param params
  */
-export async function loadYAMLLSConfiguration(
+export async function loadYAMLConfigFile(
   octokit: Octokit,
   { owner, repo, ref }: LSConfigurationParams,
 ): Promise<Either<string, any>> {
