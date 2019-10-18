@@ -5,6 +5,8 @@
   "dependencies": {
     "@hapi/joi": "^16.1.7",
     "express": "^4.17.1",
+    "fp-ts": "^2.1.0",
+    "io-ts": "^2.0.1",
     "jsonwebtoken": "^8.5.0",
     "probot": "^9.0.0"
   },

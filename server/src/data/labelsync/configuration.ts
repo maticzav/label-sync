@@ -1,10 +1,12 @@
-import joi, { ValidationError } from '@hapi/joi'
 import debug from 'debug'
-import { Context, Octokit } from 'probot'
+// import * as either from 'fp-ts/lib/Either'
+// import { pipe } from 'fp-ts/lib/pipeable'
+import { Either, either, right, left, fold, chain } from 'fp-ts/lib/Either'
+import * as t from 'io-ts'
+import { Octokit } from 'probot'
 import yaml from 'yaml'
 
 import { labelSyncConfigurationFilePath } from '../constants'
-import { Either, left, right } from '../either'
 
 /* File logger. */
 
@@ -19,119 +21,75 @@ const log = debug('data:configuration')
 /* Types */
 
 /**
- * Configuration represents an entire configuration for all
- * LabelSync tools that an organisation is using.
+ * Sibling represents a label that LabelSync should add whenever
+ * a parent label is assigned to issues or pull request.
+ * Siblings can only refer to labels also defined in LabelSync repository
+ * configuration.
  */
-export type LSConfiguration = {
-  repos: Map<LSRepositoryName, LSRepository>
-}
+const LSSibling = t.string
+export type LSSibling = t.TypeOf<typeof LSSibling>
 
 /**
- * Repository represents a single Github repository.
- * When configured as `strict` it will delete any surplus of labels
- * in the repository.
+ * Represents a label hook. LabelSync triggers a label hook
+ * every time a hook is added to an issues or a pull request.
  */
-export type LSRepository = {
-  strict: boolean
-  labels: Map<LSLabelName, LSLabel>
-}
-export type LSRepositoryName = string
+const LSHook = t.type({
+  integration: t.string,
+})
+export type LSHook = t.TypeOf<typeof LSHook>
+
+// export type LSHook =
+//   /* webhooks */
+//   | {
+//       integration: 'webhook'
+//       endpoint: string
+//     }
+//   /* slack */
+//   | { integration: 'slack'; action: 'notify'; user: string }
+//   /* pull requests */
+//   | { integration: 'pr'; action: 'merge' }
+//   | { integration: 'pr'; action: 'close' }
 
 /**
  * Label represents the central unit of LabelSync. Each label
  * can have multiple siblings that are meaningfully related to
  * a label itself, multiple hooks that trigger different actions.
  */
-export type LSLabel = LSLabelDefinition | LSLabelColor
-export type LSLabelDefinition = {
-  description?: string
-  color: LSLabelColor
-  siblings: LSSibling[]
-  hooks: LSHook[]
-}
-export type LSLabelName = string
-export type LSLabelColor = string
+const LSLabel = t.type({
+  description: t.string,
+  color: t.string,
+  siblings: t.array(LSSibling),
+  hooks: t.array(LSHook),
+})
+export type LSLabel = t.TypeOf<typeof LSLabel>
+
+const LSLabelName = t.string
+export type LSLabelName = t.TypeOf<typeof LSLabelName>
 
 /**
- * Sibling represents a label that LabelSync should add whenever
- * a parent label is assigned to issues or pull request.
- * Siblings can only refer to labels also defined in LabelSync repository
- * configuration.
+ * Repository represents a single Github repository.
+ * When configured as `strict` it will delete any surplus of labels
+ * in the repository.
  */
-export type LSSibling = string
+const LSRepository = t.type({
+  strict: t.boolean,
+  labels: t.record(LSLabelName, LSLabel),
+})
+type LSRepository = t.TypeOf<typeof LSRepository>
+export interface ILSRepository extends LSRepository {}
+
+const LSRepositoryName = t.string
+export type LSRepositoryName = t.TypeOf<typeof LSRepositoryName>
 
 /**
- * Represents a label hook. LabelSync triggers a label hook
- * every time a hook is added to an issues or a pull request.
+ * Configuration represents an entire configuration for all
+ * LabelSync tools that an organisation is using.
  */
-export type LSHook =
-  /* webhooks */
-  | {
-      integration: 'webhook'
-      endpoint: string
-    }
-  /* slack */
-  | { integration: 'slack'; action: 'notify'; user: string }
-  /* pull requests */
-  | { integration: 'pr'; action: 'merge' }
-  | { integration: 'pr'; action: 'close' }
-
-/* Schema */
-
-const lsSibling = joi.string()
-
-const lsHook = joi.alternatives(
-  /* Webhook integration */
-  joi.object().keys({
-    integration: 'webhook',
-    enpoint: joi
-      .string()
-      .uri()
-      .required(),
-  }),
-  /* Slack integrations */
-  joi.object().keys({
-    integration: 'slack',
-    action: 'notify',
-    user: joi.string().required(),
-  }),
-  /* PR manager */
-  joi.object().keys({
-    integration: 'pr',
-    action: joi.alternatives('merge', 'close'),
-  }),
-)
-
-const lsLabel = joi.object().keys({
-  description: joi.string(),
-  color: joi
-    .string()
-    .regex(/\#\w\w\w\w\w\w/)
-    .required(),
-  siblings: joi
-    .array()
-    .items(lsSibling)
-    .default([]),
-  hooks: joi
-    .array()
-    .items(lsHook)
-    .default([]),
+const LSConfiguration = t.type({
+  repos: t.record(LSRepositoryName, LSRepository),
 })
-
-const lsRepository = joi.object().keys({
-  strict: joi.boolean().default(false),
-  labels: joi
-    .object()
-    .pattern(/.*/, lsLabel)
-    .required(),
-})
-
-const lsConfiguration = joi.object().keys({
-  repos: joi
-    .object()
-    .pattern(/.*/, lsRepository)
-    .required(),
-})
+type LSConfiguration = t.TypeOf<typeof LSConfiguration>
+export interface ILSConfiguration extends LSConfiguration {}
 
 /* Validation */
 
@@ -143,12 +101,51 @@ const lsConfiguration = joi.object().keys({
  */
 export function validateYAMLConfiguration(
   yaml: object,
-): Either<ValidationError, LSConfiguration> {
-  const { error, errors, value } = lsConfiguration.validate(yaml)
-  // TODO: wtf.
+): Either<t.Errors, LSConfiguration> {
+  return chain(validateConfiguration)(LSConfiguration.decode(yaml))
+}
 
-  if (error) return left(error)
-  return right(value)
+/**
+ * Generates a manifest of TS configuration and validates its input.
+ * @param values
+ */
+function validateConfiguration(
+  config: LSConfiguration,
+): Either<t.Errors, LSConfiguration> {
+  /* Helper functions */
+  const repos = Object.keys(config.repos)
+  const repo = (name: string): LSRepository => config.repos[name]!
+
+  /* Validator */
+  const errors = repos.reduce((acc, repoName) => {
+    const repoConfig = repo(repoName)
+    const labels = Object.keys(repoConfig.labels)
+    const label = (name: string): LSLabel => repoConfig.labels[name]!
+
+    /* Check whether repository configuration defines all siblings. */
+    const labelsWithMissingSiblings = labels.filterMap<SiblingsValidationError>(
+      labelName => {
+        const labelConfig = label(labelName)
+        const missingSiblings = maybe([], labelConfig.siblings).filter(
+          sibling => labels.some(label => label === sibling),
+        )
+
+        if (missingSiblings.length > 0) {
+          return {
+            repository: repoName,
+            label: labelName,
+            siblings: missingSiblings,
+          }
+        } else {
+          return null
+        }
+      },
+    )
+
+    return acc.concat(labelsWithMissingSiblings)
+  }, [])
+
+  return right(config)
 }
 
 /* Github related stuff. */
@@ -168,7 +165,7 @@ export type LSConfigurationParams = {
 export async function loadYAMLLSConfiguration(
   octokit: Octokit,
   { owner, repo, ref }: LSConfigurationParams,
-) {
+): Promise<Either<string, any>> {
   /**
    * Attempts to load a single file configuraiton from Github.
    */
@@ -183,28 +180,30 @@ export async function loadYAMLLSConfiguration(
     case 200: {
       /* Validate configuration file. */
       if (Array.isArray(rawConfig.data) || !rawConfig.data.content) {
-        return left('')
-        log(`received a list instead of a file.`)
+        return left(`received a list instead of a file.`)
       } else {
         const buffer = Buffer.from(rawConfig.data.content, 'base64').toString()
         const yamlConfig = yaml.parse(buffer, {})
-        const config = validateYAMLConfiguration(yamlConfig)
 
-        if (config.type === 'left') {
-          /* Something failed miserably. */
-          /**
-           * Don't do anything for now. Eventually, we want to open an issue
-           * explaining what went wrong.
-           */
-        } else {
-          /* Everything is fine with your configuraiton. */
-          /**
-           * Seems like you know what you're doing, we'll sync all your settings.
-           */
-        }
+        return right(yamlConfig)
+        // const config = validateYAMLConfiguration(yamlConfig)
+
+        // if (config.type === 'left') {
+        //   /* Something failed miserably. */
+        //   /**
+        //    * Don't do anything for now. Eventually, we want to open an issue
+        //    * explaining what went wrong.
+        //    */
+        // } else {
+        //   /* Everything is fine with your configuraiton. */
+        //   /**
+        //    * Seems like you know what you're doing, we'll sync all your settings.
+        //    */
+        // }
       }
     }
     default: {
+      return left('Something unexpected happened.')
       /* Process the error status. */
       log(rawConfig.data)
     }
