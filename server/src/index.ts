@@ -1,6 +1,6 @@
 import { Application } from 'probot'
 
-import { either, chain } from 'fp-ts/lib/Either'
+import * as e from 'fp-ts/lib/Either'
 import { pipe } from 'fp-ts/lib/pipeable'
 
 import * as consts from './data/constants'
@@ -8,6 +8,7 @@ import {
   loadYAMLConfigFile,
   validateYAMLConfiguration,
 } from './data/labelsync/configuration'
+import { identity } from 'fp-ts/lib/function'
 
 export default (app: Application) => {
   app.on('push', async context => {
@@ -31,12 +32,15 @@ export default (app: Application) => {
       owner,
       repo,
       ref,
-    })
+    })()
 
-    const config = pipe(
-      yamlConfig,
-      chain(validateYAMLConfiguration),
-    )
+    if (e.isLeft(yamlConfig)) {
+      /* Create an issue informing a user that we couldn't load configuration file. */
+      return
+    }
+
+    const lsConfig = e.fold(err => {}, validateYAMLConfiguration)(yamlConfig)
+
     /* Process configuration file. */
   })
 }

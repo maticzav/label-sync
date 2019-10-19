@@ -1,17 +1,11 @@
-import debug from 'debug'
-// import * as either from 'fp-ts/lib/Either'
-// import { pipe } from 'fp-ts/lib/pipeable'
-import { Either, either, right, left, fold, chain } from 'fp-ts/lib/Either'
+import * as e from 'fp-ts/lib/Either'
+import { Task } from 'fp-ts/lib/Task'
 import * as t from 'io-ts'
 import { Octokit } from 'probot'
 import yaml from 'yaml'
 
 import { labelSyncConfigurationFilePath } from '../constants'
-import { filterMap, none, some } from 'fp-ts/lib/Option'
-
-/* File logger. */
-
-const log = debug('data:configuration')
+import { identity } from 'fp-ts/lib/function'
 
 /**
  * Every type that is related to configuration.
@@ -119,6 +113,16 @@ export interface ILSConfiguration extends LSConfiguration {}
 
 /* Validation */
 
+export type LSConfigurationError =
+  | {
+      type: 'LOAD'
+      message: string
+    }
+  | {
+      type: 'VALIDATION'
+      message: string[]
+    }
+
 /**
  * Processes a decoded YAML configuration. It doesn't perform
  * any content checks.
@@ -127,8 +131,21 @@ export interface ILSConfiguration extends LSConfiguration {}
  */
 export function validateYAMLConfiguration(
   yaml: object,
-): Either<t.Errors, LSConfiguration> {
-  return LSConfiguration.decode(yaml)
+): e.Either<LSConfigurationError, LSConfiguration> {
+  return e.mapLeft(validationErrorToLSConfigurationError)(
+    LSConfiguration.decode(yaml),
+  )
+}
+
+/**
+ * Converts ValidationError from io-ts to LSConfigurationError.
+ *
+ * @param errors
+ */
+function validationErrorToLSConfigurationError(
+  errors: Array<t.ValidationError>,
+): LSConfigurationError {
+  return { type: 'VALIDATION', message: [] }
 }
 
 /* Github related stuff. */
@@ -151,13 +168,10 @@ export interface LoadYamlConfigFileError {
  * @param octokit
  * @param params
  */
-export async function loadYAMLConfigFile(
+export const loadYAMLConfigFile = (
   octokit: Octokit,
   { owner, repo, ref }: LSConfigurationParams,
-): Promise<Either<LoadYamlConfigFileError, any>> {
-  /**
-   * Attempts to load a single file configuraiton from Github.
-   */
+): Task<e.Either<LoadYamlConfigFileError, any>> => async () => {
   const res = await octokit.repos.getContents({
     owner: owner,
     path: labelSyncConfigurationFilePath,
@@ -169,17 +183,17 @@ export async function loadYAMLConfigFile(
     case 200: {
       /* Validate configuration file. */
       if (Array.isArray(res.data) || !res.data.content) {
-        return left({ type: 'FILE_TYPE', context: res })
+        return e.left({ type: 'FILE_TYPE', context: res })
       } else {
         const buffer = Buffer.from(res.data.content, 'base64').toString()
         const yamlConfig = yaml.parse(buffer, {})
 
-        return right(yamlConfig)
+        return e.right(yamlConfig)
       }
     }
     default: {
       /* Process the error. */
-      return left({ type: 'CONNECTION', context: res })
+      return e.left({ type: 'CONNECTION', context: res })
     }
   }
 }
