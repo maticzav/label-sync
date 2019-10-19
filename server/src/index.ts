@@ -1,6 +1,7 @@
 import { Application } from 'probot'
 
-import { either } from 'fp-ts/lib/Either'
+import { either, chain } from 'fp-ts/lib/Either'
+import { pipe } from 'fp-ts/lib/pipeable'
 
 import * as consts from './data/constants'
 import {
@@ -26,9 +27,16 @@ export default (app: Application) => {
      * labels sync.
      */
 
-    const yamlConfig = loadYAMLConfigFile(context.github, { owner, repo, ref })
-    const lsConfig = either.map(validateYAMLConfiguration())
+    const yamlConfig = await loadYAMLConfigFile(context.github, {
+      owner,
+      repo,
+      ref,
+    })
 
+    const config = pipe(
+      yamlConfig,
+      chain(validateYAMLConfiguration),
+    )
     /* Process configuration file. */
   })
 }
