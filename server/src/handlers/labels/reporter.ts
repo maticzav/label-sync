@@ -1,15 +1,10 @@
 import chalk from 'chalk'
 import mls from 'multilines'
-import { GithubLabel, GithubRepository } from '../../github'
-import { RepositoryConfig } from '../../types'
 
-export type LabelSyncReport = {
-  repository: GithubRepository
-  config: RepositoryConfig
-  // options: LabelSyncOptions
-  additions: GithubLabel[]
-  updates: GithubLabel[]
-  removals: GithubLabel[]
+import { LSCConfiguration } from '../../data/labelsync/configuration'
+
+export type LSSyncReport = {
+  config: LSCConfiguration
 }
 
 /**
@@ -19,7 +14,7 @@ export type LabelSyncReport = {
  *
  * @param report
  */
-export function createTerminalReport(report: LabelSyncReport): string {
+export function createTerminalReport(report: LSSyncReport): string {
   const strictMessage = mls`
     | We haven't removed any label yet.
     | If you want us to remove them, set ${chalk.bgRedBright('strict')} to true.

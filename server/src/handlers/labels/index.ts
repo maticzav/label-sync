@@ -1,8 +1,8 @@
+export { analyseConfiguration } from './analysis'
 export {
-  getLabelsDiff,
   addLabelsToRepository,
   updateLabelsInRepository,
   removeLabelsFromRepository,
 } from './labels'
-export { createTerminalReport, LabelSyncReport } from './reporter'
-export { handleLabelSync, LabelSyncOptions } from './sync'
+export { createReport } from './reporter'
+export { handleLabelSync } from './sync'

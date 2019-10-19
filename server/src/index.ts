@@ -6,9 +6,12 @@ import { pipe } from 'fp-ts/lib/pipeable'
 import * as consts from './data/constants'
 import {
   loadYAMLConfigFile,
-  validateYAMLConfiguration,
+  validateConfigurationShape,
+  validateConfigurationContents,
 } from './data/labelsync/configuration'
 import { identity } from 'fp-ts/lib/function'
+import { handleLabelSync } from './handlers/labels'
+import { handleSiblingSync } from './handlers/siblings'
 
 export default (app: Application) => {
   app.on('push', async context => {
@@ -22,6 +25,9 @@ export default (app: Application) => {
     /* Ignore changes in non-configuration repositories. */
     if (configurationRepo === repo) return
 
+    /* Ignore changes made to non master refs. */
+    if (ref !== masterRef) return
+
     /**
      * Changes made to non-master branches should result in check runs.
      * Changes made on the master branch, however, should resolve with
@@ -34,13 +40,25 @@ export default (app: Application) => {
       ref,
     })()
 
-    if (e.isLeft(yamlConfig)) {
-      /* Create an issue informing a user that we couldn't load configuration file. */
-      return
-    }
-
-    const lsConfig = e.fold(err => {}, validateYAMLConfiguration)(yamlConfig)
+    const config = pipe(
+      yamlConfig,
+      e.chain(validateConfigurationShape),
+      e.chain(validateConfigurationContents),
+    )
 
     /* Process configuration file. */
+    if (e.isRight(config)) {
+      /**
+       * Perform a label sync across repositories.
+       */
+      const { right: conf } = config
+      const labelSyncStatus = await handleLabelSync(context.github, conf)
+      const siblingSyncStatus = await handleSiblingSync(context.github, conf)
+      const labelRenamesStatus = await handleLabelRename(context.github, {})
+    } else {
+      /**
+       * Open up an issue explaining the encountered error.
+       */
+    }
   })
 }

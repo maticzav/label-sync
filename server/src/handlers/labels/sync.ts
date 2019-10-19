@@ -1,31 +1,33 @@
-import Octokit from '@octokit/rest'
+import * as e from 'fp-ts/lib/Either'
+import * as t from 'fp-ts/lib/Task'
+import { Octokit } from 'probot'
 
-import { GithubRepository, getRepositoryLabels } from '../../github'
-import { getLabelsInConfiguration } from '../../manifest'
-import { RepositoryConfig } from '../../types'
+import { LSCConfiguration } from '../../data/labelsync/configuration'
 
+import { analyseConfiguration } from './analysis'
 import {
   getLabelsDiff,
   addLabelsToRepository,
   updateLabelsInRepository,
   removeLabelsFromRepository,
 } from './labels'
-import { LabelSyncReport } from './reporter'
+import { LSSyncReport } from './reporter'
+
+export interface LSSyncError {}
 
 /**
  *
- * Handles Label Sync in a repository.
+ * Performs a labels sync with configuration.
  *
  * @param client
  * @param repository
  * @param config
  * @param options
  */
-export async function handleLabelSync(
-  client: Octokit,
-  repository: GithubRepository,
-  config: RepositoryConfig,
-): Promise<LabelSyncReport> {
+export const handleLabelSync = (
+  octokit: Octokit,
+  config: LSCConfiguration,
+): t.Task<e.Either<LSSyncError, LSSyncReport>> => async () => {
   /**
    * Label Sync handler firstly loads current labels from Github,
    * and new labels from local configuration.
@@ -34,26 +36,23 @@ export async function handleLabelSync(
    * label definitions in a particular repository.
    */
 
-  const currentLabels = await getRepositoryLabels(client, repository)
-  const newLabels = getLabelsInConfiguration(config)
+  const analysis = await analyseConfiguration(octokit, config)()
 
-  const diff = getLabelsDiff(currentLabels, newLabels)
+  // const additions = await addLabelsToRepository(client, diff.add, repository)
+  // const updates = await updateLabelsInRepository(
+  //   client,
+  //   diff.update,
+  //   repository,
+  // )
+  // const removals = config.strict
+  //   ? await removeLabelsFromRepository(client, diff.remove, repository)
+  //   : diff.remove
 
-  const additions = await addLabelsToRepository(client, diff.add, repository)
-  const updates = await updateLabelsInRepository(
-    client,
-    diff.update,
-    repository,
-  )
-  const removals = config.strict
-    ? await removeLabelsFromRepository(client, diff.remove, repository)
-    : diff.remove
-
-  return {
+  return e.right({
     repository: repository,
     config,
     additions,
     updates,
     removals,
-  }
+  })
 }

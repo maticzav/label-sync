@@ -11,7 +11,7 @@ import { labelSyncConfigurationFilePath } from '../constants'
 /**
  * Every type that is related to configuration.
  *
- * "Configuration" = "LS"-prefix
+ * "Configuration" = "LSC"-prefix
  */
 
 /* Types */
@@ -22,14 +22,14 @@ import { labelSyncConfigurationFilePath } from '../constants'
  * Siblings can only refer to labels also defined in LabelSync repository
  * configuration.
  */
-const LSSibling = t.string
-export type LSSibling = t.TypeOf<typeof LSSibling>
+const LSCSibling = t.string
+export type LSCSibling = t.TypeOf<typeof LSCSibling>
 
 /**
  * Represents a label hook. LabelSync triggers a label hook
  * every time a hook is added to an issues or a pull request.
  */
-const LSHook = t.union([
+const LSCHook = t.union([
   t.type({
     integration: t.literal('webhook'),
     endpoint: t.string,
@@ -45,58 +45,55 @@ const LSHook = t.union([
     action: t.union([t.literal('merge'), t.literal('close')]),
   }),
 ])
-export type LSHook = t.TypeOf<typeof LSHook>
+export type LSCHook = t.TypeOf<typeof LSCHook>
 
 /**
  * Label represents the central unit of LabelSync. Each label
  * can have multiple siblings that are meaningfully related to
  * a label itself, multiple hooks that trigger different actions.
  */
-const LSLabel = t.type({
+const LSCLabel = t.type({
   description: t.string,
   color: t.string,
-  siblings: t.array(LSSibling),
-  hooks: t.array(LSHook),
+  siblings: t.array(LSCSibling),
+  hooks: t.array(LSCHook),
 })
-export type LSLabel = t.TypeOf<typeof LSLabel>
+export type LSCLabel = t.TypeOf<typeof LSCLabel>
 
-const LSLabelName = t.string
-export type LSLabelName = t.TypeOf<typeof LSLabelName>
+const LSCLabelName = t.string
+export type LSCLabelName = t.TypeOf<typeof LSCLabelName>
 
 /**
  * Repository represents a single Github repository.
  * When configured as `strict` it will delete any surplus of labels
  * in the repository.
  */
-const LSRepository = t.type({
+const LSCRepository = t.type({
   strict: t.boolean,
-  labels: t.record(LSLabelName, LSLabel),
+  labels: t.record(LSCLabelName, LSCLabel),
 })
-
-type LSRepository = t.TypeOf<typeof LSRepository>
-export interface ILSRepository extends LSRepository {}
-const LSRepositoryName = t.string
-export type LSRepositoryName = t.TypeOf<typeof LSRepositoryName>
+export interface LSCRepository extends t.TypeOf<typeof LSCRepository> {}
+const LSCRepositoryName = t.string
+export type LSCRepositoryName = t.TypeOf<typeof LSCRepositoryName>
 
 /**
  * Configuration represents an entire configuration for all
  * LabelSync tools that an organisation is using.
  */
-const LSConfiguration = t.type({
-  repos: t.record(LSRepositoryName, LSRepository),
+const LSCConfiguration = t.type({
+  repos: t.record(LSCRepositoryName, LSCRepository),
 })
-type LSConfiguration = t.TypeOf<typeof LSConfiguration>
-export interface ILSConfiguration extends LSConfiguration {}
+export interface LSCConfiguration extends t.TypeOf<typeof LSCConfiguration> {}
 
 /* Validation */
 
-export type LSConfigurationError =
-  | LSConfigurationLocationError
-  | LSConfigurationShapeError
-  | LSConfigurationContentError
+export type LSCConfigurationError =
+  | LSCConfigurationLocationError
+  | LSCConfigurationShapeError
+  | LSCConfigurationContentError
 
 /* Problems with configuration file location on Github. */
-export type LSConfigurationLocationError =
+export type LSCConfigurationLocationError =
   | {
       type: 'LOCATION'
       context: Octokit.Response<Octokit.ReposGetContentsResponse>
@@ -110,7 +107,7 @@ export type LSConfigurationLocationError =
     }
 
 /* Wrong file structure. */
-export type LSConfigurationShapeError = {
+export type LSCConfigurationShapeError = {
   type: 'SHAPE'
   fields: Array<{
     path: string[]
@@ -119,7 +116,7 @@ export type LSConfigurationShapeError = {
 }
 
 /* Problems with configuration content. */
-export type LSConfigurationContentError = {
+export type LSCConfigurationContentError = {
   type: 'CONTENT'
   missing: Array<{
     path: string[]
@@ -133,22 +130,22 @@ export type LSConfigurationContentError = {
  *
  * @param yaml
  */
-export function validateYAMLConfiguration(
+export function validateConfigurationShape(
   yaml: object,
-): e.Either<LSConfigurationError, LSConfiguration> {
-  return e.mapLeft(validationErrorToLSConfigurationShapeError)(
-    LSConfiguration.decode(yaml),
+): e.Either<LSCConfigurationError, LSCConfiguration> {
+  return e.mapLeft(validationErrorToLSCConfigurationShapeError)(
+    LSCConfiguration.decode(yaml),
   )
 }
 
 /**
- * Converts ValidationError from io-ts to LSConfigurationError.
+ * Converts ValidationError from io-ts to LSCConfigurationError.
  *
  * @param errors
  */
-function validationErrorToLSConfigurationShapeError(
+function validationErrorToLSCConfigurationShapeError(
   errors: Array<t.ValidationError>,
-): LSConfigurationError {
+): LSCConfigurationError {
   return { type: 'SHAPE', fields: errors.map(getError) }
 
   function getError(
@@ -164,11 +161,11 @@ function validationErrorToLSConfigurationShapeError(
  * @param config
  */
 export function validateConfigurationContents(
-  config: LSConfiguration,
-): e.Either<LSConfigurationError, LSConfiguration> {
+  config: LSCConfiguration,
+): e.Either<LSCConfigurationError, LSCConfiguration> {
   /* Helper functions */
   const repos = Object.keys(config.repos)
-  const repo = (name: string): LSRepository => config.repos[name]!
+  const repo = (name: string): LSCRepository => config.repos[name]!
 
   /* Validator */
   const errors = a.reduce<
@@ -177,7 +174,7 @@ export function validateConfigurationContents(
   >([], (acc, repoName) => {
     const repoConfig = repo(repoName)
     const labels = Object.keys(repoConfig.labels)
-    const label = (name: string): LSLabel => repoConfig.labels[name]!
+    const label = (name: string): LSCLabel => repoConfig.labels[name]!
 
     /* Check whether repository configuration defines all siblings. */
     const labelsWithMissingSiblings = a.filterMap<
@@ -209,7 +206,7 @@ export function validateConfigurationContents(
   return e.right(config)
 }
 
-export interface LSConfigurationParams {
+export interface LSCConfigurationParams {
   owner: string
   repo: string
   ref: string
@@ -223,8 +220,8 @@ export interface LSConfigurationParams {
  */
 export const loadYAMLConfigFile = (
   octokit: Octokit,
-  { owner, repo, ref }: LSConfigurationParams,
-): Task<e.Either<LSConfigurationLocationError, any>> => async () => {
+  { owner, repo, ref }: LSCConfigurationParams,
+): Task<e.Either<LSCConfigurationLocationError, any>> => async () => {
   try {
     const res = await octokit.repos.getContents({
       owner: owner,

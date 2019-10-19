@@ -1,6 +1,7 @@
-import * as Octokit from '@octokit/rest'
-
 /**
- * Represents a single Github Label.
+ * Represents a single label.
  */
-export type GithubLabel = Octokit.IssuesCreateLabelParams
+export interface LSLabel {
+  name: string
+  color: string
+}

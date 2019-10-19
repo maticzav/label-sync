@@ -1,4 +1,4 @@
-import * as Octokit from '@octokit/rest'
+import { Octokit } from 'probot'
 import { GithubLabel, GithubRepository, isLabel } from '../../github'
 
 /**
@@ -10,7 +10,7 @@ import { GithubLabel, GithubRepository, isLabel } from '../../github'
  * @param repository
  */
 export async function addLabelsToRepository(
-  github: Octokit,
+  octokit: Octokit,
   labels: GithubLabel[],
   repository: GithubRepository,
 ): Promise<GithubLabel[]> {
