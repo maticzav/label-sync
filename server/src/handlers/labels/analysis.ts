@@ -17,34 +17,31 @@ import { getRepositoryLabels, getRepositoryIssues } from './github'
  * report which includes information about
  * each particular repository.
  */
-export interface LSConfigurationAnalysis {
-  repositories: Map<
-    string,
+export interface LSCRepositoryAnalysis {
+  /* Metadata */
+  strict: boolean
+  /* Configuration diff */
+  createdLabels: Map<LSCLabelName, LSCLabel>
+  updatedLabels: Map<
+    LSCLabelName,
     {
-      /* Configuration diff */
-      createdLabels: Map<LSCLabelName, LSCLabel>
-      updatedLabels: Map<
-        LSCLabelName,
-        {
-          config: LSCLabel
-          changes: string[]
-        }
-      >
-      removedLabels: LSLabel[]
-      unchangedLabels: LSLabel[]
-      /* Impact */
-      issues: Array<{
-        /* Issue metadata */
-        number: number
-        name: string
-        description: string
-        /* Label changes */
-        newLabels: string[]
-        existingLabels: string[]
-        removedLabels: string[]
-      }>
+      config: LSCLabel
+      changes: string[]
     }
   >
+  removedLabels: LSLabel[]
+  unchangedLabels: LSLabel[]
+  /* Impact */
+  issues: Array<{
+    /* Issue metadata */
+    number: number
+    name: string
+    description: string
+    /* Label changes */
+    newLabels: string[]
+    existingLabels: string[]
+    removedLabels: string[]
+  }>
 }
 
 export interface LSConfigurationAnalysisError {}
@@ -63,19 +60,31 @@ export const analyseConfiguration = (
   owner: string,
   config: LSCConfiguration,
 ): t.Task<
-  e.Either<LSConfigurationAnalysisError, LSConfigurationAnalysis>
+  e.Either<LSConfigurationAnalysisError, Record<string, LSCRepositoryAnalysis>>
 > => async () => {
   const repos = r.mapWithIndex<
     string,
     LSCRepository,
-    t.Task<LSConfigurationAnalysis>
+    t.Task<LSCRepositoryAnalysis>
   >((repoName, repoConfig) => async () => {
+    const labelsC: Record<LSCLabelName, LSCLabel> = repoConfig.labels
     const labelsT = getRepositoryLabels(octokit, { owner, repo: repoName })
     const issuesT = getRepositoryIssues(octokit, { owner, repo: repoName })
 
-    const [labels, issues] = await Promise.all([labelsT(), issuesT()])
+    /* Load existing labels and issues. */
+    const [labels, issues] = await Promise.all([labelsT(), issuesT()]) //TODO: flat [Either, Either] to Either[]
 
-    return {} as any
+    /* Compare them with configuation. */
+
+    const createdLabels = diffLabels(labels)
+
+    return {
+      createdLabels: [],
+      updatedLabels: [],
+      removedLabels: [],
+      unchangedLabels: [],
+      issues: [],
+    }
   })(config.repos)
 
   // map record of tasks to task record
