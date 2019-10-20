@@ -48,9 +48,9 @@ export default (app: Application) => {
        * Perform a label sync across repositories.
        */
       const { right: conf } = config
-      const labelSyncStatus = await handleLabelSync(github, owner, conf)
-      const siblingSyncStatus = await handleSiblingSync(github, owner, conf)
-      const labelRenamesStatus = await handleLabelRename(github, owner, {})
+      const labelSyncStatus = await handleLabelSync(github, owner, conf)()
+      const siblingSyncStatus = await handleSiblingSync(github, owner, conf)()
+      const labelRenamesStatus = await handleLabelRename(github, owner, {})()
 
       /* Log changes. */
     } else {
