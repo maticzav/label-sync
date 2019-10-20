@@ -168,36 +168,35 @@ export function validateConfigurationContents(
   const repo = (name: string): LSCRepository => config.repos[name]!
 
   /* Validator */
-  const errors = a.reduce<
-    string,
-    Array<{ path: string[]; siblings: string[] }>
-  >([], (acc, repoName) => {
-    const repoConfig = repo(repoName)
-    const labels = Object.keys(repoConfig.labels)
-    const label = (name: string): LSCLabel => repoConfig.labels[name]!
+  const errors = a.chain<string, { path: string[]; siblings: string[] }>(
+    repoName => {
+      const repoConfig = repo(repoName)
+      const labels = Object.keys(repoConfig.labels)
+      const label = (name: string): LSCLabel => repoConfig.labels[name]!
 
-    /* Check whether repository configuration defines all siblings. */
-    const labelsWithMissingSiblings = a.filterMap<
-      string,
-      { path: string[]; siblings: string[] }
-    >(labelName => {
-      const labelConfig = label(labelName)
-      const missingSiblings = labelConfig.siblings.filter(sibling =>
-        labels.some(label => label === sibling),
-      )
+      /* Check whether repository configuration defines all siblings. */
+      const labelsWithMissingSiblings = a.filterMap<
+        string,
+        { path: string[]; siblings: string[] }
+      >(labelName => {
+        const labelConfig = label(labelName)
+        const missingSiblings = labelConfig.siblings.filter(sibling =>
+          labels.some(label => label === sibling),
+        )
 
-      if (missingSiblings.length > 0) {
-        return o.some({
-          path: [repoName, labelName],
-          siblings: missingSiblings,
-        })
-      } else {
-        return o.none
-      }
-    })(labels)
+        if (missingSiblings.length > 0) {
+          return o.some({
+            path: [repoName, labelName],
+            siblings: missingSiblings,
+          })
+        } else {
+          return o.none
+        }
+      })(labels)
 
-    return acc.concat(labelsWithMissingSiblings)
-  })(repos)
+      return labelsWithMissingSiblings
+    },
+  )(repos)
 
   if (errors.length > 0) {
     return e.left({ type: 'CONTENT', missing: errors })
