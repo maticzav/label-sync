@@ -1,5 +1,5 @@
 import * as e from 'fp-ts/lib/Either'
-import * as m from 'fp-ts/lib/Map'
+import * as r from 'fp-ts/lib/Record'
 import * as t from 'fp-ts/lib/Task'
 import { Octokit } from 'probot'
 
@@ -7,9 +7,9 @@ import {
   LSCConfiguration,
   LSCLabelName,
   LSCLabel,
+  LSCRepository,
 } from '../../data/labelsync/configuration'
 import { LSLabel } from '../../data/labelsync/label'
-import { right } from 'inquirer/lib/utils/readline'
 
 /**
  * Represents a single configuration analysis
@@ -63,26 +63,14 @@ export const analyseConfiguration = (
 ): t.Task<
   e.Either<LSConfigurationAnalysisError, LSConfigurationAnalysis>
 > => async () => {
-  return e.right({} as any)
+  const repos = r.mapWithIndex<
+    string,
+    LSCRepository,
+    t.Task<LSConfigurationAnalysis>
+  >((repoName, repoConfig) => {
+    return foo
+  })(config.repos)
 
+  return repos
   /* Helper functions. */
-  /**
-   * Fetches labels in a repository.
-   */
-  function getRepositoryLabels(): t.Task<e.Either<any, any>> {
-    return async () => {
-      octokit.issues.listLabelsForRepo()
-      return e.right('')
-    }
-  }
-
-  /**
-   * Fetches labels in a repository.
-   */
-  function getRepositoryLabels(): t.Task<e.Either<any, any>> {
-    return async () => {
-      octokit.issues.listLabelsForRepo()
-      return e.right('')
-    }
-  }
 }
