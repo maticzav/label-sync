@@ -10,6 +10,7 @@ import {
   LSCRepository,
 } from '../../data/labelsync/configuration'
 import { LSLabel } from '../../data/labelsync/label'
+import { getRepositoryLabels, getRepositoryIssues } from './github'
 
 /**
  * Represents a single configuration analysis
@@ -59,6 +60,7 @@ export interface LSConfigurationAnalysisError {}
  */
 export const analyseConfiguration = (
   octokit: Octokit,
+  owner: string,
   config: LSCConfiguration,
 ): t.Task<
   e.Either<LSConfigurationAnalysisError, LSConfigurationAnalysis>
@@ -67,10 +69,16 @@ export const analyseConfiguration = (
     string,
     LSCRepository,
     t.Task<LSConfigurationAnalysis>
-  >((repoName, repoConfig) => {
-    return foo
+  >((repoName, repoConfig) => async () => {
+    const labelsT = getRepositoryLabels(octokit, { owner, repo: repoName })
+    const issuesT = getRepositoryIssues(octokit, { owner, repo: repoName })
+
+    const [labels, issues] = await Promise.all([labelsT(), issuesT()])
+
+    return {} as any
   })(config.repos)
 
+  // map record of tasks to task record
   return repos
   /* Helper functions. */
 }

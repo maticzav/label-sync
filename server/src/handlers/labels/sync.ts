@@ -26,6 +26,7 @@ export interface LSSyncError {}
  */
 export const handleLabelSync = (
   octokit: Octokit,
+  owner: string,
   config: LSCConfiguration,
 ): t.Task<e.Either<LSSyncError, LSSyncReport>> => async () => {
   /**
@@ -36,7 +37,7 @@ export const handleLabelSync = (
    * label definitions in a particular repository.
    */
 
-  const analysis = await analyseConfiguration(octokit, config)()
+  const analysis = await analyseConfiguration(octokit, owner, config)()
 
   // const additions = await addLabelsToRepository(client, diff.add, repository)
   // const updates = await updateLabelsInRepository(

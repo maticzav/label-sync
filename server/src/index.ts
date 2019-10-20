@@ -14,11 +14,11 @@ import { handleLabelSync } from './handlers/labels'
 import { handleSiblingSync } from './handlers/siblings'
 
 export default (app: Application) => {
-  app.on('push', async context => {
-    const owner = context.payload.repository.owner.login
-    const repo = context.payload.repository.name
-    const ref = context.payload.ref
-    const masterRef = `refs/heads/${context.payload.repository.master_branch}`
+  app.on('push', async ({ payload, github }) => {
+    const owner = payload.repository.owner.login
+    const repo = payload.repository.name
+    const ref = payload.ref
+    const masterRef = `refs/heads/${payload.repository.master_branch}`
 
     const configurationRepo = consts.labelSyncConfigurationRepository(owner)
 
@@ -34,11 +34,7 @@ export default (app: Application) => {
      * labels sync.
      */
 
-    const yamlConfig = await loadYAMLConfigFile(context.github, {
-      owner,
-      repo,
-      ref,
-    })()
+    const yamlConfig = await loadYAMLConfigFile(github, { owner, repo, ref })()
 
     const config = pipe(
       yamlConfig,
@@ -52,9 +48,11 @@ export default (app: Application) => {
        * Perform a label sync across repositories.
        */
       const { right: conf } = config
-      const labelSyncStatus = await handleLabelSync(context.github, conf)
-      const siblingSyncStatus = await handleSiblingSync(context.github, conf)
-      const labelRenamesStatus = await handleLabelRename(context.github, {})
+      const labelSyncStatus = await handleLabelSync(github, owner, conf)
+      const siblingSyncStatus = await handleSiblingSync(github, owner, conf)
+      const labelRenamesStatus = await handleLabelRename(github, owner, {})
+
+      /* Log changes. */
     } else {
       /**
        * Open up an issue explaining the encountered error.
