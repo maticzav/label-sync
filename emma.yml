@@ -1,7 +1,7 @@
 starters:
   - name: with-typescript
-    path: examples/with-circleci/package.json
+    path: /examples/with-circleci
   - name: with-typescript
-    path: examples/with-javascript/package.json
+    path: /examples/with-javascript
   - name: with-typescript
-    path: examples/with-typescript/package.json
+    path: /examples/with-typescript
