@@ -7,28 +7,23 @@
     "build-clean": "rm -rf ./packages/*/dist",
     "clean-all": "rm -rf ./node_modules && rm -rf ./packages/*/node_modules && yarn build-clean",
     "coverage": "yarn codecov",
-    "lint": "tslint packages/*/{src,tests}/*/*.ts",
     "postinstall": "yarn build",
     "publish": "yarn build-clean && yarn build && lerna publish --silent",
-    "test": "yarn lint; yarn run build; yarn jest"
+    "test": "yarn run build; yarn jest"
   },
   "devDependencies": {
     "@types/jest": "^24.0.9",
-    "chalk": "^2.4.2",
+    "chalk": "^3.0.0",
     "codecov": "3.6.1",
-    "execa": "^2.1.0",
+    "execa": "^3.4.0",
     "husky": "3.0.9",
     "jest": "^24.1.0",
     "jest-serializer-ansi": "^1.0.3",
     "lerna": "3.17.0",
-    "multilines": "^1.0.2",
     "prettier": "1.18.2",
     "pretty-quick": "2.0.0",
     "ts-jest": "^24.0.0",
     "ts-node": "^8.0.2",
-    "tslint": "^5.13.1",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-config-standard": "^8.0.1",
     "typescript": "^3.6.4"
   },
   "workspaces": {
@@ -36,5 +31,6 @@
       "packages/*",
       "server"
     ]
-  }
+  },
+  "dependencies": {}
 }

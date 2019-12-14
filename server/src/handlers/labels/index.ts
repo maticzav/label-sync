@@ -4,5 +4,4 @@ export {
   updateLabelsInRepository,
   removeLabelsFromRepository,
 } from './labels'
-export { createReport } from './reporter'
 export { handleLabelSync } from './sync'

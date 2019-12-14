@@ -1,62 +1,110 @@
-import { Application } from 'probot'
+import { Application, Context } from 'probot'
 
-import * as e from 'fp-ts/lib/Either'
-import { pipe } from 'fp-ts/lib/pipeable'
-
-import * as consts from './data/constants'
-import {
-  loadYAMLConfigFile,
-  validateConfigurationShape,
-  validateConfigurationContents,
-} from './data/labelsync/configuration'
-import { identity } from 'fp-ts/lib/function'
+import { parseConfig, LSCConfiguration } from './configuration'
+import * as maybe from './data/maybe'
+import { getFile } from './github'
 import { handleLabelSync } from './handlers/labels'
-import { handleSiblingSync } from './handlers/siblings'
+
+/* Constants */
+
+/**
+ * Configuration repository is the repository which LabelSync
+ * uses to determine the configuration of the service.
+ *
+ * @param organization
+ */
+const getLSConfigRepoName = (owner: string) => `${owner}-labelsync`
+
+/**
+ * Configuration file path determines the path of the file in the repositoy
+ * that we use to gather configuration information from.
+ *
+ * It should always be in YAML format.
+ */
+const LS_CONFIG_PATH = 'labelsync.yml'
+
+/* Application */
 
 export default (app: Application) => {
-  app.on('push', async ({ payload, github }) => {
+  /**
+   * Push Event
+   *
+   * Listens for changes to the configuration file.
+   *
+   * Tasks:
+   *  - determine whether the configuration file is OK,
+   *  - sync labels across repositories (i.e. create new ones, remove old ones)
+   *    on master branch,
+   *  - perform check runs on non-master branch.
+   */
+  app.on('push', async ({ payload, github, log }) => {
     const owner = payload.repository.owner.login
     const repo = payload.repository.name
     const ref = payload.ref
-    const masterRef = `refs/heads/${payload.repository.master_branch}`
+    const defaultRef = `refs/heads/${payload.repository.default_branch}`
 
-    const configurationRepo = consts.labelSyncConfigurationRepository(owner)
+    const configRepo = getLSConfigRepoName(owner)
 
-    /* Ignore changes in non-configuration repositories. */
-    if (configurationRepo === repo) return
+    /* istanbul ignore if */
+    if (configRepo === repo) return
 
-    /* Ignore changes made to non master refs. */
-    if (ref !== masterRef) return
+    /* Ignore changes made to non default refs. */
+    if (ref !== defaultRef) return
 
-    /**
-     * Changes made to non-master branches should result in check runs.
-     * Changes made on the master branch, however, should resolve with
-     * labels sync.
-     */
-
-    const yamlConfig = await loadYAMLConfigFile(github, { owner, repo, ref })()
-
-    const config = pipe(
-      yamlConfig,
-      e.chain(validateConfigurationShape),
-      e.chain(validateConfigurationContents),
+    /* Load configuration */
+    const configRaw = await getFile(
+      github,
+      { owner, repo, ref },
+      LS_CONFIG_PATH,
     )
+    const config = maybe.andThen(configRaw, parseConfig)
 
-    /* Process configuration file. */
-    if (e.isRight(config)) {
-      /**
-       * Perform a label sync across repositories.
-       */
-      const { right: conf } = config
-      const labelSyncStatus = await handleLabelSync(github, owner, conf)()
-      const siblingSyncStatus = await handleSiblingSync(github, owner, conf)()
-      const labelRenamesStatus = await handleLabelRename(github, owner, {})()
+    log.debug({ config }, `About to sync ${owner}.`)
 
-      /* Log changes. */
-    } else {
-      /**
-       * Open up an issue explaining the encountered error.
-       */
-    }
+    /* Skips invalid configuration. */
+    if (config === null) return
+
+    /* Performs sync. */
+    await Promise.all([handleLabelSync(github, owner, config)])
   })
+
+  /**
+   * Label Created
+   *
+   * Tasks:
+   *  - figure out whether repository is strict
+   *  - prune unsupported labels.
+   */
+  app.on('label.created', withSources(async ctx => {}))
+}
+
+interface Sources {
+  config: LSCConfiguration
+}
+
+/**
+ * Wraps a function inside a sources loader.
+ */
+function withSources<C, T>(
+  fn: (ctx: Context<C> & { sources: Sources }) => Promise<T>,
+): (ctx: Context<C>) => Promise<T | undefined> {
+  return async ctx => {
+    const owner = ''
+    const repo = getLSConfigRepoName(owner)
+    const ref = ''
+
+    /* Load configuration */
+    const configRaw = await getFile(
+      ctx.github,
+      { owner, repo, ref },
+      LS_CONFIG_PATH,
+    )
+    const config = maybe.andThen(configRaw, parseConfig)
+
+    /* Skips invlaid config. */
+    if (config === null) return
+    ;(ctx as Context<C> & { sources: Sources }).sources = { config }
+
+    return fn(ctx as Context<C> & { sources: Sources })
+  }
 }
