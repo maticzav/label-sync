@@ -65,7 +65,11 @@ export default (app: Application) => {
     if (config === null) return
 
     /* Performs sync. */
-    await Promise.all([handleLabelSync(github, owner, config)])
+    for (const repo in config.repos) {
+      await Promise.all([
+        handleLabelSync(github, owner, repo, config.repos[repo]),
+      ])
+    }
   })
 
   /**

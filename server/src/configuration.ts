@@ -1,7 +1,7 @@
 import * as t from 'io-ts'
 import yaml from 'js-yaml'
 
-import { Maybe } from './utils'
+import { Maybe } from './data/maybe'
 
 /**
  * Label represents the central unit of LabelSync. Each label

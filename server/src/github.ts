@@ -1,6 +1,6 @@
 import { Octokit } from 'probot'
 
-import { Maybe } from './utils'
+import { Maybe } from './data/maybe'
 
 /**
  * Loads a file from Github.
@@ -35,4 +35,54 @@ export async function getFile(
   } catch (err) {
     return null
   }
+}
+
+export interface GithubLabel {
+  name: string
+  description: string
+  color: string
+  default?: boolean
+}
+
+/**
+ * Fetches labels in a repository.
+ */
+export async function getRepositoryLabels(
+  octokit: Octokit,
+  { repo, owner }: { repo: string; owner: string },
+): Promise<Maybe<Octokit.IssuesListLabelsForRepoResponseItem[]>> {
+  try {
+    const labels = octokit.issues.listLabelsForRepo.endpoint.merge({
+      repo,
+      owner,
+    })
+
+    return octokit.paginate(labels)
+  } catch (err) {
+    return null
+  }
+}
+
+/**
+ *
+ * Compares two labels by comparing all of their keys.
+ *
+ * @param label
+ */
+export function isLabel(local: GithubLabel): (remote: GithubLabel) => boolean {
+  return remote =>
+    local.name === remote.name &&
+    local.description === remote.description &&
+    local.color === remote.color
+}
+
+/**
+ * Determines whether the two configurations configure the same label.
+ *
+ * @param local
+ */
+export function isLabelDefinition(
+  local: GithubLabel,
+): (remote: GithubLabel) => boolean {
+  return remote => local.name === remote.name
 }
