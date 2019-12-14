@@ -3,7 +3,8 @@ import { Application, Context } from 'probot'
 import { parseConfig, LSCConfiguration } from './configuration'
 import * as maybe from './data/maybe'
 import { getFile } from './github'
-import { handleLabelSync } from './handlers/labels'
+import { handleLabelSync, removeLabelsFromRepository } from './handlers/labels'
+import Webhooks = require('@octokit/webhooks')
 
 /* Constants */
 
@@ -26,6 +27,18 @@ const LS_CONFIG_PATH = 'labelsync.yml'
 /* Application */
 
 export default (app: Application) => {
+  /**
+   * Installation event
+   *
+   * Performs an onboarding configuration to make it easier to get acquainted
+   * with LabelSync.
+   *
+   * Tasks:
+   *  - check whether there exists a configuration repository,
+   *  - create a configuration repository from template.
+   */
+  app.on('installation.created', async () => {})
+
   /**
    * Push Event
    *
@@ -79,7 +92,29 @@ export default (app: Application) => {
    *  - figure out whether repository is strict
    *  - prune unsupported labels.
    */
-  app.on('label.created', withSources(async ctx => {}))
+  app.on(
+    'label.created',
+    withSources(async ctx => {
+      const owner = ctx.payload.sender.login
+      const repo = ctx.payload.repository.name
+      const config = ctx.sources.config.repos[repo]
+      const label = ctx.payload.label
+
+      /* Ignore changes in non-strict config */
+      if (!config.strict) return
+
+      /* Ignore complying changes. */
+      if (config.labels.hasOwnProperty(label.name)) return
+
+      /* Prune unsupported labels in strict repositories. */
+      await removeLabelsFromRepository(
+        ctx.github,
+        { repo, owner },
+        [label],
+        config.strict,
+      )
+    }),
+  )
 }
 
 interface Sources {
@@ -89,13 +124,20 @@ interface Sources {
 /**
  * Wraps a function inside a sources loader.
  */
-function withSources<C, T>(
+function withSources<
+  C extends
+    | Webhooks.WebhookPayloadCheckRun
+    | Webhooks.WebhookPayloadIssues
+    | Webhooks.WebhookPayloadLabel
+    | Webhooks.WebhookPayloadPullRequest,
+  T
+>(
   fn: (ctx: Context<C> & { sources: Sources }) => Promise<T>,
 ): (ctx: Context<C>) => Promise<T | undefined> {
   return async ctx => {
-    const owner = ''
+    const owner = ctx.payload.sender.login
     const repo = getLSConfigRepoName(owner)
-    const ref = ''
+    const ref = ctx.payload.repository.default_branch
 
     /* Load configuration */
     const configRaw = await getFile(

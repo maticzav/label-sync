@@ -39,7 +39,7 @@ export async function getFile(
 
 export interface GithubLabel {
   name: string
-  description: string
+  description?: string
   color: string
   default?: boolean
 }
