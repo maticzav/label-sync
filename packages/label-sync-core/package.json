@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@octokit/rest": "^16.28.2",
-    "chalk": "^2.4.1",
+    "chalk": "^3.0.0",
     "multilines": "^1.0.2"
   },
   "devDependencies": {

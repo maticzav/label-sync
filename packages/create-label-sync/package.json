@@ -19,7 +19,7 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "chalk": "^2.4.1",
+    "chalk": "^3.0.0",
     "creato": "^1.0.5",
     "inquirer": "^7.0.0",
     "meow": "^5.0.0",
