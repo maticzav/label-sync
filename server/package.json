@@ -1,5 +1,5 @@
 {
-  "name": "@labelsync/core",
+  "name": "@labelsync/server",
   "version": "0.0.0",
   "scripts": {},
   "dependencies": {

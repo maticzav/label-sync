@@ -1,1 +1,1 @@
-export { generateYAMLConfigurationFromTS } from './generator'
+export { repository, configuration, label } from './generator'

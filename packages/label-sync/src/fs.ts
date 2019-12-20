@@ -17,7 +17,10 @@ export async function findFolderUp(
   dir: string,
   name: string,
 ): Promise<Maybe<string>> {
-  return findUp(dir, p => path.dirname(p) === name)
+  return findUp(
+    dir,
+    p => fs.lstatSync(p).isDirectory() && path.basename(p) === name,
+  )
 }
 
 /**
@@ -39,7 +42,9 @@ export async function findUp(
     /* Recursive case. */
     default: {
       const elements = await fsReaddir(dir)
-      const includes = elements.some(pattern)
+      const includes = elements
+        .map(name => path.resolve(dir, name))
+        .some(pattern)
 
       if (includes) return dir
       else return findUp(path.join(dir, '../'), pattern)

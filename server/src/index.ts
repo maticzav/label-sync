@@ -1,4 +1,4 @@
-import { Application, Context } from 'probot'
+import { Application, Context, Octokit } from 'probot'
 
 import { parseConfig, LSCConfiguration } from './configuration'
 import * as maybe from './data/maybe'
@@ -14,7 +14,7 @@ import Webhooks = require('@octokit/webhooks')
  *
  * @param organization
  */
-const getLSConfigRepoName = (owner: string) => `${owner}-labelsync`
+export const getLSConfigRepoName = (owner: string) => `${owner}-labelsync`
 
 /**
  * Configuration file path determines the path of the file in the repositoy
@@ -22,7 +22,7 @@ const getLSConfigRepoName = (owner: string) => `${owner}-labelsync`
  *
  * It should always be in YAML format.
  */
-const LS_CONFIG_PATH = 'labelsync.yml'
+export const LS_CONFIG_PATH = 'labelsync.yml'
 
 /* Application */
 
@@ -37,7 +37,7 @@ export default (app: Application) => {
    *  - check whether there exists a configuration repository,
    *  - create a configuration repository from template.
    */
-  app.on('installation.created', async () => {})
+  // app.on('installation.created', async ({ github }) => {})
 
   /**
    * Push Event
@@ -72,16 +72,31 @@ export default (app: Application) => {
     )
     const config = maybe.andThen(configRaw, parseConfig)
 
-    log.debug({ config }, `About to sync ${owner}.`)
+    log.debug({ config }, `Loaded configuration for ${owner}.`)
 
     /* Skips invalid configuration. */
     if (config === null) return
 
-    /* Performs sync. */
-    for (const repo in config.repos) {
-      await Promise.all([
-        handleLabelSync(github, owner, repo, config.repos[repo]),
-      ])
+    /* Verify that we can access all configured files. */
+    const access = await checkInstallationAccess(
+      github,
+      Object.keys(config.repos),
+    )
+
+    /* Skip configurations that we can't access. */
+    switch (access.status) {
+      case 'Sufficient': {
+        /* Opens up an issue about insufficient permissions. */
+        return
+      }
+      case 'Insufficient': {
+        /* Performs sync. */
+        for (const repo in config.repos) {
+          await Promise.all([
+            handleLabelSync(github, owner, repo, config.repos[repo]),
+          ])
+        }
+      }
     }
   })
 
@@ -152,5 +167,31 @@ function withSources<
     ;(ctx as Context<C> & { sources: Sources }).sources = { config }
 
     return fn(ctx as Context<C> & { sources: Sources })
+  }
+}
+
+type InstallationAccess =
+  | { status: 'Sufficient' }
+  | { status: 'Insufficient'; missing: string[] }
+
+async function checkInstallationAccess(
+  github: Octokit,
+  repos: string[],
+): Promise<InstallationAccess> {
+  const {
+    data: { repositories },
+  } = await github.apps.listRepos({ per_page: 100 })
+
+  const missing = repos.filter(repo =>
+    repositories.every(({ name }) => repo !== name),
+  )
+
+  if (missing.length > 0) {
+    return {
+      status: 'Insufficient',
+      missing: missing,
+    }
+  } else {
+    return { status: 'Sufficient' }
   }
 }

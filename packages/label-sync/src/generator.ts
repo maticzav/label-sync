@@ -1,201 +1,117 @@
-import fs from 'fs'
-import path from 'path'
-import { stringify } from 'yaml'
+import {
+  LSCConfiguration,
+  LSCRepository,
+  LSCLabel,
+} from '../../../server/src/types'
+import { Configurable } from './configurable'
+import { Dict, withDefault, mapEntries } from './utils'
+import { YAML } from './yaml'
 
-import * as constants from '@labelsync/core/src/constants'
+/* Providers */
 
-import { Either, right, left, maybe } from './utils'
-import { findFolderUp } from './fs'
-
-/**
- * Configuration represents an entire configuration for all
- * LabelSync tools that an organisation is using.
- */
-export type LSConfiguration = {
-  repos: Map<LSRepositoryName, LSRepository>
+export function configuration(config: ConfigurationInput): Configuration {
+  return new Configuration(config)
 }
 
-/**
- * Repository represents a single Github repository.
- * When configured as `strict` it will delete any surplus of labels
- * in the repository.
- */
-export type LSRepository = {
-  strict: boolean
-  labels: Map<LSLabelName, LSLabel>
+export function repository(repo: RepositoryInput): Repository {
+  return new Repository(repo)
 }
-export type LSRepositoryName = string
 
-/**
- * Label represents the central unit of LabelSync. Each label
- * can have multiple siblings that are meaningfully related to
- * a label itself, multiple hooks that trigger different actions.
- */
-export type LSLabel = LSLabelDefinition | LSLabelColor
-export type LSLabelDefinition = {
-  description?: string
-  color: string
-  siblings?: LSSibling[]
-  hooks?: LSHook[]
-  // oldName?: string -- TODO: renaming
-  // perhaps it would be better if renamings were noted in a separate file
-  // or through dialogue to skip the unnecessary field deletion step.
-  // * PR message: "I have renamed these labels: - old:new"
+export function label(label: LabelInput): Label {
+  return new Label(label)
 }
-export type LSLabelName = string
-export type LSLabelColor = string
 
-/**
- * Hydrates a Label to a Label definition.
- *
- * @param label
- */
-export function lsLabelDefinition(label: LSLabel): LSLabelDefinition {
-  switch (typeof label) {
-    case 'string': {
-      return { color: label }
-    }
-    case 'object': {
-      return label
+/* Classes */
+
+/* Configuration */
+
+export type ConfigurationInput = {
+  repositories: Dict<Repository>
+}
+
+export class Configuration extends YAML<LSCConfiguration>
+  implements Configurable<LSCConfiguration> {
+  private repositories: Dict<Repository> = {}
+
+  constructor(config: ConfigurationInput) {
+    super()
+    this.repositories = config.repositories
+  }
+
+  getConfiguration() {
+    const repos = mapEntries(this.repositories, r => r.getConfiguration())
+
+    return { repos }
+  }
+}
+
+/* Repository */
+
+export type RepositoryInput = {
+  strict?: boolean
+  labels: Dict<Label>
+}
+
+export class Repository implements Configurable<LSCRepository> {
+  private strict: boolean
+  private labels: Dict<Label>
+
+  constructor(repo: RepositoryInput) {
+    this.strict = withDefault(false, repo.strict)
+    this.labels = repo.labels
+  }
+
+  getConfiguration() {
+    const labels = mapEntries(this.labels, label => label.getConfiguration())
+
+    return {
+      strict: this.strict,
+      labels,
     }
   }
 }
 
-/**
- * Sibling represents a label that LabelSync should add whenever
- * a parent label is assigned to issues or pull request.
- * Siblings can only refer to labels also defined in LabelSync repository
- * configuration.
- */
-export type LSSibling = string
+/* Label */
 
-/**
- * Represents a label hook. LabelSync triggers a label hook
- * every time a hook is added to an issues or a pull request.
- */
-export type LSHook =
-  /* webhooks */
+export type LabelInput =
   | {
-      integration: 'webhook'
-      endpoint: string
+      color: string
+      description: string
     }
-  /* slack */
-  | { integration: 'slack'; action: 'notify'; user: string }
-  /* pull requests */
-  | { integration: 'pr'; action: 'merge' }
-  | { integration: 'pr'; action: 'close' }
+  | string
 
-/**
- * Validates the configuration file and saves its YAML version
- * to labelsync configuration file path.
- *
- * @param config
- */
-export async function save(
-  config: LSConfiguration,
-  dir: string = __dirname,
-  logger: (...args: any[]) => any = console.error,
-) {
-  /* Loads the configuration. */
-  const yaml = generateYAMLConfigurationFromTS(config)
+export class Label implements Configurable<LSCLabel> {
+  private color: string = ''
+  private description: string | undefined
 
-  /* Processes the configuration.  */
-  await yaml.either({
-    left: errors => {
-      logger(reportValidationErrors(errors))
-    },
-    right: async configuration => {
-      /* Finds the location. */
-      const projectRoot = await findFolderUp(dir, '.git')
-      const labelSyncConfigurationFilePath = path.join(
-        maybe(dir, projectRoot),
-        constants.labelSyncConfigurationFilePath,
-      )
+  constructor(label: LabelInput) {
+    switch (typeof label) {
+      case 'string': {
+        this.color = this.fixColor(label)
+        this.description = undefined
 
-      /* Commit configuration. */
-      fs.writeFileSync(labelSyncConfigurationFilePath, configuration)
-    },
-  })
-}
+        return
+      }
+      case 'object': {
+        this.color = this.fixColor(label.color)
+        this.description = withDefault(undefined, label.description)
 
-/**
- * Converts ValidationErrors to a human readable format.
- *
- * @param errors
- */
-function reportValidationErrors(errors: ValidationError[]): string {
-  return `many errors ${errors.length}`
-}
-
-/**
- * Turns a TypeScript specification into a label-sync readable
- * YAML configuration.
- *
- * @param values
- */
-export function generateYAMLConfigurationFromTS(
-  config: LSConfiguration,
-): Either<ValidationError[], string> {
-  const { errors, configuration } = validateConfiguration(config)
-  if (errors) {
-    return left(errors)
+        return
+      }
+    }
   }
-  return right(stringify(configuration))
-}
 
-/**
- * Generates a manifest of TS configuration and validates its input.
- * @param values
- */
-function validateConfiguration(
-  config: LSConfiguration,
-): {
-  errors: ValidationError[]
-  configuration: LSConfiguration
-} {
-  /* Helper functions */
-  const repos = Object.keys(config.repos)
-  const repo = (name: string): LSRepository => config.repos.get(name)!
+  fixColor(color: string): string {
+    if (color.startsWith('#')) {
+      return color.slice(1)
+    }
+    return color
+  }
 
-  /* Validator */
-  const errors = repos.reduce<ValidationError[]>((acc, repoName) => {
-    const repoConfig = repo(repoName)
-    const labels = Object.keys(repoConfig.labels)
-    const label = (name: string): LSLabelDefinition =>
-      lsLabelDefinition(repoConfig.labels.get(name)!)
-
-    /* Check whether repository configuration defines all siblings. */
-    const labelsWithMissingSiblings = labels.filterMap<SiblingsValidationError>(
-      labelName => {
-        const labelConfig = label(labelName)
-        const missingSiblings = maybe([], labelConfig.siblings).filter(
-          sibling => labels.some(label => label === sibling),
-        )
-
-        if (missingSiblings.length > 0) {
-          return {
-            repository: repoName,
-            label: labelName,
-            siblings: missingSiblings,
-          }
-        } else {
-          return null
-        }
-      },
-    )
-
-    return acc.concat(labelsWithMissingSiblings)
-  }, [])
-
-  /* Process */
-
-  return { errors: errors, configuration: config }
-}
-
-export type ValidationError = SiblingsValidationError
-
-export type SiblingsValidationError = {
-  repository: string
-  label: string
-  siblings: LSSibling[]
+  getConfiguration() {
+    return {
+      color: this.color,
+      description: this.description,
+    }
+  }
 }

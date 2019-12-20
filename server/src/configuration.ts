@@ -8,10 +8,14 @@ import { Maybe } from './data/maybe'
  * can have multiple siblings that are meaningfully related to
  * a label itself, multiple hooks that trigger different actions.
  */
-const LSCLabel = t.type({
-  description: t.string,
-  color: t.string,
-})
+const LSCLabel = t.intersection([
+  t.type({
+    color: t.string,
+  }),
+  t.partial({
+    description: t.string,
+  }),
+])
 export type LSCLabel = t.TypeOf<typeof LSCLabel>
 
 const LSCLabelName = t.string
