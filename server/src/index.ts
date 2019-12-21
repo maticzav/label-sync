@@ -61,9 +61,6 @@ export default (app: Application) => {
     /* istanbul ignore if */
     if (configRepo === repo) return
 
-    /* Ignore changes made to non default refs. */
-    if (ref !== defaultRef) return
-
     /* Load configuration */
     const configRaw = await getFile(
       github,
@@ -86,16 +83,22 @@ export default (app: Application) => {
     /* Skip configurations that we can't access. */
     switch (access.status) {
       case 'Sufficient': {
-        /* Opens up an issue about insufficient permissions. */
+        if (defaultRef === ref) {
+          /* Performs sync. */
+          for (const repo in config.repos) {
+            await Promise.all([
+              handleLabelSync(github, owner, repo, config.repos[repo]),
+            ])
+          }
+        } else {
+          /* Comment on a PR in a human friendly way. */
+        }
+
         return
       }
       case 'Insufficient': {
-        /* Performs sync. */
-        for (const repo in config.repos) {
-          await Promise.all([
-            handleLabelSync(github, owner, repo, config.repos[repo]),
-          ])
-        }
+        /* Opens up an issue about insufficient permissions. */
+        return
       }
     }
   })
