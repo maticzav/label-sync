@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`make compiles configuration to default path 1`] = `
+"repos:
+  prisma-test-utils:
+    strict: false
+    labels:
+      bug/0-needs-reproduction:
+        color: ff0022
+      bug/1-has-reproduction:
+        color: ff0022
+        description: Indicates that an issue has reproduction
+      bug/2-bug-confirmed:
+        color: red
+      bug/3-fixing:
+        color: 00ff22
+        description: Indicates that we are working on fixing the issue.
+  label-sync:
+    strict: false
+    labels:
+      bug/0-needs-reproduction:
+        color: ff0022
+      bug/1-has-reproduction:
+        color: ff0022
+        description: Indicates that an issue has reproduction
+      bug/2-bug-confirmed:
+        color: red
+      bug/3-fixing:
+        color: 00ff22
+        description: Indicates that we are working on fixing the issue.
+"
+`;
+
+exports[`make compiles configuration to path 1`] = `
+"repos:
+  prisma-test-utils:
+    strict: false
+    labels:
+      bug/0-needs-reproduction:
+        color: ff0022
+      bug/1-has-reproduction:
+        color: ff0022
+        description: Indicates that an issue has reproduction
+      bug/2-bug-confirmed:
+        color: red
+      bug/3-fixing:
+        color: 00ff22
+        description: Indicates that we are working on fixing the issue.
+  label-sync:
+    strict: false
+    labels:
+      bug/0-needs-reproduction:
+        color: ff0022
+      bug/1-has-reproduction:
+        color: ff0022
+        description: Indicates that an issue has reproduction
+      bug/2-bug-confirmed:
+        color: red
+      bug/3-fixing:
+        color: 00ff22
+        description: Indicates that we are working on fixing the issue.
+"
+`;

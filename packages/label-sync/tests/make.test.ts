@@ -1,6 +1,14 @@
-import * as ls from '../../src'
+import fs from 'fs'
+import path from 'path'
+import { promisify } from 'util'
 
-export default ls.configuration({
+import * as ls from '../src'
+import { make } from '../src'
+
+const fsReadFile = promisify(fs.readFile)
+const fsUnlink = promisify(fs.unlink)
+
+const config = ls.configuration({
   repositories: {
     'prisma-test-utils': ls.repository({
       strict: false,
@@ -33,4 +41,37 @@ export default ls.configuration({
       },
     }),
   },
+})
+
+describe('make', () => {
+  test('compiles configuration to path', async () => {
+    const yamlPath = path.resolve(__dirname, 'labelsync.yml')
+
+    await make({
+      configs: [config],
+      outputs: {
+        config: yamlPath,
+      },
+    })
+
+    const file = await fsReadFile(yamlPath, { encoding: 'utf-8' })
+    await fsUnlink(yamlPath)
+
+    expect(file).toMatchSnapshot()
+  })
+
+  test('compiles configuration to default path', async () => {
+    await make(
+      {
+        configs: [config],
+      },
+      __dirname,
+    )
+
+    const yamlPath = path.resolve(__dirname, 'labelsync.yml')
+    const file = await fsReadFile(yamlPath, { encoding: 'utf-8' })
+    await fsUnlink(yamlPath)
+
+    expect(file).toMatchSnapshot()
+  })
 })

@@ -36,6 +36,7 @@ export async function findUp(
 ): Promise<Maybe<string>> {
   switch (path.normalize(dir)) {
     /* End case: we reached the root. */
+    /* istanbul ignore next */
     case '/': {
       return null
     }
@@ -47,7 +48,7 @@ export async function findUp(
         .some(pattern)
 
       if (includes) return dir
-      else return findUp(path.join(dir, '../'), pattern)
+      else return findUp(path.resolve(dir, '../'), pattern)
     }
   }
 }
