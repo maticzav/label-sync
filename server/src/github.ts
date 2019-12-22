@@ -24,6 +24,7 @@ export async function getFile(
     switch (res.status) {
       case 200: {
         // expect a single file
+        /* istanbul ignore if */
         if (Array.isArray(res.data) || !res.data.content) return null
 
         return Buffer.from(res.data.content, 'base64').toString()
