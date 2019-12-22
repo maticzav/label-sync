@@ -5,10 +5,13 @@ import { Application, Context, Octokit } from 'probot'
 
 import { parseConfig, LSCConfiguration } from './configuration'
 import * as maybe from './data/maybe'
-import { getFile } from './github'
-import { handleLabelSync, removeLabelsFromRepository } from './handlers/labels'
-import { handleIssue } from './handlers/issues'
-import { handlePRComment } from './handlers/prs'
+import {
+  getFile,
+  openIssue,
+  createPRComment,
+  removeLabelsFromRepository,
+} from './github'
+import { handleLabelSync } from './handlers/labels'
 import { generateHumanReadableReport } from './language/labels'
 
 /* Constants */
@@ -119,7 +122,7 @@ export default (app: Application) => {
         | LabelSync Team
         `
 
-        await handleIssue(github, owner, configRepo, title, body)
+        await openIssue(github, owner, configRepo, title, body)
 
         return
       }
@@ -182,7 +185,7 @@ export default (app: Application) => {
             const report = generateHumanReadableReport(reports)
 
             /* Comment on a PR in a human friendly way. */
-            await handlePRComment(github, owner, configRepo, number, report)
+            await createPRComment(github, owner, configRepo, number, report)
 
             return
           }
@@ -197,7 +200,7 @@ export default (app: Application) => {
             | ${access.missing.map(missing => ` * ${missing}`).join(os.EOL)}
             `
 
-            await handlePRComment(github, owner, configRepo, number, body)
+            await createPRComment(github, owner, configRepo, number, body)
 
             return
           }

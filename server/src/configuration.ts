@@ -52,11 +52,9 @@ export function parseConfig(input: string): Maybe<LSCConfiguration> {
     const object = yaml.safeLoad(input)
     const config = LSCConfiguration.decode(object)
 
-    if (config._tag === 'Left') {
-      return null
-    }
+    if (config._tag === 'Left') return null
     return config.right
-  } catch (err) {
+  } catch (err) /* istanbul ignore next */ {
     return null
   }
 }

@@ -3,7 +3,14 @@ import { Octokit } from 'probot'
 import { LSCRepository, LSCLabel } from '../configuration'
 import * as maybe from '../data/maybe'
 import { Dict } from '../data/dict'
-import { GithubLabel, getRepositoryLabels, isLabel } from '../github'
+import {
+  GithubLabel,
+  getRepositoryLabels,
+  isLabel,
+  addLabelsToRepository,
+  updateLabelsInRepository,
+  removeLabelsFromRepository,
+} from '../github'
 
 export type LabelSyncReport =
   | {
@@ -139,123 +146,5 @@ export function calculateDiff(
 
   function hydrateLabel(name: string): GithubLabel {
     return { ...config[name], name, default: false }
-  }
-}
-
-/**
- *
- * Create new labels in a repository.
- *
- * @param github
- * @param labels
- * @param repository
- */
-export async function addLabelsToRepository(
-  github: Octokit,
-  { repo, owner }: { repo: string; owner: string },
-  labels: GithubLabel[],
-  persist: boolean,
-): Promise<GithubLabel[]> {
-  /* Return config on non persist */
-  if (!persist) {
-    return labels
-  }
-
-  /* Perform sync on persist. */
-  const actions = labels.map(label => addLabelToRepository(label))
-  return Promise.all(actions)
-
-  /**
-   * Helper functions
-   */
-  async function addLabelToRepository(
-    label: GithubLabel,
-  ): Promise<GithubLabel> {
-    return github.issues
-      .createLabel({
-        owner: owner,
-        repo: repo,
-        name: label.name,
-        description: label.description,
-        color: label.color,
-      })
-      .then(res => res.data)
-  }
-}
-
-/**
- *
- * Updates labels in repository.
- *
- * @param github
- * @param labels
- * @param repository
- */
-export async function updateLabelsInRepository(
-  github: Octokit,
-  { repo, owner }: { repo: string; owner: string },
-  labels: GithubLabel[],
-  persist: boolean,
-): Promise<GithubLabel[]> {
-  /* Return config on non persist */
-  if (!persist) {
-    return labels
-  }
-
-  /* Update values on persist. */
-  const actions = labels.map(label => updateLabelInRepository(label))
-  return Promise.all(actions)
-
-  /**
-   * Helper functions
-   */
-  async function updateLabelInRepository(
-    label: GithubLabel,
-  ): Promise<GithubLabel> {
-    return github.issues
-      .updateLabel({
-        current_name: label.name,
-        owner: owner,
-        repo: repo,
-        name: label.name,
-        description: label.description,
-        color: label.color,
-      })
-      .then(res => res.data)
-  }
-}
-
-/**
- *
- * Removes labels from repository.
- *
- * @param github
- * @param labels
- * @param repository
- */
-export async function removeLabelsFromRepository(
-  github: Octokit,
-  { repo, owner }: { repo: string; owner: string },
-  labels: GithubLabel[],
-  persist: boolean,
-): Promise<GithubLabel[]> {
-  const actions = labels.map(label => removeLabelFromRepository(label))
-  if (persist) await Promise.all(actions)
-
-  return labels
-
-  /**
-   * Helper functions
-   */
-  async function removeLabelFromRepository(
-    label: GithubLabel,
-  ): Promise<Octokit.IssuesDeleteLabelParams> {
-    return github.issues
-      .deleteLabel({
-        owner: owner,
-        repo: repo,
-        name: label.name,
-      })
-      .then(res => res.data)
   }
 }

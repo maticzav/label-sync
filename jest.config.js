@@ -1,5 +1,5 @@
 module.exports = {
-  roots: ['<rootDir>/packages/'],
+  roots: ['<rootDir>/packages/', '<rootDir>/server/'],
   testEnvironment: 'node',
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
@@ -15,6 +15,7 @@ module.exports = {
     '!**/vendor/**',
     '!**/generated/**',
     '!**/__fixtures__/**',
+    '!**/scenarios/**',
   ],
   snapshotSerializers: ['jest-serializer-ansi'],
   verbose: true,
