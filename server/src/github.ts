@@ -82,14 +82,11 @@ export async function addLabelsToRepository(
   labels: GithubLabel[],
   persist: boolean,
 ): Promise<GithubLabel[]> {
-  /* Return config on non persist */
-  if (!persist) {
-    return labels
-  }
-
   /* Perform sync on persist. */
   const actions = labels.map(label => addLabelToRepository(label))
-  return Promise.all(actions)
+  if (persist) await Promise.all(actions)
+
+  return labels
 
   /**
    * Helper functions
@@ -123,14 +120,11 @@ export async function updateLabelsInRepository(
   labels: GithubLabel[],
   persist: boolean,
 ): Promise<GithubLabel[]> {
-  /* Return config on non persist */
-  if (!persist) {
-    return labels
-  }
-
   /* Update values on persist. */
   const actions = labels.map(label => updateLabelInRepository(label))
-  return Promise.all(actions)
+  if (persist) await Promise.all(actions)
+
+  return labels
 
   /**
    * Helper functions

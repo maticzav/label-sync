@@ -71,7 +71,7 @@ export default (app: Application) => {
 
     /* Skip non default branch */
     /* istanbul ignore if */
-    if (defaultRef === ref) return
+    if (defaultRef !== ref) return
 
     /* Load configuration */
     const configRaw = await getFile(
@@ -84,6 +84,7 @@ export default (app: Application) => {
     log.debug({ config }, `Loaded configuration for ${owner}.`)
 
     /* Skips invalid configuration. */
+    /* istanbul ignore next */
     if (config === null) return
 
     /* Verify that we can access all configured files. */
@@ -208,6 +209,7 @@ export default (app: Application) => {
 
         return
       }
+      /* istanbul ignore next */
       case 'pull_request.assigned':
       case 'pull_request.closed':
       case 'pull_request.labeled':
@@ -223,6 +225,7 @@ export default (app: Application) => {
         /* Ignore other events. */
         return
       }
+      /* istanbul ignore next */
       default: {
         /* Log unsupported pull_request action. */
         log.error(`Unsupported pull_request event: ${payload.action}`)
@@ -247,9 +250,11 @@ export default (app: Application) => {
       const label = ctx.payload.label
 
       /* Ignore changes in non-strict config */
+      /* istanbul ignore if */
       if (!config.strict) return
 
       /* Ignore complying changes. */
+      /* istanbul ignore if */
       if (config.labels.hasOwnProperty(label.name)) return
 
       /* Prune unsupported labels in strict repositories. */
@@ -317,12 +322,12 @@ async function checkInstallationAccess(
     repositories.every(({ name }) => repo !== name),
   )
 
-  if (missing.length > 0) {
-    return {
-      status: 'Insufficient',
-      missing: missing,
-    }
-  } else {
+  if (missing.length === 0) {
     return { status: 'Sufficient' }
+  }
+
+  return {
+    status: 'Insufficient',
+    missing: missing,
   }
 }

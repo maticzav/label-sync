@@ -62,6 +62,9 @@ export async function handleLabelSync(
   const remoteLabels = await getRepositoryLabels(octokit, { repo, owner })
   const labelsDiff = maybe.andThen(remoteLabels, calculateDiff(labels))
 
+  console.log({ labelsDiff })
+
+  /* istanbul ignore if */
   if (labelsDiff === null) {
     return {
       status: 'Failure',
@@ -74,15 +77,16 @@ export async function handleLabelSync(
 
   const { added, changed, removed } = labelsDiff
 
+  /* Perform sync */
   const [additions, updates, removals] = await Promise.all([
     addLabelsToRepository(octokit, { repo, owner }, added, persist),
-    updateLabelsInRepository(octokit, { repo, owner }, changed, persist),
-    removeLabelsFromRepository(
-      octokit,
-      { repo, owner },
-      removed,
-      strict && persist,
-    ),
+    // updateLabelsInRepository(octokit, { repo, owner }, changed, persist),
+    // removeLabelsFromRepository(
+    //   octokit,
+    //   { repo, owner },
+    //   removed,
+    //   strict && persist,
+    // ),
   ])
 
   return {
