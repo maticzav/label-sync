@@ -1,10 +1,15 @@
+import Webhooks = require('@octokit/webhooks')
+import ml from 'multilines'
+import os from 'os'
 import { Application, Context, Octokit } from 'probot'
 
 import { parseConfig, LSCConfiguration } from './configuration'
 import * as maybe from './data/maybe'
 import { getFile } from './github'
 import { handleLabelSync, removeLabelsFromRepository } from './handlers/labels'
-import Webhooks = require('@octokit/webhooks')
+import { handleIssue } from './handlers/issues'
+import { handlePRComment } from './handlers/prs'
+import { generateHumanReadableReport } from './language/labels'
 
 /* Constants */
 
@@ -59,7 +64,11 @@ export default (app: Application) => {
     const configRepo = getLSConfigRepoName(owner)
 
     /* istanbul ignore if */
-    if (configRepo === repo) return
+    if (configRepo !== repo) return
+
+    /* Skip non default branch */
+    /* istanbul ignore if */
+    if (defaultRef === ref) return
 
     /* Load configuration */
     const configRaw = await getFile(
@@ -83,26 +92,142 @@ export default (app: Application) => {
     /* Skip configurations that we can't access. */
     switch (access.status) {
       case 'Sufficient': {
-        if (defaultRef === ref) {
-          /* Performs sync. */
-          for (const repo in config.repos) {
-            await Promise.all([
-              handleLabelSync(github, owner, repo, config.repos[repo]),
-            ])
-          }
-        } else {
-          /* Comment on a PR in a human friendly way. */
+        /* Performs sync. */
+        for (const repo in config.repos) {
+          await Promise.all([
+            handleLabelSync(github, owner, repo, config.repos[repo], true),
+          ])
         }
 
         return
       }
       case 'Insufficient': {
         /* Opens up an issue about insufficient permissions. */
+        const title = 'LabelSync - Insufficient permissions'
+        const body = ml`
+        | # Insufficient permissions
+        |
+        | Hi there,
+        | We have noticed that your configuration stretches beyond
+        | repositories we can access. Please update it so we can help
+        | you as best as we can.
+        |
+        | _Missing repositories:_
+        | ${access.missing.map(missing => ` * ${missing}`).join(os.EOL)}
+        |
+        | Best,
+        | LabelSync Team
+        `
+
+        await handleIssue(github, owner, configRepo, title, body)
+
         return
       }
     }
   })
 
+  /**
+   * Pull Request event
+   *
+   * Tasks:
+   *  - review changes introduced,
+   *  - open issues,
+   *  - review changes.
+   */
+  app.on('pull_request', async ({ github, payload, log }) => {
+    const owner = payload.repository.owner.login
+    const repo = payload.repository.name
+    const ref = payload.pull_request.head.ref
+    const number = payload.pull_request.number
+
+    const configRepo = getLSConfigRepoName(owner)
+
+    /* istanbul ignore if */
+    if (configRepo !== repo) return
+
+    /* Load configuration */
+    const configRaw = await getFile(
+      github,
+      { owner, repo, ref },
+      LS_CONFIG_PATH,
+    )
+    const config = maybe.andThen(configRaw, parseConfig)
+
+    log.debug({ config }, `Loaded configuration for ${owner}/${ref}.`)
+
+    /* Skips invalid configuration. */
+    if (config === null) return
+
+    switch (payload.action) {
+      case 'pull_request.opened':
+      case 'pull_request.edited': {
+        /* Review pull request. */
+
+        /* Verify that we can access all configured files. */
+        const access = await checkInstallationAccess(
+          github,
+          Object.keys(config.repos),
+        )
+
+        /* Skip configurations that we can't access. */
+        switch (access.status) {
+          case 'Sufficient': {
+            /* Fetch changes to repositories. */
+            const reports = await Promise.all(
+              Object.keys(config.repos).map(repo =>
+                handleLabelSync(github, owner, repo, config.repos[repo], false),
+              ),
+            )
+
+            const report = generateHumanReadableReport(reports)
+
+            /* Comment on a PR in a human friendly way. */
+            await handlePRComment(github, owner, configRepo, number, report)
+
+            return
+          }
+          case 'Insufficient': {
+            /* Opens up an issue about insufficient permissions. */
+            const body = ml`
+            | It seems like this configuration stretches beyond
+            | repositories we can access. Please update it so we can help
+            | you as best as we can.
+            |
+            | _Missing repositories:_
+            | ${access.missing.map(missing => ` * ${missing}`).join(os.EOL)}
+            `
+
+            await handlePRComment(github, owner, configRepo, number, body)
+
+            return
+          }
+        }
+
+        return
+      }
+      case 'pull_request.assigned':
+      case 'pull_request.closed':
+      case 'pull_request.labeled':
+      case 'pull_request.locked':
+      case 'pull_request.ready_for_review':
+      case 'pull_request.reopened':
+      case 'pull_request.review_request_removed':
+      case 'pull_request.review_requested':
+      case 'pull_request.unassigned':
+      case 'pull_request.unlabeled':
+      case 'pull_request.unlocked':
+      case 'pull_request.synchronize': {
+        /* Ignore other events. */
+        return
+      }
+      default: {
+        /* Log unsupported pull_request action. */
+        log.error(`Unsupported pull_request event: ${payload.action}`)
+
+        return
+      }
+    }
+  })
   /**
    * Label Created
    *

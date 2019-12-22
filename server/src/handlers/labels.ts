@@ -1,17 +1,33 @@
 import { Octokit } from 'probot'
 
-import { LSCRepository } from '../configuration'
+import { LSCRepository, LSCLabel } from '../configuration'
 import * as maybe from '../data/maybe'
 import { GithubLabel, getRepositoryLabels, isLabel } from '../github'
+import { Dict } from '../utils'
 
 export type LabelSyncReport =
   | {
       status: 'Success'
+      owner: string
+      repo: string
       additions: GithubLabel[]
       updates: GithubLabel[]
       removals: GithubLabel[]
+      config: {
+        strict: boolean
+        labels: Dict<LSCLabel>
+      }
     }
-  | { status: 'Failure'; message: string }
+  | {
+      status: 'Failure'
+      repo: string
+      owner: string
+      message: string
+      config: {
+        strict: boolean
+        labels: Dict<LSCLabel>
+      }
+    }
 
 /**
  *
@@ -27,6 +43,7 @@ export async function handleLabelSync(
   owner: string,
   repo: string,
   { strict, labels }: LSCRepository,
+  persist: boolean = false,
 ): Promise<LabelSyncReport> {
   /**
    * Label Sync handler firstly loads current labels from Github,
@@ -39,22 +56,39 @@ export async function handleLabelSync(
   const labelsDiff = maybe.andThen(remoteLabels, calculateDiff(labels))
 
   if (labelsDiff === null) {
-    return { status: 'Failure', message: '' }
+    return {
+      status: 'Failure',
+      owner,
+      repo,
+      message: `Couldn't make a diff of labels.`,
+      config: { labels, strict },
+    }
   }
 
   const { added, changed, removed } = labelsDiff
 
   const [additions, updates, removals] = await Promise.all([
-    addLabelsToRepository(octokit, { repo, owner }, added),
-    updateLabelsInRepository(octokit, { repo, owner }, changed),
-    removeLabelsFromRepository(octokit, { repo, owner }, removed, strict),
+    addLabelsToRepository(octokit, { repo, owner }, added, persist),
+    updateLabelsInRepository(octokit, { repo, owner }, changed, persist),
+    removeLabelsFromRepository(
+      octokit,
+      { repo, owner },
+      removed,
+      strict && persist,
+    ),
   ])
 
   return {
     status: 'Success',
+    repo,
+    owner,
     additions,
     updates,
     removals,
+    config: {
+      strict,
+      labels,
+    },
   }
 }
 
@@ -120,11 +154,16 @@ export async function addLabelsToRepository(
   github: Octokit,
   { repo, owner }: { repo: string; owner: string },
   labels: GithubLabel[],
+  persist: boolean,
 ): Promise<GithubLabel[]> {
-  const actions = labels.map(label => addLabelToRepository(label))
-  const res = await Promise.all(actions)
+  /* Return config on non persist */
+  if (!persist) {
+    return labels
+  }
 
-  return res
+  /* Perform sync on persist. */
+  const actions = labels.map(label => addLabelToRepository(label))
+  return Promise.all(actions)
 
   /**
    * Helper functions
@@ -156,11 +195,16 @@ export async function updateLabelsInRepository(
   github: Octokit,
   { repo, owner }: { repo: string; owner: string },
   labels: GithubLabel[],
+  persist: boolean,
 ): Promise<GithubLabel[]> {
-  const actions = labels.map(label => updateLabelInRepository(label))
-  const res = await Promise.all(actions)
+  /* Return config on non persist */
+  if (!persist) {
+    return labels
+  }
 
-  return res
+  /* Update values on persist. */
+  const actions = labels.map(label => updateLabelInRepository(label))
+  return Promise.all(actions)
 
   /**
    * Helper functions
@@ -193,10 +237,10 @@ export async function removeLabelsFromRepository(
   github: Octokit,
   { repo, owner }: { repo: string; owner: string },
   labels: GithubLabel[],
-  permanent: boolean,
+  persist: boolean,
 ): Promise<GithubLabel[]> {
   const actions = labels.map(label => removeLabelFromRepository(label))
-  if (permanent) await Promise.all(actions)
+  if (persist) await Promise.all(actions)
 
   return labels
 

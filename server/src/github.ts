@@ -44,6 +44,10 @@ export interface GithubLabel {
   default?: boolean
 }
 
+export interface GithubLabelDiff extends GithubLabel {
+  old: Partial<GithubLabel>
+}
+
 /**
  * Fetches labels in a repository.
  */
