@@ -1,6 +1,7 @@
 version: 2.0
 jobs:
   test:
+    working_directory: ~/app
     docker:
       - image: 'circleci/node:11.3.0'
     steps:

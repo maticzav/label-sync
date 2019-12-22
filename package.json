@@ -12,7 +12,7 @@
     "test": "yarn run build; yarn jest"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.9",
+    "@types/jest": "^24.0.24",
     "chalk": "^3.0.0",
     "codecov": "3.6.1",
     "execa": "^3.4.0",
