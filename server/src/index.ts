@@ -34,7 +34,7 @@ export const LS_CONFIG_PATH = 'labelsync.yml'
 
 /* Application */
 
-export default (app: Application) => {
+module.exports = (app: Application) => {
   /**
    * Installation event
    *
