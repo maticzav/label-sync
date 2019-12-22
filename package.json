@@ -8,7 +8,7 @@
     "clean-all": "rm -rf ./node_modules && rm -rf ./packages/*/node_modules && yarn build-clean",
     "coverage": "yarn codecov",
     "postinstall": "yarn build",
-    "release": "yarn build-clean && yarn build && lerna publish --yes",
+    "release": "lerna publish --yes",
     "test": "yarn run build; yarn jest"
   },
   "devDependencies": {
