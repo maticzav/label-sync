@@ -50,7 +50,7 @@ export async function handleLabelSync(
   owner: string,
   repo: string,
   { strict, labels }: LSCRepository,
-  persist: boolean = false,
+  persist: boolean,
 ): Promise<LabelSyncReport> {
   /**
    * Label Sync handler firstly loads current labels from Github,

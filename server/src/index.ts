@@ -160,11 +160,12 @@ export default (app: Application) => {
     log.debug({ config }, `Loaded configuration for ${owner}/${ref}.`)
 
     /* Skips invalid configuration. */
+    /* istanbul ignore if */
     if (config === null) return
 
     switch (payload.action) {
-      case 'pull_request.opened':
-      case 'pull_request.edited': {
+      case 'opened':
+      case 'edited': {
         /* Review pull request. */
 
         /* Verify that we can access all configured files. */
@@ -206,22 +207,31 @@ export default (app: Application) => {
             return
           }
         }
-
-        return
       }
       /* istanbul ignore next */
-      case 'pull_request.assigned':
-      case 'pull_request.closed':
-      case 'pull_request.labeled':
-      case 'pull_request.locked':
-      case 'pull_request.ready_for_review':
-      case 'pull_request.reopened':
-      case 'pull_request.review_request_removed':
-      case 'pull_request.review_requested':
-      case 'pull_request.unassigned':
-      case 'pull_request.unlabeled':
-      case 'pull_request.unlocked':
-      case 'pull_request.synchronize': {
+      case 'assigned':
+      /* istanbul ignore next */
+      case 'closed':
+      /* istanbul ignore next */
+      case 'labeled':
+      /* istanbul ignore next */
+      case 'locked':
+      /* istanbul ignore next */
+      case 'ready_for_review':
+      /* istanbul ignore next */
+      case 'reopened':
+      /* istanbul ignore next */
+      case 'review_request_removed':
+      /* istanbul ignore next */
+      case 'review_requested':
+      /* istanbul ignore next */
+      case 'unassigned':
+      /* istanbul ignore next */
+      case 'unlabeled':
+      /* istanbul ignore next */
+      case 'unlocked':
+      /* istanbul ignore next */
+      case 'synchronize': {
         /* Ignore other events. */
         return
       }
@@ -288,7 +298,7 @@ function withSources<
   return async ctx => {
     const owner = ctx.payload.sender.login
     const repo = getLSConfigRepoName(owner)
-    const ref = ctx.payload.repository.default_branch
+    const ref = `refs/heads/${ctx.payload.repository.default_branch}`
 
     /* Load configuration */
     const configRaw = await getFile(
@@ -299,6 +309,7 @@ function withSources<
     const config = maybe.andThen(configRaw, parseConfig)
 
     /* Skips invlaid config. */
+    /* istanbul ignore if */
     if (config === null) return
     ;(ctx as Context<C> & { sources: Sources }).sources = { config }
 

@@ -1,3 +1,42 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`bot: pull_request 1`] = `
+Object {
+  "body": "## PullRequest Overview 
+> NOTE: This is only a preview of what will happen. Nothing has been changed yet.
+
+#### graphql-shield
+
+__New labels:__
+ * bug/3-fixing
+
+__Changed labels:__
+ * bug/2-bug-confirmed
+
+__Remvoed labels:__
+ * bug/4-fixed
+#### emma-cli
+
+__New labels:__
+
+
+__Changed labels:__
+
+
+__Remvoed labels:__
+",
+}
+`;
+
+exports[`bot: pull_request with insufficient permissions 1`] = `
+Object {
+  "body": "It seems like this configuration stretches beyond
+repositories we can access. Please update it so we can help
+you as best as we can.
+
+_Missing repositories:_
+ * emma-cli",
+}
+`;
+
 exports[`bot: push event with insufficient premissions 1`] = `"/repos/maticzav/maticzav-labelsync/issues"`;

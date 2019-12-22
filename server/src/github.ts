@@ -83,9 +83,12 @@ export async function addLabelsToRepository(
   labels: GithubLabel[],
   persist: boolean,
 ): Promise<GithubLabel[]> {
+  /* Return immediately on non-persistent sync. */
+  if (!persist) return labels
+
   /* Perform sync on persist. */
   const actions = labels.map(label => addLabelToRepository(label))
-  if (persist) await Promise.all(actions)
+  await Promise.all(actions)
 
   return labels
 
@@ -121,9 +124,12 @@ export async function updateLabelsInRepository(
   labels: GithubLabel[],
   persist: boolean,
 ): Promise<GithubLabel[]> {
+  /* Return immediately on non-persistent sync. */
+  if (!persist) return labels
+
   /* Update values on persist. */
   const actions = labels.map(label => updateLabelInRepository(label))
-  if (persist) await Promise.all(actions)
+  await Promise.all(actions)
 
   return labels
 
@@ -160,8 +166,11 @@ export async function removeLabelsFromRepository(
   labels: GithubLabel[],
   persist: boolean,
 ): Promise<GithubLabel[]> {
+  /* Return immediately on non-persistent sync. */
+  if (!persist) return labels
+
   const actions = labels.map(label => removeLabelFromRepository(label))
-  if (persist) await Promise.all(actions)
+  await Promise.all(actions)
 
   return labels
 
@@ -249,7 +258,7 @@ export async function createPRComment(
       owner: owner,
       repo: repo,
       body: message,
-      number: number,
+      issue_number: number,
     })
     .then(({ data }) => data)
 }
