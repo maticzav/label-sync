@@ -12,6 +12,7 @@ jobs:
       - run:
           name: Test packages
           command: |
+            find ./packages
             chown -R $USER:$USER /home/circleci/app/packages/label-sync/tests/__fixtures__
             yarn test
       - run:
