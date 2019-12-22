@@ -26,7 +26,7 @@ jobs:
           command: yarn install
       - run:
           name: Release packages
-          command: yarn release
+          command: yarn publish
 workflows:
   version: 2
   test-and-publish:
