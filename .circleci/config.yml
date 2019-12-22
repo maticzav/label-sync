@@ -26,7 +26,10 @@ jobs:
           command: yarn install
       - run:
           name: Release packages
-          command: yarn release
+          command: |
+            git config user.email "matic.zavadlal@gmail.com"
+            git config user.name "maticzav"
+            yarn release
 workflows:
   version: 2
   test-and-publish:
