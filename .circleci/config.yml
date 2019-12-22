@@ -25,11 +25,16 @@ jobs:
           name: Install monorepo
           command: yarn install
       - run:
-          name: Release packages
+          name: Setup NPM and Github credentials
           command: |
-            git config user.email "matic.zavadlal@gmail.com"
-            git config user.name "maticzav"
-            yarn release
+            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+            git config --global github.token $GH_TOKEN
+            git config --global user.email $GH_EMAIL
+            git config --global user.name $GH_USER
+      - run:
+          name: Build packages
+          command: yarn build
+      - run: ./scripts/release.sh
 workflows:
   version: 2
   test-and-publish:
