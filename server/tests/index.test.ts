@@ -26,7 +26,7 @@ describe('bot:', () => {
   let probot: Probot
 
   beforeEach(() => {
-    probot = new Probot({})
+    probot = new Probot({ id: 123, githubToken: 'token' })
     const app = probot.load(ls)
 
     app.app = {
