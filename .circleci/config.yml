@@ -11,10 +11,7 @@ jobs:
           command: yarn install
       - run:
           name: Test packages
-          command: |
-            find ./packages
-            chown -R $USER:$USER /home/circleci/app/packages/label-sync/tests/__fixtures__
-            yarn test
+          command: yarn test
       - run:
           name: Get coverage of packages
           command: yarn coverage
