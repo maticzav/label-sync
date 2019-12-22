@@ -24,6 +24,20 @@ export async function findFolderUp(
 }
 
 /**
+ * Looks up for a folder starting with the current directory and
+ * going up until it reaches the root folder or finds the folder.
+ *
+ * @param dir
+ * @param name
+ */
+export async function findFileUp(
+  dir: string,
+  name: string,
+): Promise<Maybe<string>> {
+  return findUp(dir, p => fs.lstatSync(p).isFile() && path.basename(p) === name)
+}
+
+/**
  * Traverses file system up to find a specific directory that contains
  * a matching pattern.
  *

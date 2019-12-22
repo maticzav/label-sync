@@ -59,4 +59,20 @@ describe('make', () => {
 
     expect(file).toMatchSnapshot()
   })
+
+  test('compiles configuration to default path', async () => {
+    const yamlPath = path.resolve(__dirname, './__fixtures__/labelsync.yml')
+
+    await make(
+      {
+        configs: [config],
+      },
+      path.resolve(__dirname, './__fixtures__/'),
+    )
+
+    const file = await fsReadFile(yamlPath, { encoding: 'utf-8' })
+    await fsUnlink(yamlPath)
+
+    expect(file).toMatchSnapshot()
+  })
 })

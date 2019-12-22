@@ -2,7 +2,7 @@ import { writeFileSync } from 'fs'
 import path from 'path'
 import { isNull, isNullOrUndefined } from 'util'
 
-import { findFolderUp } from './fs'
+import { findFileUp } from './fs'
 import { Configuration } from './generator'
 import { withDefault } from './utils'
 import { EOL } from 'os'
@@ -23,15 +23,15 @@ export async function make(
   cwd: string = process.cwd(),
 ): Promise<boolean> {
   /* Search for git folder */
-  const gitPath = await findFolderUp(cwd, '.git')
+  const pkgPath = await findFileUp(cwd, 'package.json')
 
   /* istanbul ignore next */
-  if (isNull(gitPath) && isNullOrUndefined(outputs?.config)) {
+  if (isNull(pkgPath) && isNullOrUndefined(outputs?.config)) {
     return false
   }
 
   const output = withDefault(
-    path.resolve(gitPath!, LS_CONFIG_PATH),
+    path.resolve(pkgPath!, LS_CONFIG_PATH),
     outputs?.config,
   )
 
