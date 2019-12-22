@@ -3,7 +3,7 @@ import nock from 'nock'
 import path from 'path'
 import { Probot } from 'probot'
 
-import ls from '../src'
+const ls = require('../src')
 
 /* Fixtures */
 const configFixture = fs.readFileSync(
