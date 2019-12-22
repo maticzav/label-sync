@@ -63,7 +63,7 @@ export async function getRepositoryLabels(
     })
 
     return octokit.paginate(labels)
-  } catch (err) {
+  } catch (err) /* istanbul ignore next */ {
     return null
   }
 }
