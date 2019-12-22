@@ -18,4 +18,4 @@ RUN yarn install
 # Build Server
 RUN yarn build
 
-CMD ["./node_modules/.bin/probot", "run server/dist/index.js"]
+CMD ["./node_modules/.bin/probot", "run ./server/dist/index.js"]
