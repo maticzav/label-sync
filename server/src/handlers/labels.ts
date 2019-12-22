@@ -2,8 +2,8 @@ import { Octokit } from 'probot'
 
 import { LSCRepository, LSCLabel } from '../configuration'
 import * as maybe from '../data/maybe'
+import { Dict } from '../data/dict'
 import { GithubLabel, getRepositoryLabels, isLabel } from '../github'
-import { Dict } from '../utils'
 
 export type LabelSyncReport =
   | {

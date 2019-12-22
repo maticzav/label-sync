@@ -2,7 +2,6 @@ import ml from 'multilines'
 import os from 'os'
 
 import { LabelSyncReport } from '../handlers/labels'
-import { Dict } from '../utils'
 import { GithubLabel } from '../github'
 
 /**
