@@ -2,6 +2,7 @@ import * as t from 'io-ts'
 import yaml from 'js-yaml'
 
 import { Maybe } from './data/maybe'
+import { mapEntries } from './utils'
 
 /**
  * Label represents the central unit of LabelSync. Each label
@@ -53,8 +54,49 @@ export function parseConfig(input: string): Maybe<LSCConfiguration> {
     const config = LSCConfiguration.decode(object)
 
     if (config._tag === 'Left') return null
-    return config.right
+    return fixConfig(config.right)
   } catch (err) /* istanbul ignore next */ {
     return null
   }
+}
+
+/**
+ * Catches configuration issues that io-ts couldn't catch.
+ *
+ * @param config
+ */
+function fixConfig(config: LSCConfiguration): LSCConfiguration {
+  const repos = mapEntries(config.repos, fixRepoConfig)
+
+  return {
+    ...config,
+    repos: repos,
+  }
+}
+
+/**
+ * Fixes issues that io-ts couldn't catch.
+ *
+ * @param config
+ */
+function fixRepoConfig(config: LSCRepository): LSCRepository {
+  const labels = mapEntries<LSCLabel, LSCLabel>(config.labels, label => ({
+    ...label,
+    color: fixLabelColor(label.color),
+  }))
+
+  return {
+    ...config,
+    labels,
+  }
+}
+
+/**
+ * Removes hash from the color.
+ *
+ * @param color
+ */
+function fixLabelColor(color: string): string {
+  if (color.startsWith('#')) return color.slice(1)
+  return color
 }

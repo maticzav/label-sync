@@ -25,21 +25,21 @@ export function generateHumanReadableReport(
     switch (report.status) {
       case 'Success': {
         return ml`
-        | #### ${report.repo}
+        | #### \`${report.repo}\`
         |
         | __New labels:__
-        | ${ulOfLabels(report.additions)}
+        | ${ulOfLabels(report.additions, `No new labels created.`)}
         |
         | __Changed labels:__
-        | ${ulOfLabels(report.updates)}
+        | ${ulOfLabels(report.updates, `No changed labels.`)}
         |
-        | __Remvoed labels:__
-        | ${ulOfLabels(report.removals)}
+        | __Removed labels:__
+        | ${ulOfLabels(report.removals, `You haven't removed any label.`)}
         `
       }
       case 'Failure': {
         return ml`
-        | #### ${report.repo}
+        | #### \`${report.repo}\`
         |
         | ${report.message}
         `
@@ -48,6 +48,12 @@ export function generateHumanReadableReport(
   }
 }
 
-function ulOfLabels(labels: GithubLabel[]): string {
+/**
+ * Creates a human readable list of labels.
+ *
+ * @param labels
+ */
+function ulOfLabels(labels: GithubLabel[], empty: string): string {
+  if (labels.length === 0) return empty
   return labels.map(label => ` * ${label.name}`).join(os.EOL)
 }

@@ -4,10 +4,10 @@ exports[`language: correctly generates human readable report 1`] = `
 "## PullRequest Overview 
 > NOTE: This is only a preview of what will happen. Nothing has been changed yet.
 
-#### labelsync
+#### \\\\\`labelsync\\\\\`
 
 Couldn't make a diff of labels.
-#### graphql-shield
+#### \\\\\`graphql-shield\\\\\`
 
 __New labels:__
  * bug/2
@@ -15,6 +15,6 @@ __New labels:__
 __Changed labels:__
  * bug/1
 
-__Remvoed labels:__
+__Removed labels:__
  * bug/3"
 `;
