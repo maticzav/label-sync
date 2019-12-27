@@ -1,6 +1,6 @@
 {
   "name": "label-sync",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CLI tool for Label Sync",
   "main": "dist/index.js",
   "repository": "https://github.com/matizav/label-sync",

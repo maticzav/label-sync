@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.1](https://github.com/matizav/label-sync/compare/label-sync@1.0.0...label-sync@1.0.1) (2019-12-27)
+
+
+### Bug Fixes
+
+* remove unnecessary files from distribution label-sync package ([d9ed3d3](https://github.com/matizav/label-sync/commit/d9ed3d388ed1745800d7f23abff9e8d071dd05e2))
+
+
+
+
+
 # 1.0.0 (2019-12-22)
 
 
