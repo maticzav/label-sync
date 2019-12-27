@@ -5,6 +5,9 @@
   "main": "dist/index.js",
   "repository": "https://github.com/matizav/label-sync",
   "author": "Matic Zavadlal <matic.zavadlal@gmail.com>",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build:bin": "ncc build src/bin.ts -o dist"
   },
