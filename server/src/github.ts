@@ -262,3 +262,91 @@ export async function createPRComment(
     })
     .then(({ data }) => data)
 }
+
+/**
+ * Tries to fetch a repository.
+ *
+ * @param github
+ * @param owner
+ * @param repo
+ */
+export async function getRepo(
+  github: Octokit,
+  owner: string,
+  repo: string,
+): Promise<
+  { status: 'Exists'; repo: Octokit.ReposGetResponse } | { status: 'Unknown' }
+> {
+  return github.repos
+    .get({
+      owner: owner,
+      repo: repo,
+    })
+    .then(res => {
+      switch (res.status) {
+        case 200: {
+          return { status: 'Exists' as const, repo: res.data }
+        }
+        /* istanbul ignore next */
+        default: {
+          return { status: 'Unknown' as const }
+        }
+      }
+    })
+    .catch(() => {
+      return { status: 'Unknown' as const }
+    })
+}
+
+/**
+ * Bootstraps a configuration repository to a prescribed destination.
+ *
+ * @param github
+ * @param owner
+ * @param repo
+ */
+export async function bootstrapConfigRepository(
+  github: Octokit,
+  owner: string,
+  repo: string,
+): Promise<Octokit.ReposCreateUsingTemplateResponse> {
+  return github.repos
+    .createUsingTemplate({
+      name: repo,
+      owner: owner,
+      template_owner: 'maticzav',
+      template_repo: 'label-sync-template',
+    })
+    .then(res => res.data)
+}
+
+export type InstallationAccess =
+  | { status: 'Sufficient' }
+  | { status: 'Insufficient'; missing: string[] }
+
+/**
+ * Determines whether LabelSync can access all requested repositories.
+ * @param github
+ * @param repos
+ */
+export async function checkInstallationAccess(
+  github: Octokit,
+  repos: string[],
+): Promise<InstallationAccess> {
+  const {
+    data: { repositories },
+  } = await github.apps.listRepos({ per_page: 100 })
+
+  const missing = repos.filter(repo =>
+    repositories.every(({ name }) => repo !== name),
+  )
+
+  if (missing.length === 0) {
+    return { status: 'Sufficient' }
+  }
+
+  return {
+    status: 'Insufficient',
+    missing: missing,
+  }
+}
