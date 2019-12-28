@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/matizav/label-sync/compare/label-sync@1.0.1...label-sync@1.1.0) (2019-12-28)
+
+
+### Features
+
+* onboarding ([1a6096b](https://github.com/matizav/label-sync/commit/1a6096b14f401a4355b68a487135817602c03255))
+
+
+
+
+
 ## [1.0.1](https://github.com/matizav/label-sync/compare/label-sync@1.0.0...label-sync@1.0.1) (2019-12-27)
 
 
