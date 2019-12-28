@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/matizav/label-sync/compare/label-sync@1.1.0...label-sync@3.0.0) (2019-12-28)
+
+
+### Performance Improvements
+
+* Release label-sync ([9c54fbf](https://github.com/matizav/label-sync/commit/9c54fbf173e7826bbcb7b2e578d02206070cd51c))
+
+
+### BREAKING CHANGES
+
+* This version of label-sync no longer supports version 1.x
+
+
+
+
+
 # [1.1.0](https://github.com/matizav/label-sync/compare/label-sync@1.0.1...label-sync@1.1.0) (2019-12-28)
 
 
