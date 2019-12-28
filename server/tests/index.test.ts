@@ -39,6 +39,8 @@ describe('bot:', () => {
     nock.cleanAll()
   })
 
+  test('installation event', async () => {})
+
   test(
     'push event',
     async () => {
@@ -187,6 +189,82 @@ describe('bot:', () => {
   )
 
   test(
+    'push event invalid configuration',
+    async () => {
+      expect.assertions(8)
+
+      const configEndpoint = jest.fn().mockReturnValue({
+        content: Buffer.from('invalid: invalid').toString('base64'),
+      })
+
+      const issuesEndpoint = jest.fn().mockImplementation((uri, body) => {
+        expect(body).toMatchSnapshot()
+      })
+
+      const installationsEndpoint = jest.fn()
+      const labelsEndpoint = jest.fn()
+
+      const createLabelsEndpoint = jest.fn()
+      const updateLabelsEndpoint = jest.fn()
+      const removeLabelsEndpoint = jest.fn()
+
+      /* Mocks */
+
+      nock('https://api.github.com')
+        .post('/app/installations/13055/access_tokens')
+        .reply(200, { token: 'test' })
+
+      nock('https://api.github.com')
+        .get(
+          '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
+        )
+        .reply(200, configEndpoint)
+
+      nock('https://api.github.com')
+        .post('/repos/maticzav/maticzav-labelsync/issues')
+        .reply(200, issuesEndpoint)
+        .persist()
+
+      nock('https://api.github.com')
+        .get('/installation/repositories?per_page=100')
+        .reply(200, installationsEndpoint)
+
+      nock('https://api.github.com')
+        .get(/\/repos\/maticzav\/.*\/labels/)
+        .reply(200, labelsEndpoint)
+        .persist()
+
+      nock('https://api.github.com')
+        .post(/\/repos\/maticzav\/.*\/labels/)
+        .reply(200, createLabelsEndpoint)
+        .persist()
+
+      nock('https://api.github.com')
+        .patch(/\/repos\/maticzav\/.*\/labels/)
+        .reply(200, updateLabelsEndpoint)
+        .persist()
+
+      nock('https://api.github.com')
+        .delete(/\/repos\/maticzav\/.*\/labels/)
+        .reply(200, removeLabelsEndpoint)
+        .persist()
+
+      await probot.receive({ id: 'push', name: 'push', payload: pushPayload })
+
+      /* Tests */
+
+      expect(configEndpoint).toBeCalledTimes(1)
+      expect(issuesEndpoint).toBeCalledTimes(1)
+      expect(installationsEndpoint).toBeCalledTimes(0)
+      expect(labelsEndpoint).toBeCalledTimes(0)
+      expect(createLabelsEndpoint).toBeCalledTimes(0)
+      expect(updateLabelsEndpoint).toBeCalledTimes(0)
+      expect(removeLabelsEndpoint).toBeCalledTimes(0)
+    },
+    5 * 60 * 1000,
+  )
+
+  test(
     'push event with insufficient premissions',
     async () => {
       expect.assertions(3)
@@ -217,7 +295,7 @@ describe('bot:', () => {
 
       nock('https://api.github.com')
         .post('/repos/maticzav/maticzav-labelsync/issues')
-        .reply(200, body => {
+        .reply(200, (uri, body) => {
           expect(body).toMatchSnapshot()
         })
 

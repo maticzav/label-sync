@@ -39,4 +39,39 @@ _Missing repositories:_
 }
 `;
 
-exports[`bot: push event with insufficient premissions 1`] = `"/repos/maticzav/maticzav-labelsync/issues"`;
+exports[`bot: push event invalid configuration 1`] = `
+Object {
+  "body": "# Invalid configuration
+
+Hi there,
+Thank you for using LabelSync. It seems like your configuration
+uses a format unknown to us. That might be a consequence of invalid yaml 
+cofiguration file. 
+
+We encourage you to check out \\\\\`label-sync\\\\\` utility library that
+simplifies your workflow by leveraging power of TypeScript. You can
+also use a [starting tempalte](github.com/maticzav/label-sync-template).
+
+Best,
+LabelSync Team",
+  "title": "LabelSync - Invalid configuration",
+}
+`;
+
+exports[`bot: push event with insufficient premissions 1`] = `
+Object {
+  "body": "# Insufficient permissions
+
+Hi there,
+We have noticed that your configuration stretches beyond
+repositories we can access. Please update it so we can help
+you as best as we can.
+
+_Missing repositories:_
+ * emma-cli
+
+Best,
+LabelSync Team",
+  "title": "LabelSync - Insufficient permissions",
+}
+`;

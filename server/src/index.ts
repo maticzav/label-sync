@@ -10,6 +10,8 @@ import {
   openIssue,
   createPRComment,
   removeLabelsFromRepository,
+  getRepo,
+  bootstrapConfigRepository,
 } from './github'
 import { handleLabelSync } from './handlers/labels'
 import { generateHumanReadableReport } from './language/labels'
@@ -45,7 +47,105 @@ module.exports = (app: Application) => {
    *  - check whether there exists a configuration repository,
    *  - create a configuration repository from template.
    */
-  // app.on('installation.created', async ({ github }) => {})
+  app.on('installation.created', async ({ github, log, payload }) => {
+    const owner = payload.installation.account.login
+    const configRepo = getLSConfigRepoName(owner)
+
+    log.info(`Onboarding ${owner} with ${configRepo}`)
+
+    /* See if config repository exists. */
+    const repo = await getRepo(github, owner, configRepo)
+
+    switch (repo.status) {
+      case 'Exists': {
+        /* Perform sync. */
+
+        const ref = repo.repo.default_branch
+
+        /* Load configuration */
+        const configRaw = await getFile(
+          github,
+          { owner, repo: configRepo, ref },
+          LS_CONFIG_PATH,
+        )
+        const config = maybe.andThen(configRaw, parseConfig)
+
+        log.debug({ config }, `Loaded configuration for ${owner}.`)
+
+        if (config === null) {
+          /* Open an issue about invalid configuration. */
+          const title = 'LabelSync - Invalid configuration'
+          const body = ml`
+          | # Invalid configuration
+          |
+          | Hi there,
+          | Thank you for using LabelSync. It seems like your configuration
+          | uses an unknown format. That might be a consequence of invalid yaml 
+          | cofiguration file. 
+          |
+          | We encourage you to check out \`label-sync\` utility library that
+          | simplifies your workflow by leveraging power of TypeScript. You can
+          | also use a [starting tempalte](github.com/maticzav/label-sync-template).
+          |
+          | Best,
+          | LabelSync Team
+          `
+
+          await openIssue(github, owner, configRepo, title, body)
+
+          return
+        }
+
+        /* Verify that we can access all configured files. */
+        const access = await checkInstallationAccess(
+          github,
+          Object.keys(config.repos),
+        )
+
+        switch (access.status) {
+          case 'Sufficient': {
+            /* Performs sync. */
+            for (const repo in config.repos) {
+              await Promise.all([
+                handleLabelSync(github, owner, repo, config.repos[repo], true),
+              ])
+            }
+
+            return
+          }
+          case 'Insufficient': {
+            /* Opens up an issue about insufficient permissions. */
+            const title = 'LabelSync - Insufficient permissions'
+            const body = ml`
+            | # Insufficient permissions
+            |
+            | Hi there,
+            | Thank you for installing LabelSync. We have noticed that your 
+            | configuration stretches beyond repositories we can access. We assume that you
+            | forgot to allow access to certain repositories.
+            | Please update your installation. 
+            |
+            | _Missing repositories:_
+            | ${access.missing.map(missing => ` * ${missing}`).join(os.EOL)}
+            |
+            | Best,
+            | LabelSync Team
+            `
+
+            await openIssue(github, owner, configRepo, title, body)
+
+            return
+          }
+        }
+      }
+
+      case 'Unknown': {
+        /* Bootstrap a configuration repository. */
+        await bootstrapConfigRepository(github, owner, configRepo)
+        return
+      }
+    }
+  })
 
   /**
    * Push Event
@@ -66,12 +166,12 @@ module.exports = (app: Application) => {
 
     const configRepo = getLSConfigRepoName(owner)
 
+    /* Skip non default branch and other repos pushes. */
     /* istanbul ignore if */
-    if (configRepo !== repo) return
-
-    /* Skip non default branch */
-    /* istanbul ignore if */
-    if (defaultRef !== ref) return
+    if (defaultRef !== ref || configRepo !== repo) {
+      log.debug({ defaultRef, ref, configRepo, repo }, `Skipping sync ${owner}`)
+      return
+    }
 
     /* Load configuration */
     const configRaw = await getFile(
@@ -83,9 +183,29 @@ module.exports = (app: Application) => {
 
     log.debug({ config }, `Loaded configuration for ${owner}.`)
 
-    /* Skips invalid configuration. */
-    /* istanbul ignore next */
-    if (config === null) return
+    /* Open an issue about invalid configuration. */
+    if (config === null) {
+      const title = 'LabelSync - Invalid configuration'
+      const body = ml`
+      | # Invalid configuration
+      |
+      | Hi there,
+      | Thank you for using LabelSync. It seems like your configuration
+      | uses a format unknown to us. That might be a consequence of invalid yaml 
+      | cofiguration file. 
+      |
+      | We encourage you to check out \`label-sync\` utility library that
+      | simplifies your workflow by leveraging power of TypeScript. You can
+      | also use a [starting tempalte](github.com/maticzav/label-sync-template).
+      |
+      | Best,
+      | LabelSync Team
+      `
+
+      await openIssue(github, owner, configRepo, title, body)
+
+      return
+    }
 
     /* Verify that we can access all configured files. */
     const access = await checkInstallationAccess(
@@ -102,6 +222,10 @@ module.exports = (app: Application) => {
             handleLabelSync(github, owner, repo, config.repos[repo], true),
           ])
         }
+
+        /* Closes issues */
+
+        // TODO: close issues on successful sync.
 
         return
       }
