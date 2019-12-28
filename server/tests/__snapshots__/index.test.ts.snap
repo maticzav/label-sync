@@ -1,5 +1,43 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`bot: installation event insufficient permissions 1`] = `
+Object {
+  "body": "# Insufficient permissions
+
+Hi there,
+Thank you for installing LabelSync. We have noticed that your 
+configuration stretches beyond repositories we can access. We assume that you
+forgot to allow access to certain repositories.
+Please update your installation. 
+
+_Missing repositories:_
+ * emma-cli
+
+Best,
+LabelSync Team",
+  "title": "LabelSync - Insufficient permissions",
+}
+`;
+
+exports[`bot: installation invalid config issue 1`] = `
+Object {
+  "body": "# Invalid configuration
+
+Hi there,
+Thank you for using LabelSync. It seems like your configuration
+uses an unknown format. That might be a consequence of invalid yaml 
+cofiguration file. 
+
+We encourage you to check out \\\\\`label-sync\\\\\` utility library that
+simplifies your workflow by leveraging power of TypeScript. You can
+also use a [starting tempalte](github.com/maticzav/label-sync-template).
+
+Best,
+LabelSync Team",
+  "title": "LabelSync - Invalid configuration",
+}
+`;
+
 exports[`bot: pull_request 1`] = `
 Object {
   "body": "## PullRequest Overview 

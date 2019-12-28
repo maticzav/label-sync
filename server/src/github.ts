@@ -285,12 +285,16 @@ export async function getRepo(
     .then(res => {
       switch (res.status) {
         case 200: {
-          return { status: 'Exists', repo: res.data }
+          return { status: 'Exists' as const, repo: res.data }
         }
+        /* istanbul ignore next */
         default: {
-          return { status: 'Unknown' }
+          return { status: 'Unknown' as const }
         }
       }
+    })
+    .catch(() => {
+      return { status: 'Unknown' as const }
     })
 }
 

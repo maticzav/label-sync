@@ -6,6 +6,7 @@ import { Application, Context, Octokit } from 'probot'
 import { parseConfig, LSCConfiguration } from './configuration'
 import * as maybe from './data/maybe'
 import {
+  checkInstallationAccess,
   getFile,
   openIssue,
   createPRComment,
@@ -60,7 +61,7 @@ module.exports = (app: Application) => {
       case 'Exists': {
         /* Perform sync. */
 
-        const ref = repo.repo.default_branch
+        const ref = `refs/heads/${repo.repo.default_branch}`
 
         /* Load configuration */
         const configRaw = await getFile(
@@ -438,31 +439,5 @@ function withSources<
     ;(ctx as Context<C> & { sources: Sources }).sources = { config }
 
     return fn(ctx as Context<C> & { sources: Sources })
-  }
-}
-
-type InstallationAccess =
-  | { status: 'Sufficient' }
-  | { status: 'Insufficient'; missing: string[] }
-
-async function checkInstallationAccess(
-  github: Octokit,
-  repos: string[],
-): Promise<InstallationAccess> {
-  const {
-    data: { repositories },
-  } = await github.apps.listRepos({ per_page: 100 })
-
-  const missing = repos.filter(repo =>
-    repositories.every(({ name }) => repo !== name),
-  )
-
-  if (missing.length === 0) {
-    return { status: 'Sufficient' }
-  }
-
-  return {
-    status: 'Insufficient',
-    missing: missing,
   }
 }
