@@ -16,7 +16,7 @@ Label Sync helps you sync Github labels across multiple repositories. Using an i
 
 Start by installing the LabelSync Manager Github Application. We recommend you install it across your entire fleet - LabelSync won't modify repositories that you haven't configured.
 
-> Install [LabelSync Manager Github Application]()`.
+> Install [LabelSync Manager Github Application](https://github.com/apps/labelsync-manager).
 
 LabelSync manager should've created a `<org>-labelsync` repository for you. That's where your configuration resides. We've included the labels and repository configurations that we found most useful and encourage you to use them as your starting point.
 
