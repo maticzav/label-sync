@@ -1,6 +1,10 @@
-<p align="center"><img src="media/logo.png" width="300" /></p>
+<div align="center">
 
-# :label: LabelSync
+<a href="label-sync.com"><img src="assets/thumbnail.png" width="400" /></a>
+
+### The missing Github labels manager.
+
+</div>
 
 [![CircleCI](https://circleci.com/gh/maticzav/label-sync/tree/master.svg?style=shield)](https://circleci.com/gh/maticzav/label-sync/tree/master)
 [![codecov](https://codecov.io/gh/maticzav/label-sync/branch/master/graph/badge.svg)](https://codecov.io/gh/maticzav/label-sync)
@@ -8,7 +12,13 @@
 
 > Managing multiple repositories is hard. LabelSync helps you manage labels across your repository fleet.
 
-## Overview
+## Why LabelSync?
+
+While working at Prisma, I discovered that many companies struggle with repository organisation. In particular, companies struggle with managing labels across multiple repositories in their organisation.
+
+My vision is to develop the best in class software that would help companies triage issues and pull requests, and simplify the use of labels.
+
+## How LabelSync works?
 
 Label Sync helps you sync Github labels across multiple repositories:
 
@@ -111,8 +121,12 @@ LabelSync will remain free while in beta.
 
 #### I have a problem but don't know who to ask.
 
-Please open up an issue describing your problem, or send us an email to `support@label-sync.com`.
+Please open up an issue describing your problem, or send us an email to <a href="mailto:support@label-sync.com">support@label-sync.com</a>.
+
+#### I have an idea/problem that LabelSync could solve.
+
+Please reach out to <a href="mailto:matic@label-sync.com">matic@label-sync.com</a>. I'd be more than happy to chat about LabelSync with you!
 
 ## License
 
-MIT @ Matic Zavadlal
+BSD 3-Clause, see the [LICENSE](./LICENSE) file.
