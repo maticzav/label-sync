@@ -75,9 +75,21 @@ You can reuse `label` and `repository` configurations anywhere in your configura
 In the end, LabelSync still relies on `labelsync.yml` file. To generate it, run `make`.
 
 ```ts
-import { configuration, make } from 'label-sync'
-import { standard } from './repositories/standard'
+import { configuration, repository, label, make } from 'label-sync'
 
+const bug = label('#ff32bb')
+const question = label('#c5def5')
+
+/* Setup repository configuration */
+const labelSync = repository({
+  strict: true,
+  lablels: {
+    'kind/bug': bug,
+    'kind/question': question,
+  },
+})
+
+/* Setup LabelSync configuration */
 const config = configuration({
   repositories: {
     'label-sync': standard,
