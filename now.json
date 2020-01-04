@@ -1,12 +1,7 @@
 {
   "name": "label-sync",
   "version": 2,
-  "alias": [
-    "www.label-sync.com",
-    "install.label-sync.com",
-    "label-sync.com",
-    "app.label-sync.com"
-  ],
+  "alias": ["www.label-sync.com", "label-sync.com"],
   "builds": [
     {
       "src": "redirects/**/*.ts",
@@ -17,7 +12,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/redirects/src"
+      "destination": "/redirects/src/index.ts?path=$1"
     }
   ],
   "github": {

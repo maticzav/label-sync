@@ -14,7 +14,7 @@ const redirects: Redirects = {
     code: 302,
     target: 'https://github.com/maticzav/label-sync',
   },
-  install: {
+  '/manager': {
     code: 302,
     target: 'https://github.com/apps/labelsync-manager',
   },
@@ -40,12 +40,12 @@ function redirect(hostaname: keyof Redirects, res: NowResponse): NowResponse {
  * Serverless function.
  */
 export default (req: NowRequest, res: NowResponse) => {
-  const hostname = req.headers.host
+  const { path } = req.query
 
   /* istanbul ignore next */
-  if (!hostname) {
+  if (!path || typeof path !== 'string') {
     return redirect('*', res)
   }
 
-  return redirect(hostname, res)
+  return redirect(`\/${path}`, res)
 }
