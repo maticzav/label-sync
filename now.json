@@ -1,6 +1,6 @@
 {
   "name": "label-sync",
-  "version": "2",
+  "version": 2,
   "alias": ["label-sync.com"],
   "builds": [
     {
