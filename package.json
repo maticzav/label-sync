@@ -29,7 +29,8 @@
   "workspaces": {
     "packages": [
       "packages/*",
-      "server"
+      "server",
+      "redirects"
     ]
   },
   "dependencies": {}

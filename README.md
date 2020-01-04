@@ -1,6 +1,6 @@
 <p align="center"><img src="media/logo.png" width="300" /></p>
 
-# LabelSync Manager
+# :label: LabelSync
 
 [![CircleCI](https://circleci.com/gh/maticzav/label-sync/tree/master.svg?style=shield)](https://circleci.com/gh/maticzav/label-sync/tree/master)
 [![codecov](https://codecov.io/gh/maticzav/label-sync/branch/master/graph/badge.svg)](https://codecov.io/gh/maticzav/label-sync)
@@ -10,21 +10,29 @@
 
 ## Overview
 
-Label Sync helps you sync Github labels across multiple repositories. Using an intuitive API you'll be able to customize repository configuration across all your projects in no time.
+Label Sync helps you sync Github labels across multiple repositories:
 
-## Installation
+- _Manage_: **Handle multiple repositories from a central configuration.**
+- _Restrict_: **Prevent adding new labels that don't fit into your workflow.**
+- _Simplify_: **Simplify your triaging by selectivly picking labels.**.
 
-Start by installing the LabelSync Manager Github Application. We recommend you install it across your entire fleet - LabelSync won't modify repositories that you haven't configured.
+## Getting Starterd
 
-> Install [LabelSync Manager Github Application](https://github.com/apps/labelsync-manager).
+Start by installing the [LabelSync Manager Github Application](https://install.label-sync.com). We recommend you install it across your entire fleet - LabelSync won't modify repositories that you haven't configured.
 
-LabelSync manager should've created a `<org>-labelsync` repository for you. That's where your configuration resides. We've included the labels and repository configurations that we found most useful and encourage you to use them as your starting point.
+> Install [LabelSync Manager Github Application](https://install.label-sync.com).
+
+LabelSync Manager created a `<org>-labelsync` repository for you, where `<org>` represents the name of your organisation or account.
+
+That's where your configuration resides. We've included the labels and repository configurations that we found most useful and encourage you to use them as your starting point.
 
 ## Configuring LabelSync
 
-We configure all repositories managed by LabelSync from a single repository. LabelSync Manager already created it during installation.
+We configure all repositories that LabelSync manager from a single repository. LabelSync Manager already created that repository for you during installation.
 
-LabelSync comes with a utility library `label-sync` that allows you to leverage the power of TypeScript to compose configuration for your fleet. Alternatively, you can write `labelsync.yml` configuration manually.
+LabelSync comes with a utility library `label-sync` that allows you to leverage the power of TypeScript to compose configuration for your fleet. We encourage you to use the library.
+
+Alternatively, you can write `labelsync.yml` configuration manually.
 
 #### Using TypeScript utility library
 
@@ -95,6 +103,16 @@ repos:
         description: Label indicating Stale issue.
 ```
 
+## F.A.Q
+
+#### Is LabelSync free?
+
+LabelSync will remain free while in beta.
+
+#### I have a problem but don't know who to ask.
+
+Please open up an issue describing your problem, or send us an email to `support@label-sync.com`.
+
 ## License
 
-Matic Zavadlal
+MIT @ Matic Zavadlal

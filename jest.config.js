@@ -17,6 +17,7 @@ module.exports = {
     '!**/generated/**',
     '!**/__fixtures__/**',
     '!**/scenarios/**',
+    '!**/redirects/**',
   ],
   snapshotSerializers: ['jest-serializer-ansi'],
   verbose: true,
