@@ -29,6 +29,8 @@ const redirects: Redirects = {
 function redirect(hostaname: keyof Redirects, res: NowResponse): NowResponse {
   const { target, code } = withDefault(redirects['*'], redirects[hostaname])
 
+  console.log(`Redirecting ${hostaname} to ${target}`)
+
   res.setHeader('Location', target)
   res.status(code)
   return res.send('Redirecting...')
