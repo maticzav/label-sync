@@ -596,7 +596,11 @@ describe('bot:', () => {
   test(
     'pull_request',
     async () => {
-      expect.assertions(3)
+      expect.assertions(4)
+
+      const compareEndpoint = jest.fn().mockReturnValue({
+        files: [{ filename: 'labelsync.yml' }, { filename: 'README.md' }],
+      })
 
       const configEndpoint = jest.fn().mockReturnValue({
         content: Buffer.from(configFixture).toString('base64'),
@@ -665,6 +669,10 @@ describe('bot:', () => {
       /* Mocks */
 
       nock('https://api.github.com')
+        .get('/repos/maticzav/maticzav-labelsync/compare/master...labels')
+        .reply(200, compareEndpoint)
+
+      nock('https://api.github.com')
         .post('/app/installations/13055/access_tokens')
         .reply(200, { token: 'test' })
 
@@ -697,8 +705,41 @@ describe('bot:', () => {
 
       /* Tests */
 
+      expect(compareEndpoint).toBeCalledTimes(1)
       expect(configEndpoint).toBeCalledTimes(1)
       expect(installationsEndpoint).toBeCalledTimes(1)
+    },
+    5 * 60 * 1000,
+  )
+
+  test(
+    'pull_request with no changes',
+    async () => {
+      expect.assertions(1)
+
+      const compareEndpoint = jest.fn().mockReturnValue({
+        files: [{ filename: 'README.md' }],
+      })
+
+      /* Mocks */
+
+      nock('https://api.github.com')
+        .get('/repos/maticzav/maticzav-labelsync/compare/master...labels')
+        .reply(200, compareEndpoint)
+
+      nock('https://api.github.com')
+        .post('/app/installations/13055/access_tokens')
+        .reply(200, { token: 'test' })
+
+      await probot.receive({
+        id: 'pr.no_changes',
+        name: 'pull_request',
+        payload: prPayload,
+      })
+
+      /* Tests */
+
+      expect(compareEndpoint).toBeCalledTimes(1)
     },
     5 * 60 * 1000,
   )
@@ -707,6 +748,10 @@ describe('bot:', () => {
     'pull_request with insufficient permissions',
     async () => {
       expect.assertions(3)
+
+      const compareEndpoint = jest.fn().mockReturnValue({
+        files: [{ filename: 'README.md' }, { filename: 'labelsync.yml' }],
+      })
 
       const configEndpoint = jest.fn().mockReturnValue({
         content: Buffer.from(configFixture).toString('base64'),
@@ -717,6 +762,10 @@ describe('bot:', () => {
       })
 
       /* Mocks */
+
+      nock('https://api.github.com')
+        .get('/repos/maticzav/maticzav-labelsync/compare/master...labels')
+        .reply(200, compareEndpoint)
 
       nock('https://api.github.com')
         .post('/app/installations/13055/access_tokens')

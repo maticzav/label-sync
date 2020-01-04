@@ -274,6 +274,22 @@ module.exports = (app: Application) => {
     /* istanbul ignore if */
     if (configRepo !== repo) return
 
+    /* Check changed files */
+    const compare = await github.repos.compareCommits({
+      owner: owner,
+      repo: repo,
+      base: payload.pull_request.base.ref,
+      head: payload.pull_request.head.ref,
+    })
+
+    /* istanbul ignore next */
+    if (compare.data.files.every(file => file.filename !== LS_CONFIG_PATH)) {
+      log.debug(
+        { files: compare.data.files },
+        `Skipping merge comment, configuration didn't change.`,
+      )
+    }
+
     /* Load configuration */
     const configRaw = await getFile(
       github,

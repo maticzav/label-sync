@@ -12,40 +12,70 @@ import { GithubLabel } from '../github'
 export function generateHumanReadableReport(
   reports: LabelSyncReport[],
 ): string {
-  const body = reports.map(parseLabelSyncReport).join(os.EOL)
+  const body = joinReports(reports.map(parseLabelSyncReport))
+
   return ml`
-  | ## PullRequest Overview 
+  | ## LabelSync Overview 
   | > NOTE: This is only a preview of what will happen. Nothing has been changed yet.
   | 
   | ${body}
   `
+}
 
-  /* Helper functions. */
-  function parseLabelSyncReport(report: LabelSyncReport): string {
-    switch (report.status) {
-      case 'Success': {
-        return ml`
-        | #### \`${report.repo}\`
-        |
-        | __New labels:__
-        | ${ulOfLabels(report.additions, `No new labels created.`)}
-        |
-        | __Changed labels:__
-        | ${ulOfLabels(report.updates, `No changed labels.`)}
-        |
-        | __Removed labels:__
-        | ${ulOfLabels(report.removals, `You haven't removed any label.`)}
+function parseLabelSyncReport(report: LabelSyncReport): string {
+  switch (report.status) {
+    case 'Success': {
+      switch (report.config.strict) {
+        case true: {
+          return ml`
+          | ### ${parseRepoName(report.repo)}
+          |
+          | __New labels:__
+          | ${ulOfLabels(report.additions, `No new labels created.`)}
+          |
+          | __Changed labels:__
+          | ${ulOfLabels(report.updates, `No changed labels.`)}
+          |
+          | __Removed labels:__
+          | ${ulOfLabels(report.removals, `You haven't removed any label.`)}
         `
-      }
-      case 'Failure': {
-        return ml`
-        | #### \`${report.repo}\`
-        |
-        | ${report.message}
-        `
+        }
+        case false: {
+          return ml`
+          | ### ${parseRepoName(report.repo)}
+          |
+          | __New labels:__
+          | ${ulOfLabels(report.additions, `No new labels created.`)}
+          |
+          | __Changed labels:__
+          | ${ulOfLabels(report.updates, `No changed labels.`)}
+          |
+          | __Unconfigured labels.__
+          | ${ulOfLabels(
+            report.removals,
+            'You have no unconfigured labels - you could make this repository `strict`.',
+          )}
+          `
+        }
       }
     }
+    case 'Failure': {
+      return ml`
+      | #### \`${report.repo}\`
+      |
+      | ${report.message}
+      `
+    }
   }
+}
+
+/**
+ * Parses the repo name with backticks.
+ *
+ * @param name
+ */
+function parseRepoName(name: string): string {
+  return ['`', name, '`'].join('')
 }
 
 /**
@@ -56,4 +86,13 @@ export function generateHumanReadableReport(
 function ulOfLabels(labels: GithubLabel[], empty: string): string {
   if (labels.length === 0) return empty
   return labels.map(label => ` * ${label.name}`).join(os.EOL)
+}
+
+/**
+ * Joins reports with a separator.
+ * @param reports
+ */
+function joinReports(reports: string[]): string {
+  const separator = ['', '---', ''].join(os.EOL)
+  return reports.join(separator)
 }

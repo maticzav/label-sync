@@ -40,10 +40,10 @@ LabelSync Team",
 
 exports[`bot: pull_request 1`] = `
 Object {
-  "body": "## PullRequest Overview 
+  "body": "## LabelSync Overview 
 > NOTE: This is only a preview of what will happen. Nothing has been changed yet.
 
-#### \\\\\`graphql-shield\\\\\`
+### \`graphql-shield\`
 
 __New labels:__
  * bug/3-fixing
@@ -53,7 +53,8 @@ __Changed labels:__
 
 __Removed labels:__
  * bug/4-fixed
-#### \\\\\`emma-cli\\\\\`
+---
+### \`emma-cli\`
 
 __New labels:__
 No new labels created.
@@ -61,8 +62,8 @@ No new labels created.
 __Changed labels:__
 No changed labels.
 
-__Removed labels:__
-You haven't removed any label.",
+__Unconfigured labels.__
+You have no unconfigured labels - you could make this repository \`strict\`.",
 }
 `;
 

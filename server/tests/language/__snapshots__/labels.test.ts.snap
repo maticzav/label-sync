@@ -1,13 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`language: correctly generates human readable report 1`] = `
-"## PullRequest Overview 
+"## LabelSync Overview 
 > NOTE: This is only a preview of what will happen. Nothing has been changed yet.
 
 #### \\\\\`labelsync\\\\\`
 
 Couldn't make a diff of labels.
-#### \\\\\`graphql-shield\\\\\`
+---
+### \`graphql-shield\`
 
 __New labels:__
  * bug/2
