@@ -316,6 +316,9 @@ export async function bootstrapConfigRepository(
       owner: owner,
       template_owner: 'maticzav',
       template_repo: 'label-sync-template',
+      mediaType: {
+        previews: ['baptiste'],
+      },
     })
     .then(res => res.data)
 }
