@@ -22,7 +22,7 @@ Label Sync helps you sync Github labels across multiple repositories:
 
 - _Manage_: **Handle multiple repositories from a central configuration.**
 - _Restrict_: **Prevent adding new labels that don't fit into your workflow.**
-- _Simplify_: **Simplify your triaging by selectivly picking labels.**.
+- _Simplify_: **Simplify your triaging by selectivly picking labels.**
 
 ## Getting Starterd
 
@@ -33,7 +33,7 @@ Label Sync helps you sync Github labels across multiple repositories:
 
 ## Configuring LabelSync
 
-We configure all repositories that LabelSync manager from a single repository. LabelSync Manager already created that repository for you during installation.
+We configure all repositories that LabelSync manages from a single repository. LabelSync Manager already created that repository for you during installation.
 
 LabelSync comes with a utility library `label-sync` that allows you to leverage the power of TypeScript to compose configuration for your fleet. We encourage you to use the library.
 
