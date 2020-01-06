@@ -9,7 +9,7 @@
     "js-yaml": "^3.13.1",
     "jsonwebtoken": "^8.5.0",
     "multilines": "^1.0.2",
-    "probot": "9.8.1"
+    "probot": "9.9.0"
   },
   "devDependencies": {
     "@octokit/fixtures": "^18.0.0",
