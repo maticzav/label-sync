@@ -288,6 +288,7 @@ module.exports = (app: Application) => {
         { files: compare.data.files },
         `Skipping merge comment, configuration didn't change.`,
       )
+      return
     }
 
     /* Load configuration */
