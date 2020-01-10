@@ -403,7 +403,7 @@ module.exports = (app: Application) => {
 
       /* Ignore changes in non-strict config */
       /* istanbul ignore if */
-      if (!config.strict) return
+      if (!config || !config.strict) return
 
       /* Ignore complying changes. */
       /* istanbul ignore if */
