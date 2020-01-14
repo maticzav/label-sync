@@ -30,7 +30,8 @@
     "packages": [
       "packages/*",
       "server",
-      "redirects"
+      "redirects",
+      "web"
     ]
   },
   "dependencies": {}
