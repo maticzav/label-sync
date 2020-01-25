@@ -35,5 +35,10 @@ view =
         , centerY
         , spacing 24
         ]
-        [ html (Logo.logo { width = "300px", height = "150px" })
+        [ row []
+            [ row []
+                [ html (Logo.logo { width = "300px", height = "150px" })
+                ]
+            , row [] [ text "The missing Github labels manager." ]
+            ]
         ]
