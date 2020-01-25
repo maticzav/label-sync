@@ -1,14 +1,19 @@
-module Components.Logo exposing (logo)
+module Components.Badge exposing (badge)
 
+import Element exposing (Element, html)
 import Html exposing (Html)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 
 
-logo : { width : String, height : String } -> Html msg
-logo options =
+badge : { width : Int, text : String, color : String } -> Element msg
+badge options =
     svg
-        [ width options.width, height options.height, viewBox "0 0 900 450", version "1.1" ]
+        [ width <| String.fromInt options.width ++ "px"
+        , height <| (String.fromInt <| options.width // 2) ++ "px"
+        , viewBox "0 0 900 450"
+        , version "1.1"
+        ]
         [ desc [] []
         , defs []
             [ rect
@@ -56,9 +61,10 @@ logo options =
             ]
             [ g [ id "Rectangle" ]
                 [ use [ fill "black", fillOpacity "1", Svg.Attributes.filter "url(#filter-2)", xlinkHref "#path-1" ] []
-                , use [ fill "#0E698A", fillRule "evenodd", xlinkHref "#path-1" ] []
+                , use [ fill options.color, fillRule "evenodd", xlinkHref "#path-1" ] []
                 , use [ fill "black", fillOpacity "1", Svg.Attributes.filter "url(#filter-3)", xlinkHref "#path-1" ] []
                 ]
-            , text_ [ id "label/sync", fontFamily "HelveticaNeue-Bold, Helvetica Neue", fontSize "150", fontWeight "bold", fill "#FFFFFF" ] [ tspan [ x "85", y "277" ] [ text "label/sync" ] ]
+            , text_ [ id "label/sync", fontFamily "HelveticaNeue-Bold, Helvetica Neue", fontSize "150", fontWeight "bold", fill "#FFFFFF" ] [ tspan [ x "85", y "277" ] [ text options.text ] ]
             ]
         ]
+        |> html

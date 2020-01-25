@@ -1,8 +1,13 @@
 module Layout exposing (view)
 
+-- import Element.Background as Background
+-- import Element.Border as Border
+
+import Components.Badge exposing (badge)
 import Element exposing (..)
 import Element.Font as Font
 import Generated.Routes as Routes exposing (Route, routes)
+import UI exposing (colors, fonts)
 import Utils.Spa as Spa
 
 
@@ -15,43 +20,33 @@ view { page, route } =
 
 
 viewHeader : Route -> Element msg
-viewHeader currentRoute =
+viewHeader _ =
     row
-        [ centerX ]
-        [ column [] [ text "Hey" ]
-        , column
-            []
-            [ row
-                [ spacing 24
-                , paddingEach { top = 32, left = 16, right = 16, bottom = 0 }
-                , centerX
-                , width (fill |> maximum 480)
-                ]
-                [ viewLink currentRoute ( "home", routes.top )
-                , viewLink currentRoute ( "nowhere", routes.notFound )
-                ]
-            ]
+        [ centerX
+        , paddingXY 35 5
+        , width (fill |> maximum 700)
         ]
-
-
-viewLink : Route -> ( String, Route ) -> Element msg
-viewLink currentRoute ( label, route ) =
-    if currentRoute == route then
-        el
-            [ Font.underline
-            , Font.color (rgb255 204 75 75)
-            , alpha 0.5
-            , Font.size 16
-            ]
-            (text label)
-
-    else
-        link
-            [ Font.underline
-            , Font.color (rgb255 204 75 75)
-            , Font.size 16
-            , mouseOver [ alpha 0.5 ]
-            ]
-            { label = text label
-            , url = Routes.toPath route
+        [ link [ alignLeft ]
+            { label = badge { width = 150, text = "label/sync", color = "#0E698A" }
+            , url = Routes.toPath routes.top
             }
+
+        -- , link
+        --     [ alignRight
+        --     , Background.color colors.white
+        --     , paddingXY 8 4
+        --     , Font.size 20
+        --     , Font.color colors.blue
+        --     , Font.family [ fonts.work ]
+        --     , Border.solid
+        --     , Border.rounded 7
+        --     , Border.width 2
+        --     , Border.color colors.blue
+        --     , mouseOver
+        --         [ Background.color colors.blue
+        --         , Border.color colors.blue
+        --         ]
+        --     ]
+        --     { label = text "Start syncing labels!", url = "https://github.com/apps/labelsync-manager" }
+        -- -- , link [ alignRight ] { label = text "Sync Labels", url = "https://calendly.com/maticzav/labelsync" }
+        ]

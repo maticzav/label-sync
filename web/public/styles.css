@@ -5,3 +5,16 @@ body {
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   height: 100%;
 }
+
+#stripe {
+  overflow: hidden;
+  animation: slide 60s linear infinite;
+  -webkit-animation: slide 60s linear infinite;
+  -moz-animation: slide 60s linear infinite;
+}
+
+@keyframes slide {
+  100% {
+    transform: translateX(-66.6666%);
+  }
+}
