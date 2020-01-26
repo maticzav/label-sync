@@ -9,8 +9,8 @@ import Svg.Attributes exposing (..)
 badge : { width : Int, text : String, color : String } -> Element msg
 badge options =
     svg
-        [ width <| String.fromInt options.width ++ "px"
-        , height <| (String.fromInt <| options.width // 2) ++ "px"
+        [ width <| String.fromInt options.width
+        , height <| String.fromInt <| options.width // 2
         , viewBox "0 0 900 450"
         , version "1.1"
         ]

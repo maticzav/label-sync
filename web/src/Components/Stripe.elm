@@ -27,6 +27,7 @@ stripe =
         , spacing 15
         , paddingXY 0 10
         , centerX
+        , clip
         , Element.htmlAttribute <| Attr.id "stripe"
         ]
         (List.map viewLabel labels)

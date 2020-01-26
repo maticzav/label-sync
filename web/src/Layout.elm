@@ -1,10 +1,10 @@
 module Layout exposing (view)
 
--- import Element.Background as Background
 -- import Element.Border as Border
 
 import Components.Badge exposing (badge)
 import Element exposing (..)
+import Element.Background as Background
 import Element.Font as Font
 import Generated.Routes as Routes exposing (Route, routes)
 import UI exposing (colors, fonts)
@@ -16,6 +16,7 @@ view { page, route } =
     column [ height fill, width fill ]
         [ viewHeader route
         , page
+        , viewFooter
         ]
 
 
@@ -49,4 +50,16 @@ viewHeader _ =
         --     ]
         --     { label = text "Start syncing labels!", url = "https://github.com/apps/labelsync-manager" }
         -- -- , link [ alignRight ] { label = text "Sync Labels", url = "https://calendly.com/maticzav/labelsync" }
+        ]
+
+
+viewFooter : Element msg
+viewFooter =
+    row
+        [ width fill
+        , Background.color colors.blue
+        , Font.color colors.white
+        , paddingXY 30 15
+        ]
+        [ link [] { url = "", label = text "Privacy policy" }
         ]

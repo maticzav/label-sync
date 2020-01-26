@@ -7,10 +7,10 @@ body {
 }
 
 #stripe {
-  overflow: hidden;
-  animation: slide 60s linear infinite;
-  -webkit-animation: slide 60s linear infinite;
-  -moz-animation: slide 60s linear infinite;
+  /* overflow: hidden; */
+  /* animation: slide 60s linear infinite; */
+  /* -webkit-animation: slide 60s linear infinite; */
+  /* -moz-animation: slide 60s linear infinite; */
 }
 
 @keyframes slide {
