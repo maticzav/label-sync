@@ -142,7 +142,20 @@ module.exports = (app: Application) => {
 
       case 'Unknown': {
         /* Bootstrap a configuration repository. */
-        await bootstrapConfigRepository(github, owner, configRepo)
+
+        const tree = {
+          'README.md': ml`
+          | # LabelSync configuration
+          |
+          | Welcome to LabelSync!
+          `,
+        }
+
+        await bootstrapConfigRepository(
+          github,
+          { owner, repo: configRepo },
+          tree,
+        )
         return
       }
     }

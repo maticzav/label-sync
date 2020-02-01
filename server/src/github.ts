@@ -1,6 +1,8 @@
+import * as path from 'path'
 import { Octokit } from 'probot'
 
 import { Maybe } from './data/maybe'
+import { Dict, not, mapEntriesAsync } from './utils'
 
 /**
  * Loads a file from Github.
@@ -298,8 +300,130 @@ export async function getRepo(
     })
 }
 
+type GHRepo = { owner: string; repo: string }
+
+/**
+ * Represents a Github file/folder structure.
+ *
+ * Files should be utf-8 strings.
+ */
+type GHTree = { [path: string]: string }
+
+/**
+ * Returns the files that are not nested.
+ * @param tree
+ */
+function getTreeFiles(tree: GHTree): Dict<string> {
+  return Object.fromEntries(
+    Object.keys(tree)
+      .filter(isFileInThisFolder)
+      .map(name => [name, tree[name]]),
+  )
+}
+
+/**
+ * Returns a dictionary of remaining subtrees.
+ * @param tree
+ */
+function getTreeSubTrees(tree: GHTree): Dict<GHTree> {
+  return Object.keys(tree)
+    .filter(not(isFileInThisFolder))
+    .reduce<Dict<GHTree>>((acc, filepath) => {
+      const [subTree, newFilepath] = shiftPath(filepath)
+      if (!Object.hasOwnProperty(subTree)) {
+        acc[subTree] = {}
+      }
+      acc[subTree][newFilepath] = tree[filepath]
+      return acc
+    }, {})
+}
+
+/**
+ * Shifts path by one.
+ * Returns the shifted part as first argument and remaining part as second.
+ *
+ * @param filepath
+ */
+function shiftPath(filepath: string): [string, string] {
+  const [dir, ...dirs] = filepath.split('/').filter(Boolean)
+  return [dir, dirs.join('/')]
+}
+
+/**
+ * Determines whether a path references a direct file
+ * or a file in the nested folder.
+ *
+ * "/src/index.ts" -> false
+ * "/index.ts" -> true
+ * "index.ts" -> true
+ *
+ * @param filePath
+ */
+function isFileInThisFolder(filePath: string): boolean {
+  return ['.', '/'].includes(path.dirname(filePath))
+}
+
+/**
+ * Recursively creates a tree commit by creating blobs and generating
+ * trees on folders.
+ *
+ * @param github
+ * @param tree
+ */
+async function createGhTree(
+  github: Octokit,
+  { owner, repo }: GHRepo,
+  tree: GHTree,
+): Promise<{ sha: string }> {
+  /**
+   * Uploads blobs and creates subtrees.
+   */
+  const blobs = await mapEntriesAsync(getTreeFiles(tree), content =>
+    createGhBlob(github, { owner, repo }, content),
+  )
+  const trees = await mapEntriesAsync(getTreeSubTrees(tree), subTree =>
+    createGhTree(github, { owner, repo }, subTree),
+  )
+
+  return github.git
+    .createTree({
+      owner,
+      repo,
+      tree: [
+        ...Object.entries(trees).map(([treePath, { sha }]) => ({
+          mode: '040000' as const,
+          path: treePath,
+          sha,
+        })),
+        ...Object.entries(blobs).map(([filePath, { sha }]) => ({
+          mode: '100644' as const,
+          path: filePath,
+          sha,
+        })),
+      ],
+    })
+    .then(res => res.data)
+}
+
+/**
+ * Creates a Github Blob from a File.
+ *
+ * @param github
+ * @param param1
+ * @param file
+ */
+async function createGhBlob(
+  github: Octokit,
+  { owner, repo }: GHRepo,
+  content: string,
+): Promise<Octokit.GitCreateBlobResponse> {
+  return github.git.createBlob({ owner, repo, content }).then(res => res.data)
+}
+
 /**
  * Bootstraps a configuration repository to a prescribed destination.
+ *
+ * Assumes repository is empty.
  *
  * @param github
  * @param owner
@@ -307,20 +431,25 @@ export async function getRepo(
  */
 export async function bootstrapConfigRepository(
   github: Octokit,
-  owner: string,
-  repo: string,
-): Promise<Octokit.ReposCreateUsingTemplateResponse> {
-  return github.repos
-    .createUsingTemplate({
+  { owner, repo }: GHRepo,
+  tree: GHTree,
+): Promise<Octokit.GitCreateRefResponse> {
+  await github.repos
+    .createForAuthenticatedUser({
       name: repo,
-      owner: owner,
-      template_owner: 'maticzav',
-      template_repo: 'label-sync-template',
-      mediaType: {
-        previews: ['baptiste'],
-      },
+      description: 'LabelSync configuration repository.',
     })
     .then(res => res.data)
+
+  const commit = await createGhTree(github, { owner, repo }, tree)
+  const ref = await github.git.createRef({
+    owner,
+    repo,
+    ref: 'refs/heads/master',
+    sha: commit.sha,
+  })
+
+  return ref.data
 }
 
 export type InstallationAccess =
