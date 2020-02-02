@@ -43,7 +43,7 @@ describe('bot:', () => {
   test(
     'installation event bootstrap config',
     async () => {
-      expect.assertions(6)
+      expect.assertions(7)
 
       const repoEndpoint = jest.fn().mockReturnValue({})
       const createRepoEndpoint = jest.fn().mockImplementation((uri, body) => {
@@ -77,9 +77,16 @@ describe('bot:', () => {
         return { object: { sha: parentSha } }
       })
 
+      const commitSha = Math.floor(Math.random() * 1000).toString()
+
       const createCommitEndpoint = jest.fn().mockImplementation((uri, body) => {
         expect(body.parents).toEqual([parentSha])
-        return
+        return { sha: commitSha }
+      })
+
+      const updateRefEndpoint = jest.fn().mockImplementation((uri, body) => {
+        expect(body.sha).toBe(commitSha)
+        return { object: { sha: '' } }
       })
 
       /* Mocks */
@@ -113,6 +120,10 @@ describe('bot:', () => {
       nock('https://api.github.com')
         .post('/repos/maticzav/maticzav-labelsync/git/commits')
         .reply(200, createCommitEndpoint)
+
+      nock('https://api.github.com')
+        .patch('/repos/maticzav/maticzav-labelsync/git/refs/heads/master')
+        .reply(200, updateRefEndpoint)
 
       await probot.receive({
         id: 'installation.boot',

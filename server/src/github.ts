@@ -436,7 +436,7 @@ export async function bootstrapConfigRepository(
   github: Octokit,
   { owner, repo }: GHRepo,
   tree: GHTree,
-): Promise<Octokit.GitCreateCommitResponse> {
+): Promise<Octokit.GitUpdateRefResponse> {
   await github.repos
     .createInOrg({
       org: owner,
@@ -447,7 +447,7 @@ export async function bootstrapConfigRepository(
     .then(res => res.data)
 
   const gitTree = await createGhTree(github, { owner, repo }, tree)
-  const ref = await github.git
+  const masterRef = await github.git
     .getRef({
       owner,
       repo,
@@ -455,15 +455,24 @@ export async function bootstrapConfigRepository(
     })
     .then(res => res.data)
 
-  const commit = await github.git.createCommit({
+  const commit = await github.git
+    .createCommit({
+      owner,
+      repo,
+      message: ':sparkles: Scaffold configuration',
+      tree: gitTree.sha,
+      parents: [masterRef.object.sha],
+    })
+    .then(res => res.data)
+
+  const ref = await github.git.updateRef({
     owner,
     repo,
-    message: ':sparkles: Scaffold configuration',
-    tree: gitTree.sha,
-    parents: [ref.object.sha],
+    ref: 'heads/master',
+    sha: commit.sha,
   })
 
-  return commit.data
+  return ref.data
 }
 
 export type InstallationAccess =
