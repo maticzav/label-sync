@@ -9,7 +9,8 @@
     "coverage": "yarn codecov",
     "postinstall": "yarn build",
     "release": "lerna publish --yes",
-    "test": "yarn run build; NODE_ENV=test LOG_LEVEL=fatal jest"
+    "test": "yarn run build; NODE_ENV=test LOG_LEVEL=fatal jest",
+    "now-build": "./scripts/publish_web.sh"
   },
   "devDependencies": {
     "@types/jest": "^25.1.1",

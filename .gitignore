@@ -1,5 +1,6 @@
 node_modules
 dist
+/public
 coverage
 
 .DS_Store

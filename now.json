@@ -2,9 +2,7 @@
   "name": "label-sync",
   "version": 2,
   "alias": ["www.label-sync.com", "label-sync.com"],
-  "builds": [],
   "trailingSlash": false,
-  "rewrites": [],
   "github": {
     "enabled": true,
     "autoAlias": true
