@@ -16,3 +16,6 @@ cp -R ./web/public/* ./public/
 # Expose assets
 mkdir public/assets
 cp -R ./assets/* ./public/assets/
+
+# Log public files.
+ls -R public
