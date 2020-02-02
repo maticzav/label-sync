@@ -7,5 +7,6 @@ coverage
 .env*
 *.tsbuildinfo
 package-lock.json
+elm-stuff
 
 __tmp__
