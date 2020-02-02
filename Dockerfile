@@ -6,6 +6,8 @@ RUN curl -sL https://deb.nodesource.com/setup_13.x | bash - &&\
   echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list &&\
   apt-get update -y && apt-get install -y nodejs gcc g++ make yarn
 
+RUN node --version
+
 WORKDIR /usr/src/app
 
 # Install Dependencies

@@ -1,0 +1,19 @@
+{
+  "name": "labelsync",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "make": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "husky": "^3.1.0",
+    "label-sync": "latest"
+  },
+  "devDependencies": {
+    "prettier": "^1.19.1",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.4"
+  },
+  "license": "MIT"
+}

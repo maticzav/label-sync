@@ -1,7 +1,9 @@
 import Webhooks = require('@octokit/webhooks')
+import fs from 'fs'
 import ml from 'multilines'
 import os from 'os'
-import { Application, Context, Octokit } from 'probot'
+import path from 'path'
+import { Application, Context } from 'probot'
 
 import { parseConfig, LSCConfiguration } from './configuration'
 import * as maybe from './data/maybe'
@@ -13,9 +15,11 @@ import {
   removeLabelsFromRepository,
   getRepo,
   bootstrapConfigRepository,
+  GHTree,
 } from './github'
 import { handleLabelSync } from './handlers/labels'
 import { generateHumanReadableReport } from './language/labels'
+import { loadTreeFromPath } from './utils'
 
 /* Constants */
 
@@ -34,6 +38,18 @@ export const getLSConfigRepoName = (owner: string) => `${owner}-labelsync`
  * It should always be in YAML format.
  */
 export const LS_CONFIG_PATH = 'labelsync.yml'
+
+/**
+ * Tempalte using for onboarding new customers.
+ */
+const BOOTSTRAP_TEMPLATE_PATH = path.resolve(__dirname, '../../template')
+const BOOTSTRAP_REPOSITORY: GHTree = loadTreeFromPath(BOOTSTRAP_TEMPLATE_PATH, [
+  'dist',
+  'node_modules',
+  '.DS_Store',
+  /.*\.log.*/,
+  /.*\.lock.*/,
+])
 
 /* Application */
 
@@ -142,7 +158,12 @@ module.exports = (app: Application) => {
 
       case 'Unknown': {
         /* Bootstrap a configuration repository. */
-        await bootstrapConfigRepository(github, owner, configRepo)
+
+        await bootstrapConfigRepository(
+          github,
+          { owner, repo: configRepo },
+          BOOTSTRAP_REPOSITORY,
+        )
         return
       }
     }

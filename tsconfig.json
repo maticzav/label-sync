@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2017",
+    "target": "es2019",
     "module": "commonjs",
     "lib": ["dom", "es2017", "es2019"],
     "declaration": true,
@@ -9,7 +9,6 @@
     // "isolatedModules": true,
 
     "strict": true,
-    "strictNullChecks": true,
 
     /* Additional Checks */
     // "noUnusedLocals": true,
@@ -24,5 +23,5 @@
     "skipDefaultLibCheck": true,
     "skipLibCheck": true
   },
-  "exclude": ["**/tests/**/*", "**/dist/**/*"]
+  "exclude": ["**/tests/**/*", "**/dist/**/*", "**/template/**/*"]
 }
