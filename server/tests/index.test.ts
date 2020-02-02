@@ -50,6 +50,7 @@ describe('bot:', () => {
         expect(body).toEqual({
           name: 'maticzav-labelsync',
           description: 'LabelSync configuration repository.',
+          auto_init: true,
         })
         return
       })
@@ -70,8 +71,14 @@ describe('bot:', () => {
         return { sha: sha, url: 'url', tree: body.tree }
       })
 
-      const createRefEndpoint = jest.fn().mockImplementation((uri, body) => {
-        expect(body.ref).toBe('refs/heads/master')
+      const parentSha = Math.floor(Math.random() * 1000).toString()
+
+      const getRefEndpoint = jest.fn().mockImplementation((uri, body) => {
+        return { object: { sha: parentSha } }
+      })
+
+      const createCommitEndpoint = jest.fn().mockImplementation((uri, body) => {
+        expect(body.parents).toEqual([parentSha])
         return
       })
 
@@ -100,8 +107,12 @@ describe('bot:', () => {
         .persist()
 
       nock('https://api.github.com')
-        .post('/repos/maticzav/maticzav-labelsync/git/refs')
-        .reply(200, createRefEndpoint)
+        .get('/repos/maticzav/maticzav-labelsync/git/refs/refs/heads/master')
+        .reply(200, getRefEndpoint)
+
+      nock('https://api.github.com')
+        .post('/repos/maticzav/maticzav-labelsync/git/commits')
+        .reply(200, createCommitEndpoint)
 
       await probot.receive({
         id: 'installation.boot',

@@ -436,24 +436,34 @@ export async function bootstrapConfigRepository(
   github: Octokit,
   { owner, repo }: GHRepo,
   tree: GHTree,
-): Promise<Octokit.GitCreateRefResponse> {
+): Promise<Octokit.GitCreateCommitResponse> {
   await github.repos
     .createInOrg({
       org: owner,
       name: repo,
       description: 'LabelSync configuration repository.',
+      auto_init: true,
     })
     .then(res => res.data)
 
-  const commit = await createGhTree(github, { owner, repo }, tree)
-  const ref = await github.git.createRef({
+  const gitTree = await createGhTree(github, { owner, repo }, tree)
+  const ref = await github.git
+    .getRef({
+      owner,
+      repo,
+      ref: 'refs/heads/master',
+    })
+    .then(res => res.data)
+
+  const commit = await github.git.createCommit({
     owner,
     repo,
-    ref: 'refs/heads/master',
-    sha: commit.sha,
+    message: ':sparkles: Scaffold configuration',
+    tree: gitTree.sha,
+    parents: [ref.object.sha],
   })
 
-  return ref.data
+  return commit.data
 }
 
 export type InstallationAccess =
