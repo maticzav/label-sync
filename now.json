@@ -2,19 +2,9 @@
   "name": "label-sync",
   "version": 2,
   "alias": ["www.label-sync.com", "label-sync.com"],
-  "builds": [
-    {
-      "src": "redirects/**/*.ts",
-      "use": "@now/node"
-    }
-  ],
+  "builds": [],
   "trailingSlash": false,
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/redirects/src/index.ts?path=$1"
-    }
-  ],
+  "rewrites": [],
   "github": {
     "enabled": true,
     "autoAlias": true
