@@ -86,7 +86,7 @@ describe('bot:', () => {
         .reply(404, repoEndpoint)
 
       nock('https://api.github.com')
-        .post('/user/repos')
+        .post('/orgs/maticzav/repos')
         .reply(200, createRepoEndpoint)
 
       nock('https://api.github.com')

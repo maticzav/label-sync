@@ -438,7 +438,8 @@ export async function bootstrapConfigRepository(
   tree: GHTree,
 ): Promise<Octokit.GitCreateRefResponse> {
   await github.repos
-    .createForAuthenticatedUser({
+    .createInOrg({
+      org: owner,
       name: repo,
       description: 'LabelSync configuration repository.',
     })
