@@ -451,7 +451,7 @@ export async function bootstrapConfigRepository(
     .getRef({
       owner,
       repo,
-      ref: 'refs/heads/master',
+      ref: 'heads/master',
     })
     .then(res => res.data)
 

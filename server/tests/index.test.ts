@@ -107,7 +107,7 @@ describe('bot:', () => {
         .persist()
 
       nock('https://api.github.com')
-        .get('/repos/maticzav/maticzav-labelsync/git/refs/refs/heads/master')
+        .get('/repos/maticzav/maticzav-labelsync/git/refs/heads/master')
         .reply(200, getRefEndpoint)
 
       nock('https://api.github.com')
