@@ -10,10 +10,10 @@ const configFixture = fs.readFileSync(
   path.resolve(__dirname, './__fixtures__/labelsync.yml'),
   { encoding: 'utf-8' },
 )
-import labelCreatedPayload from './__fixtures__/label.created'
-import installationPayload from './__fixtures__/installation.created'
-import prPayload from './__fixtures__/pullrequest.opened'
-import pushPayload from './__fixtures__/push'
+import labelCreatedPayload from './__fixtures__/github/label.created'
+import installationPayload from './__fixtures__/github/installation.created'
+import prPayload from './__fixtures__/github/pullrequest.opened'
+import pushPayload from './__fixtures__/github/push'
 
 describe('bot:', () => {
   beforeAll(() => {
@@ -43,14 +43,35 @@ describe('bot:', () => {
   test(
     'installation event bootstrap config',
     async () => {
-      expect.assertions(3)
+      expect.assertions(6)
 
       const repoEndpoint = jest.fn().mockReturnValue({})
-      const templateEndpoint = jest.fn().mockImplementation((uri, body) => {
+      const createRepoEndpoint = jest.fn().mockImplementation((uri, body) => {
         expect(body).toEqual({
           name: 'maticzav-labelsync',
-          owner: 'maticzav',
+          description: 'LabelSync configuration repository.',
         })
+        return
+      })
+
+      let blobs: { [sha: number]: string } = {}
+
+      const createBlobEndpoint = jest.fn().mockImplementation((uri, body) => {
+        const sha = Object.keys(blobs).length
+        blobs[sha] = body.content
+        return { url: 'url', sha }
+      })
+
+      let trees: { [sha: number]: string } = {}
+
+      const createTreeEndpoint = jest.fn().mockImplementation((uri, body) => {
+        const sha = Object.keys(trees).length
+        trees[sha] = body.tree
+        return { sha: sha, url: 'url', tree: body.tree }
+      })
+
+      const createRefEndpoint = jest.fn().mockImplementation((uri, body) => {
+        expect(body.ref).toBe('refs/heads/master')
         return
       })
 
@@ -65,8 +86,22 @@ describe('bot:', () => {
         .reply(404, repoEndpoint)
 
       nock('https://api.github.com')
-        .post('/repos/maticzav/label-sync-template/generate')
-        .reply(200, templateEndpoint)
+        .post('/user/repos')
+        .reply(200, createRepoEndpoint)
+
+      nock('https://api.github.com')
+        .post('/repos/maticzav/maticzav-labelsync/git/blobs')
+        .reply(200, createBlobEndpoint)
+        .persist()
+
+      nock('https://api.github.com')
+        .post('/repos/maticzav/maticzav-labelsync/git/trees')
+        .reply(200, createTreeEndpoint)
+        .persist()
+
+      nock('https://api.github.com')
+        .post('/repos/maticzav/maticzav-labelsync/git/refs')
+        .reply(200, createRefEndpoint)
 
       await probot.receive({
         id: 'installation.boot',
@@ -77,7 +112,10 @@ describe('bot:', () => {
       /* Tests */
 
       expect(repoEndpoint).toBeCalledTimes(1)
-      expect(templateEndpoint).toBeCalledTimes(1)
+      expect(createRepoEndpoint).toBeCalledTimes(1)
+
+      expect(blobs).toMatchSnapshot()
+      expect(trees).toMatchSnapshot()
     },
     5 * 60 * 1000,
   )

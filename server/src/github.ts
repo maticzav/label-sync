@@ -2,7 +2,8 @@ import * as path from 'path'
 import { Octokit } from 'probot'
 
 import { Maybe } from './data/maybe'
-import { Dict, not, mapEntriesAsync } from './utils'
+import { Dict, mapEntriesAsync } from './data/dict'
+import { not } from './utils'
 
 /**
  * Loads a file from Github.
@@ -307,7 +308,7 @@ type GHRepo = { owner: string; repo: string }
  *
  * Files should be utf-8 strings.
  */
-type GHTree = { [path: string]: string }
+export type GHTree = { [path: string]: string }
 
 /**
  * Returns the files that are not nested.
@@ -330,7 +331,7 @@ function getTreeSubTrees(tree: GHTree): Dict<GHTree> {
     .filter(not(isFileInThisFolder))
     .reduce<Dict<GHTree>>((acc, filepath) => {
       const [subTree, newFilepath] = shiftPath(filepath)
-      if (!Object.hasOwnProperty(subTree)) {
+      if (!acc.hasOwnProperty(subTree)) {
         acc[subTree] = {}
       }
       acc[subTree][newFilepath] = tree[filepath]
@@ -392,11 +393,13 @@ async function createGhTree(
       tree: [
         ...Object.entries(trees).map(([treePath, { sha }]) => ({
           mode: '040000' as const,
+          type: 'tree' as const,
           path: treePath,
           sha,
         })),
         ...Object.entries(blobs).map(([filePath, { sha }]) => ({
           mode: '100644' as const,
+          type: 'blob' as const,
           path: filePath,
           sha,
         })),
