@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0](https://github.com/matizav/label-sync/compare/label-sync@3.0.0...label-sync@3.1.0) (2020-02-02)
+
+
+### Features
+
+* add onboarding template ([c61fd34](https://github.com/matizav/label-sync/commit/c61fd3402810b625e3c6eae5b9c0574416ca53dd))
+* onboarding functionality ([2bf8061](https://github.com/matizav/label-sync/commit/2bf806174a21248e1588ff90b1a7e1f60efc4c9b))
+
+
+
+
+
 # [3.0.0](https://github.com/matizav/label-sync/compare/label-sync@1.1.0...label-sync@3.0.0) (2019-12-28)
 
 
