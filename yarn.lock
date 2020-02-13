@@ -3292,22 +3292,22 @@ ee-first@1.1.1:
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
-elm-hot@1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/elm-hot/-/elm-hot-1.1.1.tgz#5284dcb475b329b1a41f1b41d201041cd05a3b96"
-  integrity sha512-ZHjoHd2Ev6riNXNQirj3J+GKKXXwedAUikfFBYzlVL/+3CdGs96cpZ7nhAk4c5l//Qa9ymltrqX36mOlr0pPFA==
+elm-hot@1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/elm-hot/-/elm-hot-1.1.4.tgz#4984592b3554670255ea4e08f4e98aa9103ab51f"
+  integrity sha512-qPDP/o/Fkifriaxaf3E7hHFB5L6Ijihyg8is4A6xna6/h/zebUiNssbQrxywI2oxNUkr6W/leEu/WlIC1tmVnw==
 
-elm-live@4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/elm-live/-/elm-live-4.0.1.tgz#6ff88752d105d0c8458735c112145891785335ff"
-  integrity sha512-IlonaC1pO/QoXlOrwwrJaxyvpJAT8QDSfzenkChbhU1PC1fJetkj2TwZfki+y1ZxpSMTnMSomMraOdWA6DO3VQ==
+elm-live@4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/elm-live/-/elm-live-4.0.2.tgz#c943f348961e406a7963115a3eeb7cfec38cf4d6"
+  integrity sha512-4I3UvJxF6MubC14VsgtV11B0zBxaaKtdKKsWquoaa5a3UHBIGW83qgTnt/NxOj4omOLfupaftmDaE4yRMTgTcw==
   dependencies:
     chalk "^1.1.1"
     chokidar "3.0.2"
     commander "2.17.1"
     crocks "0.12.1"
     cross-spawn "5.0.1"
-    elm-hot "1.1.1"
+    elm-hot "1.1.4"
     finalhandler "1.1.2"
     http-proxy "1.17.0"
     internal-ip "4.3.0"
