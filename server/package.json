@@ -5,7 +5,7 @@
   "dependencies": {
     "@octokit/rest": "16.41.1",
     "express": "4.17.1",
-    "fp-ts": "2.4.3",
+    "fp-ts": "2.5.3",
     "io-ts": "2.0.6",
     "js-yaml": "3.13.1",
     "jsonwebtoken": "8.5.1",
