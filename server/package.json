@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {},
   "dependencies": {
-    "@octokit/rest": "16.41.1",
+    "@octokit/rest": "17.1.1",
     "express": "4.17.1",
     "fp-ts": "2.4.3",
     "io-ts": "2.0.6",
