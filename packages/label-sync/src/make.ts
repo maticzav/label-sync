@@ -18,6 +18,11 @@ export type MakeInput = {
   outputs?: { config?: string }
 }
 
+/**
+ * Parses a configuration file for the configuration.
+ * @param param0 
+ * @param cwd 
+ */
 export async function make(
   { configs, outputs }: MakeInput,
   cwd: string = process.cwd(),

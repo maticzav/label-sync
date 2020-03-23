@@ -241,6 +241,27 @@ export async function openIssue(
     .then(({ data }) => data)
 }
 
+// /**
+//  * Closes the issue openned by the LabelSync configuration.
+//  *
+//  * @param octokit
+//  * @param owner
+//  * @param repo
+//  * @param title
+//  */
+// export async function closeIssue(
+//   octokit: Octokit,
+//   owner: string,
+//   repo: string,
+//   title: string,
+// ) {
+//   const issues = await octokit.issues.listForRepo({
+//     owner: owner,
+//     repo: repo,
+//     creator: 'labelsync-manager',
+//   })
+// }
+
 /**
  * Creates a comment on a dedicated pull request.
  * @param octokit

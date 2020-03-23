@@ -43,7 +43,7 @@ describe('bot:', () => {
   test(
     'installation event bootstrap config',
     async () => {
-      expect.assertions(7)
+      expect.assertions(5)
 
       const repoEndpoint = jest.fn().mockReturnValue({})
       const createRepoEndpoint = jest.fn().mockImplementation((uri, body) => {
@@ -136,8 +136,9 @@ describe('bot:', () => {
       expect(repoEndpoint).toBeCalledTimes(1)
       expect(createRepoEndpoint).toBeCalledTimes(1)
 
-      expect(blobs).toMatchSnapshot()
-      expect(trees).toMatchSnapshot()
+      /* Moved to the other test in Github */
+      // expect(blobs).toMatchSnapshot()
+      // expect(trees).toMatchSnapshot()
     },
     5 * 60 * 1000,
   )

@@ -5,7 +5,12 @@ import os from 'os'
 import path from 'path'
 import { Application, Context } from 'probot'
 
-import { parseConfig, LSCConfiguration } from './configuration'
+import {
+  parseConfig,
+  LSCConfiguration,
+  LS_CONFIG_PATH,
+  getLSConfigRepoName,
+} from './configuration'
 import * as maybe from './data/maybe'
 import {
   checkInstallationAccess,
@@ -20,29 +25,12 @@ import {
 import { handleLabelSync } from './handlers/labels'
 import { generateHumanReadableReport } from './language/labels'
 import { loadTreeFromPath } from './utils'
-
-/* Constants */
-
-/**
- * Configuration repository is the repository which LabelSync
- * uses to determine the configuration of the service.
- *
- * @param organization
- */
-export const getLSConfigRepoName = (owner: string) => `${owner}-labelsync`
-
-/**
- * Configuration file path determines the path of the file in the repositoy
- * that we use to gather configuration information from.
- *
- * It should always be in YAML format.
- */
-export const LS_CONFIG_PATH = 'labelsync.yml'
+import { populateTempalte } from './bootstrap'
 
 /**
  * Tempalte using for onboarding new customers.
  */
-const BOOTSTRAP_TEMPLATE_PATH = path.resolve(__dirname, '../../template')
+const BOOTSTRAP_TEMPLATE_PATH = path.resolve(__dirname, '../../templates/yaml')
 const BOOTSTRAP_REPOSITORY: GHTree = loadTreeFromPath(BOOTSTRAP_TEMPLATE_PATH, [
   'dist',
   'node_modules',
@@ -85,10 +73,18 @@ module.exports = (app: Application) => {
           { owner, repo: configRepo, ref },
           LS_CONFIG_PATH,
         )
-        const config = maybe.andThen(configRaw, parseConfig)
+
+        /* No configuration, skip the evaluation. */
+        /* istanbul ignore next */
+        if (configRaw === null) {
+          return
+        }
+
+        const config = parseConfig(configRaw)
 
         log.debug({ config }, `Loaded configuration for ${owner}.`)
 
+        /* Wrong configuration, open the issue. */
         if (config === null) {
           /* Open an issue about invalid configuration. */
           const title = 'LabelSync - Invalid configuration'
@@ -158,11 +154,14 @@ module.exports = (app: Application) => {
 
       case 'Unknown': {
         /* Bootstrap a configuration repository. */
+        const template = populateTempalte(BOOTSTRAP_REPOSITORY, {
+          repositories: payload.repositories,
+        })
 
         await bootstrapConfigRepository(
           github,
           { owner, repo: configRepo },
-          BOOTSTRAP_REPOSITORY,
+          template,
         )
         return
       }
@@ -201,7 +200,14 @@ module.exports = (app: Application) => {
       { owner, repo, ref },
       LS_CONFIG_PATH,
     )
-    const config = maybe.andThen(configRaw, parseConfig)
+
+    /* Skip altogether if there's no configuration. */
+    /* istanbul ignore next */
+    if (configRaw === null) {
+      return
+    }
+
+    const config = parseConfig(configRaw)
 
     log.debug({ config }, `Loaded configuration for ${owner}.`)
 
@@ -328,6 +334,7 @@ module.exports = (app: Application) => {
 
     switch (payload.action) {
       case 'opened':
+      case 'review_requested':
       case 'edited': {
         /* Review pull request. */
 
@@ -386,8 +393,6 @@ module.exports = (app: Application) => {
       /* istanbul ignore next */
       case 'review_request_removed':
       /* istanbul ignore next */
-      case 'review_requested':
-      /* istanbul ignore next */
       case 'unassigned':
       /* istanbul ignore next */
       case 'unlabeled':
@@ -407,6 +412,7 @@ module.exports = (app: Application) => {
       }
     }
   })
+
   /**
    * Label Created
    *

@@ -13,7 +13,7 @@
     "now-build": "./scripts/publish_web.sh"
   },
   "devDependencies": {
-    "@types/jest": "25.1.1",
+    "@types/jest": "25.1.4",
     "chalk": "3.0.0",
     "codecov": "3.6.4",
     "execa": "3.4.0",

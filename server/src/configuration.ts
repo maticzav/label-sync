@@ -5,6 +5,22 @@ import { Maybe } from './data/maybe'
 import { mapEntries } from './data/dict'
 
 /**
+ * Configuration repository is the repository which LabelSync
+ * uses to determine the configuration of the service.
+ *
+ * @param organization
+ */
+export const getLSConfigRepoName = (owner: string) => `${owner}-labelsync`
+
+/**
+ * Configuration file path determines the path of the file in the repositoy
+ * that we use to gather configuration information from.
+ *
+ * It should always be in YAML format.
+ */
+export const LS_CONFIG_PATH = 'labelsync.yml'
+
+/**
  * Label represents the central unit of LabelSync. Each label
  * can have multiple siblings that are meaningfully related to
  * a label itself, multiple hooks that trigger different actions.
@@ -15,6 +31,8 @@ const LSCLabel = t.intersection([
   }),
   t.partial({
     description: t.string,
+    siblings: t.array(t.string),
+    alias: t.array(t.string),
   }),
 ])
 export type LSCLabel = t.TypeOf<typeof LSCLabel>
@@ -48,7 +66,10 @@ export interface LSCConfiguration extends t.TypeOf<typeof LSCConfiguration> {}
  * Parses a string into a configuration object.
  * @param input
  */
-export function parseConfig(input: string): Maybe<LSCConfiguration> {
+export function parseConfig(
+  input: string,
+  logger?: (err: any) => any,
+): Maybe<LSCConfiguration> {
   try {
     const object = yaml.safeLoad(input)
     const config = LSCConfiguration.decode(object)
@@ -56,6 +77,7 @@ export function parseConfig(input: string): Maybe<LSCConfiguration> {
     if (config._tag === 'Left') return null
     return fixConfig(config.right)
   } catch (err) /* istanbul ignore next */ {
+    if (logger) logger(err)
     return null
   }
 }

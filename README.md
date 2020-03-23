@@ -26,19 +26,60 @@ Label Sync helps you sync Github labels across multiple repositories:
 
 ## Getting Starterd
 
-1. Start by installing the [LabelSync Manager Github Application](https://github.com/apps/labelsync-manager). We recommend you install it across your entire fleet - LabelSync won't modify repositories that you haven't configured.
+1. Start by installing the [LabelSync Manager Github Application](https://github.com/apps/labelsync-manager). I recommend you install it across your entire fleet - LabelSync won't modify repositories that you haven't configured.
 2. LabelSync Manager created a `<org>-labelsync` repository for you, where `<org>` represents the name of your organisation or account.
    That's where your configuration resides. We've included the labels and repository configurations that we found most useful and encourage you to use them as your starting point.
 
 ## Configuring LabelSync
 
-We configure all repositories that LabelSync manager from a single repository. LabelSync Manager already created that repository for you during installation.
+We configure all repositories that LabelSync manager from a single repository. LabelSync Manager already created that repository for you during installation. In that repository, there's a file `labelsync.yml`. Whenever you change it, Label Sync is going to try to sync labels across your organisation.
 
-LabelSync comes with a utility library `label-sync` that allows you to leverage the power of TypeScript to compose configuration for your fleet. We encourage you to use the library.
+In the end, Label Sync only cares about that `labelsync.yml` file. However, to make configuration more approachable, I've created helper packages that allow you to use the power of your prefered language and generate `labelsync.yml` using a library.
 
-Alternatively, you can write `labelsync.yml` configuration manually.
+You may configureusing:
 
-#### Using TypeScript utility library
+- **YAML**
+- **TypeScript**
+- **Python** (coming soon)
+- **Go** (coming soon)
+
+Check the docs below for documentation on how to do it.
+
+### LabelSync configuration libraries
+
+#### YAML
+
+Create a `repos` object at the root of the file and nest names of the repositories inside.
+
+Each repository accepts two properties:
+
+- an optional `config` parameter that tells LabelSync how to sync that particular repository. Set `removeUnconfiguredLabels` to `true` to, well, remove all unconfigured labels.
+- an object of labels
+
+Each label accepts a `color` property in HEX format, a description and an `alias` property that accepts a list of labels that LabelSync should rename to the new label. We also support `siblings` that tell LabelSync which labels it should add to the issue or pull request additionally when a particular label is assigned to it.
+
+```yml
+repos:
+  graphql-shield:
+    config:
+      removeUnconfiguredLabels: true
+    labels:
+      kind/bug:
+        color: ff3311
+      bug/0-needs-reproduction:
+        color: ff3311
+        siblings: ['kind/bug'] # when you add "bug/0-needs-reproduction" LabelSync adds "kind/bug".
+      kind/question:
+        color: '#c5def5'
+        alias: ['question'] # we'll rename "question" label to "kind/question".
+      stale:
+        color: ff69b4
+        description: Label indicating Stale issue.
+```
+
+#### TypeScript
+
+> :construction: NOTE: TypeScript library is still under development and subject to change without notice.
 
 `label-sync` library comes pre-packed in your configuration repository. It exposes three main constructors: `configuration`, `repository`, and `label`.
 
@@ -99,24 +140,6 @@ const config = configuration({
 make({
   configs: [config],
 })
-```
-
-#### Manually configuring LabelSync using YAML file
-
-To configure LabelSync using YAML file, create `labelsync.yml` file in the root of your configuration repository.
-
-```yml
-repos:
-  graphql-shield:
-    strict: true
-    labels:
-      kind/bug:
-        color: ff3311
-      kind/question:
-        color: '#c5def5'
-      stale:
-        color: ff69b4
-        description: Label indicating Stale issue.
 ```
 
 ## F.A.Q
