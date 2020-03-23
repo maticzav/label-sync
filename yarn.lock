@@ -2669,10 +2669,10 @@ commander@2.20.0:
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.0.tgz#d58bb2b5c1ee8f87b0d340027e9e94e222c5a422"
   integrity sha512-7j2y+40w61zy6YC2iRNpUe/NwhNyoXrYpHMrSunaMG64nRnaf96zO/KMQR4OyN/UnE5KLyEBnKHd4aG3rskjpQ==
 
-commander@^4.0.0:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-4.0.1.tgz#b67622721785993182e807f4883633e6401ba53c"
-  integrity sha512-IPF4ouhCP+qdlcmCedhxX4xiGBPyigb8v5NeUp+0LyhwLgxMqyp3S0vl7TAPfS/hiP7FC3caI/PB9lTmP8r1NA==
+commander@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-5.0.0.tgz#dbf1909b49e5044f8fdaf0adc809f0c0722bdfd0"
+  integrity sha512-JrDGPAKjMGSP1G0DUoaceEJ3DZgAfr/q6X7FVk4+U5KxUSKviYGM2k6zWkfyyBHy5rAtzgYJFa1ro2O9PtoxwQ==
 
 compare-func@^1.3.1:
   version "1.3.2"
@@ -6880,10 +6880,10 @@ pretty-quick@2.0.1:
     mri "^1.1.4"
     multimatch "^4.0.0"
 
-probot@9.9.8:
-  version "9.9.8"
-  resolved "https://registry.yarnpkg.com/probot/-/probot-9.9.8.tgz#0ea75912573ce0dd2a4d3e810bd5036a5d7e21d0"
-  integrity sha512-cOWzXdfwG71PX3u+G7ymyDYYCucOJln9skvW4GYrEiFO4xmDPUqqE/YMGXk0GXO9uRNjO47yqe3joIEaG8pcPA==
+probot@9.11.1:
+  version "9.11.1"
+  resolved "https://registry.yarnpkg.com/probot/-/probot-9.11.1.tgz#53e82e0e5e3c38d6c3a68762ee873176c55755fb"
+  integrity sha512-w8YQ574OK4ELtcFQwU/VPKvCpMWntdbEaC2Ekms5a77DhmnORbJ2lR4G0PkmQUQOMYXRJ9zhoNL7vBVeC0aj1w==
   dependencies:
     "@octokit/app" "^4.0.0"
     "@octokit/graphql" "^4.2.0"
@@ -6899,7 +6899,7 @@ probot@9.9.8:
     bunyan-format "^0.2.1"
     bunyan-sentry-stream "^1.1.0"
     cache-manager "^3.0.0"
-    commander "^4.0.0"
+    commander "^5.0.0"
     deepmerge "^4.1.0"
     dotenv "~8.2.0"
     eventsource "^1.0.7"
