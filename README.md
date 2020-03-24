@@ -31,6 +31,8 @@ Label Sync helps you sync Github labels across multiple repositories:
 2. LabelSync Manager created a `<org>-labelsync` repository for you, where `<org>` represents the name of your organisation or account.
    That's where your configuration resides. We've included the labels and repository configurations that we found most useful and encourage you to use them as your starting point.
 
+3. Support the project by sponsoring me on Github. I've put a lot of effort into making this bot and I'd love to keep it free to use in the future. Thank you for [sponsoring](https://github.com/sponsors/maticzav) me! :heart:
+
 > :construction: NOTE: It seems like scaffolding for personal accounts doesn't work as expected due to some Github Application endpoint limitations. If you can help, please comment in the [issue](https://github.com/maticzav/label-sync/issues/208).
 
 ## Configuring LabelSync
