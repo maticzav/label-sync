@@ -91,7 +91,7 @@ export async function addLabelsToRepository(
   if (!persist) return labels
 
   /* Perform sync on persist. */
-  const actions = labels.map(label => addLabelToRepository(label))
+  const actions = labels.map((label) => addLabelToRepository(label))
   await Promise.all(actions)
 
   return labels
@@ -110,7 +110,7 @@ export async function addLabelsToRepository(
         description: label.description,
         color: label.color,
       })
-      .then(res => res.data)
+      .then((res) => res.data)
   }
 }
 
@@ -134,7 +134,7 @@ export async function updateLabelsInRepository(
   if (!persist) return labels
 
   /* Update values on persist. */
-  const actions = labels.map(label => updateLabelInRepository(label))
+  const actions = labels.map((label) => updateLabelInRepository(label))
   await Promise.all(actions)
 
   return labels
@@ -154,7 +154,7 @@ export async function updateLabelsInRepository(
         description: label.description,
         color: label.color,
       })
-      .then(res => res.data)
+      .then((res) => res.data)
   }
 }
 
@@ -175,7 +175,7 @@ export async function removeLabelsFromRepository(
   /* Return immediately on non-persistent sync. */
   if (!persist) return labels
 
-  const actions = labels.map(label => removeLabelFromRepository(label))
+  const actions = labels.map((label) => removeLabelFromRepository(label))
   await Promise.all(actions)
 
   return labels
@@ -192,7 +192,7 @@ export async function removeLabelsFromRepository(
         repo: repo,
         name: label.name,
       })
-      .then(res => res.data)
+      .then((res) => res.data)
   }
 }
 
@@ -211,6 +211,7 @@ export async function addLabelsToIssue(
   persist: boolean,
 ): Promise<Pick<GithubLabel, 'name'>[]> {
   /* Return immediately on non-persistent sync. */
+  /* istanbul ignore next */
   if (!persist) return labels
 
   const ghLabels = await github.issues
@@ -218,9 +219,9 @@ export async function addLabelsToIssue(
       repo,
       owner,
       issue_number: issue,
-      labels: labels.map(label => label.name),
+      labels: labels.map((label) => label.name),
     })
-    .then(res => res.data)
+    .then((res) => res.data)
 
   return ghLabels
 }
@@ -232,7 +233,7 @@ export async function addLabelsToIssue(
  * @param label
  */
 export function isLabel(local: GithubLabel): (remote: GithubLabel) => boolean {
-  return remote =>
+  return (remote) =>
     local.name === remote.name &&
     local.description === remote.description &&
     local.color === remote.color
@@ -246,7 +247,7 @@ export function isLabel(local: GithubLabel): (remote: GithubLabel) => boolean {
 export function isLabelDefinition(
   local: GithubLabel,
 ): (remote: GithubLabel) => boolean {
-  return remote => local.name === remote.name
+  return (remote) => local.name === remote.name
 }
 
 /**
@@ -338,7 +339,7 @@ export async function getRepo(
       owner: owner,
       repo: repo,
     })
-    .then(res => {
+    .then((res) => {
       switch (res.status) {
         case 200: {
           return { status: 'Exists' as const, repo: res.data }
@@ -371,7 +372,7 @@ function getTreeFiles(tree: GHTree): Dict<string> {
   return Object.fromEntries(
     Object.keys(tree)
       .filter(isFileInThisFolder)
-      .map(name => [name, tree[name]]),
+      .map((name) => [name, tree[name]]),
   )
 }
 
@@ -432,10 +433,10 @@ async function createGhTree(
   /**
    * Uploads blobs and creates subtrees.
    */
-  const blobs = await mapEntriesAsync(getTreeFiles(tree), content =>
+  const blobs = await mapEntriesAsync(getTreeFiles(tree), (content) =>
     createGhBlob(github, { owner, repo }, content),
   )
-  const trees = await mapEntriesAsync(getTreeSubTrees(tree), subTree =>
+  const trees = await mapEntriesAsync(getTreeSubTrees(tree), (subTree) =>
     createGhTree(github, { owner, repo }, subTree),
   )
 
@@ -458,7 +459,7 @@ async function createGhTree(
         })),
       ],
     })
-    .then(res => res.data)
+    .then((res) => res.data)
 }
 
 /**
@@ -473,7 +474,7 @@ async function createGhBlob(
   { owner, repo }: GHRepo,
   content: string,
 ): Promise<Octokit.GitCreateBlobResponse> {
-  return github.git.createBlob({ owner, repo, content }).then(res => res.data)
+  return github.git.createBlob({ owner, repo, content }).then((res) => res.data)
 }
 
 /**
@@ -497,7 +498,7 @@ export async function bootstrapConfigRepository(
       description: 'LabelSync configuration repository.',
       auto_init: true,
     })
-    .then(res => res.data)
+    .then((res) => res.data)
 
   const gitTree = await createGhTree(github, { owner, repo }, tree)
   const masterRef = await github.git
@@ -506,7 +507,7 @@ export async function bootstrapConfigRepository(
       repo,
       ref: 'heads/master',
     })
-    .then(res => res.data)
+    .then((res) => res.data)
 
   const commit = await github.git
     .createCommit({
@@ -516,7 +517,7 @@ export async function bootstrapConfigRepository(
       tree: gitTree.sha,
       parents: [masterRef.object.sha],
     })
-    .then(res => res.data)
+    .then((res) => res.data)
 
   const ref = await github.git.updateRef({
     owner,
@@ -545,7 +546,7 @@ export async function checkInstallationAccess(
     data: { repositories },
   } = await github.apps.listRepos({ per_page: 100 })
 
-  const missing = repos.filter(repo =>
+  const missing = repos.filter((repo) =>
     repositories.every(({ name }) => repo !== name),
   )
 
