@@ -198,48 +198,6 @@ export async function removeLabelsFromRepository(
 
 /**
  *
- * Updates labels in repository.
- *
- * @param github
- * @param labels
- * @param repository
- */
-export async function renameLabelsInRepository(
-  github: Octokit,
-  { repo, owner }: { repo: string; owner: string },
-  labels: GithubLabel[],
-  persist: boolean,
-): Promise<GithubLabel[]> {
-  /* Return immediately on non-persistent sync. */
-  if (!persist) return labels
-
-  /* Update values on persist. */
-  const actions = labels.map(label => updateLabelInRepository(label))
-  await Promise.all(actions)
-
-  return labels
-
-  /**
-   * Helper functions
-   */
-  async function updateLabelInRepository(
-    label: GithubLabel,
-  ): Promise<GithubLabel> {
-    return github.issues
-      .updateLabel({
-        current_name: label.name,
-        owner: owner,
-        repo: repo,
-        name: label.name,
-        description: label.description,
-        color: label.color,
-      })
-      .then(res => res.data)
-  }
-}
-
-/**
- *
  * Adds labels to an issue.
  *
  * @param github

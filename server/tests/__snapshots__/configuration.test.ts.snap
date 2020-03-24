@@ -119,3 +119,12 @@ Array [
   "Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }",
 ]
 `;
+
+exports[`configurations: missing_siblings.yml 1`] = `
+Array [
+  "Configuration references unconfigured siblings:
+* \`label/6\` in repo-one:label/1
+* \`label/7\` in repo-one:label/1
+* \`label/8\` in repo-two:label/4",
+]
+`;

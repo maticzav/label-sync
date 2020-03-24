@@ -16,19 +16,22 @@ While working at Prisma, I discovered that many companies struggle with reposito
 
 My vision is to develop the best in class software that would help companies triage issues and pull requests, and simplify the use of labels.
 
-## How LabelSync works?
+## Features and Quirks of LabelSync
 
 Label Sync helps you sync Github labels across multiple repositories:
 
-- _Manage_: **Handle multiple repositories from a central configuration.**
-- _Restrict_: **Prevent adding new labels that don't fit into your workflow.**
-- _Simplify_: **Simplify your triaging by selectivly picking labels.**.
+- 🛰 **Centralised management**: Handle multiple repositories from a central configuration.
+- 👮 **Restricts unconfigured labels**: Prevent adding new labels that don't fit into your workflow.
+- 🐣 **Aliases**: Quickly rename old labels to a new label.
+- 🎢 **Siblings**: Create workflows with labels.
 
 ## Getting Starterd
 
 1. Start by installing the [LabelSync Manager Github Application](https://github.com/apps/labelsync-manager). I recommend you install it across your entire fleet - LabelSync won't modify repositories that you haven't configured.
 2. LabelSync Manager created a `<org>-labelsync` repository for you, where `<org>` represents the name of your organisation or account.
    That's where your configuration resides. We've included the labels and repository configurations that we found most useful and encourage you to use them as your starting point.
+
+> :construction: NOTE: It seems like scaffolding for personal accounts doesn't work as expected due to some Github Application endpoint limitations. If you can help, please comment in the [issue](https://github.com/maticzav/label-sync/issues/208).
 
 ## Configuring LabelSync
 
@@ -56,7 +59,12 @@ Each repository accepts two properties:
 - an optional `config` parameter that tells LabelSync how to sync that particular repository. Set `removeUnconfiguredLabels` to `true` to, well, remove all unconfigured labels.
 - an object of labels
 
-Each label accepts a `color` property in HEX format, a description and an `alias` property that accepts a list of labels that LabelSync should rename to the new label. We also support `siblings` that tell LabelSync which labels it should add to the issue or pull request additionally when a particular label is assigned to it.
+Each label accepts:
+
+- `color` property in HEX format (with or without "#"),
+- an optional `description`
+- an `alias` property that accepts a list of labels that LabelSync should rename to the new label.
+- `siblings` that tell LabelSync which labels it should add to the issue or pull request additionally when a particular label is assigned to it. All `siblings`, however, need to be configured - you cannot reference a "third-party" label.
 
 ```yml
 repos:
@@ -68,7 +76,7 @@ repos:
         color: ff3311
       bug/0-needs-reproduction:
         color: ff3311
-        siblings: ['kind/bug'] # when you add "bug/0-needs-reproduction" LabelSync adds "kind/bug".
+        siblings: ['kind/bug'] # when you add "bug/0-needs-reproduction" to issue LabelSync will add "kind/bug" as well.
       kind/question:
         color: '#c5def5'
         alias: ['question'] # we'll rename "question" label to "kind/question".

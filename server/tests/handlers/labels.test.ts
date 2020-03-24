@@ -8,6 +8,7 @@ describe('labels:', () => {
       /* unchanged */
       'label/unchanged': {
         color: 'unchanged',
+        alias: ['no/label'],
       },
       /* changed */
       'label/changed': {

@@ -90,7 +90,14 @@ function parseRepoName(name: string): string {
  */
 function ulOfLabels(labels: GithubLabel[], empty: string): string {
   if (labels.length === 0) return empty
-  return labels.map(label => ` * ${label.name}`).join(os.EOL)
+  return labels
+    .map((label) => {
+      if (label.old_name) {
+        return ` * ${label.old_name} => ${label.name}`
+      }
+      return ` * ${label.name}`
+    })
+    .join(os.EOL)
 }
 
 /**

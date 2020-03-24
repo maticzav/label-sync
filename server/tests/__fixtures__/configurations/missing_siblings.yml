@@ -1,0 +1,17 @@
+repos:
+  repo-one:
+    labels:
+      label/1:
+        color: '#ff0022'
+        siblings: ['label/6', 'label/7']
+      label/2:
+        color: '#ff0022'
+      label/3:
+        color: '#ff0022'
+  repo-two:
+    labels:
+      label/4:
+        color: '#ff0022'
+        siblings: ['label/8', 'label/5']
+      label/5:
+        color: '#ff0022'

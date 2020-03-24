@@ -4,6 +4,8 @@ import yaml from 'js-yaml'
 import * as os from 'os'
 
 import { mapEntries } from './data/dict'
+import { withDefault } from './utils'
+import ml from 'multilines'
 
 /**
  * Configuration repository is the repository which LabelSync
@@ -91,11 +93,50 @@ export function parseConfig(
     if (config._tag === 'Left') {
       return [PathReporter.report(config).join(os.EOL)]
     }
-    return [null, fixConfig(config.right)]
+    return [null, checkSiblings(fixConfig(config.right))]
   } catch (err) /* istanbul ignore next */ {
     if (logger) logger(err)
     return [err.message]
   }
+}
+
+/**
+ * Makes sure that all siblings reference an configured labels.
+ * @param config
+ */
+function checkSiblings(config: LSCConfiguration): LSCConfiguration {
+  let missingSiblings: { repo: string; sibling: string; label: string }[] = []
+  for (const repoName in config.repos) {
+    const repoConfig = config.repos[repoName]
+    const configuredLabels = Object.keys(repoConfig.labels)
+
+    /* Check every label for unconfigured siblings. */
+    for (const label in repoConfig.labels) {
+      const siblings = withDefault([], repoConfig.labels[label].siblings)
+
+      for (const sibling of siblings) {
+        /* Report unconfigured missing sibling. */
+        if (!configuredLabels.includes(sibling)) {
+          missingSiblings.push({ repo: repoName, sibling, label })
+        }
+      }
+    }
+  }
+
+  /**
+   * Reports missing siblings.
+   */
+  if (missingSiblings.length !== 0) {
+    const report = ml`
+    | Configuration references unconfigured siblings:
+    | ${missingSiblings
+      .map(s => `* \`${s.sibling}\` in ${s.repo}:${s.label}`)
+      .join(os.EOL)}
+    `
+    throw new Error(report)
+  }
+
+  return config
 }
 
 /**

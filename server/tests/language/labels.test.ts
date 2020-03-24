@@ -43,6 +43,12 @@ describe('language:', () => {
             color: '00',
             default: false,
           },
+          {
+            old_name: 'label/old',
+            name: 'label/new',
+            color: '00',
+            default: false,
+          },
         ],
         removals: [
           {
