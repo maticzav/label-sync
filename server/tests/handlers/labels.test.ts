@@ -6,67 +6,66 @@ describe('labels:', () => {
   test('calculateDiff', () => {
     const config: LSCRepository['labels'] = {
       /* unchanged */
-      'bug/0': {
-        color: 'ff',
+      'label/unchanged': {
+        color: 'unchanged',
       },
       /* changed */
-      'bug/1': {
-        color: '00',
+      'label/changed': {
+        color: 'changed',
       },
       /* new */
-      'bug/2': {
-        color: '33',
+      'label/new': {
+        color: 'new',
+        alias: ['label/renamed'],
       },
-      /* removed */
-      // "bug/3": {
-      //   color: "12"
-      // }
     }
     const labels: GithubLabel[] = [
       {
-        name: 'bug/0',
-        color: 'ff',
-        default: false,
+        name: 'label/unchanged',
+        color: 'unchanged',
       },
       {
-        name: 'bug/1',
-        color: 'ff',
-        default: false,
+        name: 'label/changed',
+        color: '00',
       },
       {
-        name: 'bug/3',
-        color: 'ff',
-        default: false,
+        name: 'label/removed',
+        color: 'removed',
+      },
+      {
+        name: 'label/renamed',
+        color: 'renamed',
       },
     ]
 
-    expect(calculateDiff(config)(labels)).toEqual({
+    const diff = calculateDiff(config)(labels)
+
+    expect(diff).toEqual({
       added: [
         {
-          name: 'bug/2',
-          color: '33',
-          default: false,
+          name: 'label/new',
+          color: 'new',
+          description: undefined,
         },
       ],
       changed: [
         {
-          name: 'bug/1',
-          color: '00',
-          default: false,
+          name: 'label/changed',
+          color: 'changed',
+          description: undefined,
+        },
+        {
+          old_name: 'label/renamed',
+          name: 'label/new',
+          color: 'new',
+          description: undefined,
         },
       ],
       removed: [
         {
-          name: 'bug/3',
-          color: 'ff',
-          default: false,
-        },
-      ],
-      unchanged: [
-        {
-          name: 'bug/0',
-          color: 'ff',
-          default: false,
+          name: 'label/removed',
+          color: 'removed',
+          description: undefined,
         },
       ],
     })

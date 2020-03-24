@@ -1,6 +1,10 @@
 import { Octokit } from 'probot'
 
-import { LSCRepository, LSCLabel } from '../configuration'
+import {
+  LSCRepository,
+  LSCLabel,
+  LSCRepositoryConfiguration,
+} from '../configuration'
 import * as maybe from '../data/maybe'
 import { Dict } from '../data/dict'
 import {
@@ -11,6 +15,7 @@ import {
   updateLabelsInRepository,
   removeLabelsFromRepository,
 } from '../github'
+import { withDefault } from '../utils'
 
 export type LabelSyncReport =
   | {
@@ -21,7 +26,7 @@ export type LabelSyncReport =
       updates: GithubLabel[]
       removals: GithubLabel[]
       config: {
-        strict: boolean
+        config: Required<LSCRepositoryConfiguration>
         labels: Dict<LSCLabel>
       }
     }
@@ -31,7 +36,7 @@ export type LabelSyncReport =
       owner: string
       message: string
       config: {
-        strict: boolean
+        config: LSCRepositoryConfiguration
         labels: Dict<LSCLabel>
       }
     }
@@ -49,7 +54,7 @@ export async function handleLabelSync(
   octokit: Octokit,
   owner: string,
   repo: string,
-  { strict, labels }: LSCRepository,
+  { config, labels }: LSCRepository,
   persist: boolean,
 ): Promise<LabelSyncReport> {
   /**
@@ -62,6 +67,13 @@ export async function handleLabelSync(
   const remoteLabels = await getRepositoryLabels(octokit, { repo, owner })
   const labelsDiff = maybe.andThen(remoteLabels, calculateDiff(labels))
 
+  /* Configuration */
+
+  const removeUnconfiguredLabels = withDefault(
+    false,
+    config?.removeUnconfiguredLabels,
+  )
+
   /* istanbul ignore if */
   if (labelsDiff === null) {
     return {
@@ -69,7 +81,12 @@ export async function handleLabelSync(
       owner,
       repo,
       message: `Couldn't make a diff of labels.`,
-      config: { labels, strict },
+      config: {
+        labels,
+        config: {
+          removeUnconfiguredLabels,
+        },
+      },
     }
   }
 
@@ -83,7 +100,7 @@ export async function handleLabelSync(
       octokit,
       { repo, owner },
       removed,
-      strict && persist,
+      removeUnconfiguredLabels && persist,
     ),
   ])
 
@@ -95,7 +112,9 @@ export async function handleLabelSync(
     updates,
     removals,
     config: {
-      strict,
+      config: {
+        removeUnconfiguredLabels,
+      },
       labels,
     },
   }
@@ -111,42 +130,84 @@ export async function handleLabelSync(
 export function calculateDiff(
   config: LSCRepository['labels'],
 ): (
-  labels: GithubLabel[],
+  currentLabels: GithubLabel[],
 ) => {
   added: GithubLabel[]
   changed: GithubLabel[]
   removed: GithubLabel[]
-  unchanged: GithubLabel[]
+  // unchanged: GithubLabel[]
 } {
-  return labels => {
-    const labelsNames = labels.map(l => l.name)
+  return currentLabels => {
+    const currentLabelsNames = currentLabels.map(l => l.name)
 
-    const added = Object.keys(config)
-      .filter(label => !labelsNames.includes(label))
-      .map(hydrateLabel)
-    const changed = Object.keys(config)
-      .filter(label => {
-        const persisted = labelsNames.includes(label)
-        const changed = !labels.some(isLabel(hydrateLabel(label)))
-        return persisted && changed
+    /* Labels */
+
+    let added: GithubLabel[] = []
+    let changed: GithubLabel[] = []
+    // let unchanged: GithubLabel[] = []
+    let removed: GithubLabel[] = []
+
+    /* Find changes */
+
+    for (const label of Object.keys(config)) {
+      /* New labels */
+      if (!currentLabelsNames.includes(label)) {
+        added.push(hydrateLabel(label))
+        continue
+      }
+      /* Updated labels */
+      const labelPersisted = currentLabelsNames.includes(label)
+      const labelHasChanged = !currentLabels.some(isLabel(hydrateLabel(label)))
+
+      if (labelPersisted && labelHasChanged) {
+        changed.push(hydrateLabel(label))
+        continue
+      }
+    }
+
+    for (const label of currentLabels) {
+      const labelRemoved = !config.hasOwnProperty(label.name)
+      const labelAlias = Object.keys(config).find(labelName => {
+        const aliases = withDefault([], config[labelName].alias)
+        return aliases.some(a => a === label.name)
       })
-      .map(hydrateLabel)
-    const unchanged = Object.keys(config)
-      .filter(label => labels.some(isLabel(hydrateLabel(label))))
-      .map(hydrateLabel)
-    const removed = labels.filter(label => !config.hasOwnProperty(label.name))
+      /* Aliases */
+      if (labelRemoved && labelAlias) {
+        changed.push({
+          old_name: label.name,
+          name: labelAlias,
+          color: config[labelAlias]!.color,
+          description: config[labelAlias]!.description,
+        })
+        continue
+      }
+
+      /* Removed */
+      if (labelRemoved && !labelAlias) {
+        removed.push({
+          name: label.name,
+          color: label.color,
+          description: label.description,
+        })
+        continue
+      }
+    }
 
     return {
       added,
       changed,
       removed,
-      unchanged,
+      // unchanged,
     }
   }
 
   /* Helper functions */
 
   function hydrateLabel(name: string): GithubLabel {
-    return { ...config[name], name, default: false }
+    return {
+      name,
+      color: config[name]!.color,
+      description: config[name]!.description,
+    }
   }
 }

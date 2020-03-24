@@ -1,19 +1,23 @@
 repos:
   graphql-shield:
-    strict: true
+    config:
+      removeUnconfiguredLabels: true
     labels:
+      kind/bug:
+        color: ff0022
+        alias: ['bug', 'error']
       bug/0-needs-reproduction:
         color: ff0022
+        siblings: ['kind/bug']
       bug/1-has-reproduction:
         color: ff0022
         description: Indicates that an issue has reproduction
       bug/2-bug-confirmed:
-        color: red
+        color: 00ff22
       bug/3-fixing:
         color: 00ff22
         description: Indicates that we are working on fixing the issue.
   emma-cli:
-    strict: false
     labels:
       bug/0-needs-reproduction:
         color: ff0022
@@ -21,7 +25,7 @@ repos:
         color: ff0022
         description: Indicates that an issue has reproduction
       bug/2-bug-confirmed:
-        color: red
+        color: 00ff22
       bug/3-fixing:
         color: 00ff22
         description: Indicates that we are working on fixing the issue.

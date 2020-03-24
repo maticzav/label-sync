@@ -1,0 +1,54 @@
+# Colors
+colors:
+  area: &area '#FFD700'
+  kind: &kind '#3B5BDB'
+  status: &status '#F8F9FA'
+  bug: &bug '#EE0000'
+  priority: &priority '#F783AC'
+  scope: &scope '#27CF79'
+  team: &team'#FDF4E8'
+  release: &release '#A5D8ff'
+  process: &process' '#EB9100'
+
+# Labels
+labels: &common
+  'bug/0-needs-info':
+    color: &bug
+    description: More information is needed for reproduction.
+  'bug/1-repro-available':
+    color: &bug
+    description: A reproduction exists and needs to be confirmed.
+  'bug/2-confirmed':
+    color: &bug
+    description: We have confirmed that this is a bug.
+  'kind/bug':
+    color: &bug
+    description: A reported bug.
+  'kind/regression':
+    color: &kind
+    description: A reported bug in functionality that used to work before.
+  'kind/feature':
+    color: &kind
+    description: A request for a new feature.
+  'kind/improvement':
+    color: &kind
+    description: An improvement to existing feature and code.
+  'kind/docs':
+    color: &kind
+    description: A documentation change is required.
+  'kind/discussion':
+    color: &kind
+    description: Discussion is required.
+  'kind/question':
+    color: &kind
+    description: Developer asked a question. No code changes required.
+  'process/candidate':
+    color: &process
+    description: Candidate for next Milestone.
+  'process/next-milestone':
+    color: &process
+    description: Issue earmarked for next Milestone.
+  'process/product':
+    color: &process
+    description: Temporary label to export products issues from the Engineering process
+repos: {}

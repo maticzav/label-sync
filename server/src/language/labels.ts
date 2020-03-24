@@ -3,6 +3,7 @@ import os from 'os'
 
 import { LabelSyncReport } from '../handlers/labels'
 import { GithubLabel } from '../github'
+import { withDefault } from '../utils'
 
 /**
  * Concatenates multiple reports into a human readable string.
@@ -25,7 +26,11 @@ export function generateHumanReadableReport(
 function parseLabelSyncReport(report: LabelSyncReport): string {
   switch (report.status) {
     case 'Success': {
-      switch (report.config.strict) {
+      const removeUnconfiguredLabels = withDefault(
+        false,
+        report.config?.config.removeUnconfiguredLabels,
+      )
+      switch (removeUnconfiguredLabels) {
         case true: {
           return ml`
           | ### ${parseRepoName(report.repo)}

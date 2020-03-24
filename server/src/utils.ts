@@ -48,3 +48,13 @@ export function loadTreeFromPath(
 function unshift(pre: string, path: string): string {
   return [pre, ...path.split('/').filter(Boolean)].join('/')
 }
+
+/**
+ * Creates a fallback default value.
+ * @param fallback
+ * @param value
+ */
+export function withDefault<T>(fallback: T, value: T | undefined): T {
+  if (value) return value
+  else return fallback
+}

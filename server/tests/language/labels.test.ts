@@ -21,7 +21,9 @@ describe('language:', () => {
               color: '33',
             },
           },
-          strict: false,
+          config: {
+            removeUnconfiguredLabels: false,
+          },
         },
       },
       {
@@ -61,7 +63,9 @@ describe('language:', () => {
               color: '33',
             },
           },
-          strict: true,
+          config: {
+            removeUnconfiguredLabels: true,
+          },
         },
       },
     ]

@@ -1,0 +1,5 @@
+prisma-test-utils:
+  strict: false
+  labels:
+    bug/0-needs-reproduction:
+      color: ff0022

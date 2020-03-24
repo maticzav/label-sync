@@ -1,7 +1,8 @@
 import * as t from 'io-ts'
+import { PathReporter } from 'io-ts/lib/PathReporter'
 import yaml from 'js-yaml'
+import * as os from 'os'
 
-import { Maybe } from './data/maybe'
 import { mapEntries } from './data/dict'
 
 /**
@@ -41,14 +42,27 @@ const LSCLabelName = t.string
 export type LSCLabelName = t.TypeOf<typeof LSCLabelName>
 
 /**
+ * Repository configuration for how LabelSync should sync it.
+ */
+const LSCRepositoryConfiguration = t.partial({
+  removeUnconfiguredLabels: t.boolean,
+})
+export interface LSCRepositoryConfiguration
+  extends t.TypeOf<typeof LSCRepositoryConfiguration> {}
+
+/**
  * Repository represents a single Github repository.
  * When configured as `strict` it will delete any surplus of labels
  * in the repository.
  */
-const LSCRepository = t.type({
-  strict: t.boolean,
-  labels: t.record(LSCLabelName, LSCLabel),
-})
+const LSCRepository = t.intersection([
+  t.partial({
+    config: LSCRepositoryConfiguration,
+  }),
+  t.type({
+    labels: t.record(LSCLabelName, LSCLabel),
+  }),
+])
 export interface LSCRepository extends t.TypeOf<typeof LSCRepository> {}
 const LSCRepositoryName = t.string
 export type LSCRepositoryName = t.TypeOf<typeof LSCRepositoryName>
@@ -69,16 +83,18 @@ export interface LSCConfiguration extends t.TypeOf<typeof LSCConfiguration> {}
 export function parseConfig(
   input: string,
   logger?: (err: any) => any,
-): Maybe<LSCConfiguration> {
+): [string] | [null, LSCConfiguration] {
   try {
     const object = yaml.safeLoad(input)
     const config = LSCConfiguration.decode(object)
 
-    if (config._tag === 'Left') return null
-    return fixConfig(config.right)
+    if (config._tag === 'Left') {
+      return [PathReporter.report(config).join(os.EOL)]
+    }
+    return [null, fixConfig(config.right)]
   } catch (err) /* istanbul ignore next */ {
     if (logger) logger(err)
-    return null
+    return [err.message]
   }
 }
 

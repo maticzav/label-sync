@@ -11,7 +11,6 @@ import {
   LS_CONFIG_PATH,
   getLSConfigRepoName,
 } from './configuration'
-import * as maybe from './data/maybe'
 import {
   checkInstallationAccess,
   getFile,
@@ -21,10 +20,12 @@ import {
   getRepo,
   bootstrapConfigRepository,
   GHTree,
+  addLabelsToIssue,
+  GithubLabel,
 } from './github'
 import { handleLabelSync } from './handlers/labels'
 import { generateHumanReadableReport } from './language/labels'
-import { loadTreeFromPath } from './utils'
+import { loadTreeFromPath, withDefault } from './utils'
 import { populateTempalte } from './bootstrap'
 
 /**
@@ -80,25 +81,26 @@ module.exports = (app: Application) => {
           return
         }
 
-        const config = parseConfig(configRaw)
+        const [error, config] = parseConfig(configRaw)
 
         log.debug({ config }, `Loaded configuration for ${owner}.`)
 
         /* Wrong configuration, open the issue. */
-        if (config === null) {
+        if (error !== null) {
+          log.debug(`Error in ${owner} configuration: ${error}`)
+
           /* Open an issue about invalid configuration. */
           const title = 'LabelSync - Invalid configuration'
           const body = ml`
           | # Invalid configuration
           |
           | Hi there,
-          | Thank you for using LabelSync. It seems like your configuration
-          | uses an unknown format. That might be a consequence of invalid yaml 
-          | cofiguration file. 
+          | Thank you for using LabelSync. It seems like there are some problems with your
+          | configuration. Here's what our parser reported:
           |
-          | We encourage you to check out \`label-sync\` utility library that
-          | simplifies your workflow by leveraging power of TypeScript. You can
-          | also use a [starting tempalte](github.com/maticzav/label-sync-template).
+          | \`\`\`
+          | ${error}
+          | \`\`\`
           |
           | Best,
           | LabelSync Team
@@ -112,15 +114,15 @@ module.exports = (app: Application) => {
         /* Verify that we can access all configured files. */
         const access = await checkInstallationAccess(
           github,
-          Object.keys(config.repos),
+          Object.keys(config!.repos),
         )
 
         switch (access.status) {
           case 'Sufficient': {
             /* Performs sync. */
-            for (const repo in config.repos) {
+            for (const repo in config!.repos) {
               await Promise.all([
-                handleLabelSync(github, owner, repo, config.repos[repo], true),
+                handleLabelSync(github, owner, repo, config!.repos[repo], true),
               ])
             }
 
@@ -207,12 +209,14 @@ module.exports = (app: Application) => {
       return
     }
 
-    const config = parseConfig(configRaw)
+    const [error, config] = parseConfig(configRaw)
 
     log.debug({ config }, `Loaded configuration for ${owner}.`)
 
     /* Open an issue about invalid configuration. */
-    if (config === null) {
+    if (error !== null) {
+      log.debug(`Error in ${owner} configuration: ${error}`)
+
       const title = 'LabelSync - Invalid configuration'
       const body = ml`
       | # Invalid configuration
@@ -222,9 +226,9 @@ module.exports = (app: Application) => {
       | uses a format unknown to us. That might be a consequence of invalid yaml 
       | cofiguration file. 
       |
-      | We encourage you to check out \`label-sync\` utility library that
-      | simplifies your workflow by leveraging power of TypeScript. You can
-      | also use a [starting tempalte](github.com/maticzav/label-sync-template).
+      | \`\`\`
+      | ${error}
+      | \`\`\`
       |
       | Best,
       | LabelSync Team
@@ -238,16 +242,16 @@ module.exports = (app: Application) => {
     /* Verify that we can access all configured files. */
     const access = await checkInstallationAccess(
       github,
-      Object.keys(config.repos),
+      Object.keys(config!.repos),
     )
 
     /* Skip configurations that we can't access. */
     switch (access.status) {
       case 'Sufficient': {
         /* Performs sync. */
-        for (const repo in config.repos) {
+        for (const repo in config!.repos) {
           await Promise.all([
-            handleLabelSync(github, owner, repo, config.repos[repo], true),
+            handleLabelSync(github, owner, repo, config!.repos[repo], true),
           ])
         }
 
@@ -298,6 +302,11 @@ module.exports = (app: Application) => {
 
     const configRepo = getLSConfigRepoName(owner)
 
+    log.debug(
+      { configRepo, repo },
+      `${owner}: received pr event ${payload.action}`,
+    )
+
     /* istanbul ignore if */
     if (configRepo !== repo) return
 
@@ -324,13 +333,20 @@ module.exports = (app: Application) => {
       { owner, repo, ref },
       LS_CONFIG_PATH,
     )
-    const config = maybe.andThen(configRaw, parseConfig)
+
+    /* Skip the pull request if there's no configuraiton. */
+    /* istanbul ignore next */
+    if (configRaw === null) {
+      return
+    }
+
+    const [error, config] = parseConfig(configRaw)
 
     log.debug({ config }, `Loaded configuration for ${owner}/${ref}.`)
 
     /* Skips invalid configuration. */
     /* istanbul ignore if */
-    if (config === null) return
+    if (error !== null) return
 
     switch (payload.action) {
       case 'opened':
@@ -341,7 +357,7 @@ module.exports = (app: Application) => {
         /* Verify that we can access all configured files. */
         const access = await checkInstallationAccess(
           github,
-          Object.keys(config.repos),
+          Object.keys(config!.repos),
         )
 
         /* Skip configurations that we can't access. */
@@ -349,8 +365,14 @@ module.exports = (app: Application) => {
           case 'Sufficient': {
             /* Fetch changes to repositories. */
             const reports = await Promise.all(
-              Object.keys(config.repos).map(repo =>
-                handleLabelSync(github, owner, repo, config.repos[repo], false),
+              Object.keys(config!.repos).map(repo =>
+                handleLabelSync(
+                  github,
+                  owner,
+                  repo,
+                  config!.repos[repo],
+                  false,
+                ),
               ),
             )
 
@@ -406,7 +428,9 @@ module.exports = (app: Application) => {
       /* istanbul ignore next */
       default: {
         /* Log unsupported pull_request action. */
-        log.error(`Unsupported pull_request event: ${payload.action}`)
+        log.error(
+          `${owner}:${repo} unsupported pull_request event: ${payload.action}`,
+        )
 
         return
       }
@@ -428,20 +452,64 @@ module.exports = (app: Application) => {
       const config = ctx.sources.config.repos[repo]
       const label = ctx.payload.label
 
-      /* Ignore changes in non-strict config */
+      /* Ignore no configuration. */
       /* istanbul ignore if */
-      if (!config || !config.strict) return
+      if (!config) return
 
       /* Ignore complying changes. */
       /* istanbul ignore if */
       if (config.labels.hasOwnProperty(label.name)) return
+
+      /* Config */
+      const removeUnconfiguredLabels = withDefault(
+        false,
+        config.config?.removeUnconfiguredLabels,
+      )
 
       /* Prune unsupported labels in strict repositories. */
       await removeLabelsFromRepository(
         ctx.github,
         { repo, owner },
         [label],
-        config.strict,
+        removeUnconfiguredLabels,
+      )
+    }),
+  )
+
+  /**
+   * Label assigned to issue
+   *
+   * Tasks:
+   *  - check if there are any siblings that we should add
+   *  - add siblings
+   */
+  app.on(
+    'issues.labeled',
+    withSources(async ctx => {
+      const owner = ctx.payload.sender.login
+      const repo = ctx.payload.repository.name
+      const config = ctx.sources.config.repos[repo]
+      const label = ((ctx.payload as any) as { label: GithubLabel }).label
+      const issue = ctx.payload.issue
+
+      /* Ignore changes in non-strict config */
+      /* istanbul ignore if */
+      if (!config || !config.labels.hasOwnProperty(label.name)) return
+
+      /* Find siblings. */
+      const siblings = withDefault([], config.labels[label.name]?.siblings)
+      const ghSiblings = siblings.map(sibling => ({ name: sibling }))
+
+      ctx.log.debug(
+        { ghSiblings },
+        `${owner}:${repo}:#${issue.number} adding siblings to ${label.name}`,
+      )
+
+      await addLabelsToIssue(
+        ctx.github,
+        { repo, owner, issue: issue.number },
+        ghSiblings,
+        true,
       )
     }),
   )
@@ -475,12 +543,17 @@ function withSources<
       { owner, repo, ref },
       LS_CONFIG_PATH,
     )
-    const config = maybe.andThen(configRaw, parseConfig)
+
+    /* Skip if there's no configuration. */
+    /* istanbul ignore next */
+    if (configRaw === null) return
+
+    const [error, config] = parseConfig(configRaw)
 
     /* Skips invlaid config. */
     /* istanbul ignore if */
-    if (config === null) return
-    ;(ctx as Context<C> & { sources: Sources }).sources = { config }
+    if (error !== null) return
+    ;(ctx as Context<C> & { sources: Sources }).sources = { config: config! }
 
     return fn(ctx as Context<C> & { sources: Sources })
   }

@@ -24,13 +24,12 @@ Object {
   "body": "# Invalid configuration
 
 Hi there,
-Thank you for using LabelSync. It seems like your configuration
-uses an unknown format. That might be a consequence of invalid yaml 
-cofiguration file. 
+Thank you for using LabelSync. It seems like there are some problems with your
+configuration. Here's what our parser reported:
 
-We encourage you to check out \\\\\`label-sync\\\\\` utility library that
-simplifies your workflow by leveraging power of TypeScript. You can
-also use a [starting tempalte](github.com/maticzav/label-sync-template).
+\\\\\`\\\\\`\\\\\`
+Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }
+\\\\\`\\\\\`\\\\\`
 
 Best,
 LabelSync Team",
@@ -46,6 +45,7 @@ Object {
 ### \`graphql-shield\`
 
 __New labels:__
+ * kind/bug
  * bug/3-fixing
 
 __Changed labels:__
@@ -60,7 +60,7 @@ __New labels:__
 No new labels created.
 
 __Changed labels:__
-No changed labels.
+ * bug/2-bug-confirmed
 
 __Unconfigured labels.__
 You have no unconfigured labels - you could make this repository \`strict\`.",
@@ -87,9 +87,9 @@ Thank you for using LabelSync. It seems like your configuration
 uses a format unknown to us. That might be a consequence of invalid yaml 
 cofiguration file. 
 
-We encourage you to check out \\\\\`label-sync\\\\\` utility library that
-simplifies your workflow by leveraging power of TypeScript. You can
-also use a [starting tempalte](github.com/maticzav/label-sync-template).
+\\\\\`\\\\\`\\\\\`
+Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }
+\\\\\`\\\\\`\\\\\`
 
 Best,
 LabelSync Team",

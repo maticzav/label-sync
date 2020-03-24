@@ -3,7 +3,7 @@ import { Octokit } from 'probot'
 
 import { Maybe } from './data/maybe'
 import { Dict, mapEntriesAsync } from './data/dict'
-import { not } from './utils'
+import { not, withDefault } from './utils'
 
 /**
  * Loads a file from Github.
@@ -43,6 +43,7 @@ export async function getFile(
 }
 
 export interface GithubLabel {
+  old_name?: string
   name: string
   description?: string
   color: string
@@ -83,7 +84,7 @@ export async function getRepositoryLabels(
 export async function addLabelsToRepository(
   github: Octokit,
   { repo, owner }: { repo: string; owner: string },
-  labels: GithubLabel[],
+  labels: Pick<GithubLabel, 'name' | 'color'>[],
   persist: boolean,
 ): Promise<GithubLabel[]> {
   /* Return immediately on non-persistent sync. */
@@ -117,6 +118,8 @@ export async function addLabelsToRepository(
  *
  * Updates labels in repository.
  *
+ * When old_name is specified in the label, we try to rename the label.
+ *
  * @param github
  * @param labels
  * @param repository
@@ -144,7 +147,7 @@ export async function updateLabelsInRepository(
   ): Promise<GithubLabel> {
     return github.issues
       .updateLabel({
-        current_name: label.name,
+        current_name: withDefault(label.name, label.old_name),
         owner: owner,
         repo: repo,
         name: label.name,
@@ -191,6 +194,77 @@ export async function removeLabelsFromRepository(
       })
       .then(res => res.data)
   }
+}
+
+/**
+ *
+ * Updates labels in repository.
+ *
+ * @param github
+ * @param labels
+ * @param repository
+ */
+export async function renameLabelsInRepository(
+  github: Octokit,
+  { repo, owner }: { repo: string; owner: string },
+  labels: GithubLabel[],
+  persist: boolean,
+): Promise<GithubLabel[]> {
+  /* Return immediately on non-persistent sync. */
+  if (!persist) return labels
+
+  /* Update values on persist. */
+  const actions = labels.map(label => updateLabelInRepository(label))
+  await Promise.all(actions)
+
+  return labels
+
+  /**
+   * Helper functions
+   */
+  async function updateLabelInRepository(
+    label: GithubLabel,
+  ): Promise<GithubLabel> {
+    return github.issues
+      .updateLabel({
+        current_name: label.name,
+        owner: owner,
+        repo: repo,
+        name: label.name,
+        description: label.description,
+        color: label.color,
+      })
+      .then(res => res.data)
+  }
+}
+
+/**
+ *
+ * Adds labels to an issue.
+ *
+ * @param github
+ * @param labels
+ * @param repository
+ */
+export async function addLabelsToIssue(
+  github: Octokit,
+  { repo, owner, issue }: { repo: string; owner: string; issue: number },
+  labels: Pick<GithubLabel, 'name'>[],
+  persist: boolean,
+): Promise<Pick<GithubLabel, 'name'>[]> {
+  /* Return immediately on non-persistent sync. */
+  if (!persist) return labels
+
+  const ghLabels = await github.issues
+    .addLabels({
+      repo,
+      owner,
+      issue_number: issue,
+      labels: labels.map(label => label.name),
+    })
+    .then(res => res.data)
+
+  return ghLabels
 }
 
 /**

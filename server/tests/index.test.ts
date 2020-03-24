@@ -12,6 +12,7 @@ const configFixture = fs.readFileSync(
 )
 import labelCreatedPayload from './__fixtures__/github/label.created'
 import installationPayload from './__fixtures__/github/installation.created'
+import issuesLabeledPayload from './__fixtures__/github/issues.labeled'
 import prPayload from './__fixtures__/github/pullrequest.opened'
 import pushPayload from './__fixtures__/github/push'
 
@@ -222,6 +223,10 @@ describe('bot:', () => {
           case '/repos/maticzav/graphql-shield/labels': {
             return [
               {
+                name: 'kind/bug',
+                color: 'ff0022',
+              },
+              {
                 name: 'bug/0-needs-reproduction',
                 color: 'ff0022',
               },
@@ -232,7 +237,7 @@ describe('bot:', () => {
               },
               {
                 name: 'bug/2-bug-confirmed',
-                color: 'blue',
+                color: '000000',
               },
               {
                 name: 'bug/4-fixed',
@@ -253,7 +258,7 @@ describe('bot:', () => {
               },
               {
                 name: 'bug/2-bug-confirmed',
-                color: 'red',
+                color: '00ff22',
               },
               {
                 name: 'bug/3-fixing',
@@ -285,7 +290,7 @@ describe('bot:', () => {
         expect({ uri, body }).toEqual({
           uri: '/repos/maticzav/graphql-shield/labels/bug/2-bug-confirmed',
           body: {
-            color: 'red',
+            color: '00ff22',
             name: 'bug/2-bug-confirmed',
           },
         })
@@ -440,6 +445,10 @@ describe('bot:', () => {
           case '/repos/maticzav/graphql-shield/labels': {
             return [
               {
+                name: 'kind/bug',
+                color: 'ff0022',
+              },
+              {
                 name: 'bug/0-needs-reproduction',
                 color: 'ff0022',
               },
@@ -450,7 +459,7 @@ describe('bot:', () => {
               },
               {
                 name: 'bug/2-bug-confirmed',
-                color: 'blue',
+                color: '000000',
               },
               {
                 name: 'bug/4-fixed',
@@ -471,7 +480,7 @@ describe('bot:', () => {
               },
               {
                 name: 'bug/2-bug-confirmed',
-                color: 'red',
+                color: '00ff22',
               },
               {
                 name: 'bug/3-fixing',
@@ -503,7 +512,7 @@ describe('bot:', () => {
         expect({ uri, body }).toEqual({
           uri: '/repos/maticzav/graphql-shield/labels/bug/2-bug-confirmed',
           body: {
-            color: 'red',
+            color: '00ff22',
             name: 'bug/2-bug-confirmed',
           },
         })
@@ -711,7 +720,7 @@ describe('bot:', () => {
               },
               {
                 name: 'bug/2-bug-confirmed',
-                color: 'red',
+                color: 'ff0022',
               },
               {
                 name: 'bug/3-fixing',
@@ -896,6 +905,48 @@ describe('bot:', () => {
         id: 'labelcreated',
         name: 'label.created',
         payload: labelCreatedPayload,
+      })
+
+      /* Tests */
+
+      expect(configEndpoint).toBeCalledTimes(1)
+    },
+    5 * 60 * 1000,
+  )
+
+  test(
+    'issues.labeled adds siblings',
+    async () => {
+      expect.assertions(2)
+
+      const configEndpoint = jest.fn().mockReturnValue({
+        content: Buffer.from(configFixture).toString('base64'),
+      })
+
+      /* Mocks */
+
+      nock('https://api.github.com')
+        .post('/app/installations/13055/access_tokens')
+        .reply(200, { token: 'test' })
+
+      nock('https://api.github.com')
+        .get(
+          '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
+        )
+        .reply(200, configEndpoint)
+
+      nock('https://api.github.com')
+        .post('/repos/maticzav/graphql-shield/issues/1/labels')
+        .reply(200, (uri, body) => {
+          expect(body).toEqual(['kind/bug'])
+          return
+        })
+        .persist()
+
+      await probot.receive({
+        id: 'issueslabeled',
+        name: 'issues.labeled',
+        payload: issuesLabeledPayload,
       })
 
       /* Tests */
