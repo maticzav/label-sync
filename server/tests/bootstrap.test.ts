@@ -7,10 +7,11 @@ import { loadTreeFromPath } from '../src/utils'
 const templatesPath = path.resolve(__dirname, '../../templates')
 const templates = fs
   .readdirSync(templatesPath)
-  .map(template => path.resolve(templatesPath, template))
+  .map((template) => path.resolve(templatesPath, template))
 
 describe('templates:', () => {
   const data = {
+    repository: 'maticzav-labelsync',
     repositories: [
       {
         name: 'graphql-shield',

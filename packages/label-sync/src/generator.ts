@@ -9,6 +9,8 @@ import { YAML } from './yaml'
 
 /* Providers */
 
+// export function
+
 export function configuration(config: ConfigurationInput): Configuration {
   return new Configuration(config)
 }
@@ -39,7 +41,7 @@ export class Configuration extends YAML<LSCConfiguration>
   }
 
   getConfiguration() {
-    const repos = mapEntries(this.repositories, r => r.getConfiguration())
+    const repos = mapEntries(this.repositories, (r) => r.getConfiguration())
 
     return { repos }
   }
@@ -52,6 +54,9 @@ export type RepositoryInput = {
   labels: Dict<Label>
 }
 
+/**
+ * Repository configuration.
+ */
 export class Repository implements Configurable<LSCRepository> {
   private strict: boolean
   private labels: Dict<Label>
@@ -62,7 +67,7 @@ export class Repository implements Configurable<LSCRepository> {
   }
 
   getConfiguration() {
-    const labels = mapEntries(this.labels, label => label.getConfiguration())
+    const labels = mapEntries(this.labels, (label) => label.getConfiguration())
 
     return {
       strict: this.strict,

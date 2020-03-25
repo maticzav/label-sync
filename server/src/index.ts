@@ -141,7 +141,7 @@ module.exports = (app: Application) => {
             | Please update your installation. 
             |
             | _Missing repositories:_
-            | ${access.missing.map(missing => ` * ${missing}`).join(os.EOL)}
+            | ${access.missing.map((missing) => ` * ${missing}`).join(os.EOL)}
             |
             | Best,
             | LabelSync Team
@@ -157,6 +157,7 @@ module.exports = (app: Application) => {
       case 'Unknown': {
         /* Bootstrap a configuration repository. */
         const template = populateTempalte(BOOTSTRAP_REPOSITORY, {
+          repository: configRepo,
           repositories: payload.repositories,
         })
 
@@ -273,7 +274,7 @@ module.exports = (app: Application) => {
         | you as best as we can.
         |
         | _Missing repositories:_
-        | ${access.missing.map(missing => ` * ${missing}`).join(os.EOL)}
+        | ${access.missing.map((missing) => ` * ${missing}`).join(os.EOL)}
         |
         | Best,
         | LabelSync Team
@@ -319,7 +320,7 @@ module.exports = (app: Application) => {
     })
 
     /* istanbul ignore next */
-    if (compare.data.files.every(file => file.filename !== LS_CONFIG_PATH)) {
+    if (compare.data.files.every((file) => file.filename !== LS_CONFIG_PATH)) {
       log.debug(
         { files: compare.data.files },
         `Skipping merge comment, configuration didn't change.`,
@@ -365,7 +366,7 @@ module.exports = (app: Application) => {
           case 'Sufficient': {
             /* Fetch changes to repositories. */
             const reports = await Promise.all(
-              Object.keys(config!.repos).map(repo =>
+              Object.keys(config!.repos).map((repo) =>
                 handleLabelSync(
                   github,
                   owner,
@@ -391,7 +392,7 @@ module.exports = (app: Application) => {
             | you as best as we can.
             |
             | _Missing repositories:_
-            | ${access.missing.map(missing => ` * ${missing}`).join(os.EOL)}
+            | ${access.missing.map((missing) => ` * ${missing}`).join(os.EOL)}
             `
 
             await createPRComment(github, owner, configRepo, number, body)
@@ -446,7 +447,7 @@ module.exports = (app: Application) => {
    */
   app.on(
     'label.created',
-    withSources(async ctx => {
+    withSources(async (ctx) => {
       const owner = ctx.payload.sender.login
       const repo = ctx.payload.repository.name
       const config = ctx.sources.config.repos[repo]
@@ -485,7 +486,7 @@ module.exports = (app: Application) => {
    */
   app.on(
     'issues.labeled',
-    withSources(async ctx => {
+    withSources(async (ctx) => {
       const owner = ctx.payload.sender.login
       const repo = ctx.payload.repository.name
       const config = ctx.sources.config.repos[repo]
@@ -498,7 +499,7 @@ module.exports = (app: Application) => {
 
       /* Find siblings. */
       const siblings = withDefault([], config.labels[label.name]?.siblings)
-      const ghSiblings = siblings.map(sibling => ({ name: sibling }))
+      const ghSiblings = siblings.map((sibling) => ({ name: sibling }))
 
       ctx.log.debug(
         { ghSiblings },
@@ -532,7 +533,7 @@ function withSources<
 >(
   fn: (ctx: Context<C> & { sources: Sources }) => Promise<T>,
 ): (ctx: Context<C>) => Promise<T | undefined> {
-  return async ctx => {
+  return async (ctx) => {
     const owner = ctx.payload.sender.login
     const repo = getLSConfigRepoName(owner)
     const ref = `refs/heads/${ctx.payload.repository.default_branch}`

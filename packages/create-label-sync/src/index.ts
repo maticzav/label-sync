@@ -130,7 +130,7 @@ async function main() {
   try {
     const tree = loadTreeFromPath(dist, [])
     const populatedTree = mapEntries(tree, (file) =>
-      handlebars.compile(file)({ repositories }),
+      handlebars.compile(file)({ repository, repositories }),
     )
     writeTreeToPath(dist, populatedTree)
 

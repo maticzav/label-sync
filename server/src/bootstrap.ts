@@ -9,7 +9,7 @@ import { GHTree } from './github'
  */
 export function populateTempalte(
   tree: GHTree,
-  data: { repositories: { name: string }[] },
+  data: { repository: string; repositories: { name: string }[] },
 ): GHTree {
   return mapEntries(tree, (file) => compile(file)(data))
 }
