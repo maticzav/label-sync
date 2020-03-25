@@ -296,19 +296,19 @@ labels: &common
 repos:
   graphql-shield:
     config:
-      removeUnconfiguredLabels: true
+      removeUnconfiguredLabels: false
     labels:
       # <<: *common
       # Add labels here.
   label-sync:
     config:
-      removeUnconfiguredLabels: true
+      removeUnconfiguredLabels: false
     labels:
       # <<: *common
       # Add labels here.
   resk:
     config:
-      removeUnconfiguredLabels: true
+      removeUnconfiguredLabels: false
     labels:
       # <<: *common
       # Add labels here.
