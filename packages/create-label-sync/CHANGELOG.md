@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.66](https://github.com/maticzav/label-sync/compare/create-label-sync@2.3.65...create-label-sync@2.3.66) (2020-03-25)
+
+
+### Bug Fixes
+
+* coverage, messages, default config ([8c01e80](https://github.com/maticzav/label-sync/commit/8c01e80c60e4d5bc8e07ac3e8380bf8a21f30ef2))
+
+
+
+
+
 ## 2.3.65 (2020-03-25)
 
 
