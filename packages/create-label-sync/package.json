@@ -24,7 +24,7 @@
     "@types/inquirer": "^6.5.0",
     "@types/meow": "5.0.0",
     "@types/mkdirp": "0.5.2",
-    "@types/node": "12.12.21"
+    "@types/node": "12.12.31"
   },
   "license": "MIT"
 }
