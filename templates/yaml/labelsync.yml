@@ -58,7 +58,7 @@ repos:
   {{#with this}}
   {{name}}:
     config:
-      removeUnconfiguredLabels: true
+      removeUnconfiguredLabels: false
     labels:
       # <<: *common
       # Add labels here.

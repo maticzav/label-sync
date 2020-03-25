@@ -11,6 +11,7 @@ module.exports = {
   collectCoverageFrom: [
     '**/*.ts',
     '!**/*.d.ts',
+    '!**/create-label-sync/**',
     '!**/dist/**',
     '!**/node_modules/**',
     '!**/vendor/**',

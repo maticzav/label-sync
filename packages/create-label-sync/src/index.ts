@@ -124,7 +124,7 @@ async function main() {
   /* Populate */
 
   const populateSpinner = ora({
-    text: `Loading ${template.name} template.`,
+    text: `Personalising configuration for you`,
   }).start()
 
   try {
