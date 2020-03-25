@@ -54,7 +54,7 @@ labels: &common
 
 {{! we use Handlebars to personalise initial configuration. }}
 repos:
-  {{#each repos}}
+  {{#each repositories}}
   {{#with this}}
   {{name}}:
     config:

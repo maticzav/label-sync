@@ -1,11 +1,11 @@
 import * as t from 'io-ts'
 import { PathReporter } from 'io-ts/lib/PathReporter'
 import yaml from 'js-yaml'
+import ml from 'multilines'
 import * as os from 'os'
 
 import { mapEntries } from './data/dict'
 import { withDefault } from './utils'
-import ml from 'multilines'
 
 /**
  * Configuration repository is the repository which LabelSync
@@ -130,7 +130,7 @@ function checkSiblings(config: LSCConfiguration): LSCConfiguration {
     const report = ml`
     | Configuration references unconfigured siblings:
     | ${missingSiblings
-      .map(s => `* \`${s.sibling}\` in ${s.repo}:${s.label}`)
+      .map((s) => `* \`${s.sibling}\` in ${s.repo}:${s.label}`)
       .join(os.EOL)}
     `
     throw new Error(report)
@@ -159,7 +159,7 @@ function fixConfig(config: LSCConfiguration): LSCConfiguration {
  * @param config
  */
 function fixRepoConfig(config: LSCRepository): LSCRepository {
-  const labels = mapEntries<LSCLabel, LSCLabel>(config.labels, label => ({
+  const labels = mapEntries<LSCLabel, LSCLabel>(config.labels, (label) => ({
     ...label,
     color: fixLabelColor(label.color),
   }))

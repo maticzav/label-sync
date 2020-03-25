@@ -1,6 +1,7 @@
 import { compile } from 'handlebars'
-import { GHTree } from './github'
+
 import { mapEntries } from './data/dict'
+import { GHTree } from './github'
 
 /**
  * Populates the template with repositories.
@@ -10,5 +11,5 @@ export function populateTempalte(
   tree: GHTree,
   data: { repositories: { name: string }[] },
 ): GHTree {
-  return mapEntries(tree, file => compile(file)(data))
+  return mapEntries(tree, (file) => compile(file)(data))
 }

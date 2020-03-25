@@ -1,0 +1,32 @@
+{
+  "name": "create-label-sync",
+  "description": "Label Sync setup scaffolding tool.",
+  "version": "2.3.64",
+  "main": "dist/index.js",
+  "repository": "https://github.com/maticzav/label-sync.git",
+  "bin": {
+    "create-label-sync": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {},
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "creato": "^1.0.5",
+    "handlebars": "^4.7.3",
+    "inquirer": "^7.1.0",
+    "meow": "^5.0.0",
+    "mkdirp": "^0.5.1",
+    "ora": "^4.0.0",
+    "update-notifier": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^6.5.0",
+    "@types/meow": "5.0.0",
+    "@types/mkdirp": "0.5.2",
+    "@types/node": "12.12.21",
+    "@types/update-notifier": "2.5.0"
+  },
+  "license": "MIT"
+}
