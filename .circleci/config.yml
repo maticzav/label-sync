@@ -27,8 +27,9 @@ jobs:
       - run:
           name: Setup Prisma
           command: |
-            bash ./scripts/migrate.sh
-            bash ./scripts/generate.sh
+            cd server
+            yarn db:migrate
+            yarn db:generate
       - run:
           name: Test packages
           command: yarn test
