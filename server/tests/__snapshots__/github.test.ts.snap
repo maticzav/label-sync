@@ -50,21 +50,20 @@ labelsync({
   "3": "repos: {}
 ",
   "4": "{
-  \\"name\\": \\"labelsync\\",
-  \\"version\\": \\"0.0.0\\",
+  \\"name\\": \\"{{repository}}\\",
   \\"private\\": true,
   \\"main\\": \\"index.js\\",
   \\"scripts\\": {
     \\"make\\": \\"ts-node labelsync.ts\\"
   },
   \\"dependencies\\": {
-    \\"husky\\": \\"3.1.0\\",
+    \\"husky\\": \\"latest\\",
     \\"label-sync\\": \\"latest\\"
   },
   \\"devDependencies\\": {
-    \\"prettier\\": \\"1.19.1\\",
-    \\"ts-node\\": \\"8.6.2\\",
-    \\"typescript\\": \\"3.8.3\\"
+    \\"prettier\\": \\"*\\",
+    \\"ts-node\\": \\"*\\",
+    \\"typescript\\": \\"*\\"
   },
   \\"husky\\": {
     \\"hooks\\": {
