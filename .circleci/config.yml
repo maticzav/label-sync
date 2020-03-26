@@ -25,6 +25,11 @@ jobs:
             done
             echo Failed waiting for Postgres && exit 1
       - run:
+          name: Setup Prisma
+          command: |
+            bash ./scripts/migrate.sh
+            bash ./scripts/generate.sh
+      - run:
           name: Test packages
           command: yarn test
           environment:
