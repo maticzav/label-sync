@@ -9,18 +9,12 @@ import { YAML } from './yaml'
 
 /* Providers */
 
-// export function
-
-export function configuration(config: ConfigurationInput): Configuration {
-  return new Configuration(config)
-}
-
-export function repository(repo: RepositoryInput): Repository {
+export function repo(repo: RepositoryInput): Repository {
   return new Repository(repo)
 }
 
-export function label(label: LabelInput): Label {
-  return new Label(label)
+export function label(label: LabelInput | string, color?: string): Label {
+  return new Label(label, color)
 }
 
 /* Classes */
@@ -28,7 +22,7 @@ export function label(label: LabelInput): Label {
 /* Configuration */
 
 export type ConfigurationInput = {
-  repositories: Dict<Repository>
+  repos: Dict<Repository>
 }
 
 export class Configuration extends YAML<LSCConfiguration>
@@ -37,40 +31,54 @@ export class Configuration extends YAML<LSCConfiguration>
 
   constructor(config: ConfigurationInput) {
     super()
-    this.repositories = config.repositories
+    this.repositories = config.repos
   }
 
   getConfiguration() {
-    const repos = mapEntries(this.repositories, (r) => r.getConfiguration())
-
-    return { repos }
+    return {
+      repos: mapEntries(this.repositories, (r) => r.getConfiguration()),
+    }
   }
 }
 
 /* Repository */
 
 export type RepositoryInput = {
-  strict?: boolean
-  labels: Dict<Label>
+  config?: RepositoryConfiguration
+  labels: Label[]
+}
+
+export type RepositoryConfiguration = {
+  removeUnconfiguredLabels?: boolean
 }
 
 /**
  * Repository configuration.
  */
 export class Repository implements Configurable<LSCRepository> {
-  private strict: boolean
-  private labels: Dict<Label>
+  private config: RepositoryConfiguration
+  private labels: Label[]
 
   constructor(repo: RepositoryInput) {
-    this.strict = withDefault(false, repo.strict)
+    this.config = withDefault({}, repo.config)
     this.labels = repo.labels
   }
 
   getConfiguration() {
-    const labels = mapEntries(this.labels, (label) => label.getConfiguration())
+    let labels: { [label: string]: LSCLabel } = {}
+
+    /* Process labels */
+    for (const label of this.labels) {
+      const name = label.getName()
+      /* istanbul ignore next */
+      if (labels.hasOwnProperty(name)) {
+        throw new Error(`Duplicate label ${name}`)
+      }
+      labels[name] = label.getConfiguration()
+    }
 
     return {
-      strict: this.strict,
+      config: this.config,
       labels,
     }
   }
@@ -80,43 +88,62 @@ export class Repository implements Configurable<LSCRepository> {
 
 export type LabelInput =
   | {
+      name: string
       color: string
-      description: string
+      description?: string
+      alias?: string[]
+      siblings?: string[]
     }
   | string
 
 export class Label implements Configurable<LSCLabel> {
+  private name: string
   private color: string = ''
   private description: string | undefined
+  private siblings: string[] = []
+  private alias: string[] = []
 
-  constructor(label: LabelInput) {
+  constructor(label: LabelInput | string, color?: string) {
     switch (typeof label) {
       case 'string': {
-        this.color = this.fixColor(label)
-        this.description = undefined
-
+        this.name = label
+        /* istanbul ignore next */
+        if (!color) {
+          throw new Error(
+            `Label either accepts label(name, color) or label(config) object!`,
+          )
+        }
+        this.color = this.fixColor(color)
         return
       }
       case 'object': {
+        this.name = label.name
         this.color = this.fixColor(label.color)
-        this.description = withDefault(undefined, label.description)
-
+        this.description = label.description
+        this.siblings = withDefault([], label.siblings)
+        this.alias = withDefault([], label.alias)
         return
       }
     }
   }
 
   fixColor(color: string): string {
-    if (color.startsWith('#')) {
-      return color.slice(1)
+    if (!color.startsWith('#')) {
+      return `#${color}`
     }
     return color
+  }
+
+  getName() {
+    return this.name
   }
 
   getConfiguration() {
     return {
       color: this.color,
       description: this.description,
+      alias: this.alias,
+      siblings: this.siblings,
     }
   }
 }

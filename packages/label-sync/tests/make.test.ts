@@ -3,56 +3,29 @@ import path from 'path'
 import { promisify } from 'util'
 
 import * as ls from '../src'
-import { make } from '../src'
+import { labelsync } from '../src'
+import { parseConfig } from '../../../server/src/configuration'
 
 const fsReadFile = promisify(fs.readFile)
 const fsUnlink = promisify(fs.unlink)
 
-const config = ls.configuration({
-  repositories: {
-    'prisma-test-utils': ls.repository({
-      strict: false,
-      labels: {
-        'bug/0-needs-reproduction': ls.label('#ff0022'),
-        'bug/1-has-reproduction': ls.label({
-          color: '#ff0022',
-          description: 'Indicates that an issue has reproduction',
-        }),
-        'bug/2-bug-confirmed': ls.label('red'),
-        'bug/3-fixing': ls.label({
-          color: '00ff22',
-          description: 'Indicates that we are working on fixing the issue.',
-        }),
-      },
-    }),
-    'label-sync': ls.repository({
-      strict: false,
-      labels: {
-        'bug/0-needs-reproduction': ls.label('#ff0022'),
-        'bug/1-has-reproduction': ls.label({
-          color: '#ff0022',
-          description: 'Indicates that an issue has reproduction',
-        }),
-        'bug/2-bug-confirmed': ls.label('red'),
-        'bug/3-fixing': ls.label({
-          color: '00ff22',
-          description: 'Indicates that we are working on fixing the issue.',
-        }),
-      },
-    }),
-  },
-})
-
-describe('make', () => {
+describe('make:', () => {
   test('compiles configuration to path', async () => {
     const yamlPath = path.resolve(__dirname, 'labelsync.yml')
 
-    await make({
-      configs: [config],
-      outputs: {
-        config: yamlPath,
+    labelsync(
+      {
+        repos: {
+          'prisma-test-utils': ls.repo({
+            config: {
+              removeUnconfiguredLabels: true,
+            },
+            labels: [ls.label('bug/0-needs-reproduction', '#ff0022')],
+          }),
+        },
       },
-    })
+      yamlPath,
+    )
 
     const file = await fsReadFile(yamlPath, { encoding: 'utf-8' })
     await fsUnlink(yamlPath)
@@ -60,13 +33,57 @@ describe('make', () => {
     expect(file).toMatchSnapshot()
   })
 
-  test('compiles configuration to default path', async () => {
+  test('integration test: compiles configuration to default path', async () => {
     const yamlPath = path.resolve(__dirname, './__fixtures__/labelsync.yml')
 
-    await make(
+    labelsync(
       {
-        configs: [config],
+        repos: {
+          'prisma-test-utils': ls.repo({
+            config: {
+              removeUnconfiguredLabels: true,
+            },
+            labels: [
+              ls.label('kind/bug', '#02f5aa'),
+              ls.label('bug/0-needs-reproduction', '#ff0022'),
+              ls.label({
+                name: 'bug/1-has-reproduction',
+                color: '#ff0022',
+                description: 'Indicates that an issue has reproduction',
+                alias: ['bug', 'error'],
+                siblings: ['kind/bug'],
+              }),
+              ls.type('bug', '#ff0022'),
+              ls.note('sweet'),
+              ls.impact('big'),
+              ls.effort('low'),
+              ls.needs('reproduction'),
+              ls.scope('project'),
+              ls.community('help-wanted'),
+            ],
+          }),
+          'graphql-shield': ls.repo({
+            config: {
+              removeUnconfiguredLabels: true,
+            },
+            labels: [
+              ls.label('kind/bug', '02f5aa'),
+              ls.label('bug/0-needs-reproduction', '#ff0022'),
+              ls.label({
+                name: 'bug/1-has-reproduction',
+                color: '#ff0022',
+                description: 'Indicates that an issue has reproduction',
+                alias: ['bug', 'error'],
+                siblings: ['kind/bug'],
+              }),
+              ls.type('bug', '#ff0022'),
+              ls.scope('project'),
+              ls.community('help-wanted'),
+            ],
+          }),
+        },
       },
+      undefined,
       path.resolve(__dirname, './__fixtures__/'),
     )
 
@@ -74,5 +91,9 @@ describe('make', () => {
     await fsUnlink(yamlPath)
 
     expect(file).toMatchSnapshot()
+
+    const [errors, config] = parseConfig(file)
+    expect(errors).toBeNull()
+    expect(config).toMatchSnapshot()
   })
 })

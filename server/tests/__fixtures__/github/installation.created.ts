@@ -22,7 +22,7 @@ export default {
       events_url: 'https://api.github.com/users/octocat/events{/privacy}',
       received_events_url:
         'https://api.github.com/users/octocat/received_events',
-      type: 'User',
+      type: 'Organization',
       site_admin: false,
     },
     repository_selection: 'selected',

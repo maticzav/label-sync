@@ -1,63 +1,212 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`make compiles configuration to default path 1`] = `
+exports[`make: compiles configuration to path 1`] = `
 "repos:
   prisma-test-utils:
-    strict: false
+    config:
+      removeUnconfiguredLabels: true
     labels:
       bug/0-needs-reproduction:
-        color: ff0022
-      bug/1-has-reproduction:
-        color: ff0022
-        description: Indicates that an issue has reproduction
-      bug/2-bug-confirmed:
-        color: red
-      bug/3-fixing:
-        color: 00ff22
-        description: Indicates that we are working on fixing the issue.
-  label-sync:
-    strict: false
-    labels:
-      bug/0-needs-reproduction:
-        color: ff0022
-      bug/1-has-reproduction:
-        color: ff0022
-        description: Indicates that an issue has reproduction
-      bug/2-bug-confirmed:
-        color: red
-      bug/3-fixing:
-        color: 00ff22
-        description: Indicates that we are working on fixing the issue.
+        color: '#ff0022'
+        alias: []
+        siblings: []
 "
 `;
 
-exports[`make compiles configuration to path 1`] = `
+exports[`make: integration test: compiles configuration to default path 1`] = `
 "repos:
   prisma-test-utils:
-    strict: false
+    config:
+      removeUnconfiguredLabels: true
     labels:
+      kind/bug:
+        color: '#02f5aa'
+        alias: []
+        siblings: []
       bug/0-needs-reproduction:
-        color: ff0022
+        color: '#ff0022'
+        alias: []
+        siblings: []
       bug/1-has-reproduction:
-        color: ff0022
+        color: '#ff0022'
         description: Indicates that an issue has reproduction
-      bug/2-bug-confirmed:
-        color: red
-      bug/3-fixing:
-        color: 00ff22
-        description: Indicates that we are working on fixing the issue.
-  label-sync:
-    strict: false
+        alias:
+          - bug
+          - error
+        siblings:
+          - kind/bug
+      type/bug:
+        color: '#ff0022'
+        alias: []
+        siblings: []
+      note/sweet:
+        color: '#EEEEEE'
+        alias: []
+        siblings: []
+      impact/big:
+        color: '#EEEEEE'
+        alias: []
+        siblings: []
+      effort/low:
+        color: '#EEEEEE'
+        alias: []
+        siblings: []
+      needs/reproduction:
+        color: '#FFCF2D'
+        alias: []
+        siblings: []
+      scope/project:
+        color: '#94ebfc'
+        alias: []
+        siblings: []
+      community/help-wanted:
+        color: '#7057ff'
+        alias: []
+        siblings: []
+  graphql-shield:
+    config:
+      removeUnconfiguredLabels: true
     labels:
+      kind/bug:
+        color: '#02f5aa'
+        alias: []
+        siblings: []
       bug/0-needs-reproduction:
-        color: ff0022
+        color: '#ff0022'
+        alias: []
+        siblings: []
       bug/1-has-reproduction:
-        color: ff0022
+        color: '#ff0022'
         description: Indicates that an issue has reproduction
-      bug/2-bug-confirmed:
-        color: red
-      bug/3-fixing:
-        color: 00ff22
-        description: Indicates that we are working on fixing the issue.
+        alias:
+          - bug
+          - error
+        siblings:
+          - kind/bug
+      type/bug:
+        color: '#ff0022'
+        alias: []
+        siblings: []
+      scope/project:
+        color: '#94ebfc'
+        alias: []
+        siblings: []
+      community/help-wanted:
+        color: '#7057ff'
+        alias: []
+        siblings: []
 "
+`;
+
+exports[`make: integration test: compiles configuration to default path 2`] = `
+Object {
+  "repos": Object {
+    "graphql-shield": Object {
+      "config": Object {
+        "removeUnconfiguredLabels": true,
+      },
+      "labels": Object {
+        "bug/0-needs-reproduction": Object {
+          "alias": Array [],
+          "color": "ff0022",
+          "siblings": Array [],
+        },
+        "bug/1-has-reproduction": Object {
+          "alias": Array [
+            "bug",
+            "error",
+          ],
+          "color": "ff0022",
+          "description": "Indicates that an issue has reproduction",
+          "siblings": Array [
+            "kind/bug",
+          ],
+        },
+        "community/help-wanted": Object {
+          "alias": Array [],
+          "color": "7057ff",
+          "siblings": Array [],
+        },
+        "kind/bug": Object {
+          "alias": Array [],
+          "color": "02f5aa",
+          "siblings": Array [],
+        },
+        "scope/project": Object {
+          "alias": Array [],
+          "color": "94ebfc",
+          "siblings": Array [],
+        },
+        "type/bug": Object {
+          "alias": Array [],
+          "color": "ff0022",
+          "siblings": Array [],
+        },
+      },
+    },
+    "prisma-test-utils": Object {
+      "config": Object {
+        "removeUnconfiguredLabels": true,
+      },
+      "labels": Object {
+        "bug/0-needs-reproduction": Object {
+          "alias": Array [],
+          "color": "ff0022",
+          "siblings": Array [],
+        },
+        "bug/1-has-reproduction": Object {
+          "alias": Array [
+            "bug",
+            "error",
+          ],
+          "color": "ff0022",
+          "description": "Indicates that an issue has reproduction",
+          "siblings": Array [
+            "kind/bug",
+          ],
+        },
+        "community/help-wanted": Object {
+          "alias": Array [],
+          "color": "7057ff",
+          "siblings": Array [],
+        },
+        "effort/low": Object {
+          "alias": Array [],
+          "color": "EEEEEE",
+          "siblings": Array [],
+        },
+        "impact/big": Object {
+          "alias": Array [],
+          "color": "EEEEEE",
+          "siblings": Array [],
+        },
+        "kind/bug": Object {
+          "alias": Array [],
+          "color": "02f5aa",
+          "siblings": Array [],
+        },
+        "needs/reproduction": Object {
+          "alias": Array [],
+          "color": "FFCF2D",
+          "siblings": Array [],
+        },
+        "note/sweet": Object {
+          "alias": Array [],
+          "color": "EEEEEE",
+          "siblings": Array [],
+        },
+        "scope/project": Object {
+          "alias": Array [],
+          "color": "94ebfc",
+          "siblings": Array [],
+        },
+        "type/bug": Object {
+          "alias": Array [],
+          "color": "ff0022",
+          "siblings": Array [],
+        },
+      },
+    },
+  },
+}
 `;

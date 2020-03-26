@@ -3,47 +3,43 @@ import path from 'path'
 import { isNull, isNullOrUndefined } from 'util'
 
 import { findFileUp } from './fs'
-import { Configuration } from './generator'
-import { withDefault } from './utils'
-import { EOL } from 'os'
+import { Repository, Configuration } from './generator'
+import { withDefault, Dict } from './utils'
 
 /* Constants */
 
 const LS_CONFIG_PATH = 'labelsync.yml'
 
-/* File compilation */
-
-export type MakeInput = {
-  configs: Configuration[]
-  outputs?: { config?: string }
+export type LabelSyncConfig = {
+  repos: Dict<Repository>
 }
 
 /**
  * Parses a configuration file for the configuration.
- * @param param0 
- * @param cwd 
+ * @param param0
+ * @param cwd
  */
-export async function make(
-  { configs, outputs }: MakeInput,
+export async function labelsync(
+  config: LabelSyncConfig,
+  output?: string,
   cwd: string = process.cwd(),
-): Promise<boolean> {
+): Promise<Configuration | false> {
   /* Search for git folder */
-  const pkgPath = await findFileUp(cwd, 'package.json')
+  const pkgPath = findFileUp(cwd, 'package.json')
 
   /* istanbul ignore next */
-  if (isNull(pkgPath) && isNullOrUndefined(outputs?.config)) {
+  if (isNull(pkgPath) && isNullOrUndefined(output)) {
     return false
   }
 
-  const output = withDefault(
-    path.resolve(pkgPath!, LS_CONFIG_PATH),
-    outputs?.config,
-  )
+  output = withDefault(path.resolve(pkgPath!, LS_CONFIG_PATH), output)
+
+  /* Generate configuration */
+
+  const configuration = new Configuration({ repos: config.repos })
 
   /* Write config to file */
-  writeFileSync(output, configs.map(c => c.getYAML()).join(EOL), {
-    encoding: 'utf-8',
-  })
+  writeFileSync(output, configuration.getYAML(), { encoding: 'utf-8' })
 
-  return true
+  return configuration
 }

@@ -7,85 +7,7 @@ node_modules
 
 .DS_Store
 *.log*",
-  "1": "{
-  \\"hooks\\": {
-    \\"pre-commit\\": \\"npm run make\\"
-  }
-}
-",
-  "10": "import { repository, label } from 'label-sync'
-
-import { colors } from '../colors'
-
-/**
- * Label configuration used internally by Prisma team. Labels are grouped
- * by their intention (e.g. bug/*, kind/*, process/*) and give
- * great base for issue triaging.
- */
-
-export const prisma = repository({
-  strict: false,
-  labels: {
-    /* Bugs */
-    'bug/0-needs-info': label({
-      color: colors.bug,
-      description: 'More information is needed for reproduction.',
-    }),
-    'bug/1-repro-available': label({
-      color: colors.bug,
-      description: 'A reproduction exists and needs to be confirmed.',
-    }),
-    'bug/2-confirmed': label({
-      color: colors.bug,
-      description: 'We have confirmed that this is a bug.',
-    }),
-    /* Kind */
-    'kind/bug': label({
-      color: colors.kind,
-      description: 'A reported bug.',
-    }),
-    'kind/regression': label({
-      color: colors.kind,
-      description: 'A reported bug in functionality that used to work before.',
-    }),
-    'kind/feature': label({
-      color: colors.kind,
-      description: 'A request for a new feature.',
-    }),
-    'kind/improvement': label({
-      color: colors.kind,
-      description: 'An improvement to existing feature and code.',
-    }),
-    'kind/docs': label({
-      color: colors.kind,
-      description: 'A documentation change is required.',
-    }),
-    'kind/discussion': label({
-      color: colors.kind,
-      description: 'Discussion is required.',
-    }),
-    'kind/question': label({
-      color: colors.kind,
-      description: 'Developer asked a question. No code changes required.',
-    }),
-    /* Process triaging. */
-    'process/candidate': label({
-      color: colors.process,
-      description: 'Candidate for next Milestone.',
-    }),
-    'process/next-milestone': label({
-      color: colors.process,
-      description: 'Issue earmarked for next Milestone.',
-    }),
-    'process/product': label({
-      color: colors.process,
-      description:
-        'Temporary label to export products issues from the Engineering process',
-    }),
-  },
-})
-",
-  "2": "# LabelSync Template
+  "1": "# LabelSync Template
 
 Hi :wave:,
 
@@ -97,6 +19,20 @@ Welcome to LabelSync. We are very excited to see you use our service. We believe
 - \`huskyrc\`: pre-commit hooks
 - \`prettier\`: code formatting
 ",
+  "2": "import { labelsync } from 'label-sync'
+
+/* Repository */
+import { prisma } from './repos/prisma'
+import { github } from './repos/github'
+
+/* Config */
+labelsync({
+  repos: {
+    // prisma,
+    // github,
+  },
+})
+",
   "3": "repos: {}
 ",
   "4": "{
@@ -105,7 +41,7 @@ Welcome to LabelSync. We are very excited to see you use our service. We believe
   \\"private\\": true,
   \\"main\\": \\"index.js\\",
   \\"scripts\\": {
-    \\"make\\": \\"ts-node src/index.ts\\"
+    \\"make\\": \\"ts-node labelsync.ts\\"
   },
   \\"dependencies\\": {
     \\"husky\\": \\"3.1.0\\",
@@ -116,105 +52,168 @@ Welcome to LabelSync. We are very excited to see you use our service. We believe
     \\"ts-node\\": \\"8.6.2\\",
     \\"typescript\\": \\"3.8.3\\"
   },
+  \\"husky\\": {
+    \\"hooks\\": {
+      \\"pre-commit\\": \\"yarn -s make && git add labelsync.yml\\"
+    }
+  },
+  \\"prettier\\": {
+    \\"semi\\": false,
+    \\"singleQuote\\": true,
+    \\"trailingComma\\": \\"all\\",
+    \\"printWidth\\": 100
+  },
   \\"license\\": \\"MIT\\"
 }
 ",
-  "5": "module.exports = {
-  semi: false,
-  singleQuote: true,
-  trailingComma: 'all',
-}
-",
-  "6": "{
+  "5": "{
   \\"compilerOptions\\": {
     \\"target\\": \\"es2017\\",
     \\"module\\": \\"commonjs\\",
-    \\"lib\\": [\\"dom\\", \\"es2017\\", \\"es2019\\"],
-    \\"rootDir\\": \\"src\\",
-    \\"outDir\\": \\"dist\\"
+    \\"rootDir\\": \\".\\"
   }
 }
 ",
-  "7": "export const colors = {
-  area: 'FFD700',
-  kind: '3B5BDB',
-  status: 'F8F9FA',
-  bug: 'ee0000',
-  priority: 'F783AC',
-  scope: '27CF79',
-  team: 'FDF4E8',
-  release: 'a5d8ff',
-  process: 'EB9100',
-}
-",
-  "8": "import { configuration, make } from 'label-sync'
-
-import { github } from './repositories/github'
-import { prisma } from './repositories/prisma'
-
-/**
- * Create a configuration instance by definining repositories
- * and their configurations.
- */
-const config = configuration({
-  repositories: {
-    /**
-     * replace repository name with your own repositories
-     */
-    // 'emma-cli': github,
-  },
-})
-
-/* Generates labelsync.yml into the root of repository. */
-make({
-  configs: [config],
-})
-",
-  "9": "import { repository, label } from 'label-sync'
+  "6": "import { repo, label } from 'label-sync'
 
 /**
  * Default collection of label in a Github repository.
  */
-export const github = repository({
-  strict: false,
-  labels: {
-    bug: label({
+export const github = repo({
+  config: {
+    removeUnconfiguredLabels: false,
+  },
+  labels: [
+    label({
+      name: 'bug',
       color: '#d73a4a',
       description: \\"Something isn't working\\",
     }),
-    documentation: label({
+    label({
+      name: 'documentation',
       color: '#0075ca',
       description: 'Improvements or additions to documentation',
     }),
-    duplicate: label({
+    label({
+      name: 'duplicate',
       color: '#cfd3d7',
       description: 'This issue or pull request already exists',
     }),
-    enhancement: label({
+    label({
+      name: 'enhancement',
       color: '#a2eeef',
       description: 'New feature or request',
     }),
-    'good first issue': label({
+    label({
+      name: 'good first issue',
       color: '#7057ff',
       description: 'Good for newcomers',
     }),
-    'help wanted': label({
+    label({
+      name: 'help wanted',
       color: '#008672',
       description: 'Extra attention is needed',
     }),
-    invalid: label({
+    label({
+      name: 'invalid',
       color: '#e4e669',
       description: \\"This doesn't seem right\\",
     }),
-    question: label({
+    label({
+      name: 'question',
       color: '#d876e3',
       description: 'Further information is requested',
     }),
-    wontfix: label({
+    label({
+      name: 'wontfix',
       color: '#000000',
       description: 'This will not be worked on',
     }),
+  ],
+})
+",
+  "7": "import { repo, label, colors } from 'label-sync'
+
+/**
+ * Label configuration used internally by Prisma team. Labels are grouped
+ * by their intention (e.g. bug/*, kind/*, process/*) and give
+ * great base for issue triaging.
+ */
+
+export const prisma = repo({
+  config: {
+    removeUnconfiguredLabels: false,
   },
+  labels: [
+    /* Bugs */
+    label({
+      name: 'bug/0-needs-info',
+      color: colors.danger,
+      description: 'More information is needed for reproduction.',
+    }),
+    label({
+      name: 'bug/1-repro-available',
+      color: colors.danger,
+      description: 'A reproduction exists and needs to be confirmed.',
+    }),
+    label({
+      name: 'bug/2-confirmed',
+      color: colors.danger,
+      description: 'We have confirmed that this is a bug.',
+    }),
+    /* Kind */
+    label({
+      name: 'kind/bug',
+      color: colors.neutral,
+      description: 'A reported bug.',
+    }),
+    label({
+      name: 'kind/regression',
+      color: colors.neutral,
+      description: 'A reported bug in functionality that used to work before.',
+    }),
+    label({
+      name: 'kind/feature',
+      color: colors.neutral,
+      description: 'A request for a new feature.',
+    }),
+    label({
+      name: 'kind/improvement',
+      color: colors.neutral,
+      description: 'An improvement to existing feature and code.',
+    }),
+    label({
+      name: 'kind/docs',
+      color: colors.neutral,
+      description: 'A documentation change is required.',
+    }),
+    label({
+      name: 'kind/discussion',
+      color: colors.neutral,
+      description: 'Discussion is required.',
+    }),
+    label({
+      name: 'kind/question',
+      color: colors.neutral,
+      description: 'Developer asked a question. No code changes required.',
+    }),
+    /* Process triaging. */
+    label({
+      name: 'process/candidate',
+      color: colors.shiny,
+      description: 'Candidate for next Milestone.',
+    }),
+    label({
+      name: 'process/next-milestone',
+      color: colors.shiny,
+      description: 'Issue earmarked for next Milestone.',
+    }),
+    label({
+      name: 'process/product',
+      color: colors.shiny,
+      description: 'Temporary label to export products issues from the Engineering process',
+    }),
+  ],
 })
 ",
 }
@@ -226,41 +225,21 @@ Object {
     Object {
       "mode": "100644",
       "path": "github.ts",
-      "sha": 9,
+      "sha": 6,
       "type": "blob",
     },
     Object {
       "mode": "100644",
       "path": "prisma.ts",
-      "sha": 10,
+      "sha": 7,
       "type": "blob",
     },
   ],
   "1": Array [
     Object {
       "mode": "040000",
-      "path": "repositories",
+      "path": "repos",
       "sha": 0,
-      "type": "tree",
-    },
-    Object {
-      "mode": "100644",
-      "path": "colors.ts",
-      "sha": 7,
-      "type": "blob",
-    },
-    Object {
-      "mode": "100644",
-      "path": "index.ts",
-      "sha": 8,
-      "type": "blob",
-    },
-  ],
-  "2": Array [
-    Object {
-      "mode": "040000",
-      "path": "src",
-      "sha": 1,
       "type": "tree",
     },
     Object {
@@ -271,13 +250,13 @@ Object {
     },
     Object {
       "mode": "100644",
-      "path": ".huskyrc.json",
+      "path": "README.md",
       "sha": 1,
       "type": "blob",
     },
     Object {
       "mode": "100644",
-      "path": "README.md",
+      "path": "labelsync.ts",
       "sha": 2,
       "type": "blob",
     },
@@ -295,14 +274,8 @@ Object {
     },
     Object {
       "mode": "100644",
-      "path": "prettier.config.js",
-      "sha": 5,
-      "type": "blob",
-    },
-    Object {
-      "mode": "100644",
       "path": "tsconfig.json",
-      "sha": 6,
+      "sha": 5,
       "type": "blob",
     },
   ],

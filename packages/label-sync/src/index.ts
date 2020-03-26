@@ -1,2 +1,3 @@
-export { repository, configuration, label } from './generator'
-export { make } from './make'
+export { repo, label } from './generator'
+export { labelsync } from './make'
+export * from './presets'

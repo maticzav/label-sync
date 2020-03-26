@@ -28,17 +28,12 @@ import { generateHumanReadableReport } from './language/labels'
 import { loadTreeFromPath, withDefault } from './utils'
 import { populateTempalte } from './bootstrap'
 
-/**
- * Tempalte using for onboarding new customers.
- */
-const BOOTSTRAP_TEMPLATE_PATH = path.resolve(__dirname, '../../templates/yaml')
-const BOOTSTRAP_REPOSITORY: GHTree = loadTreeFromPath(BOOTSTRAP_TEMPLATE_PATH, [
-  'dist',
-  'node_modules',
-  '.DS_Store',
-  /.*\.log.*/,
-  /.*\.lock.*/,
-])
+/* Templates */
+
+const TEMPLATES = {
+  yaml: path.resolve(__dirname, '../../templates/yaml'),
+  typescript: path.resolve(__dirname, '../../templates/typescript'),
+}
 
 /* Application */
 
@@ -155,18 +150,54 @@ module.exports = (app: Application) => {
       }
 
       case 'Unknown': {
-        /* Bootstrap a configuration repository. */
-        const template = populateTempalte(BOOTSTRAP_REPOSITORY, {
-          repository: configRepo,
-          repositories: payload.repositories,
-        })
+        /**
+         * Bootstrap the configuration depending on the
+         * type of the installation account.
+         */
+        switch (payload.installation.account.type) {
+          /* istanbul ignore next */
+          case 'User': {
+            // TODO: Update once Github changes the settings
+            log.info(`${owner}: skip bootstrap for User accounts`)
+            return
+          }
+          case 'Organization': {
+            /**
+             * Tempalte using for onboarding new customers.
+             */
 
-        await bootstrapConfigRepository(
-          github,
-          { owner, repo: configRepo },
-          template,
-        )
-        return
+            const template: GHTree = loadTreeFromPath(TEMPLATES.yaml, [
+              'dist',
+              'node_modules',
+              '.DS_Store',
+              /.*\.log.*/,
+              /.*\.lock.*/,
+            ])
+
+            /* Bootstrap a configuration repository in organisation. */
+            const personalisedTemplate = populateTempalte(template, {
+              repository: configRepo,
+              repositories: payload.repositories,
+            })
+
+            await bootstrapConfigRepository(
+              github,
+              { owner, repo: configRepo },
+              personalisedTemplate,
+            )
+
+            log.info(`${owner}: bootstraped repository: ${configRepo}`)
+
+            return
+          }
+          /* istanbul ignore next */
+          default: {
+            log.warn(
+              `${owner}: unsupported bootstrap type: ${payload.installation.account.type}`,
+            )
+            return
+          }
+        }
       }
     }
   })

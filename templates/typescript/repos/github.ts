@@ -1,46 +1,57 @@
-import { repository, label } from 'label-sync'
+import { repo, label } from 'label-sync'
 
 /**
  * Default collection of label in a Github repository.
  */
-export const github = repository({
-  strict: false,
-  labels: {
-    bug: label({
+export const github = repo({
+  config: {
+    removeUnconfiguredLabels: false,
+  },
+  labels: [
+    label({
+      name: 'bug',
       color: '#d73a4a',
       description: "Something isn't working",
     }),
-    documentation: label({
+    label({
+      name: 'documentation',
       color: '#0075ca',
       description: 'Improvements or additions to documentation',
     }),
-    duplicate: label({
+    label({
+      name: 'duplicate',
       color: '#cfd3d7',
       description: 'This issue or pull request already exists',
     }),
-    enhancement: label({
+    label({
+      name: 'enhancement',
       color: '#a2eeef',
       description: 'New feature or request',
     }),
-    'good first issue': label({
+    label({
+      name: 'good first issue',
       color: '#7057ff',
       description: 'Good for newcomers',
     }),
-    'help wanted': label({
+    label({
+      name: 'help wanted',
       color: '#008672',
       description: 'Extra attention is needed',
     }),
-    invalid: label({
+    label({
+      name: 'invalid',
       color: '#e4e669',
       description: "This doesn't seem right",
     }),
-    question: label({
+    label({
+      name: 'question',
       color: '#d876e3',
       description: 'Further information is requested',
     }),
-    wontfix: label({
+    label({
+      name: 'wontfix',
       color: '#000000',
       description: 'This will not be worked on',
     }),
-  },
+  ],
 })

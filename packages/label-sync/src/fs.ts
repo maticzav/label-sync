@@ -4,8 +4,6 @@ import { promisify } from 'util'
 
 import { Maybe } from './utils'
 
-const fsReaddir = promisify(fs.readdir)
-
 /**
  * Looks up for a folder starting with the current directory and
  * going up until it reaches the root folder or finds the folder.
@@ -13,13 +11,10 @@ const fsReaddir = promisify(fs.readdir)
  * @param dir
  * @param name
  */
-export async function findFolderUp(
-  dir: string,
-  name: string,
-): Promise<Maybe<string>> {
+export function findFolderUp(dir: string, name: string): Maybe<string> {
   return findUp(
     dir,
-    p => fs.lstatSync(p).isDirectory() && path.basename(p) === name,
+    (p) => fs.lstatSync(p).isDirectory() && path.basename(p) === name,
   )
 }
 
@@ -30,11 +25,11 @@ export async function findFolderUp(
  * @param dir
  * @param name
  */
-export async function findFileUp(
-  dir: string,
-  name: string,
-): Promise<Maybe<string>> {
-  return findUp(dir, p => fs.lstatSync(p).isFile() && path.basename(p) === name)
+export function findFileUp(dir: string, name: string): Maybe<string> {
+  return findUp(
+    dir,
+    (p) => fs.lstatSync(p).isFile() && path.basename(p) === name,
+  )
 }
 
 /**
@@ -44,10 +39,10 @@ export async function findFileUp(
  * @param dir
  * @param pattern
  */
-export async function findUp(
+export function findUp(
   dir: string,
   pattern: (path: string) => boolean,
-): Promise<Maybe<string>> {
+): Maybe<string> {
   switch (path.normalize(dir)) {
     /* End case: we reached the root. */
     /* istanbul ignore next */
@@ -56,9 +51,9 @@ export async function findUp(
     }
     /* Recursive case. */
     default: {
-      const elements = await fsReaddir(dir)
+      const elements = fs.readdirSync(dir)
       const includes = elements
-        .map(name => path.resolve(dir, name))
+        .map((name) => path.resolve(dir, name))
         .some(pattern)
 
       if (includes) return dir
