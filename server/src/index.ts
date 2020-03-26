@@ -419,7 +419,10 @@ module.exports = (app: Application) => {
 
     switch (payload.action) {
       case 'opened':
+      case 'reopened':
+      case 'ready_for_review':
       case 'review_requested':
+      case 'synchronize':
       case 'edited': {
         /* Review pull request. */
 
@@ -498,20 +501,15 @@ module.exports = (app: Application) => {
       /* istanbul ignore next */
       case 'locked':
       /* istanbul ignore next */
-      case 'ready_for_review':
-      /* istanbul ignore next */
-      case 'reopened':
-      /* istanbul ignore next */
       case 'review_request_removed':
       /* istanbul ignore next */
       case 'unassigned':
       /* istanbul ignore next */
       case 'unlabeled':
       /* istanbul ignore next */
-      case 'unlocked':
-      /* istanbul ignore next */
-      case 'synchronize': {
+      case 'unlocked': {
         /* Ignore other events. */
+        log.info(`${owner}:pullrequest ignoring event ${payload.action}`)
         return
       }
       /* istanbul ignore next */
