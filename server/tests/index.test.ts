@@ -3,7 +3,7 @@ import nock from 'nock'
 import path from 'path'
 import { Probot } from 'probot'
 
-const ls = require('../src')
+const manager = require('../src')
 
 /* Fixtures */
 const configFixture = fs.readFileSync(
@@ -15,21 +15,40 @@ import installationPayload from './__fixtures__/github/installation.created'
 import issuesLabeledPayload from './__fixtures__/github/issues.labeled'
 import prPayload from './__fixtures__/github/pullrequest.opened'
 import pushPayload from './__fixtures__/github/push'
+import { PrismaClient } from '@prisma/client'
 
 describe('bot:', () => {
-  beforeAll(() => {
+  let client: PrismaClient
+
+  beforeAll(async () => {
     nock.disableNetConnect()
+    nock.enableNetConnect('127.0.0.1')
+    nock.enableNetConnect('localhost')
+    client = new PrismaClient()
+
+    await client.log.deleteMany({ where: {} })
+
+    await client.log.create({
+      data: {
+        event: 'START TEST',
+        type: 'INFO',
+        owner: 'maticzav',
+        message: 'started tests',
+      },
+    })
   })
 
-  afterAll(() => {
+  afterAll(async () => {
+    nock.cleanAll()
     nock.enableNetConnect()
+    await client.disconnect()
   })
 
   let probot: Probot
 
   beforeEach(() => {
     probot = new Probot({ id: 123, githubToken: 'token' })
-    const app = probot.load(ls)
+    const app = probot.load((app) => manager(app, client))
 
     app.app = {
       getSignedJsonWebToken: () => 'jwt',
@@ -218,7 +237,7 @@ describe('bot:', () => {
         ],
       })
 
-      const labelsEndpoint = jest.fn().mockImplementation(uri => {
+      const labelsEndpoint = jest.fn().mockImplementation((uri) => {
         switch (uri) {
           case '/repos/maticzav/graphql-shield/labels': {
             return [
@@ -440,7 +459,7 @@ describe('bot:', () => {
         ],
       })
 
-      const labelsEndpoint = jest.fn().mockImplementation(uri => {
+      const labelsEndpoint = jest.fn().mockImplementation((uri) => {
         switch (uri) {
           case '/repos/maticzav/graphql-shield/labels': {
             return [
@@ -684,7 +703,7 @@ describe('bot:', () => {
         ],
       })
 
-      const labelsEndpoint = jest.fn().mockImplementation(uri => {
+      const labelsEndpoint = jest.fn().mockImplementation((uri) => {
         switch (uri) {
           case '/repos/maticzav/graphql-shield/labels': {
             return [
@@ -894,7 +913,7 @@ describe('bot:', () => {
 
       nock('https://api.github.com')
         .delete(/\/repos\/maticzav\/.*\/labels/)
-        .reply(200, uri => {
+        .reply(200, (uri) => {
           expect(uri).toBe(
             '/repos/maticzav/graphql-shield/labels/:bug:%20Bugfix',
           )
@@ -955,4 +974,10 @@ describe('bot:', () => {
     },
     5 * 60 * 1000,
   )
+
+  test('logs are saving correctly', async () => {
+    const logs = await client.log.findMany()
+
+    expect(logs.length > 0).toBeTruthy()
+  })
 })

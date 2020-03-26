@@ -4,14 +4,30 @@ jobs:
     working_directory: ~/app
     docker:
       - image: 'circleci/node:13.7.0'
+      - image: circleci/postgres:10.3-alpine
+        environment:
+          POSTGRES_USER: prisma
+          POSTGRES_PASSWORD: prisma
+          POSTGRES_DB: prisma
     steps:
       - checkout
       - run:
           name: Install monorepo
           command: yarn install
       - run:
+        name: Waiting for PostgreSQL to start
+        command: |
+          for i in `seq 1 10`;
+          do
+            nc -z localhost 5432 && echo Success && exit 0
+            echo -n .
+            sleep 2
+          done
+          echo Failed waiting for Postgres && exit 1
+      - run:
           name: Test packages
           command: yarn test
+          environment: POSTGRESQL_URL=postgresql://prisma:prisma@localhost:5432/prisma
       - run:
           name: Get coverage of packages
           command: yarn coverage

@@ -14,8 +14,8 @@ WORKDIR /usr/src/app
 COPY . .
 RUN yarn install
 
-# Build Photon
-# RUN ./scripts/generate.sh
+# Generate Prisma Client
+RUN ./scripts/generate.sh
 
 # Build Server
 RUN yarn build

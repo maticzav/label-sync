@@ -1,0 +1,23 @@
+datasource postgresql {
+  provider = "postgresql"
+  url = "***"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Log {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type       LogType
+  message    String
+  owner      String
+  repository String?
+}
+
+enum LogType {
+  DEBUG INFO WARN
+}
