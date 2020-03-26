@@ -18,13 +18,15 @@
     "inquirer": "^7.1.0",
     "meow": "^5.0.0",
     "mkdirp": "^0.5.1",
-    "ora": "^4.0.0"
+    "ora": "^4.0.0",
+    "prettier": "^2.0.2"
   },
   "devDependencies": {
     "@types/inquirer": "^6.5.0",
     "@types/meow": "5.0.0",
     "@types/mkdirp": "0.5.2",
-    "@types/node": "12.12.21"
+    "@types/node": "12.12.21",
+    "@types/prettier": "^1.19.1"
   },
   "license": "MIT"
 }

@@ -11,6 +11,7 @@
     "js-yaml": "3.13.1",
     "jsonwebtoken": "8.5.1",
     "multilines": "1.0.3",
+    "prettier": "^2.0.2",
     "probot": "9.11.1"
   },
   "devDependencies": {
@@ -19,6 +20,7 @@
     "@types/jsonwebtoken": "8.3.8",
     "@types/nock": "11.1.0",
     "@types/node": "13.9.3",
+    "@types/prettier": "^1.19.1",
     "js-yaml": "3.13.1",
     "nock": "12.0.3"
   },

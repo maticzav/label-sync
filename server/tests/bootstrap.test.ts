@@ -5,9 +5,10 @@ import { populateTempalte } from '../src/bootstrap'
 import { loadTreeFromPath } from '../src/utils'
 
 const templatesPath = path.resolve(__dirname, '../../templates')
-const templates = fs
-  .readdirSync(templatesPath)
-  .map((template) => path.resolve(templatesPath, template))
+const templates = fs.readdirSync(templatesPath).map((template) => ({
+  name: template,
+  path: path.resolve(templatesPath, template),
+}))
 
 describe('templates:', () => {
   const data = {
@@ -26,8 +27,8 @@ describe('templates:', () => {
   }
 
   for (const template of templates) {
-    test('populates yaml tempalate', () => {
-      const tree = loadTreeFromPath(template, [
+    test(`populates ${template.name} tempalate`, () => {
+      const tree = loadTreeFromPath(template.path, [
         'dist',
         'node_modules',
         '.DS_Store',

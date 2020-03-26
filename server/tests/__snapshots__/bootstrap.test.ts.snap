@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`templates: populates yaml tempalate 1`] = `
+exports[`templates: populates typescript tempalate 1`] = `
 Object {
   ".gitignore": "dist
 node_modules
@@ -19,19 +19,39 @@ Welcome to LabelSync. We are very excited to see you use our service. We believe
 - \`huskyrc\`: pre-commit hooks
 - \`prettier\`: code formatting
 ",
-  "labelsync.ts": "import { labelsync } from 'label-sync'
+  "labelsync.ts": "import { labelsync, repo } from \\"label-sync\\";
 
 /* Repository */
-import { prisma } from './repos/prisma'
-import { github } from './repos/github'
+import { prisma } from \\"./repos/prisma\\";
+import { github } from \\"./repos/github\\";
 
 /* Config */
 labelsync({
   repos: {
+    /* Check presets in the repos folder. */
     // prisma,
     // github,
+    /* Personalized repositories */
+    \\"graphql-shield\\": repo({
+      config: {
+        removeUnconfiguredLabels: false,
+      },
+      labels: [],
+    }),
+    \\"label-sync\\": repo({
+      config: {
+        removeUnconfiguredLabels: false,
+      },
+      labels: [],
+    }),
+    resk: repo({
+      config: {
+        removeUnconfiguredLabels: false,
+      },
+      labels: [],
+    }),
   },
-})
+});
 ",
   "labelsync.yml": "repos: {}
 ",
@@ -66,7 +86,7 @@ labelsync({
   \\"license\\": \\"MIT\\"
 }
 ",
-  "repos/github.ts": "import { repo, label } from 'label-sync'
+  "repos/github.ts": "import { repo, label } from \\"label-sync\\";
 
 /**
  * Default collection of label in a Github repository.
@@ -77,54 +97,54 @@ export const github = repo({
   },
   labels: [
     label({
-      name: 'bug',
-      color: '#d73a4a',
+      name: \\"bug\\",
+      color: \\"#d73a4a\\",
       description: \\"Something isn't working\\",
     }),
     label({
-      name: 'documentation',
-      color: '#0075ca',
-      description: 'Improvements or additions to documentation',
+      name: \\"documentation\\",
+      color: \\"#0075ca\\",
+      description: \\"Improvements or additions to documentation\\",
     }),
     label({
-      name: 'duplicate',
-      color: '#cfd3d7',
-      description: 'This issue or pull request already exists',
+      name: \\"duplicate\\",
+      color: \\"#cfd3d7\\",
+      description: \\"This issue or pull request already exists\\",
     }),
     label({
-      name: 'enhancement',
-      color: '#a2eeef',
-      description: 'New feature or request',
+      name: \\"enhancement\\",
+      color: \\"#a2eeef\\",
+      description: \\"New feature or request\\",
     }),
     label({
-      name: 'good first issue',
-      color: '#7057ff',
-      description: 'Good for newcomers',
+      name: \\"good first issue\\",
+      color: \\"#7057ff\\",
+      description: \\"Good for newcomers\\",
     }),
     label({
-      name: 'help wanted',
-      color: '#008672',
-      description: 'Extra attention is needed',
+      name: \\"help wanted\\",
+      color: \\"#008672\\",
+      description: \\"Extra attention is needed\\",
     }),
     label({
-      name: 'invalid',
-      color: '#e4e669',
+      name: \\"invalid\\",
+      color: \\"#e4e669\\",
       description: \\"This doesn't seem right\\",
     }),
     label({
-      name: 'question',
-      color: '#d876e3',
-      description: 'Further information is requested',
+      name: \\"question\\",
+      color: \\"#d876e3\\",
+      description: \\"Further information is requested\\",
     }),
     label({
-      name: 'wontfix',
-      color: '#000000',
-      description: 'This will not be worked on',
+      name: \\"wontfix\\",
+      color: \\"#000000\\",
+      description: \\"This will not be worked on\\",
     }),
   ],
-})
+});
 ",
-  "repos/prisma.ts": "import { repo, label, colors } from 'label-sync'
+  "repos/prisma.ts": "import { repo, label, colors } from \\"label-sync\\";
 
 /**
  * Label configuration used internally by Prisma team. Labels are grouped
@@ -139,74 +159,75 @@ export const prisma = repo({
   labels: [
     /* Bugs */
     label({
-      name: 'bug/0-needs-info',
+      name: \\"bug/0-needs-info\\",
       color: colors.danger,
-      description: 'More information is needed for reproduction.',
+      description: \\"More information is needed for reproduction.\\",
     }),
     label({
-      name: 'bug/1-repro-available',
+      name: \\"bug/1-repro-available\\",
       color: colors.danger,
-      description: 'A reproduction exists and needs to be confirmed.',
+      description: \\"A reproduction exists and needs to be confirmed.\\",
     }),
     label({
-      name: 'bug/2-confirmed',
+      name: \\"bug/2-confirmed\\",
       color: colors.danger,
-      description: 'We have confirmed that this is a bug.',
+      description: \\"We have confirmed that this is a bug.\\",
     }),
     /* Kind */
     label({
-      name: 'kind/bug',
+      name: \\"kind/bug\\",
       color: colors.neutral,
-      description: 'A reported bug.',
+      description: \\"A reported bug.\\",
     }),
     label({
-      name: 'kind/regression',
+      name: \\"kind/regression\\",
       color: colors.neutral,
-      description: 'A reported bug in functionality that used to work before.',
+      description: \\"A reported bug in functionality that used to work before.\\",
     }),
     label({
-      name: 'kind/feature',
+      name: \\"kind/feature\\",
       color: colors.neutral,
-      description: 'A request for a new feature.',
+      description: \\"A request for a new feature.\\",
     }),
     label({
-      name: 'kind/improvement',
+      name: \\"kind/improvement\\",
       color: colors.neutral,
-      description: 'An improvement to existing feature and code.',
+      description: \\"An improvement to existing feature and code.\\",
     }),
     label({
-      name: 'kind/docs',
+      name: \\"kind/docs\\",
       color: colors.neutral,
-      description: 'A documentation change is required.',
+      description: \\"A documentation change is required.\\",
     }),
     label({
-      name: 'kind/discussion',
+      name: \\"kind/discussion\\",
       color: colors.neutral,
-      description: 'Discussion is required.',
+      description: \\"Discussion is required.\\",
     }),
     label({
-      name: 'kind/question',
+      name: \\"kind/question\\",
       color: colors.neutral,
-      description: 'Developer asked a question. No code changes required.',
+      description: \\"Developer asked a question. No code changes required.\\",
     }),
     /* Process triaging. */
     label({
-      name: 'process/candidate',
+      name: \\"process/candidate\\",
       color: colors.shiny,
-      description: 'Candidate for next Milestone.',
+      description: \\"Candidate for next Milestone.\\",
     }),
     label({
-      name: 'process/next-milestone',
+      name: \\"process/next-milestone\\",
       color: colors.shiny,
-      description: 'Issue earmarked for next Milestone.',
+      description: \\"Issue earmarked for next Milestone.\\",
     }),
     label({
-      name: 'process/product',
+      name: \\"process/product\\",
       color: colors.shiny,
-      description: 'Temporary label to export products issues from the Engineering process',
+      description:
+        \\"Temporary label to export products issues from the Engineering process\\",
     }),
   ],
-})
+});
 ",
   "tsconfig.json": "{
   \\"compilerOptions\\": {
@@ -219,7 +240,7 @@ export const prisma = repo({
 }
 `;
 
-exports[`templates: populates yaml tempalate 2`] = `
+exports[`templates: populates yaml tempalate 1`] = `
 Object {
   ".gitignore": "dist
 node_modules
@@ -232,7 +253,6 @@ Hey there! Welcome to LabelSync. We have scaffolded the configuration file for y
 
 ### Setting up LabelSync
 
-
 1. Create a repository on Github and name it \`maticzav-labelsync\`.
 1. Commit your configuration (this repository) to Github.
 1. Head over to [LabelSync Manager Github Application](https://github.com/apps/labelsync-manager) and make sure that you install it in all repositories that you have configured.
@@ -240,55 +260,55 @@ Hey there! Welcome to LabelSync. We have scaffolded the configuration file for y
 ",
   "labelsync.yml": "# Colors
 colors:
-  area: &area '#FFD700'
-  kind: &kind '#3B5BDB'
-  status: &status '#F8F9FA'
-  bug: &bug '#EE0000'
-  priority: &priority '#F783AC'
-  scope: &scope '#27CF79'
+  area: &area \\"#FFD700\\"
+  kind: &kind \\"#3B5BDB\\"
+  status: &status \\"#F8F9FA\\"
+  bug: &bug \\"#EE0000\\"
+  priority: &priority \\"#F783AC\\"
+  scope: &scope \\"#27CF79\\"
   team: &team'#FDF4E8'
-  release: &release '#A5D8ff'
-  process: &process' '#EB9100'
+  release: &release \\"#A5D8ff\\"
+  process: &process' \\"#EB9100\\"
 
 # Labels
 labels: &common
-  'bug/0-needs-info':
+  \\"bug/0-needs-info\\":
     color: &bug
     description: More information is needed for reproduction.
-  'bug/1-repro-available':
+  \\"bug/1-repro-available\\":
     color: &bug
     description: A reproduction exists and needs to be confirmed.
-  'bug/2-confirmed':
+  \\"bug/2-confirmed\\":
     color: &bug
     description: We have confirmed that this is a bug.
-  'kind/bug':
+  \\"kind/bug\\":
     color: &bug
     description: A reported bug.
-  'kind/regression':
+  \\"kind/regression\\":
     color: &kind
     description: A reported bug in functionality that used to work before.
-  'kind/feature':
+  \\"kind/feature\\":
     color: &kind
     description: A request for a new feature.
-  'kind/improvement':
+  \\"kind/improvement\\":
     color: &kind
     description: An improvement to existing feature and code.
-  'kind/docs':
+  \\"kind/docs\\":
     color: &kind
     description: A documentation change is required.
-  'kind/discussion':
+  \\"kind/discussion\\":
     color: &kind
     description: Discussion is required.
-  'kind/question':
+  \\"kind/question\\":
     color: &kind
     description: Developer asked a question. No code changes required.
-  'process/candidate':
+  \\"process/candidate\\":
     color: &process
     description: Candidate for next Milestone.
-  'process/next-milestone':
+  \\"process/next-milestone\\":
     color: &process
     description: Issue earmarked for next Milestone.
-  'process/product':
+  \\"process/product\\":
     color: &process
     description: Temporary label to export products issues from the Engineering process
 
@@ -311,8 +331,6 @@ repos:
     labels:
       # <<: *common
       # Add labels here.
-    
-    
 ",
 }
 `;

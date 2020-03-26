@@ -104,66 +104,80 @@ repos:
 
 #### TypeScript
 
-> :construction: NOTE: TypeScript library is still under development and subject to change without notice.
+TypeScript helper library let's you use the power of TypeScript to configure your labels. It exposes three main constructors: `labelsync`, `repo`, and `label`.
 
-`label-sync` library comes pre-packed in your configuration repository. It exposes three main constructors: `configuration`, `repository`, and `label`.
+We recommend you start with the getting started TypeScript template using `create-label-sync` package.
 
-We've already included some of them in your starting template. To add new ones follow these guidelines:
+Run `yarn create label-sync` or `npm init label-sync` to get started. Follow the guide there!
+
+**API:**
 
 ```ts
-function configuration({
+function labelsync({
   /* Repositories represent a repo-name:config dictionary */
-  repositories: Dict<Repository>
+  repos: { [repo: string]: Repository }
 }): Configuration
 
-function repository({
-  /* Strict option determines whether LabelSync should allow additional labels or limit available ones to your configuration */
-  strict?: boolean,
-  /* Represents dictionary of label-name:config configurations */
-  labels: Dict<Label>
+/* Repo */
+function repo({
+  config?: {
+    /* removes unconfigured labels from repository to keep it clean */
+    removeUnconfiguredLabels?: boolean
+  }
+  /* list of labels that we get using label method below */
+  labels: Label[]
 })
 
-function label(
-  /* Label Color */
-  string |
-  /* Full blown Label configuration */
-  { color: string
-  , description: string
-  }
-)
+/* Label */
+function label(name: string, color: string)
+function label({
+  /* name of the label */
+  name: string
+  /* color in hex format */
+  color: string
+  description?: string
+  /* old names of this label */
+  alias?: string[]
+  /* siblings of the label */
+  siblings?: string[]
+})
 ```
 
 > NOTE: Setting strict to `true` will delete unconfigured labels.
 
-You can reuse `label` and `repository` configurations anywhere in your configuration file.
+You can reuse `label` and `repo` configurations anywhere in your configuration file.
 
-In the end, LabelSync still relies on `labelsync.yml` file. To generate it, run `make`.
+In the end, LabelSync still relies on `labelsync.yml` file. To generate it, run `labelsync` method.
 
 ```ts
-import { configuration, repository, label, make } from 'label-sync'
-
-const bug = label('#ff32bb')
-const question = label('#c5def5')
-
-/* Setup repository configuration */
-const labelSync = repository({
-  strict: true,
-  lablels: {
-    'kind/bug': bug,
-    'kind/question': question,
-  },
-})
+import { labelsync, repo, label, colors } from 'label-sync'
 
 /* Setup LabelSync configuration */
-const config = configuration({
-  repositories: {
-    'label-sync': standard,
-  },
-})
-
-/* Generates the configuration file. */
-make({
-  configs: [config],
+labelsync({
+  github: repo({
+    config: {
+      removeUnconfiguredLabels: false,
+    },
+    labels: [
+      label({
+        name: 'kind/bug',
+        color: '#d73a4a',
+        description: "Something isn't working",
+        alias: ['bug'],
+      }),
+      label({
+        name: 'bug/has-reproduction',
+        color: '#d73a4a',
+        description: 'Bug with reproduction',
+        siblings: ['kind/bug'],
+      }),
+      label({
+        name: 'documentation',
+        color: '#0075ca',
+        description: 'Improvements or additions to documentation',
+      }),
+    ],
+  }),
 })
 ```
 

@@ -5,6 +5,7 @@ import meow from 'meow'
 import * as handlebars from 'handlebars'
 import ora from 'ora'
 import * as path from 'path'
+import * as prettier from 'prettier'
 import * as fs from 'fs'
 import * as mkdirp from 'mkdirp'
 import * as creato from 'creato'
@@ -129,9 +130,32 @@ async function main() {
 
   try {
     const tree = loadTreeFromPath(dist, [])
-    const populatedTree = mapEntries(tree, (file) =>
-      handlebars.compile(file)({ repository, repositories }),
-    )
+    const populatedTree = mapEntries(tree, (file, name) => {
+      /* Personalise files */
+      const populatedFile = handlebars.compile(file)({
+        repository,
+        repositories,
+      })
+
+      /* Format it */
+      switch (path.extname(name)) {
+        case '.ts': {
+          return prettier.format(populatedFile, { parser: 'typescript' })
+        }
+        case '.yml': {
+          return prettier.format(populatedFile, { parser: 'yaml' })
+        }
+        case '.md': {
+          return prettier.format(populatedFile, { parser: 'markdown' })
+        }
+        case '.json': {
+          return prettier.format(populatedFile, { parser: 'json' })
+        }
+        default: {
+          return populatedFile
+        }
+      }
+    })
     writeTreeToPath(dist, populatedTree)
 
     populateSpinner.succeed()

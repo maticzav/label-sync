@@ -1,4 +1,6 @@
-import { compile } from 'handlebars'
+import * as handlebars from 'handlebars'
+import * as path from 'path'
+import * as prettier from 'prettier'
 
 import { mapEntries } from './data/dict'
 import { GHTree } from './github'
@@ -11,5 +13,27 @@ export function populateTempalte(
   tree: GHTree,
   data: { repository: string; repositories: { name: string }[] },
 ): GHTree {
-  return mapEntries(tree, (file) => compile(file)(data))
+  return mapEntries(tree, (file, name) => {
+    /* Personalize file */
+    const populatedFile = handlebars.compile(file)(data)
+
+    /* Format it */
+    switch (path.extname(name)) {
+      case '.ts': {
+        return prettier.format(populatedFile, { parser: 'typescript' })
+      }
+      case '.yml': {
+        return prettier.format(populatedFile, { parser: 'yaml' })
+      }
+      case '.md': {
+        return prettier.format(populatedFile, { parser: 'markdown' })
+      }
+      case '.json': {
+        return prettier.format(populatedFile, { parser: 'json' })
+      }
+      default: {
+        return populatedFile
+      }
+    }
+  })
 }
