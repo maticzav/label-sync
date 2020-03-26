@@ -27,7 +27,8 @@ jobs:
       - run:
           name: Test packages
           command: yarn test
-          environment: POSTGRESQL_URL=postgresql://prisma:prisma@localhost:5432/prisma
+          environment:
+            POSTGRESQL_URL: postgresql://prisma:prisma@localhost:5432/prisma
       - run:
           name: Get coverage of packages
           command: yarn coverage
