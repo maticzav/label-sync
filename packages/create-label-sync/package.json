@@ -22,11 +22,11 @@
     "prettier": "^2.0.2"
   },
   "devDependencies": {
-    "@types/inquirer": "^6.5.0",
+    "@types/inquirer": "6.5.0",
     "@types/meow": "5.0.0",
     "@types/mkdirp": "1.0.0",
     "@types/node": "12.12.31",
-    "@types/prettier": "^1.19.1"
+    "@types/prettier": "1.19.1"
   },
   "license": "MIT"
 }
