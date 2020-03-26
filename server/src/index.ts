@@ -558,8 +558,8 @@ module.exports = (
           case 'Insufficient': {
             await logger.debug(
               { owner, event: 'pullrequest' },
-              { config },
-              `insufficient permissions ${access}`,
+              { config, access },
+              `insufficient permissions`,
             )
 
             /* Opens up an issue about insufficient permissions. */

@@ -340,7 +340,7 @@ describe('bot:', () => {
         .reply(200, configEndpoint)
 
       nock('https://api.github.com')
-        .get('/installation/repositories?per_page=100')
+        .get('/installation/repositories?per_page=100&page=0')
         .reply(200, installationsEndpoint)
 
       nock('https://api.github.com')
@@ -418,7 +418,7 @@ describe('bot:', () => {
         .reply(200, configEndpoint)
 
       nock('https://api.github.com')
-        .get('/installation/repositories?per_page=100')
+        .get('/installation/repositories?per_page=100&page=0')
         .reply(200, installationsEndpoint)
 
       nock('https://api.github.com')
@@ -556,7 +556,7 @@ describe('bot:', () => {
         .reply(200, configEndpoint)
 
       nock('https://api.github.com')
-        .get('/installation/repositories?per_page=100')
+        .get('/installation/repositories?per_page=100&page=0')
         .reply(200, installationsEndpoint)
 
       nock('https://api.github.com')
@@ -659,7 +659,7 @@ describe('bot:', () => {
         .reply(200, configEndpoint)
 
       nock('https://api.github.com')
-        .get('/installation/repositories?per_page=100')
+        .get('/installation/repositories?per_page=100&page=0')
         .reply(200, installationsEndpoint)
 
       nock('https://api.github.com')
@@ -772,7 +772,7 @@ describe('bot:', () => {
         .reply(200, configEndpoint)
 
       nock('https://api.github.com')
-        .get('/installation/repositories?per_page=100')
+        .get('/installation/repositories?per_page=100&page=0')
         .reply(200, installationsEndpoint)
 
       nock('https://api.github.com')
@@ -867,7 +867,7 @@ describe('bot:', () => {
         .reply(200, configEndpoint)
 
       nock('https://api.github.com')
-        .get('/installation/repositories?per_page=100')
+        .get('/installation/repositories?per_page=100&page=0')
         .reply(200, installationsEndpoint)
 
       nock('https://api.github.com')

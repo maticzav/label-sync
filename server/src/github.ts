@@ -531,7 +531,7 @@ export async function bootstrapConfigRepository(
 
 export type InstallationAccess =
   | { status: 'Sufficient' }
-  | { status: 'Insufficient'; missing: string[] }
+  | { status: 'Insufficient'; missing: string[]; accessible: string[] }
 
 /**
  * Determines whether LabelSync can access all requested repositories.
@@ -542,10 +542,11 @@ export async function checkInstallationAccess(
   github: Octokit,
   configRepos: string[],
 ): Promise<InstallationAccess> {
-  const gh = await github.apps
-    .listRepos({ per_page: 100 })
-    .then((res) => res.data)
-  const accessRepos = gh.repositories.map((repo) => repo.name)
+  // TODO: improve performance
+  let accessRepos: string[] = []
+
+  /* Paginates accessible repositories */
+  await getInstallationRepos()
 
   const missing = configRepos.filter((repo) => !accessRepos.includes(repo))
 
@@ -556,5 +557,17 @@ export async function checkInstallationAccess(
   return {
     status: 'Insufficient',
     missing: missing,
+    accessible: accessRepos,
+  }
+
+  async function getInstallationRepos(page: number = 0) {
+    const res = await github.apps
+      .listRepos({ per_page: 100, page })
+      .then((res) => res.data)
+
+    accessRepos.push(...res.repositories.map((repo) => repo.name))
+
+    if (res.repositories.length === 100) await getInstallationRepos(page + 1)
+    return
   }
 }
