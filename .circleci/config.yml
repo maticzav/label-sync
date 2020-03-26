@@ -15,15 +15,15 @@ jobs:
           name: Install monorepo
           command: yarn install
       - run:
-        name: Waiting for PostgreSQL to start
-        command: |
-          for i in `seq 1 10`;
-          do
-            nc -z localhost 5432 && echo Success && exit 0
-            echo -n .
-            sleep 2
-          done
-          echo Failed waiting for Postgres && exit 1
+          name: Waiting for PostgreSQL to start
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z localhost 5432 && echo Success && exit 0
+              echo -n .
+              sleep 2
+            done
+            echo Failed waiting for Postgres && exit 1
       - run:
           name: Test packages
           command: yarn test
