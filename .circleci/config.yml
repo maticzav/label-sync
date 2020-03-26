@@ -30,6 +30,8 @@ jobs:
             cd server
             yarn db:migrate
             yarn db:generate
+          environment:
+            POSTGRESQL_URL: postgresql://prisma:prisma@localhost:5432/prisma
       - run:
           name: Test packages
           command: yarn test
