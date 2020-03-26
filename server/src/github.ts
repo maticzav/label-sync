@@ -540,15 +540,14 @@ export type InstallationAccess =
  */
 export async function checkInstallationAccess(
   github: Octokit,
-  repos: string[],
+  configRepos: string[],
 ): Promise<InstallationAccess> {
-  const {
-    data: { repositories },
-  } = await github.apps.listRepos({ per_page: 100 })
+  const gh = await github.apps
+    .listRepos({ per_page: 100 })
+    .then((res) => res.data)
+  const accessRepos = gh.repositories.map((repo) => repo.name)
 
-  const missing = repos.filter((repo) =>
-    repositories.every(({ name }) => repo !== name),
-  )
+  const missing = configRepos.filter((repo) => !accessRepos.includes(repo))
 
   if (missing.length === 0) {
     return { status: 'Sufficient' }

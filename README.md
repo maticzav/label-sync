@@ -110,6 +110,16 @@ We recommend you start with the getting started TypeScript template using `creat
 
 Run `yarn create label-sync` or `npm init label-sync` to get started. Follow the guide there!
 
+**Methods:**
+
+- `labelsync`: used as a configuration entry point. Outputs yaml version of your configuration to the root of your repository.
+- `repo`: used to configure a single repository
+- `label`: used to create a single label
+
+**Presets:**
+
+Check out `colors` property with a set of common colors for labels, and `type`, `note`, `impact`, `effort`, `needs`, `scope` and `communtiy` label templates to get up to speed more quickly. Label templates all prepend their name to the name of your label and already pack a nice color of our choosing.
+
 **API:**
 
 ```ts

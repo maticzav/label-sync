@@ -5,9 +5,8 @@ Object {
   "body": "# Insufficient permissions
 
 Hi there,
-Thank you for installing LabelSync. We have noticed that your 
-configuration stretches beyond repositories we can access. We assume that you
-forgot to allow access to certain repositories.
+Thank you for installing LabelSync. We have noticed that your configuration stretches beyond repositories we can access. We assume that you forgot to allow access to certain repositories.
+
 Please update your installation. 
 
 _Missing repositories:_
@@ -69,9 +68,7 @@ You have no unconfigured labels - you could make this repository \`strict\`.",
 
 exports[`bot: pull_request with insufficient permissions 1`] = `
 Object {
-  "body": "It seems like this configuration stretches beyond
-repositories we can access. Please update it so we can help
-you as best as we can.
+  "body": "It seems like this configuration stretches beyond repositories we can access. Please update it so we can help you as best as we can.
 
 _Missing repositories:_
  * emma-cli",

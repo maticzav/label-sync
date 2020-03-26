@@ -52,7 +52,7 @@ module.exports = (app: Application) => {
     const owner = payload.installation.account.login
     const configRepo = getLSConfigRepoName(owner)
 
-    log.info(`Onboarding ${owner} with ${configRepo}`)
+    log.info(`${owner}:installation onboarding  ${configRepo}`)
 
     /* See if config repository exists. */
     const repo = await getRepo(github, owner, configRepo)
@@ -60,6 +60,8 @@ module.exports = (app: Application) => {
     switch (repo.status) {
       case 'Exists': {
         /* Perform sync. */
+
+        log.info(`${owner}:installation has existing repository`)
 
         const ref = `refs/heads/${repo.repo.default_branch}`
 
@@ -73,16 +75,15 @@ module.exports = (app: Application) => {
         /* No configuration, skip the evaluation. */
         /* istanbul ignore next */
         if (configRaw === null) {
+          log.info(`${owner}:installation no configuration`)
           return
         }
 
         const [error, config] = parseConfig(configRaw)
 
-        log.debug({ config }, `Loaded configuration for ${owner}.`)
-
         /* Wrong configuration, open the issue. */
         if (error !== null) {
-          log.debug(`Error in ${owner} configuration: ${error}`)
+          log.info(`${owner}:installation error in config ${error}`)
 
           /* Open an issue about invalid configuration. */
           const title = 'LabelSync - Invalid configuration'
@@ -101,10 +102,14 @@ module.exports = (app: Application) => {
           | LabelSync Team
           `
 
-          await openIssue(github, owner, configRepo, title, body)
+          const issue = await openIssue(github, owner, configRepo, title, body)
+
+          log.info(`${owner}:installation opened error issue ${issue.number}`)
 
           return
         }
+
+        log.info(`${owner}:installation checking access`)
 
         /* Verify that we can access all configured files. */
         const access = await checkInstallationAccess(
@@ -112,8 +117,12 @@ module.exports = (app: Application) => {
           Object.keys(config!.repos),
         )
 
+        log.info(`${owner}:installation ${access}`)
+
         switch (access.status) {
           case 'Sufficient': {
+            log.info(`${owner}:installation syncing labels`)
+
             /* Performs sync. */
             for (const repo in config!.repos) {
               await Promise.all([
@@ -124,15 +133,16 @@ module.exports = (app: Application) => {
             return
           }
           case 'Insufficient': {
+            log.info(`${owner}:installation insufficient permissions ${access}`)
+
             /* Opens up an issue about insufficient permissions. */
             const title = 'LabelSync - Insufficient permissions'
             const body = ml`
             | # Insufficient permissions
             |
             | Hi there,
-            | Thank you for installing LabelSync. We have noticed that your 
-            | configuration stretches beyond repositories we can access. We assume that you
-            | forgot to allow access to certain repositories.
+            | Thank you for installing LabelSync. We have noticed that your configuration stretches beyond repositories we can access. We assume that you forgot to allow access to certain repositories.
+            |
             | Please update your installation. 
             |
             | _Missing repositories:_
@@ -142,7 +152,15 @@ module.exports = (app: Application) => {
             | LabelSync Team
             `
 
-            await openIssue(github, owner, configRepo, title, body)
+            const issue = await openIssue(
+              github,
+              owner,
+              configRepo,
+              title,
+              body,
+            )
+
+            log.info(`${owner}:installation opened issue ${issue.number}`)
 
             return
           }
@@ -150,6 +168,8 @@ module.exports = (app: Application) => {
       }
 
       case 'Unknown': {
+        log.info(`${owner}:installation no repository`)
+
         /**
          * Bootstrap the configuration depending on the
          * type of the installation account.
@@ -165,6 +185,8 @@ module.exports = (app: Application) => {
             /**
              * Tempalte using for onboarding new customers.
              */
+
+            log.info(`${owner}:installation bootstraping config repo`)
 
             const template: GHTree = loadTreeFromPath(TEMPLATES.yaml, [
               'dist',
@@ -224,7 +246,10 @@ module.exports = (app: Application) => {
     /* Skip non default branch and other repos pushes. */
     /* istanbul ignore if */
     if (defaultRef !== ref || configRepo !== repo) {
-      log.debug({ defaultRef, ref, configRepo, repo }, `Skipping sync ${owner}`)
+      log.debug(
+        { defaultRef, ref, configRepo, repo },
+        `${owner}:push skipping sync`,
+      )
       return
     }
 
@@ -238,6 +263,7 @@ module.exports = (app: Application) => {
     /* Skip altogether if there's no configuration. */
     /* istanbul ignore next */
     if (configRaw === null) {
+      log.info(`${owner}:push no configuration`)
       return
     }
 
@@ -247,7 +273,7 @@ module.exports = (app: Application) => {
 
     /* Open an issue about invalid configuration. */
     if (error !== null) {
-      log.debug(`Error in ${owner} configuration: ${error}`)
+      log.info(`${owner}:push error in config ${error}`)
 
       const title = 'LabelSync - Invalid configuration'
       const body = ml`
@@ -266,7 +292,9 @@ module.exports = (app: Application) => {
       | LabelSync Team
       `
 
-      await openIssue(github, owner, configRepo, title, body)
+      const issue = await openIssue(github, owner, configRepo, title, body)
+
+      log.info(`${owner}:push opened issue ${issue.number}`)
 
       return
     }
@@ -277,15 +305,21 @@ module.exports = (app: Application) => {
       Object.keys(config!.repos),
     )
 
+    log.info(`${owner}:push checking access ${access}`)
+
     /* Skip configurations that we can't access. */
     switch (access.status) {
       case 'Sufficient': {
+        log.info(`${owner}:push performing sync`)
+
         /* Performs sync. */
         for (const repo in config!.repos) {
           await Promise.all([
             handleLabelSync(github, owner, repo, config!.repos[repo], true),
           ])
         }
+
+        log.info(`${owner}:push sync completed`)
 
         /* Closes issues */
 
@@ -294,6 +328,8 @@ module.exports = (app: Application) => {
         return
       }
       case 'Insufficient': {
+        log.info(`${owner}:push insufficient permissions`)
+
         /* Opens up an issue about insufficient permissions. */
         const title = 'LabelSync - Insufficient permissions'
         const body = ml`
@@ -311,7 +347,9 @@ module.exports = (app: Application) => {
         | LabelSync Team
         `
 
-        await openIssue(github, owner, configRepo, title, body)
+        const issue = await openIssue(github, owner, configRepo, title, body)
+
+        log.info(`${owner}:push opened issue ${issue.number}`)
 
         return
       }
@@ -334,10 +372,7 @@ module.exports = (app: Application) => {
 
     const configRepo = getLSConfigRepoName(owner)
 
-    log.debug(
-      { configRepo, repo },
-      `${owner}: received pr event ${payload.action}`,
-    )
+    log.info(`${owner}:pullrequest ${payload.action}`)
 
     /* istanbul ignore if */
     if (configRepo !== repo) return
@@ -354,7 +389,7 @@ module.exports = (app: Application) => {
     if (compare.data.files.every((file) => file.filename !== LS_CONFIG_PATH)) {
       log.debug(
         { files: compare.data.files },
-        `Skipping merge comment, configuration didn't change.`,
+        `${owner}:pullrequest no merge comment, configuration didn't change.`,
       )
       return
     }
@@ -369,12 +404,14 @@ module.exports = (app: Application) => {
     /* Skip the pull request if there's no configuraiton. */
     /* istanbul ignore next */
     if (configRaw === null) {
+      log.info(`${owner}:pullrequest no configuration`)
       return
     }
 
     const [error, config] = parseConfig(configRaw)
 
-    log.debug({ config }, `Loaded configuration for ${owner}/${ref}.`)
+    log.info(`${owner}:pullrequest loaded configuration on ${ref}`)
+    log.debug({ config }, `${owner}:pullrequest loaded configuration`)
 
     /* Skips invalid configuration. */
     /* istanbul ignore if */
@@ -392,9 +429,13 @@ module.exports = (app: Application) => {
           Object.keys(config!.repos),
         )
 
+        log.info(`${owner}:pullrequest checking access ${access}`)
+
         /* Skip configurations that we can't access. */
         switch (access.status) {
           case 'Sufficient': {
+            log.info(`${owner}:pullrequest simulating sync`)
+
             /* Fetch changes to repositories. */
             const reports = await Promise.all(
               Object.keys(config!.repos).map((repo) =>
@@ -411,22 +452,38 @@ module.exports = (app: Application) => {
             const report = generateHumanReadableReport(reports)
 
             /* Comment on a PR in a human friendly way. */
-            await createPRComment(github, owner, configRepo, number, report)
+            const comment = await createPRComment(
+              github,
+              owner,
+              configRepo,
+              number,
+              report,
+            )
+
+            log.info(`${owner}:pullrequest commented on pr ${comment.id}`)
 
             return
           }
           case 'Insufficient': {
+            log.info(`${owner}:pullrequest insufficient permissions ${access}`)
+
             /* Opens up an issue about insufficient permissions. */
             const body = ml`
-            | It seems like this configuration stretches beyond
-            | repositories we can access. Please update it so we can help
-            | you as best as we can.
+            | It seems like this configuration stretches beyond repositories we can access. Please update it so we can help you as best as we can.
             |
             | _Missing repositories:_
             | ${access.missing.map((missing) => ` * ${missing}`).join(os.EOL)}
             `
 
-            await createPRComment(github, owner, configRepo, number, body)
+            const comment = await createPRComment(
+              github,
+              owner,
+              configRepo,
+              number,
+              body,
+            )
+
+            log.info(`${owner}:pullrequest commented on pr ${comment.id}`)
 
             return
           }
@@ -460,9 +517,7 @@ module.exports = (app: Application) => {
       /* istanbul ignore next */
       default: {
         /* Log unsupported pull_request action. */
-        log.error(
-          `${owner}:${repo} unsupported pull_request event: ${payload.action}`,
-        )
+        log.error(`${owner}:pullrequest unsupported event: ${payload.action}`)
 
         return
       }
@@ -482,15 +537,23 @@ module.exports = (app: Application) => {
       const owner = ctx.payload.sender.login
       const repo = ctx.payload.repository.name
       const config = ctx.sources.config.repos[repo]
-      const label = ctx.payload.label
+      const label = ctx.payload.label as GithubLabel
+
+      ctx.log.info(`${owner}:label.created ${label.name}`)
 
       /* Ignore no configuration. */
       /* istanbul ignore if */
-      if (!config) return
+      if (!config) {
+        ctx.log.info(`${owner}:${repo}:label.created no config`)
+        return
+      }
 
       /* Ignore complying changes. */
       /* istanbul ignore if */
-      if (config.labels.hasOwnProperty(label.name)) return
+      if (config.labels.hasOwnProperty(label.name)) {
+        ctx.log.info(`${owner}:${repo}:label.created label in configuration`)
+        return
+      }
 
       /* Config */
       const removeUnconfiguredLabels = withDefault(
@@ -498,13 +561,20 @@ module.exports = (app: Application) => {
         config.config?.removeUnconfiguredLabels,
       )
 
-      /* Prune unsupported labels in strict repositories. */
-      await removeLabelsFromRepository(
-        ctx.github,
-        { repo, owner },
-        [label],
-        removeUnconfiguredLabels,
-      )
+      if (removeUnconfiguredLabels) {
+        ctx.log.info(`${owner}:${repo}:label.created removing label`)
+
+        /* Prune unsupported labels in strict repositories. */
+        await removeLabelsFromRepository(
+          ctx.github,
+          { repo, owner },
+          [label],
+          removeUnconfiguredLabels,
+        )
+
+        /* prettier-ignore */
+        ctx.log.info(`${owner}:${repo}:label.created removed label ${label.name}`)
+      }
     }),
   )
 
@@ -524,18 +594,31 @@ module.exports = (app: Application) => {
       const label = ((ctx.payload as any) as { label: GithubLabel }).label
       const issue = ctx.payload.issue
 
+      ctx.log.info(`${owner}:${repo}:issues.labeled ${label.name}`)
+
       /* Ignore changes in non-strict config */
       /* istanbul ignore if */
-      if (!config || !config.labels.hasOwnProperty(label.name)) return
+      if (!config) {
+        /* prettier-ignore */
+        ctx.log.info(`${owner}:${repo}:${issue.number}:issues.labeled:${label.name} no configuration`)
+        return
+      }
+
+      /* istanbul ignore if */
+      if (!config.labels.hasOwnProperty(label.name)) {
+        /* prettier-ignore */
+        ctx.log.info(`${owner}:${repo}:${issue.number}:issues.labeled:${label.name} unconfigured label`)
+        return
+      }
 
       /* Find siblings. */
       const siblings = withDefault([], config.labels[label.name]?.siblings)
       const ghSiblings = siblings.map((sibling) => ({ name: sibling }))
 
-      ctx.log.debug(
-        { ghSiblings },
-        `${owner}:${repo}:#${issue.number} adding siblings to ${label.name}`,
-      )
+      /* prettier-ignore */
+      ctx.log.info(`${owner}:${repo}:${issue.number}:issues.labeled siblings ${siblings.join(', ')}`)
+      /* prettier-ignore */
+      ctx.log.debug({ ghSiblings }, `${owner}:${repo}:${issue.number} adding siblings to ${label.name}`)
 
       await addLabelsToIssue(
         ctx.github,
@@ -543,6 +626,9 @@ module.exports = (app: Application) => {
         ghSiblings,
         true,
       )
+
+      /* prettier-ignore */
+      ctx.log.info(`${owner}:${repo}:${issue.number}:issues.labeled added siblings to ${label.name}`)
     }),
   )
 }
