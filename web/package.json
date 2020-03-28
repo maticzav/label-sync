@@ -7,10 +7,10 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@tailwindcss/ui": "^0.1.3",
-    "autoprefixer": "^9.7.5",
-    "live-server": "^1.2.1",
-    "postcss-cli": "^7.1.0",
-    "tailwindcss": "^1.2.0"
+    "@tailwindcss/ui": "0.1.3",
+    "autoprefixer": "9.7.5",
+    "live-server": "1.2.1",
+    "postcss-cli": "7.1.0",
+    "tailwindcss": "1.2.0"
   }
 }
