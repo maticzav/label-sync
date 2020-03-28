@@ -7,10 +7,10 @@
 
     <meta name="og:title" content="Github LabelSync" />
     <meta name="og:type" content="website" />
-    <meta name="og:url" content="https://labelsync.com" />
+    <meta name="og:url" content="https://label-sync.com" />
     <meta
       name="og:image"
-      content="https://labelsync.com/assets/thumbnail.png"
+      content="https://label-sync.com/assets/thumbnail.png"
     />
     <meta
       name="description"
@@ -52,85 +52,55 @@
       src="https://www.google-analytics.com/analytics.js"
     ></script>
 
+    <!-- Scrolling -->
+
+    <script>
+      function scrollToId(id) {
+        var duration = 1500
+        var fps = 100
+        var chunk = duration / fps
+
+        var time = duration // current frame
+        var targetElement = document.getElementById(id)
+
+        /* Report unknown element. */
+        if (!targetElement) {
+          throw new Error('No element with id: ' + id)
+        }
+
+        var targetOffset = targetElement.offsetTop
+
+        var frame = setInterval(() => {
+          /* Position change each milisecond. */
+          var currentOffset = window.pageYOffset
+          var diffOffset = targetOffset - currentOffset
+
+          intermediateOffset =
+            currentOffset + (1 - time / duration) * diffOffset
+
+          window.scrollTo(window.pageXOffset, intermediateOffset)
+
+          /* Count time */
+          time = time - chunk
+
+          /* Interval reset once it's over of very close. */
+          if (time < 100 || Math.abs(diffOffset) < 10) {
+            clearInterval(frame)
+          }
+        }, chunk)
+      }
+    </script>
+
     <!-- HERO -->
-
     <div class="relative bg-gray-50 overflow-hidden">
-      <div class="hidden sm:block sm:absolute sm:inset-y-0 sm:h-full sm:w-full">
-        <div class="relative h-full max-w-screen-xl mx-auto">
-          <svg
-            class="absolute right-full transform translate-y-1/4 translate-x-1/4 lg:translate-x-1/2"
-            width="404"
-            height="784"
-            fill="none"
-            viewBox="0 0 404 784"
-          >
-            <defs>
-              <pattern
-                id="f210dbf6-a58d-4871-961e-36d5016a0f49"
-                x="0"
-                y="0"
-                width="20"
-                height="20"
-                patternUnits="userSpaceOnUse"
-              >
-                <rect
-                  x="0"
-                  y="0"
-                  width="4"
-                  height="4"
-                  class="text-gray-200"
-                  fill="currentColor"
-                />
-              </pattern>
-            </defs>
-            <rect
-              width="404"
-              height="784"
-              fill="url(#f210dbf6-a58d-4871-961e-36d5016a0f49)"
-            />
-          </svg>
-          <svg
-            class="absolute left-full transform -translate-y-3/4 -translate-x-1/4 md:-translate-y-1/2 lg:-translate-x-1/2"
-            width="404"
-            height="784"
-            fill="none"
-            viewBox="0 0 404 784"
-          >
-            <defs>
-              <pattern
-                id="5d0dd344-b041-4d26-bec4-8d33ea57ec9b"
-                x="0"
-                y="0"
-                width="20"
-                height="20"
-                patternUnits="userSpaceOnUse"
-              >
-                <rect
-                  x="0"
-                  y="0"
-                  width="4"
-                  height="4"
-                  class="text-gray-200"
-                  fill="currentColor"
-                />
-              </pattern>
-            </defs>
-            <rect
-              width="404"
-              height="784"
-              fill="url(#5d0dd344-b041-4d26-bec4-8d33ea57ec9b)"
-            />
-          </svg>
-        </div>
-      </div>
-
       <div
         x-data="{ open: false }"
         class="relative pt-6 pb-12 sm:pb-16 md:pb-20 lg:pb-28 xl:pb-32"
       >
-        <div class="max-w-screen-xl mx-auto px-4 sm:px-6">
+        <!-- Desktop navigation -->
+        <div class="max-w-screen-xl mx-auto px-6 sm:px-6">
           <nav
-            class="relative flex items-center justify-between sm:h-10 md:justify-center"
+            class="relative flex items-center justify-between sm:h-10 md:justify-end"
           >
             <div
               class="flex items-center flex-1 md:absolute md:inset-y-0 md:left-0"
@@ -138,7 +108,7 @@
               <div class="flex items-center justify-between w-full md:w-auto">
                 <a href="#">
                   <img
-                    class="h-8 w-auto sm:h-10"
+                    class="h-7 w-auto sm:h-8 text-red-300"
                     src="/img/logos/labelsync.svg"
                     alt=""
                   />
@@ -166,19 +136,22 @@
                 </div>
               </div>
             </div>
+
             <div class="hidden md:block">
               <a
-                href="#"
+                href="https://github.com/maticzav/label-sync"
                 class="font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out"
                 >Documentation</a
               >
               <a
                 href="#"
+                onclick="scrollToId('pricing');"
                 class="ml-10 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out"
                 >Pricing</a
               >
               <a
                 href="#"
+                onclick="scrollToId('features');"
                 class="ml-10 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out"
                 >Features</a
               >
@@ -188,20 +161,10 @@
                 >Support</a
               >
             </div>
-            <div
-              class="hidden md:absolute md:flex md:items-center md:justify-end md:inset-y-0 md:right-0"
-            >
-              <span class="inline-flex rounded-md shadow">
-                <a
-                  href="https://github.com/marketplace/labelsync-manager"
-                  class="inline-flex items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-teal-600 bg-white hover:text-teal-500 focus:outline-none focus:shadow-outline-blue active:bg-gray-50 active:text-teal-700 transition duration-150 ease-in-out"
-                >
-                  Sync my labels!
-                </a>
-              </span>
-            </div>
           </nav>
         </div>
+
+        <!-- Mobile navigation -->
 
         <div
           x-show="open"
@@ -224,7 +187,7 @@
                   <img
                     class="h-8 w-auto"
                     src="/img/logos/labelsync.svg"
-                    alt=""
+                    alt="LabelSync"
                   />
                 </div>
                 <div class="-mr-2">
@@ -249,40 +212,38 @@
                   </button>
                 </div>
               </div>
+
               <div class="px-2 pt-2 pb-3">
                 <a
-                  href="#"
+                  href="https://github.com/maticzav/label-sync"
                   class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
                   >Documentation</a
                 >
                 <a
                   href="#"
+                  onclick="scrollToId('pricing')"
+                  @click="open = false"
                   class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
                   >Pricing</a
                 >
                 <a
                   href="#"
+                  onclick="scrollToId('features')"
+                  @click="open = false"
                   class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
                   >Features</a
                 >
                 <a
-                  href="#"
+                  href="mailto:support@label-sync.com"
                   class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
                   >Support</a
                 >
               </div>
-
-              <!-- <div>
-                <a
-                  href="#"
-                  class="block w-full px-5 py-3 text-center font-medium text-teal-600 bg-gray-50 hover:bg-gray-100 hover:text-teal-700 focus:outline-none focus:bg-gray-100 focus:text-teal-700 transition duration-150 ease-in-out"
-                >
-                  Log in
-                </a>
-              </div> -->
             </div>
           </div>
         </div>
+
+        <!-- Hero text -->
 
         <div
           class="mt-10 mx-auto max-w-screen-xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 xl:mt-28"
@@ -291,33 +252,34 @@
             <h2
               class="text-4xl tracking-tight leading-10 font-extrabold text-gray-900 sm:text-5xl sm:leading-none md:text-6xl"
             >
-              Sync labels
+              Sync labels.
               <br class="xl:hidden" />
-              <span class="text-teal-600">accross all repositories.</span>
+              <span class="text-green-600">accross all repositories.</span>
             </h2>
             <p
               class="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl"
             >
-              Managing multiple repositories is hard. LabelSync helps you manage
-              labels across your repository fleet using simple API. My vision is
-              to develop the best in class software that would help companies
-              triage issues and pull requests, and simplify the use of labels.
+              Managing Github labels accross multiple repositories is hard.
+              LabelSync makes it easy.
             </p>
+
+            <!-- Call to Action -->
+
             <div
               class="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8"
             >
               <div class="rounded-md shadow">
                 <a
-                  href="#"
-                  class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-teal-600 hover:bg-teal-500 focus:outline-none focus:shadow-outline-indigo transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
+                  href="https://github.com/marketplace/labelsync-manager"
+                  class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-indigo transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
                 >
-                  Get started
+                  Sync labels
                 </a>
               </div>
               <div class="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
                 <a
-                  href="#"
-                  class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-teal-600 bg-white hover:text-teal-500 focus:outline-none focus:shadow-outline-blue transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
+                  href="https://calendly.com/maticzav/labelsync"
+                  class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-green-600 bg-white hover:text-green-500 focus:outline-none focus:shadow-outline-blue transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
                 >
                   Live demo
                 </a>
@@ -330,8 +292,10 @@
 
     <!-- FEATURES -->
 
-    <div class="bg-gray-50 overflow-hidden">
+    <div id="features" class="bg-gray-50 overflow-hidden">
       <div class="relative max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <!-- Side art -->
+
         <svg
           class="absolute top-0 left-full transform -translate-x-1/2 -translate-y-3/4 lg:left-auto lg:right-full lg:translate-x-2/3 lg:translate-y-1/4"
           width="404"
@@ -365,20 +329,24 @@
           />
         </svg>
 
+        <!-- Features -->
+
         <div class="relative lg:grid lg:grid-cols-3 lg:col-gap-8">
           <div class="lg:col-span-1">
             <h3
               class="text-3xl leading-9 font-extrabold tracking-tight text-gray-900 sm:text-4xl sm:leading-10"
             >
-              A better way to send money.
+              <span class="mr-3">🚀</span>It's gaming changing.
             </h3>
           </div>
+
           <div
             class="mt-10 sm:grid sm:grid-cols-2 sm:col-gap-8 sm:row-gap-10 lg:col-span-2 lg:mt-0"
           >
+            <!-- Features -->
             <div>
               <div
-                class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white"
+                class="flex items-center justify-center h-12 w-12 rounded-md bg-green-500 text-white"
               >
                 <svg
                   class="h-6 w-6"
@@ -396,17 +364,17 @@
               </div>
               <div class="mt-5">
                 <h5 class="text-lg leading-6 font-medium text-gray-900">
-                  Competitive rates
+                  Centralised management
                 </h5>
                 <p class="mt-2 text-base leading-6 text-gray-500">
-                  Consequuntur omnis dicta cumque, inventore atque ab dolores
-                  aspernatur tempora ab doloremque.
+                  Sync all your repositories from a central management
+                  repository using one of the configuration languages.
                 </p>
               </div>
             </div>
             <div class="mt-10 sm:mt-0">
               <div
-                class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white"
+                class="flex items-center justify-center h-12 w-12 rounded-md bg-green-500 text-white"
               >
                 <svg
                   class="h-6 w-6"
@@ -424,17 +392,18 @@
               </div>
               <div class="mt-5">
                 <h5 class="text-lg leading-6 font-medium text-gray-900">
-                  No hidden fees
+                  Flexible configuration
                 </h5>
                 <p class="mt-2 text-base leading-6 text-gray-500">
-                  Corporis quisquam nostrum nulla veniam recusandae temporibus
-                  aperiam officia incidunt at distinctio ratione.
+                  Restrict unconfigured labels or set the default bulk to be
+                  shared between repositories.
                 </p>
               </div>
             </div>
+
             <div class="mt-10 sm:mt-0">
               <div
-                class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white"
+                class="flex items-center justify-center h-12 w-12 rounded-md bg-green-500 text-white"
               >
                 <svg
                   class="h-6 w-6"
@@ -452,39 +421,48 @@
               </div>
               <div class="mt-5">
                 <h5 class="text-lg leading-6 font-medium text-gray-900">
-                  Instant transfers
+                  Label Aliases
                 </h5>
                 <p class="mt-2 text-base leading-6 text-gray-500">
-                  Omnis, illo delectus? Libero, possimus nulla nemo tenetur
-                  adipisci repellat dolore eligendi velit doloribus mollitia.
+                  Align label configurations quickly by
+                  <a
+                    href="https://github.com/maticzav/label-sync#yaml"
+                    class="font-bold"
+                    >aliasing</a
+                  >
+                  a group of old labels in a new single label.
                 </p>
               </div>
             </div>
             <div class="mt-10 sm:mt-0">
               <div
-                class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white"
+                class="flex items-center justify-center h-12 w-12 rounded-md bg-green-500 text-white"
               >
                 <svg
+                  fill="none"
                   class="h-6 w-6"
                   stroke="currentColor"
-                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
                   viewBox="0 0 24 24"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
+                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                  ></path>
                 </svg>
               </div>
               <div class="mt-5">
                 <h5 class="text-lg leading-6 font-medium text-gray-900">
-                  Reminder emails
+                  Automate your workflow
                 </h5>
                 <p class="mt-2 text-base leading-6 text-gray-500">
-                  Veniam necessitatibus reiciendis fugit explicabo dolorem nihil
-                  et omnis assumenda odit? Quisquam unde accusantium.
+                  Create Label workflows using label
+                  <a
+                    href="https://github.com/maticzav/label-sync#yaml"
+                    class="font-bold"
+                    >siblings</a
+                  >.
                 </p>
               </div>
             </div>
@@ -493,20 +471,310 @@
       </div>
     </div>
 
+    <!-- CONFIGURATION -->
+
+    <div class="relative overflow-hidden">
+      <div
+        x-data="{ open: false }"
+        class="relative pt-6 pb-16 md:pb-20 lg:pb-24 xl:pb-32"
+      >
+        <div
+          :class="{'block': open, 'hidden': !open}"
+          class="absolute top-0 inset-x-0 p-2 hidden md:hidden"
+        >
+          <div
+            x-show="open"
+            x-transition:enter="duration-150 ease-out"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="duration-100 ease-in"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="rounded-lg shadow-md transition transform origin-top-right"
+          >
+            <div class="rounded-lg bg-white shadow-xs overflow-hidden">
+              <div class="px-5 pt-4 flex items-center justify-between">
+                <div>
+                  <img
+                    class="h-8 w-auto"
+                    src="/img/logos/workflow-mark-on-white.svg"
+                    alt=""
+                  />
+                </div>
+                <div class="-mr-2">
+                  <button
+                    @click="open = false"
+                    type="button"
+                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
+                  >
+                    <svg
+                      class="h-6 w-6"
+                      stroke="currentColor"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="px-2 pt-2 pb-3">
+                <a
+                  href="#"
+                  class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
+                  >Product</a
+                >
+                <a
+                  href="#"
+                  class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
+                  >Features</a
+                >
+                <a
+                  href="#"
+                  class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
+                  >Marketplace</a
+                >
+                <a
+                  href="#"
+                  class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
+                  >Company</a
+                >
+              </div>
+              <div>
+                <a
+                  href="#"
+                  class="block w-full px-5 py-3 text-center font-medium text-indigo-600 bg-gray-50 hover:bg-gray-100 hover:text-indigo-700 focus:outline-none focus:bg-gray-100 focus:text-indigo-700 transition duration-150 ease-in-out"
+                >
+                  Log in
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="mt-8 mx-auto max-w-screen-xl px-4 sm:mt-12 sm:px-6 md:mt-20 xl:mt-24"
+        >
+          <div class="lg:grid lg:grid-cols-12 lg:gap-8">
+            <div
+              class="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left"
+            >
+              <!--  -->
+              <div
+                class="text-sm font-semibold uppercase tracking-wide text-gray-500 sm:text-base lg:text-sm xl:text-base"
+              >
+                Start syncing now
+              </div>
+              <h2
+                class="mt-1 text-4xl tracking-tight leading-10 font-extrabold text-gray-900 sm:leading-none sm:text-6xl lg:text-5xl xl:text-6xl"
+              >
+                <span class="mr-4">👨‍💻</span>
+                Let me show you
+                <br />
+                <span class="text-green-600">how easy it is.</span>
+              </h2>
+              <p
+                class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl"
+              >
+                In this short video, I want to show you the best of LabelSync,
+                and give you a feeling of just how easy it is to use. You'll see
+                what the onboarding process feels like and how LabelSync helps
+                you with the configuration.
+              </p>
+            </div>
+            <div
+              class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center"
+            >
+              <svg
+                class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-8 scale-75 origin-top sm:scale-100 lg:hidden"
+                width="640"
+                height="784"
+                fill="none"
+                viewBox="0 0 640 784"
+              >
+                <defs>
+                  <pattern
+                    id="4f4f415c-a0e9-44c2-9601-6ded5a34a13e"
+                    x="118"
+                    y="0"
+                    width="20"
+                    height="20"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <rect
+                      x="0"
+                      y="0"
+                      width="4"
+                      height="4"
+                      class="text-gray-200"
+                      fill="currentColor"
+                    />
+                  </pattern>
+                </defs>
+                <rect
+                  y="72"
+                  width="640"
+                  height="640"
+                  class="text-gray-50"
+                  fill="currentColor"
+                />
+                <rect
+                  x="118"
+                  width="404"
+                  height="784"
+                  fill="url(#4f4f415c-a0e9-44c2-9601-6ded5a34a13e)"
+                />
+              </svg>
+              <div
+                class="relative mx-auto w-full rounded-lg shadow-lg lg:max-w-md"
+              >
+                <button
+                  class="relative block w-full rounded-lg overflow-hidden focus:outline-none focus:shadow-outline"
+                >
+                  <img
+                    class="w-full"
+                    src="https://images.unsplash.com/photo-1556740758-90de374c12ad?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+                    alt="Woman making a sale"
+                  />
+                  <div
+                    class="absolute inset-0 w-full h-full flex items-center justify-center"
+                  >
+                    <svg
+                      class="h-20 w-20 text-indigo-500"
+                      fill="currentColor"
+                      viewBox="0 0 84 84"
+                    >
+                      <circle
+                        opacity="0.9"
+                        cx="42"
+                        cy="42"
+                        r="42"
+                        fill="white"
+                      />
+                      <path
+                        d="M55.5039 40.3359L37.1094 28.0729C35.7803 27.1869 34 28.1396 34 29.737V54.263C34 55.8604 35.7803 56.8131 37.1094 55.9271L55.5038 43.6641C56.6913 42.8725 56.6913 41.1275 55.5039 40.3359Z"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TESTIMONIAL -->
+
+    <div class="py-12 bg-gray-50 overflow-hidden md:py-20 lg:py-24">
+      <div class="relative max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+        <svg
+          class="absolute top-full right-full transform translate-x-1/3 -translate-y-1/4 lg:translate-x-1/2 xl:-translate-y-1/2"
+          width="404"
+          height="404"
+          fill="none"
+          viewBox="0 0 404 404"
+        >
+          <defs>
+            <pattern
+              id="ad119f34-7694-4c31-947f-5c9d249b21f3"
+              x="0"
+              y="0"
+              width="20"
+              height="20"
+              patternUnits="userSpaceOnUse"
+            >
+              <rect
+                x="0"
+                y="0"
+                width="4"
+                height="4"
+                class="text-gray-200"
+                fill="currentColor"
+              />
+            </pattern>
+          </defs>
+          <rect
+            width="404"
+            height="404"
+            fill="url(#ad119f34-7694-4c31-947f-5c9d249b21f3)"
+          />
+        </svg>
+
+        <div class="relative">
+          <a href="https://prisma.io">
+            <img
+              class="max-h-10 mx-auto"
+              src="/img/logos/prisma.svg"
+              alt="Prisma"
+            />
+          </a>
+
+          <blockquote class="mt-8">
+            <div
+              class="max-w-3xl mx-auto text-center text-2xl leading-9 font-medium text-gray-900"
+            >
+              <p>
+                &ldquo;LabelSync let's us keep our workflow in Github and it's
+                working great. We've been using it for over a year and our
+                production has gone up by 30%. I am excited to see how we use it
+                as a Github integration.&rdquo;
+              </p>
+            </div>
+            <footer class="mt-8">
+              <div class="md:flex md:items-center md:justify-center">
+                <div class="md:flex-shrink-0">
+                  <img
+                    class="mx-auto h-10 w-10 rounded-full"
+                    src="https://avatars1.githubusercontent.com/u/1567498?s=460&u=6ec86c8d5589e6504b04a083b667920914f17175&v=4"
+                    alt=""
+                  />
+                </div>
+                <div
+                  class="mt-3 text-center md:mt-0 md:ml-4 md:flex md:items-center"
+                >
+                  <div class="text-base leading-6 font-medium text-gray-900">
+                    Johannes Schickling
+                  </div>
+
+                  <svg
+                    class="hidden md:block mx-1 h-5 w-5 text-green-600"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M11 0h3L9 20H6l5-20z" />
+                  </svg>
+
+                  <div class="text-base leading-6 font-medium text-gray-500">
+                    CEO, Prisma
+                  </div>
+                </div>
+              </div>
+            </footer>
+          </blockquote>
+        </div>
+      </div>
+    </div>
+
     <!-- PRICING -->
 
-    <div class="bg-gray-100">
+    <div id="pricing" class="bg-gray-100">
       <div class="pt-12 sm:pt-16 lg:pt-20">
         <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center">
             <h2
               class="text-3xl leading-9 font-extrabold text-gray-900 sm:text-4xl sm:leading-10 lg:text-5xl lg:leading-none"
             >
-              Simple no-tricks pricing
+              Pre-release, beta pricing
             </h2>
             <p class="mt-4 text-xl leading-7 text-gray-500">
-              If you're not satisfied, contact us within the first 14 days and
-              we'll send you a full refund.
+              While LabelSync is in development we want to keep it free for as
+              many people as possible.
             </p>
           </div>
         </div>
@@ -522,7 +790,7 @@
                 <h3
                   class="text-2xl leading-8 font-extrabold text-gray-900 sm:text-3xl sm:leading-9"
                 >
-                  Lifetime Membership
+                  Monthly Github Subscription
                 </h3>
                 <p class="mt-6 text-base leading-6 text-gray-500">
                   Lorem ipsum dolor sit amet consect etur adipisicing elit.
@@ -532,7 +800,7 @@
                 <div class="mt-8">
                   <div class="flex items-center">
                     <h4
-                      class="flex-shrink-0 pr-4 bg-white text-sm leading-5 tracking-wider font-semibold uppercase text-teal-600"
+                      class="flex-shrink-0 pr-4 bg-white text-sm leading-5 tracking-wider font-semibold uppercase text-green-600"
                     >
                       What's included
                     </h4>
@@ -556,7 +824,7 @@
                         </svg>
                       </div>
                       <p class="ml-3 text-sm leading-5 text-gray-700">
-                        Private forum access
+                        Github LabelSync Application
                       </p>
                     </li>
                     <li class="mt-5 flex items-start lg:col-span-1 lg:mt-0">
@@ -574,7 +842,7 @@
                         </svg>
                       </div>
                       <p class="ml-3 text-sm leading-5 text-gray-700">
-                        Member resources
+                        Configuration libraries
                       </p>
                     </li>
                     <li class="mt-5 flex items-start lg:col-span-1 lg:mt-0">
@@ -592,7 +860,7 @@
                         </svg>
                       </div>
                       <p class="ml-3 text-sm leading-5 text-gray-700">
-                        Entry to annual conference
+                        Label Syncing and Aliasing
                       </p>
                     </li>
                     <li class="mt-5 flex items-start lg:col-span-1 lg:mt-0">
@@ -610,7 +878,25 @@
                         </svg>
                       </div>
                       <p class="ml-3 text-sm leading-5 text-gray-700">
-                        Official member t-shirt
+                        LabelSync Siblings-Workflows
+                      </p>
+                    </li>
+                    <li class="mt-5 flex items-start lg:col-span-1 lg:mt-0">
+                      <div class="flex-shrink-0">
+                        <svg
+                          class="h-5 w-5 text-green-400"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                      <p class="ml-3 text-sm leading-5 text-gray-700">
+                        Personal Email Support
                       </p>
                     </li>
                   </ul>
@@ -620,13 +906,13 @@
                 class="py-8 px-6 text-center bg-gray-50 lg:flex-shrink-0 lg:flex lg:flex-col lg:justify-center lg:p-12"
               >
                 <p class="text-lg leading-6 font-medium text-gray-900">
-                  Pay once, own it forever
+                  Low price, easy on the pocket
                 </p>
                 <div
                   class="mt-4 flex items-center justify-center text-5xl leading-none font-extrabold text-gray-900"
                 >
                   <span>
-                    $349
+                    $0
                   </span>
                   <span
                     class="ml-3 text-xl leading-7 font-medium text-gray-500"
@@ -634,15 +920,10 @@
                     USD
                   </span>
                 </div>
-                <p class="mt-4 text-sm leading-5">
-                  <a href="#" class="font-medium text-gray-500 underline">
-                    Learn about our membership policy
-                  </a>
-                </p>
                 <div class="mt-6">
                   <div class="rounded-md shadow">
                     <a
-                      href="#"
+                      href="https://github.com/marketplace/labelsync-manager"
                       class="flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
                     >
                       Get Access
@@ -651,10 +932,13 @@
                 </div>
                 <div class="mt-4 text-sm leading-5">
                   <a href="#" class="font-medium text-gray-900">
-                    Get a free sample
-                    <span class="font-normal text-gray-500">
-                      (20MB)
-                    </span>
+                    Schedule a live demo on
+                    <a
+                      href="https://calendly.com/maticzav/labelsync"
+                      class="font-normal font-bold tracking-wide text-gray-500"
+                    >
+                      Calendly</a
+                    >
                   </a>
                 </div>
               </div>
@@ -674,55 +958,34 @@
           Trusted by experts in web technologies
         </p>
         <div class="mt-6 grid grid-cols-2 gap-0.5 md:grid-cols-3 lg:mt-8">
+          <!-- Algolia -->
           <div class="col-span-1 flex justify-center py-8 px-8">
-            <img class="max-h-12" src="/img/logos/algolia.svg" alt="Algolia" />
+            <a href="https://algolia.com">
+              <img
+                class="max-h-12"
+                src="/img/logos/algolia.svg"
+                alt="Algolia"
+              />
+            </a>
           </div>
+          <!-- Prisma -->
           <div class="col-span-1 flex justify-center py-8 px-8">
-            <img class="max-h-12" src="/img/logos/prisma.svg" alt="Prisma" />
+            <a href="https://prisma.io">
+              <img class="max-h-12" src="/img/logos/prisma.svg" alt="Prisma" />
+            </a>
           </div>
+          <!-- Zeit -->
           <div class="col-span-1 flex justify-center py-8 px-8">
-            <img class="max-h-12" src="/img/logos/zeit.svg" alt="Zeit" />
+            <a href="https://zeit.co">
+              <img
+                class="max-h-12 block"
+                src="/img/logos/zeit.svg"
+                alt="Zeit"
+              />
+            </a>
           </div>
         </div>
       </div>
-
-      <!-- <div class="max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-2 gap-8 md:grid-cols-6 lg:grid-cols-5">
-          <div
-            class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1"
-          >
-            <img class="h-12" src="/img/logos/prisma.svg" alt="Prisma" />
-          </div>
-          <div
-            class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1"
-          >
-            <img class="h-12" src="/img/logos/zeit.svg" alt="Zeit" />
-          </div>
-          <div
-            class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1"
-          >
-            <img class="h-12" src="/img/logos/algolia.svg" alt="Algolia" />
-          </div>
-          <div
-            class="col-span-1 flex justify-center md:col-span-3 lg:col-span-1"
-          >
-            <img
-              class="h-12"
-              src="/img/logos/transistor-logo.svg"
-              alt="Transistor"
-            />
-          </div>
-          <div
-            class="col-span-2 flex justify-center md:col-span-3 lg:col-span-1"
-          >
-            <img
-              class="h-12"
-              src="/img/logos/workcation-logo.svg"
-              alt="Workcation"
-            />
-          </div>
-        </div>
-      </div> -->
     </div>
 
     <!-- FAQ -->
@@ -771,25 +1034,17 @@
             <div class="mt-12 md:mt-0">
               <div>
                 <dt class="text-lg leading-6 font-medium text-gray-900">
-                  What is the least spoken language in the world?
+                  Will LabelSync remain free forever?
                 </dt>
                 <dd class="mt-2">
                   <p class="text-base leading-6 text-gray-500">
-                    Sign language. Lorem ipsum dolor sit amet consectetur
-                    adipisicing elit. Quas cupiditate laboriosam fugiat.
-                  </p>
-                </dd>
-              </div>
-
-              <div class="mt-12">
-                <dt class="text-lg leading-6 font-medium text-gray-900">
-                  Why can't you hear a pterodactyl go to the bathroom?
-                </dt>
-                <dd class="mt-2">
-                  <p class="text-base leading-6 text-gray-500">
-                    Because the pee is silent. Lorem ipsum dolor sit amet
-                    consectetur adipisicing elit. Quas cupiditate laboriosam
-                    fugiat.
+                    Well, that depends on the usage and sponsoships that the
+                    project is going to receive. You can support it
+                    <a
+                      href="https://github.com/sponsors/maticzav"
+                      class="font-semibold text-gray-600"
+                      >here</a
+                    >. ❤️
                   </p>
                 </dd>
               </div>
@@ -804,14 +1059,22 @@
     <div class="bg-white">
       <div class="max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
         <div class="xl:grid xl:grid-cols-3 xl:gap-8">
+          <!-- Upper footer -->
+
           <div class="xl:col-span-1">
+            <!-- Company -->
+
             <img class="h-10" src="/img/logos/labelsync.svg" alt="LabelSync" />
             <p class="mt-8 text-gray-500 text-base leading-6">
-              Making the world a better place through constructing elegant
-              hierarchies.
+              Our vision is to develop the best in class software that would
+              help companies triage issues and pull requests, and simplify the
+              use of labels.
             </p>
+
+            <!-- Social networks -->
+
             <div class="mt-8 flex">
-              <a href="#" class="text-gray-400 hover:text-gray-500">
+              <!-- <a href="#" class="text-gray-400 hover:text-gray-500">
                 <span class="sr-only">Facebook</span>
                 <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
                   <path
@@ -830,8 +1093,11 @@
                     clip-rule="evenodd"
                   />
                 </svg>
-              </a>
-              <a href="#" class="ml-6 text-gray-400 hover:text-gray-500">
+              </a> -->
+              <a
+                href="https://twitter.com/maticzav"
+                class="text-gray-400 hover:text-gray-500"
+              >
                 <span class="sr-only">Twitter</span>
                 <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
                   <path
@@ -839,7 +1105,10 @@
                   />
                 </svg>
               </a>
-              <a href="#" class="ml-6 text-gray-400 hover:text-gray-500">
+              <a
+                href="https://github.com/maticzav/label-sync"
+                class="ml-6 text-gray-400 hover:text-gray-500"
+              >
                 <span class="sr-only">GitHub</span>
                 <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
                   <path
@@ -849,62 +1118,14 @@
                   />
                 </svg>
               </a>
-              <a href="#" class="ml-6 text-gray-400 hover:text-gray-500">
-                <span class="sr-only">Dribbble</span>
-                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                  <path
-                    fill-rule="evenodd"
-                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.51 0 10-4.48 10-10S17.51 2 12 2zm6.605 4.61a8.502 8.502 0 011.93 5.314c-.281-.054-3.101-.629-5.943-.271-.065-.141-.12-.293-.184-.445a25.416 25.416 0 00-.564-1.236c3.145-1.28 4.577-3.124 4.761-3.362zM12 3.475c2.17 0 4.154.813 5.662 2.148-.152.216-1.443 1.941-4.48 3.08-1.399-2.57-2.95-4.675-3.189-5A8.687 8.687 0 0112 3.475zm-3.633.803a53.896 53.896 0 013.167 4.935c-3.992 1.063-7.517 1.04-7.896 1.04a8.581 8.581 0 014.729-5.975zM3.453 12.01v-.26c.37.01 4.512.065 8.775-1.215.25.477.477.965.694 1.453-.109.033-.228.065-.336.098-4.404 1.42-6.747 5.303-6.942 5.629a8.522 8.522 0 01-2.19-5.705zM12 20.547a8.482 8.482 0 01-5.239-1.8c.152-.315 1.888-3.656 6.703-5.337.022-.01.033-.01.054-.022a35.318 35.318 0 011.823 6.475 8.4 8.4 0 01-3.341.684zm4.761-1.465c-.086-.52-.542-3.015-1.659-6.084 2.679-.423 5.022.271 5.314.369a8.468 8.468 0 01-3.655 5.715z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </a>
             </div>
           </div>
-          <div class="mt-12 grid grid-cols-2 gap-8 xl:mt-0 xl:col-span-2">
-            <div class="md:grid md:grid-cols-2 md:gap-8">
+
+          <!-- Links -->
+
+          <div class="mt-12 grid grid-cols-2 gap-8 md:w-1/2 xl:mt-0">
+            <div class="md:grid">
               <div>
-                <h4
-                  class="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase"
-                >
-                  Solutions
-                </h4>
-                <ul class="mt-4">
-                  <li>
-                    <a
-                      href="#"
-                      class="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Marketing
-                    </a>
-                  </li>
-                  <li class="mt-4">
-                    <a
-                      href="#"
-                      class="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Analytics
-                    </a>
-                  </li>
-                  <li class="mt-4">
-                    <a
-                      href="#"
-                      class="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Commerce
-                    </a>
-                  </li>
-                  <li class="mt-4">
-                    <a
-                      href="#"
-                      class="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Insights
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div class="mt-12 md:mt-0">
                 <h4
                   class="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase"
                 >
@@ -914,6 +1135,7 @@
                   <li>
                     <a
                       href="#"
+                      onclick="scrollToId('pricing');"
                       class="text-base leading-6 text-gray-500 hover:text-gray-900"
                     >
                       Pricing
@@ -921,96 +1143,34 @@
                   </li>
                   <li class="mt-4">
                     <a
-                      href="#"
+                      href="https://github.com/maticzav/label-sync"
                       class="text-base leading-6 text-gray-500 hover:text-gray-900"
                     >
                       Documentation
                     </a>
                   </li>
-                  <li class="mt-4">
-                    <a
-                      href="#"
+                  <li class="mt-4 flex align-middle">
+                    <span
                       class="text-base leading-6 text-gray-500 hover:text-gray-900"
                     >
                       Guides
-                    </a>
-                  </li>
-                  <li class="mt-4">
-                    <a
-                      href="#"
-                      class="text-base leading-6 text-gray-500 hover:text-gray-900"
+                    </span>
+                    <span
+                      class="ml-2 text-xs py-1 font-semibold text-gray-600 tracking-wide"
+                      >(comming soon)</span
                     >
-                      API Status
-                    </a>
                   </li>
                 </ul>
               </div>
             </div>
-            <div class="md:grid md:grid-cols-2 md:gap-8">
+            <div>
               <div>
-                <h4
-                  class="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase"
-                >
-                  Company
-                </h4>
-                <ul class="mt-4">
-                  <li>
-                    <a
-                      href="#"
-                      class="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      About
-                    </a>
-                  </li>
-                  <li class="mt-4">
-                    <a
-                      href="#"
-                      class="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Blog
-                    </a>
-                  </li>
-                  <li class="mt-4">
-                    <a
-                      href="#"
-                      class="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Jobs
-                    </a>
-                  </li>
-                  <li class="mt-4">
-                    <a
-                      href="#"
-                      class="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Press
-                    </a>
-                  </li>
-                  <li class="mt-4">
-                    <a
-                      href="#"
-                      class="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Partners
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div class="mt-12 md:mt-0">
                 <h4
                   class="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase"
                 >
                   Legal
                 </h4>
                 <ul class="mt-4">
-                  <li>
-                    <a
-                      href="#"
-                      class="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Claim
-                    </a>
-                  </li>
                   <li class="mt-4">
                     <a
                       href="#"
