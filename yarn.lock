@@ -1494,10 +1494,15 @@
   dependencies:
     debug "^4.0.0"
 
-"@prisma/client@2.0.0-previewnull-1":
-  version "2.0.0-previewnull-1"
-  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-2.0.0-previewnull-1.tgz#190f33b1ab1fcf6404143fcc8ecbf1a8675e4500"
-  integrity sha512-glIyw5+4fyXABnvhPErG6X7IrepBj88N+0QsEXksB/NERHo8R97vHNpQvq0sAxAaK61mjiuaypZ3CyjxcC1XhA==
+"@prisma/cli@^2.0.0-preview025":
+  version "2.0.0-preview025"
+  resolved "https://registry.yarnpkg.com/@prisma/cli/-/cli-2.0.0-preview025.tgz#bf0f59f700dd25a621a4482f9d41cabfb4fe5958"
+  integrity sha512-KZIHsrYUUfBu8QwCdhgUbEeaors4Kw1s8LTPOWSWsn8ErT7H2Z3MWKv/8vN25l6RfoU53U5SEYn9+GwiPx1Fqw==
+
+"@prisma/client@2.0.0-preview025":
+  version "2.0.0-preview025"
+  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-2.0.0-preview025.tgz#163f43a62897a10750f9baaf980049ca5a4cdbe0"
+  integrity sha512-FhXqQY6WmbQldrqBMiYCcW06A0OH1hrebj5mmeb0Cq/PrWTaseypNY3Y/BPJlwpg8LGozqcs4GLcZx6QuA5QKw==
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
@@ -7713,11 +7718,6 @@ pretty-quick@2.0.1:
     ignore "^5.1.4"
     mri "^1.1.4"
     multimatch "^4.0.0"
-
-prisma2@2.0.0-previewnull-1:
-  version "2.0.0-previewnull-1"
-  resolved "https://registry.yarnpkg.com/prisma2/-/prisma2-2.0.0-previewnull-1.tgz#18d17d05ada12df272ce023bd491f0316b71c584"
-  integrity sha512-tileM0fP3FkNYkxUe/YFCCgkkuDXFLCCykJinMi72ss0riinJ3GCLuCq/xC3CjjpA9wwh5ep201ws2UQi4yIEA==
 
 probot@9.11.2:
   version "9.11.2"

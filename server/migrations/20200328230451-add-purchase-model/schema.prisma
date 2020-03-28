@@ -1,6 +1,6 @@
 datasource postgresql {
   provider = "postgresql"
-  url      = env("POSTGRESQL_URL")
+  url = "***"
 }
 
 generator client {
@@ -12,11 +12,10 @@ model Purchase {
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
   // Info
-  owner     String           @unique
-  email     String?
+  owner     String
   type      InstallationType
   // Purchase
-  planId    Int
+  planId    String
   plan      String
   trial     Boolean          @default(false)
 }

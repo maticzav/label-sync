@@ -47,6 +47,70 @@ module.exports = (
   const logger = new Logger(prisma)
 
   /**
+   * Marketplace purchase event
+   *
+   * Tasks:
+   *  - reference the purchase in the database.
+   */
+  app.on('marketplace_purchase.purchased', async (ctx) => {
+    const purchase = ctx.payload.marketplace_purchase
+    const owner = purchase.account
+
+    try {
+      const dbpurchase = await prisma.purchase.create({
+        data: {
+          owner: owner.login,
+          email: owner.organization_billing_email,
+          plan: purchase.plan.name,
+          planId: purchase.plan.id,
+          type: owner.type === 'User' ? 'USER' : 'ORGANIZATION',
+        },
+      })
+
+      await logger.info(
+        { owner: owner.login, event: 'marketplace_purchase.purchased' },
+        `${owner.login}: ${owner.type} purchased LabelSync plan ${dbpurchase.planId}`,
+      )
+    } catch (err) /* istanbul ignore next */ {
+      await logger.debug(
+        { owner: owner.login, event: 'marketplace_purchase.purchased' },
+        err,
+        `couldn't process a marketplace purchase`,
+      )
+    }
+  })
+
+  /**
+   * Marketplace purchase event
+   *
+   * Tasks:
+   *  - reference the purchase in the database.
+   */
+  app.on('marketplace_purchase.cancelled', async (ctx) => {
+    const purchase = ctx.payload.marketplace_purchase
+    const owner = purchase.account
+
+    try {
+      const dbpurchase = await prisma.purchase.delete({
+        where: {
+          owner: owner.login,
+        },
+      })
+
+      await logger.info(
+        { owner: owner.login, event: 'marketplace_purchase.cancelled' },
+        `${owner.login} cancelled LabelSync plan ${dbpurchase.planId}`,
+      )
+    } catch (err) /* istanbul ignore next */ {
+      await logger.debug(
+        { owner: owner.login, event: 'marketplace_purchase.cancelled' },
+        err,
+        `couldn't process a marketplace cancellation`,
+      )
+    }
+  })
+
+  /**
    * Installation event
    *
    * Performs an onboarding configuration to make it easier to get acquainted
@@ -787,3 +851,33 @@ function withSources<
     return fn(ctx as Context<C> & { sources: Sources })
   }
 }
+
+// /**
+//  * Wraps a function inside a sources loader.
+//  */
+// function withPurchase<
+//   C extends
+//     | Webhooks.WebhookPayloadCheckRun
+//     | Webhooks.WebhookPayloadIssues
+//     | Webhooks.WebhookPayloadLabel
+//     | Webhooks.WebhookPayloadPullRequest
+//     | Webhooks.WebhookPayloadInstallation,
+//   T
+// >(
+//   fn: (ctx: Context<C> & { sources: Sources }) => Promise<T>,
+// ): (ctx: Context<C>) => Promise<T | undefined> {
+//   return async (ctx) => {
+//     const owner = ctx.payload.sender.login
+
+//     /* Skip if there's no configuration. */
+//     /* istanbul ignore next */
+//     if (configRaw === null) return
+
+//     /* Skips invlaid config. */
+//     /* istanbul ignore if */
+//     if (error !== null) return
+//     ;(ctx as Context<C> & { sources: Sources }).sources = { config: config! }
+
+//     return fn(ctx as Context<C> & { sources: Sources })
+//   }
+// }

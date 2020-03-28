@@ -13,6 +13,8 @@ const configFixture = fs.readFileSync(
 import labelCreatedPayload from './__fixtures__/github/label.created'
 import installationPayload from './__fixtures__/github/installation.created'
 import issuesLabeledPayload from './__fixtures__/github/issues.labeled'
+import marketplacePurchasePayload from './__fixtures__/github/marketplace_purchase.purchased'
+import marketplaceCancelPayload from './__fixtures__/github/marketplace_purchase.cancelled'
 import prPayload from './__fixtures__/github/pullrequest.opened'
 import pushPayload from './__fixtures__/github/push'
 import { PrismaClient } from '@prisma/client'
@@ -26,7 +28,10 @@ describe('bot:', () => {
     nock.enableNetConnect('localhost')
     client = new PrismaClient()
 
+    /* Clear db */
+
     await client.log.deleteMany({ where: {} })
+    await client.purchase.deleteMany({ where: {} })
 
     await client.log.create({
       data: {
@@ -41,6 +46,15 @@ describe('bot:', () => {
   afterAll(async () => {
     nock.cleanAll()
     nock.enableNetConnect()
+
+    await client.log.create({
+      data: {
+        event: 'END TEST',
+        type: 'INFO',
+        owner: 'maticzav',
+        message: 'ended tests',
+      },
+    })
     await client.disconnect()
   })
 
@@ -59,6 +73,59 @@ describe('bot:', () => {
   afterEach(() => {
     nock.cleanAll()
   })
+
+  test(
+    'marketplace purchase event',
+    async () => {
+      await probot.receive({
+        id: 'marketplace.purchased',
+        name: 'marketplace_purchase',
+        payload: marketplacePurchasePayload,
+      })
+
+      /* Tests */
+
+      const purchase = await client.purchase.findOne({
+        where: { owner: 'username' },
+      })
+
+      expect(purchase).not.toBeNull()
+      expect(purchase).not.toBeUndefined()
+    },
+    5 * 60 * 1000,
+  )
+
+  test(
+    'marketplace cancel event',
+    async () => {
+      await client.purchase.create({
+        data: {
+          owner: 'maticzav',
+          email: 'matic@labelsync.com',
+          plan: 'makes sense',
+          planId: 42,
+          type: 'USER',
+        },
+      })
+
+      await probot.receive({
+        id: 'marketplace.cancel',
+        name: 'marketplace_purchase',
+        payload: marketplaceCancelPayload,
+      })
+
+      /* Tests */
+
+      const purchases = await client.purchase.findMany({
+        where: {
+          owner: 'maticzav',
+        },
+      })
+
+      expect(purchases.length).toBe(0)
+    },
+    5 * 60 * 1000,
+  )
 
   test(
     'installation event bootstrap config',
@@ -216,6 +283,7 @@ describe('bot:', () => {
     },
     5 * 60 * 1000,
   )
+
   test(
     'installation event sync',
     async () => {

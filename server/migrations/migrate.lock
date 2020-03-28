@@ -6,3 +6,8 @@
 20200326221354-create-log-model
 20200326221557-add-data-field-to-log
 20200326222204-add-event-field-to-log
+20200328230451-add-purchase-model
+20200328230542-make-purchase-owner-unique
+20200328230802-make-plan-id-number
+20200328231241-add-purchase-email
+20200328231415-make-purchase-email-optional
