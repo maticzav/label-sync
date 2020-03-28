@@ -5,7 +5,7 @@ repos:
     labels:
       kind/bug:
         color: ff0022
-        alias: ['bug', 'error']
+        alias: ['bug']
       bug/0-needs-reproduction:
         color: ff0022
         siblings: ['kind/bug']

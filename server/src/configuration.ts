@@ -93,11 +93,68 @@ export function parseConfig(
     if (config._tag === 'Left') {
       return [PathReporter.report(config).join(os.EOL)]
     }
-    return [null, checkSiblings(fixConfig(config.right))]
+
+    /* Perform checks on the content */
+    const parsedConfig = checkLimitations(
+      checkAliaii(checkSiblings(fixConfig(config.right))),
+    )
+
+    return [null, parsedConfig]
   } catch (err) /* istanbul ignore next */ {
     if (logger) logger(err)
     return [err.message]
   }
+}
+
+/**
+ * Makes sure that none of LabelSync limitations appears in the cofnig.
+ * @param config
+ */
+function checkLimitations(config: LSCConfiguration): LSCConfiguration {
+  /* Check that each label on alias one old label. */
+  let multipleAliaiiLabels: { repo: string; labels: string[] }[] = []
+
+  /* Check each repository */
+  for (const repoName in config.repos) {
+    const repoConfig = config.repos[repoName]
+
+    let multipleAliaiiLabelsInRepo: string[] = []
+
+    /* Check every label for unconfigured siblings. */
+    for (const label in repoConfig.labels) {
+      const aliaii = withDefault([], repoConfig.labels[label].alias)
+      if (aliaii.length > 1) multipleAliaiiLabelsInRepo.push(label)
+    }
+
+    if (multipleAliaiiLabelsInRepo.length > 0) {
+      multipleAliaiiLabels.push({
+        repo: repoName,
+        labels: multipleAliaiiLabelsInRepo,
+      })
+    }
+  }
+
+  /**
+   * Reports missing siblings.
+   */
+  if (multipleAliaiiLabels.length !== 0) {
+    const report = ml`
+    | Configuration references multiple old aliases in some label definitions:
+    | ${multipleAliaiiLabels
+      .map(
+        (s) =>
+          `* \`${s.repo}\`:${s.labels.join(
+            ', ',
+          )} reference more than one alias`,
+      )
+      .join(os.EOL)}
+    |
+    | This is the current limitation of LabelSync and will change shortly.
+    `
+    throw new Error(report)
+  }
+
+  return config
 }
 
 /**
@@ -132,6 +189,62 @@ function checkSiblings(config: LSCConfiguration): LSCConfiguration {
     | ${missingSiblings
       .map((s) => `* \`${s.sibling}\` in ${s.repo}:${s.label}`)
       .join(os.EOL)}
+    `
+    throw new Error(report)
+  }
+
+  return config
+}
+
+/**
+ * Makes sure that all aliases in repository appear only once.
+ * @param config
+ */
+function checkAliaii(config: LSCConfiguration): LSCConfiguration {
+  let duplicateAliaii: { repo: string; alias: string; labels: string[] }[] = []
+
+  /* Check each repository */
+  for (const repoName in config.repos) {
+    const repoConfig = config.repos[repoName]
+
+    let aliaiiInRepo: { [alias: string]: string[] } = {}
+
+    /* Check every label for unconfigured siblings. */
+    for (const label in repoConfig.labels) {
+      const aliaii = withDefault([], repoConfig.labels[label].alias)
+
+      /* Create a map of aliases. */
+      for (const alias of aliaii) {
+        if (!aliaiiInRepo.hasOwnProperty(alias)) aliaiiInRepo[alias] = []
+        aliaiiInRepo[alias].push(label)
+      }
+    }
+
+    /* Find multiples */
+    for (const alias in aliaiiInRepo) {
+      if (aliaiiInRepo[alias].length > 1) {
+        duplicateAliaii.push({
+          repo: repoName,
+          alias,
+          labels: aliaiiInRepo[alias],
+        })
+      }
+    }
+  }
+
+  /**
+   * Reports missing siblings.
+   */
+  if (duplicateAliaii.length !== 0) {
+    const report = ml`
+    | Configuration references same old label twice in alias:
+    | ${duplicateAliaii
+      .map(
+        (s) => `* \`${s.alias}\` appears in ${s.repo}:${s.labels.join(', ')}`,
+      )
+      .join(os.EOL)}
+    |
+    | Each legacy label may only be referenced once in alias.
     `
     throw new Error(report)
   }

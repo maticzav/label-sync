@@ -105,6 +105,15 @@ Array [
 ]
 `;
 
+exports[`configurations: duplicate_aliases.yml 1`] = `
+Array [
+  "Configuration references same old label twice in alias:
+* \`alias\` appears in repo-two:label/4, label/5
+
+Each legacy label may only be referenced once in alias.",
+]
+`;
+
 exports[`configurations: empty.yml 1`] = `
 Array [
   null,
@@ -126,5 +135,14 @@ Array [
 * \`label/6\` in repo-one:label/1
 * \`label/7\` in repo-one:label/1
 * \`label/8\` in repo-two:label/4",
+]
+`;
+
+exports[`configurations: multiple_aliases.yml 1`] = `
+Array [
+  "Configuration references multiple old aliases in some label definitions:
+* \`repo-one\`:label/1 reference more than one alias
+
+This is the current limitation of LabelSync and will change shortly.",
 ]
 `;

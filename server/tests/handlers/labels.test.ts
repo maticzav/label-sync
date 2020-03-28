@@ -17,6 +17,10 @@ describe('labels:', () => {
       /* new */
       'label/new': {
         color: 'new',
+      },
+      /* aliased */
+      'label/aliased': {
+        color: 'aliased',
         alias: ['label/renamed'],
       },
     }
@@ -51,14 +55,14 @@ describe('labels:', () => {
       ],
       changed: [
         {
-          name: 'label/changed',
-          color: 'changed',
+          old_name: 'label/renamed',
+          name: 'label/aliased',
+          color: 'aliased',
           description: undefined,
         },
         {
-          old_name: 'label/renamed',
-          name: 'label/new',
-          color: 'new',
+          name: 'label/changed',
+          color: 'changed',
           description: undefined,
         },
       ],

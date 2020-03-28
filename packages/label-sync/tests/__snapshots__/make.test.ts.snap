@@ -32,7 +32,6 @@ exports[`make: integration test: compiles configuration to default path 1`] = `
         description: Indicates that an issue has reproduction
         alias:
           - bug
-          - error
         siblings:
           - kind/bug
       type/bug:
@@ -80,7 +79,6 @@ exports[`make: integration test: compiles configuration to default path 1`] = `
         description: Indicates that an issue has reproduction
         alias:
           - bug
-          - error
         siblings:
           - kind/bug
       type/bug:
@@ -114,7 +112,6 @@ Object {
         "bug/1-has-reproduction": Object {
           "alias": Array [
             "bug",
-            "error",
           ],
           "color": "ff0022",
           "description": "Indicates that an issue has reproduction",
@@ -157,7 +154,6 @@ Object {
         "bug/1-has-reproduction": Object {
           "alias": Array [
             "bug",
-            "error",
           ],
           "color": "ff0022",
           "description": "Indicates that an issue has reproduction",

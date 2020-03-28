@@ -1,0 +1,18 @@
+repos:
+  repo-one:
+    labels:
+      label/1:
+        color: '#ff0022'
+        alias: ['alias']
+      label/2:
+        color: '#ff0022'
+      label/3:
+        color: '#ff0022'
+  repo-two:
+    labels:
+      label/4:
+        color: '#ff0022'
+        alias: ['alias']
+      label/5:
+        color: '#ff0022'
+        alias: ['alias']

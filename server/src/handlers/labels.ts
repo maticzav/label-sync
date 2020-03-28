@@ -137,8 +137,8 @@ export function calculateDiff(
   removed: GithubLabel[]
   // unchanged: GithubLabel[]
 } {
-  return currentLabels => {
-    const currentLabelsNames = currentLabels.map(l => l.name)
+  return (currentLabels) => {
+    const currentLabelsNames = currentLabels.map((l) => l.name)
 
     /* Labels */
 
@@ -149,28 +149,13 @@ export function calculateDiff(
 
     /* Find changes */
 
-    for (const label of Object.keys(config)) {
-      /* New labels */
-      if (!currentLabelsNames.includes(label)) {
-        added.push(hydrateLabel(label))
-        continue
-      }
-      /* Updated labels */
-      const labelPersisted = currentLabelsNames.includes(label)
-      const labelHasChanged = !currentLabels.some(isLabel(hydrateLabel(label)))
-
-      if (labelPersisted && labelHasChanged) {
-        changed.push(hydrateLabel(label))
-        continue
-      }
-    }
-
     for (const label of currentLabels) {
       const labelRemoved = !config.hasOwnProperty(label.name)
-      const labelAlias = Object.keys(config).find(labelName => {
+      const labelAlias = Object.keys(config).find((labelName) => {
         const aliases = withDefault([], config[labelName].alias)
-        return aliases.some(a => a === label.name)
+        return aliases.some((a) => a === label.name)
       })
+
       /* Aliases */
       if (labelRemoved && labelAlias) {
         changed.push({
@@ -189,6 +174,24 @@ export function calculateDiff(
           color: label.color,
           description: label.description,
         })
+        continue
+      }
+    }
+
+    for (const label of Object.keys(config)) {
+      const labelAlias: string[] = withDefault([], config[label].alias)
+
+      /* New labels */
+      if (!currentLabelsNames.includes(label) && labelAlias.length === 0) {
+        added.push(hydrateLabel(label))
+        continue
+      }
+      /* Updated labels */
+      const labelPersisted = currentLabelsNames.includes(label)
+      const labelHasChanged = !currentLabels.some(isLabel(hydrateLabel(label)))
+
+      if (labelPersisted && labelHasChanged) {
+        changed.push(hydrateLabel(label))
         continue
       }
     }
