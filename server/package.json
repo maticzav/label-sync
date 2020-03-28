@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@octokit/rest": "17.1.4",
-    "@prisma/client": "2.0.0-preview025",
+    "@prisma/client": "2.0.0-previewnull-1",
     "express": "4.17.1",
     "fp-ts": "2.5.3",
     "handlebars": "4.7.3",
