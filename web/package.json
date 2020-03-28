@@ -1,25 +1,16 @@
 {
   "name": "web",
   "version": "1.0.0",
-  "private": true,
   "scripts": {
-    "build": "webpack",
-    "build:css": "tailwindcss build src/styles.css -o dist/styles.css"
+    "build": "postcss css/tailwind.css -o public/build/tailwind.css",
+    "dev": "live-server public"
   },
-  "dependencies": {
-    "@tailwindcss/ui": "0.1.3",
-    "clean-webpack-plugin": "3.0.0",
-    "tailwindcss": "1.2.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "file-loader": "6.0.0",
-    "html-webpack-plugin": "4.0.2",
-    "html-webpack-template": "6.2.0",
-    "postcss-loader": "3.0.0",
-    "style-loader": "1.1.3",
-    "webpack": "4.42.1",
-    "webpack-cli": "3.3.11",
-    "webpack-manifest-plugin": "2.2.0"
-  },
-  "license": "MIT"
+    "@tailwindcss/ui": "^0.1.3",
+    "autoprefixer": "^9.7.5",
+    "live-server": "^1.2.1",
+    "postcss-cli": "^7.1.0",
+    "tailwindcss": "^1.2.0"
+  }
 }
