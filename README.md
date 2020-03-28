@@ -1,6 +1,6 @@
 <div align="center">
 
-<a href="label-sync.com"><img src="assets/logo_large.png" width="400" /></a>
+<a href="label-sync.com"><img src="assets/thumbnail.png" width="400" /></a>
 
 </div>
 
