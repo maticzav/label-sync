@@ -26,6 +26,16 @@
     <link rel="manifest" href="/site.webmanifest" />
 
     <link rel="stylesheet" href="/build/tailwind.css" />
+
+    <style>
+      .underline-green {
+        background-image: linear-gradient(
+          180deg,
+          transparent 70%,
+          rgba(198, 246, 213, 0.94) 0
+        );
+      }
+    </style>
   </head>
 
   <body>
@@ -70,7 +80,7 @@
           throw new Error('No element with id: ' + id)
         }
 
-        var targetOffset = targetElement.offsetTop
+        var targetOffset = targetElement.offsetTop + 10
 
         var frame = setInterval(() => {
           /* Position change each milisecond. */
@@ -262,7 +272,8 @@
               class="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl"
             >
               Managing Github labels accross multiple repositories is hard.
-              LabelSync makes it easy.
+              <br class="hidden md:inline-block" />
+              LabelSync makes it <span class="underline-green">easy</span>.
             </p>
 
             <!-- Call to Action -->
@@ -273,7 +284,7 @@
               <div class="rounded-md shadow">
                 <a
                   href="https://github.com/marketplace/labelsync-manager"
-                  class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-indigo transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
+                  class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-teal transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
                 >
                   Sync labels
                 </a>
@@ -294,7 +305,7 @@
 
     <!-- FEATURES -->
 
-    <div id="features" class="bg-gray-50 overflow-hidden">
+    <div class="bg-white overflow-hidden">
       <div class="container">
         <div
           class="relative max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8"
@@ -341,7 +352,8 @@
               <h3
                 class="text-3xl leading-9 font-extrabold tracking-tight text-gray-900 sm:text-4xl sm:leading-10"
               >
-                <span class="mr-3">🚀</span>It's game changing.
+                <span class="mr-3">🚀</span>
+                <span class="underline-green">It's game changing.</span>
               </h3>
             </div>
 
@@ -477,126 +489,335 @@
       </div>
     </div>
 
-    <!-- CONFIGURATION -->
+    <!-- FEATURES DETAILED -->
 
-    <div class="relative bg-gray-50 overflow-hidden">
-      <div class="relative container pt-6 pb-16 md:pb-20 lg:pb-24 xl:pb-32">
-        <div
-          class="mt-8 mx-auto max-w-screen-xl px-4 sm:mt-12 sm:px-6 md:mt-20 xl:mt-24"
+    <div id="features" class="relative bg-gray-50 overflow-hidden">
+      <!-- Leading text -->
+
+      <div class="text-center">
+        <h2
+          class="inline-block mt-20 text-4xl tracking-tight leading-10 font-extrabold text-gray-900 sm:leading-none sm:text-6xl lg:text-5xl xl:text-6xl underline-green"
         >
-          <div class="lg:grid lg:grid-cols-12 lg:gap-8">
-            <div
-              class="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left"
+          Features
+        </h2>
+      </div>
+
+      <!-- Features -->
+
+      <div
+        class="relative container mx-auto pt-6 md:px-10 pb-16 md:pb-20 lg:pb-24 xl:pb-32"
+      >
+        <!-- Pattern -->
+
+        <!-- <svg
+          class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-8 scale-75 origin-top sm:scale-100 lg:hidden"
+          width="640"
+          height="784"
+          fill="none"
+          viewBox="0 0 640 784"
+        >
+          <defs>
+            <pattern
+              id="4f4f415c-a0e9-44c2-9601-6ded5a34a13e"
+              x="118"
+              y="0"
+              width="20"
+              height="20"
+              patternUnits="userSpaceOnUse"
             >
-              <!--  -->
-              <div
-                class="text-sm font-semibold uppercase tracking-wide text-gray-500 sm:text-base lg:text-sm xl:text-base"
-              >
-                Start syncing now
-              </div>
-              <h2
-                class="mt-1 text-4xl tracking-tight leading-10 font-extrabold text-gray-900 sm:leading-none sm:text-6xl lg:text-5xl xl:text-6xl"
-              >
-                <span class="mr-4">👨‍💻</span>
-                Let me show you
-                <br />
-                <span class="text-green-600">how easy it is.</span>
-              </h2>
-              <p
-                class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl"
-              >
-                In this short video, I want to show you the best of LabelSync,
-                and give you a feeling of just how easy it is to use. You'll see
-                what the onboarding process feels like and how LabelSync helps
-                you with the configuration.
-              </p>
+              <rect
+                x="0"
+                y="0"
+                width="4"
+                height="4"
+                class="text-gray-200"
+                fill="currentColor"
+              />
+            </pattern>
+          </defs>
+          <rect
+            y="72"
+            width="640"
+            height="640"
+            class="text-gray-50"
+            fill="currentColor"
+          />
+          <rect
+            x="118"
+            width="404"
+            height="784"
+            fill="url(#4f4f415c-a0e9-44c2-9601-6ded5a34a13e)"
+          />
+        </svg> -->
+
+        <div
+          class="block mt-8 mx-auto max-w-screen-xl px-4 sm:mt-12 sm:px-6 md:mt-20 lg:grid lg:grid-cols-2 lg:gap-8 xl:mt-24"
+        >
+          <!-- Text -->
+          <div class="sm:text-center md:max-w-2xl md:mx-auto lg:text-right">
+            <!-- GH Issue -->
+
+            <div
+              class="text-sm font-semibold uppercase tracking-wide text-gray-500 sm:text-base lg:text-sm xl:text-base"
+            >
+              Automate in GitHub
             </div>
-            <div
-              class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center"
+            <h3
+              class="mt-1 text-3xl tracking-tight leading-10 font-extrabold text-gray-900 sm:leading-none sm:text-4xl lg:text-4xl xl:text-5xl"
             >
-              <svg
-                class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-8 scale-75 origin-top sm:scale-100 lg:hidden"
-                width="640"
-                height="784"
-                fill="none"
-                viewBox="0 0 640 784"
-              >
-                <defs>
-                  <pattern
-                    id="4f4f415c-a0e9-44c2-9601-6ded5a34a13e"
-                    x="118"
-                    y="0"
-                    width="20"
-                    height="20"
-                    patternUnits="userSpaceOnUse"
-                  >
-                    <rect
-                      x="0"
-                      y="0"
-                      width="4"
-                      height="4"
-                      class="text-gray-200"
-                      fill="currentColor"
-                    />
-                  </pattern>
-                </defs>
-                <rect
-                  y="72"
-                  width="640"
-                  height="640"
-                  class="text-gray-50"
-                  fill="currentColor"
-                />
-                <rect
-                  x="118"
-                  width="404"
-                  height="784"
-                  fill="url(#4f4f415c-a0e9-44c2-9601-6ded5a34a13e)"
-                />
-              </svg>
-              <div
-                class="relative mx-auto w-full rounded-lg shadow-lg lg:max-w-md"
-              >
-                <button
-                  class="relative block w-full rounded-lg overflow-hidden focus:outline-none focus:shadow-outline"
-                >
-                  <img
-                    class="w-full"
-                    src="https://images.unsplash.com/photo-1556740758-90de374c12ad?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
-                    alt="Woman making a sale"
-                  />
-                  <div
-                    class="absolute inset-0 w-full h-full flex items-center justify-center"
-                  >
-                    <svg
-                      class="h-20 w-20 text-green-500"
-                      fill="currentColor"
-                      viewBox="0 0 84 84"
-                    >
-                      <circle
-                        opacity="0.9"
-                        cx="42"
-                        cy="42"
-                        r="42"
-                        fill="white"
-                      />
-                      <path
-                        d="M55.5039 40.3359L37.1094 28.0729C35.7803 27.1869 34 28.1396 34 29.737V54.263C34 55.8604 35.7803 56.8131 37.1094 55.9271L55.5038 43.6641C56.6913 42.8725 56.6913 41.1275 55.5039 40.3359Z"
-                      />
-                    </svg>
-                  </div>
-                </button>
-              </div>
+              <span class="mr-4">🌈</span>
+              bring your
+              <br />
+              <span class="text-green-600">workflows to life.</span>
+            </h3>
+            <p
+              class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl"
+            >
+              Keep your workflow in GitHub so everyone can see what the
+              priorities are and how far down the chain bug has come.
+            </p>
+          </div>
+
+          <!-- Image -->
+
+          <div
+            class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:flex lg:items-center"
+          >
+            <div
+              class="relative mx-auto block w-full rounded-lg shadow-lg overflow-hidden focus:outline-none focus:shadow-outline lg:max-w-md"
+            >
+              <img
+                class="w-full h-64 object-cover object-left-top"
+                src="/img/examples/issues.png"
+                alt="Issues overview"
+              />
             </div>
           </div>
         </div>
+
+        <!-- PR message -->
+
+        <div
+          class="mx-auto max-w-screen-xl px-4 sm:mt-16 sm:px-6 md:mt-30 lg:grid lg:grid-cols-2 lg:grid-flow-col-dense lg:gap-8 xl:mt-40"
+        >
+          <!-- Text -->
+          <div
+            class="sm:text-center md:max-w-2xl md:mx-auto lg:col-start-2 lg:text-left"
+          >
+            <!-- GH Issue -->
+
+            <div
+              class="text-sm font-semibold uppercase tracking-wide text-gray-500 sm:text-base lg:text-sm xl:text-base"
+            >
+              Automate in GitHub
+            </div>
+            <h3
+              class="mt-1 text-3xl tracking-tight leading-10 font-extrabold text-gray-900 sm:leading-none sm:text-4xl lg:text-4xl xl:text-5xl"
+            >
+              <span class="mr-4">🤖</span>
+              get feedback
+              <span class="text-green-600">instantly</span>
+            </h3>
+            <p
+              class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl"
+            >
+              LabelSync manager comments on your pull request so you can predict
+              what changes are going to happen.
+            </p>
+          </div>
+
+          <!-- Image -->
+
+          <div
+            class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:col-start-1 lg:mx-0 lg:flex lg:items-center"
+          >
+            <div
+              class="relative mx-auto block w-full h-64 rounded-lg shadow-lg overflow-auto focus:outline-none focus:shadow-outline lg:max-w-md"
+            >
+              <img
+                class="w-full object-cover object-left-top"
+                src="/img/examples/pr-comment.png"
+                alt="PullRequest message"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- YAML -->
+
+        <div
+          class="mx-auto max-w-screen-xl px-4 sm:mt-16 sm:px-6 md:mt-30 lg:grid lg:grid-cols-2 lg:grid-flow-col-dense lg:gap-8 xl:mt-40"
+        >
+          <!-- Text -->
+          <div class="sm:text-center md:max-w-2xl md:mx-auto lg:text-right">
+            <div
+              class="text-sm font-semibold uppercase tracking-wide text-gray-500 sm:text-base lg:text-sm xl:text-base"
+            >
+              Language of flexibility
+            </div>
+            <h3
+              class="mt-1 text-3xl tracking-tight leading-10 font-extrabold text-gray-900 sm:leading-none sm:text-4xl lg:text-4xl xl:text-5xl"
+            >
+              <span class="inline-block mr-2">
+                <svg class="w-10 h-10" viewbox="0 0 512 512">
+                  <path
+                    d="M235.793457,20.9389935l-91.8156738,137.6740112v87.2750244H87.7020035v-87.2751465L0,20.9389935h63.2502899l55.7678528,88.6458817l56.2244568-88.6458817H235.793457z M330.2944641,195.8635406H228.4328003l-20.7168121,50.0244904h-45.1060944l95.3815918-224.9490356h46.1360474l91.5108948,224.9490356h-48.1963501L330.2944641,195.8635406z M313.3734131,151.1300201l-31.2258606-82.5503616l-34.8368378,82.5503616H313.3734131z M87.7023544,270.5895996v220.471405h47.3023605V338.9823914l49.5055237,102.2188416h37.2337494l51.1964111-105.8118896v155.6254272h45.3786011V270.5895996h-61.959259l-54.977951,99.7063904l-52.3599548-99.7063904H87.7023544z M512,443.201355H395.6384277V270.5895996h-48.1963501v219.5221863L512,490.111969V443.201355z"
+                  />
+                </svg>
+              </span>
+              use the power of
+              <br />
+              <span class="text-green-600">yaml for configuration.</span>
+            </h3>
+            <p
+              class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl"
+            >
+              LabelSync uses YAML as a default configuration language. This
+              allows you to use features such as anchors to organise your
+              configuration more efficiently.
+            </p>
+          </div>
+
+          <!-- Image -->
+
+          <div
+            class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:flex lg:items-center"
+          >
+            <div
+              class="relative mx-auto block w-full h-64 rounded-lg shadow-lg overflow-auto focus:outline-none focus:shadow-outline lg:max-w-md"
+            >
+              <img
+                class="w-full object-cover object-left-top overflow-scroll"
+                src="/img/examples/yaml.png"
+                alt="YAML configuration"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- TypeScript configuration -->
+
+        <div
+          class="mx-auto max-w-screen-xl px-4 sm:mt-16 sm:px-6 md:mt-30 lg:grid lg:grid-cols-2 lg:grid-flow-col-dense lg:gap-8 xl:mt-40"
+        >
+          <!-- Text -->
+          <div
+            class="sm:text-center md:max-w-2xl md:mx-auto lg:col-start-2 lg:text-left"
+          >
+            <!-- GH Issue -->
+
+            <div
+              class="text-sm font-semibold uppercase tracking-wide text-gray-500 sm:text-base lg:text-sm xl:text-base"
+            >
+              Prefer TypeScript?
+            </div>
+            <h3
+              class="mt-1 text-3xl tracking-tight leading-10 font-extrabold text-gray-900 sm:leading-none sm:text-4xl lg:text-4xl xl:text-5xl"
+            >
+              <span class="mr-3">
+                <svg class="h-10 w-10 inline-block" viewBox="0 0 128 128">
+                  <path
+                    d="M1.5,63.91v62.5h125V1.41H1.5Zm100.73-5a15.56,15.56,0,0,1,7.82,4.5,20.58,20.58,0,0,1,3,4c0,.16-5.4,3.81-8.69,5.85-.12.08-.6-.44-1.13-1.23a7.09,7.09,0,0,0-5.87-3.53c-3.79-.26-6.23,1.73-6.21,5a4.58,4.58,0,0,0,.54,2.34c.83,1.73,2.38,2.76,7.24,4.86,8.95,3.85,12.78,6.39,15.16,10,2.66,4,3.25,10.46,1.45,15.24-2,5.2-6.9,8.73-13.83,9.9a38.32,38.32,0,0,1-9.52-.1,23,23,0,0,1-12.72-6.63c-1.15-1.27-3.39-4.58-3.25-4.82a9.34,9.34,0,0,1,1.15-.73L82,101l3.59-2.08.75,1.11a16.78,16.78,0,0,0,4.74,4.54c4,2.1,9.46,1.81,12.16-.62a5.43,5.43,0,0,0,.69-6.92c-1-1.39-3-2.56-8.59-5-6.45-2.78-9.23-4.5-11.77-7.24a16.48,16.48,0,0,1-3.43-6.25,25,25,0,0,1-.22-8c1.33-6.23,6-10.58,12.82-11.87A31.66,31.66,0,0,1,102.23,58.93ZM72.89,64.15l0,5.12H56.66V115.5H45.15V69.26H28.88v-5A49.19,49.19,0,0,1,29,59.09C29.08,59,39,59,51,59L72.83,59Z"
+                  ></path>
+                </svg>
+              </span>
+              Use TypeScript to
+              <br />
+              <span class="text-green-600">configure anything.</span>
+            </h3>
+            <p
+              class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl"
+            >
+              LabelSync ships with a TypeScript library that lets you use
+              everything that TypeScript offers to automate you configuration.
+            </p>
+          </div>
+
+          <!-- Image -->
+
+          <div
+            class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:col-start-1 lg:mx-0 lg:flex lg:items-center"
+          >
+            <div
+              class="relative mx-auto block w-full h-64 rounded-lg shadow-lg overflow-scroll focus:outline-none focus:shadow-outline lg:max-w-md"
+            >
+              <img
+                class="w-full object-cover object-left-top"
+                src="/img/examples/typescript.png"
+                alt="Issues overview"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Siblings -->
+
+        <div
+          class="mx-auto max-w-screen-xl px-4 sm:mt-16 sm:px-6 md:mt-30 lg:grid lg:grid-cols-2 lg:grid-flow-col-dense lg:gap-8 xl:mt-40"
+        >
+          <!-- Text -->
+          <div class="sm:text-center md:max-w-2xl md:mx-auto lg:text-right">
+            <div
+              class="text-sm font-semibold uppercase tracking-wide text-gray-500 sm:text-base lg:text-sm xl:text-base"
+            >
+              Efficient workflow
+            </div>
+            <h3
+              class="mt-1 text-3xl tracking-tight leading-10 font-extrabold text-gray-900 sm:leading-none sm:text-4xl lg:text-4xl xl:text-5xl"
+            >
+              <span class="inline-block mr-2">
+                👨‍👩‍👦
+              </span>
+              connect labels with
+              <br />
+              <span class="text-green-600">LabelSync's siblings.</span>
+            </h3>
+            <p
+              class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl"
+            >
+              Each label in your configuration can reference
+              <span class="underline-green">mutliple siblings</span>. Whenever
+              you add a label to an issue or pull request, LabelSync will
+              automatically add all the missing siblings as well.
+            </p>
+          </div>
+
+          <!-- Image -->
+
+          <div
+            class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:flex lg:items-center"
+          >
+            <div
+              class="relative mx-auto block w-full h-max-64 rounded-lg shadow-lg overflow-auto focus:outline-none focus:shadow-outline lg:max-w-md"
+            >
+              <img
+                class="w-full object-fill object-left-top overflow-scroll"
+                src="/img/examples/siblings.png"
+                alt="Siblings example"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!--  -->
       </div>
     </div>
 
     <!-- TESTIMONIAL -->
 
-    <div class="py-12 bg-gray-50 overflow-hidden md:py-20 lg:py-24">
-      <div class="relative max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-15 bg-gray-30 overflow-hidden md:py-20 lg:py-24">
+      <!-- Leading text -->
+
+      <div class="text-center">
+        <h2
+          class="inline-block text-2xl tracking-tight leading-10 font-extrabold text-gray-900 sm:leading-none sm:text-4xl lg:text-4xl xl:text-4xl underline-green"
+        >
+          What our users say about us?
+        </h2>
+      </div>
+
+      <!-- Testimonial -->
+      <div class="relative mt-20 container mx-auto px-4 sm:px-6 lg:px-8">
         <svg
           class="absolute top-full right-full transform translate-x-1/3 -translate-y-1/4 lg:translate-x-1/2 xl:-translate-y-1/2"
           width="404"
@@ -643,10 +864,17 @@
             <div
               class="max-w-3xl mx-auto text-center text-2xl leading-9 font-medium text-gray-900"
             >
+              <p class="mb-3">
+                &ldquo;Label-Sync enables us to have much a more efficient
+                project management process where everything relies on a
+                consistent set of labels. Triage, Prioritization, Estimation,
+                everything can be done with labels now.
+              </p>
               <p>
-                &ldquo;LabelSync lets us keep our entire workflow in Github and
-                it's working great. We've been using it for over a year now and
-                our productivity has increased by 30%.&rdquo;
+                Everything is controlled by code, which makes it super easy to
+                track and test changes. At the same time we have the flexibility
+                to keep managing additional labels manually, which gives us all
+                the flexibility and special cases we need. &rdquo;
               </p>
             </div>
             <footer class="mt-8">
@@ -654,7 +882,7 @@
                 <div class="md:flex-shrink-0">
                   <img
                     class="mx-auto h-10 w-10 rounded-full"
-                    src="https://avatars1.githubusercontent.com/u/1567498?s=460&u=6ec86c8d5589e6504b04a083b667920914f17175&v=4"
+                    src="https://avatars0.githubusercontent.com/u/183673?s=400&u=b077ac7c4931e6d7b292f228b5877c53b74d4d10&v=4"
                     alt=""
                   />
                 </div>
@@ -662,7 +890,7 @@
                   class="mt-3 text-center md:mt-0 md:ml-4 md:flex md:items-center"
                 >
                   <div class="text-base leading-6 font-medium text-gray-900">
-                    Johannes Schickling
+                    Jan Piotrowski
                   </div>
 
                   <svg
@@ -674,7 +902,7 @@
                   </svg>
 
                   <div class="text-base leading-6 font-medium text-gray-500">
-                    CEO, Prisma
+                    Engineering Manager, Prisma
                   </div>
                 </div>
               </div>
@@ -686,206 +914,310 @@
 
     <!-- PRICING -->
 
-    <div id="pricing" class="bg-gray-100">
-      <div class="pt-12 sm:pt-16 lg:pt-20">
-        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center">
+    <div id="pricing" class="bg-green-500">
+      <div class="pt-12 sm:pt-16 lg:pt-24">
+        <div class="container mx-auto text-center px-4 sm:px-6 lg:px-8">
+          <div class="max-w-3xl mx-auto lg:max-w-none">
             <h2
-              class="text-3xl leading-9 font-extrabold text-gray-900 sm:text-4xl sm:leading-10 lg:text-5xl lg:leading-none"
+              class="text-lg leading-6 font-semibold text-gray-300 uppercase tracking-wider"
             >
-              Standard rate for non-standard features
+              Pricing
             </h2>
-            <p class="mt-4 text-xl leading-7 text-gray-500">
-              LabelSync should be easy on everyone, that's why we are keeping it
-              low priced. We are also giving you an option for 14-day trial to
-              find out how the tool works.
+            <p
+              class="mt-2 text-3xl leading-9 font-extrabold text-white sm:text-4xl sm:leading-10 lg:text-5xl lg:leading-none"
+            >
+              Ready to get started?
+            </p>
+            <p class="mt-2 text-xl leading-7 text-gray-200">
+              We are also giving you an option for 14-day free trial to find out
+              how the tool works and a free tier to see how great it is.
             </p>
           </div>
         </div>
       </div>
 
-      <div class="mt-8 bg-white pb-16 sm:mt-12 sm:pb-20 lg:pb-28">
+      <!-- Tiers -->
+
+      <div class="mt-8 pb-12 bg-white sm:mt-12 sm:pb-16 lg:mt-16 lg:pb-24">
         <div class="relative">
-          <div class="absolute inset-0 h-1/2 bg-gray-100"></div>
-          <div class="relative max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="container">
-              <div
-                class="max-w-lg mx-auto rounded-lg shadow-lg overflow-hidden lg:max-w-none lg:flex"
-              >
-                <div class="bg-white px-6 py-8 lg:flex-shrink-1 lg:p-12">
-                  <h3
-                    class="text-2xl leading-8 font-extrabold text-gray-900 sm:text-3xl sm:leading-9"
-                  >
-                    Monthly Github Subscription
-                  </h3>
-                  <p class="mt-6 text-base leading-6 text-gray-500">
-                    A subscription to Github LabelSync service on Github
-                    Marketplace. This includes all the configuration libraries
-                    and features of LabelSync.
-                  </p>
-                  <div class="mt-8">
-                    <div class="flex items-center">
-                      <h4
-                        class="flex-shrink-0 pr-4 bg-white text-sm leading-5 tracking-wider font-semibold uppercase text-green-600"
+          <div class="absolute inset-0 h-3/4 lg:h-1/2 bg-green-500"></div>
+          <div class="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
+            <div
+              class="max-w-md mx-auto lg:max-w-5xl lg:grid lg:grid-cols-2 lg:gap-5"
+            >
+              <!-- Free tier -->
+              <div>
+                <div
+                  class="relative bg-white rounded-lg overflow-hidden shadow-lg"
+                >
+                  <div class="px-6 py-8 sm:p-10 sm:pb-6">
+                    <div>
+                      <span
+                        class="inline-flex px-4 py-1 rounded-full text-sm leading-5 font-semibold tracking-wide uppercase bg-teal-100 text-teal-600"
                       >
-                        What's included
-                      </h4>
-                      <div class="flex-1 border-t-2 border-gray-200"></div>
+                        Just Basics
+                      </span>
                     </div>
-                    <ul
-                      class="mt-8 lg:grid lg:grid-cols-2 lg:col-gap-8 lg:row-gap-5"
+                    <div
+                      class="mt-4 flex items-baseline text-6xl leading-none font-extrabold"
                     >
-                      <li class="flex items-start lg:col-span-1">
+                      $0
+                      <span
+                        class="ml-1 text-2xl leading-8 font-medium text-gray-500"
+                      >
+                        /mo
+                      </span>
+                    </div>
+                    <p class="mt-5 text-lg leading-7 text-gray-500">
+                      Perfect for tiny teams and personal accounts. Includes
+                      basic features.
+                    </p>
+                  </div>
+
+                  <!-- Free features -->
+
+                  <div class="px-6 pt-6 pb-8 bg-gray-50 sm:p-10 sm:pt-6">
+                    <ul>
+                      <!--  -->
+                      <li class="flex items-start">
                         <div class="flex-shrink-0">
                           <svg
-                            class="h-5 w-5 text-green-400"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
+                            class="h-6 w-6 text-green-500"
+                            stroke="currentColor"
+                            fill="none"
+                            viewBox="0 0 24 24"
                           >
                             <path
-                              fill-rule="evenodd"
-                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                              clip-rule="evenodd"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M5 13l4 4L19 7"
                             />
                           </svg>
                         </div>
-                        <p class="ml-3 text-sm leading-5 text-gray-700">
+                        <p class="ml-3 text-base leading-6 text-gray-700">
                           Github LabelSync Application
                         </p>
                       </li>
-                      <li class="mt-5 flex items-start lg:col-span-1 lg:mt-0">
+                      <li class="mt-4 flex items-start">
                         <div class="flex-shrink-0">
                           <svg
-                            class="h-5 w-5 text-green-400"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
+                            class="h-6 w-6 text-green-500"
+                            stroke="currentColor"
+                            fill="none"
+                            viewBox="0 0 24 24"
                           >
                             <path
-                              fill-rule="evenodd"
-                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                              clip-rule="evenodd"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M5 13l4 4L19 7"
                             />
                           </svg>
                         </div>
-                        <p class="ml-3 text-sm leading-5 text-gray-700">
+                        <p class="ml-3 text-base leading-6 text-gray-700">
                           Configuration libraries
                         </p>
                       </li>
-                      <li class="mt-5 flex items-start lg:col-span-1 lg:mt-0">
+                      <li class="mt-4 flex items-start">
                         <div class="flex-shrink-0">
                           <svg
-                            class="h-5 w-5 text-green-400"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
+                            class="h-6 w-6 text-green-500"
+                            stroke="currentColor"
+                            fill="none"
+                            viewBox="0 0 24 24"
                           >
                             <path
-                              fill-rule="evenodd"
-                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                              clip-rule="evenodd"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M5 13l4 4L19 7"
                             />
                           </svg>
                         </div>
-                        <p class="ml-3 text-sm leading-5 text-gray-700">
-                          Label Syncing and Aliasing
-                        </p>
-                      </li>
-                      <li class="mt-5 flex items-start lg:col-span-1 lg:mt-0">
-                        <div class="flex-shrink-0">
-                          <svg
-                            class="h-5 w-5 text-green-400"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                              clip-rule="evenodd"
-                            />
-                          </svg>
-                        </div>
-                        <p class="ml-3 text-sm leading-5 text-gray-700">
-                          LabelSync Siblings-Workflows
-                        </p>
-                      </li>
-                      <li class="mt-5 flex items-start lg:col-span-1 lg:mt-0">
-                        <div class="flex-shrink-0">
-                          <svg
-                            class="h-5 w-5 text-green-400"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                              clip-rule="evenodd"
-                            />
-                          </svg>
-                        </div>
-                        <p class="ml-3 text-sm leading-5 text-gray-700">
-                          Personal Email Support
+                        <p class="ml-3 text-base leading-6 text-gray-700">
+                          Label Aliasing
                         </p>
                       </li>
                     </ul>
-                  </div>
-                </div>
-                <div
-                  class="py-8 px-6 text-center bg-gray-50 lg:flex-shrink-0 lg:flex lg:flex-col lg:justify-center lg:p-12"
-                >
-                  <p class="text-lg leading-6 font-medium text-gray-900">
-                    Low price, easy on the pocket
-                  </p>
-                  <div
-                    class="mt-4 flex items-center justify-center text-5xl leading-none font-extrabold text-gray-900"
-                  >
-                    <span>
-                      $7
-                    </span>
-                    <span
-                      class="ml-3 text-xl leading-7 font-medium text-gray-500"
-                    >
-                      USD
-                    </span>
-                  </div>
-                  <div class="mt-6">
-                    <div class="rounded-md shadow">
+                    <div class="mt-6 rounded-md shadow">
                       <a
-                        href="https://github.com/marketplace/labelsync-manager"
+                        href="http://github.com/marketplace/labelsync-manager"
                         class="flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
                       >
-                        Get Access
+                        Get started
                       </a>
                     </div>
                   </div>
-                  <div class="mt-4 text-sm leading-5">
-                    <a href="#" class="font-medium text-gray-900">
-                      Schedule a live demo on
-                      <a
-                        href="https://calendly.com/maticzav/labelsync"
-                        class="font-normal font-bold tracking-wide text-gray-500"
-                      >
-                        Calendly</a
-                      >
+                  <!-- End of Features -->
+                </div>
+              </div>
+
+              <!-- Paid Tier -->
+              <div class="mt-4 rounded-lg shadow-lg overflow-hidden lg:mt-0">
+                <div class="px-6 py-8 bg-white sm:p-10 sm:pb-6">
+                  <div>
+                    <span
+                      class="inline-flex px-4 py-1 rounded-full text-sm leading-5 font-semibold tracking-wide uppercase bg-teal-100 text-teal-600"
+                    >
+                      The Complete solution
+                    </span>
+                  </div>
+                  <div
+                    class="mt-4 flex items-baseline text-6xl leading-none font-extrabold"
+                  >
+                    $7
+                    <span
+                      class="ml-1 text-2xl leading-8 font-medium text-gray-500"
+                    >
+                      /mo
+                    </span>
+                  </div>
+                  <p class="mt-5 text-lg leading-7 text-gray-500">
+                    Best for teams and users in need of rapid workflows and
+                    clarity.
+                  </p>
+                </div>
+                <div class="px-6 pt-6 pb-8 bg-gray-50 sm:p-10 sm:pt-6">
+                  <ul>
+                    <li class="flex items-start">
+                      <div class="flex-shrink-0">
+                        <svg
+                          class="h-6 w-6 text-green-500"
+                          stroke="currentColor"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </div>
+                      <p class="ml-3 text-base leading-6 text-gray-700">
+                        Github LabelSync Application
+                      </p>
+                    </li>
+                    <li class="mt-4 flex items-start">
+                      <div class="flex-shrink-0">
+                        <svg
+                          class="h-6 w-6 text-green-500"
+                          stroke="currentColor"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </div>
+                      <p class="ml-3 text-base leading-6 text-gray-700">
+                        Configuration libraries
+                      </p>
+                    </li>
+                    <li class="mt-4 flex items-start">
+                      <div class="flex-shrink-0">
+                        <svg
+                          class="h-6 w-6 text-green-500"
+                          stroke="currentColor"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </div>
+                      <p class="ml-3 text-base leading-6 text-gray-700">
+                        Label Syncing and Aliasing
+                      </p>
+                    </li>
+                    <li class="mt-4 flex items-start">
+                      <div class="flex-shrink-0">
+                        <svg
+                          class="h-6 w-6 text-green-500"
+                          stroke="currentColor"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </div>
+                      <p class="ml-3 text-base leading-6 text-gray-700">
+                        LabelSync Siblings-Workflows
+                      </p>
+                    </li>
+                    <li class="mt-4 flex items-start">
+                      <div class="flex-shrink-0">
+                        <svg
+                          class="h-6 w-6 text-green-500"
+                          stroke="currentColor"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </div>
+                      <p class="ml-3 text-base leading-6 text-gray-700">
+                        Personal Email Support
+                      </p>
+                    </li>
+                  </ul>
+                  <div class="mt-6 rounded-md shadow">
+                    <a
+                      href="http://github.com/marketplace/labelsync-manager"
+                      class="flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
+                    >
+                      Sync my labels
                     </a>
                   </div>
                 </div>
               </div>
+              <!--  -->
             </div>
           </div>
         </div>
+        <!--  -->
       </div>
     </div>
 
     <!-- SHOWCASE -->
 
     <div class="bg-white">
-      <div class="max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
-        <p
-          class="text-center text-base leading-6 font-semibold uppercase text-gray-600 tracking-wider"
-        >
-          Used by experts
-        </p>
+      <div class="container mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
+        <!-- Leading text -->
+        <div class="text-center">
+          <p
+            class="text-3xl py-2 text-base leading-6 font-semibold text-gray-600 tracking-wider"
+          >
+            Join the best
+          </p>
+          <p class="text-2xl py-8 font-thin leading-6 text-gray-600">
+            Their teams are already working faster using LabelSync
+          </p>
+        </div>
+
+        <!-- Companies -->
         <div
-          class="mt-6 container grid grid-cols-2 gap-0.5 md:grid-cols-3 lg:mt-8"
+          class="mt-3 max-w-screen-xl grid grid-cols-1 gap-0.5 md:grid-cols-3 lg:mt-8"
         >
           <!-- Algolia -->
           <div class="col-span-1 flex justify-center py-8 px-8">
