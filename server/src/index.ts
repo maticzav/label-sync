@@ -126,59 +126,60 @@ module.exports = (
    */
   app.on('installation.created', async ({ github, log, payload }) => {
     const owner = payload.installation.account.login
-    const configRepo = getLSConfigRepoName(owner)
+    try {
+      const configRepo = getLSConfigRepoName(owner)
 
-    const purchase = await prisma.purchase.findOne({ where: { owner } })
+      const purchase = await prisma.purchase.findOne({ where: { owner } })
 
-    await logger.info(
-      { owner, event: 'installation.created' },
-      `onboarding ${configRepo}, purchased tier: ${purchase?.tier}`,
-    )
+      await logger.info(
+        { owner, event: 'installation.created' },
+        `onboarding ${configRepo}, purchased tier: ${purchase?.tier}`,
+      )
 
-    /* See if config repository exists. */
-    const repo = await getRepo(github, owner, configRepo)
+      /* See if config repository exists. */
+      const repo = await getRepo(github, owner, configRepo)
 
-    switch (repo.status) {
-      case 'Exists': {
-        /* Perform sync. */
+      switch (repo.status) {
+        case 'Exists': {
+          /* Perform sync. */
 
-        await logger.info(
-          { owner, event: 'installation.created' },
-          `user has existing repository in ${configRepo}`,
-        )
-
-        const ref = `refs/heads/${repo.repo.default_branch}`
-
-        /* Load configuration */
-        const configRaw = await getFile(
-          github,
-          { owner, repo: configRepo, ref },
-          LS_CONFIG_PATH,
-        )
-
-        /* No configuration, skip the evaluation. */
-        /* istanbul ignore next */
-        if (configRaw === null) {
           await logger.info(
             { owner, event: 'installation.created' },
-            `no configuration`,
-          )
-          return
-        }
-
-        const [error, config] = parseConfig(purchase, configRaw)
-
-        /* Wrong configuration, open the issue. */
-        if (error !== null) {
-          await logger.debug(
-            { owner, event: 'installation.created' },
-            { config },
-            `error in config ${error}`,
+            `user has existing repository in ${configRepo}`,
           )
 
-          /* Open an issue about invalid configuration. */
-          const title = 'LabelSync - Onboarding configuration'
-          const body = ml`
+          const ref = `refs/heads/${repo.repo.default_branch}`
+
+          /* Load configuration */
+          const configRaw = await getFile(
+            github,
+            { owner, repo: configRepo, ref },
+            LS_CONFIG_PATH,
+          )
+
+          /* No configuration, skip the evaluation. */
+          /* istanbul ignore next */
+          if (configRaw === null) {
+            await logger.info(
+              { owner, event: 'installation.created' },
+              `no configuration`,
+            )
+            return
+          }
+
+          const [error, config] = parseConfig(purchase, configRaw)
+
+          /* Wrong configuration, open the issue. */
+          if (error !== null) {
+            await logger.debug(
+              { owner, event: 'installation.created' },
+              { config },
+              `error in config ${error}`,
+            )
+
+            /* Open an issue about invalid configuration. */
+            const title = 'LabelSync - Onboarding configuration'
+            const body = ml`
           | # Welcome to LabelSync!
           |
           | Hi there,
@@ -196,53 +197,65 @@ module.exports = (
           | LabelSync Team
           `
 
-          const issue = await openIssue(github, owner, configRepo, title, body)
-
-          await logger.info(
-            { owner, event: 'installation.created' },
-            `opened error issue ${issue.number}`,
-          )
-
-          return
-        }
-
-        /* Verify that we can access all configured files. */
-        const access = await checkInstallationAccess(
-          github,
-          Object.keys(config!.repos),
-        )
-
-        await logger.debug(
-          { owner, event: 'installation.created' },
-          { access },
-          `obtained access status`,
-        )
-
-        switch (access.status) {
-          case 'Sufficient': {
-            await logger.info(
-              { owner, event: 'installation.created' },
-              `syncing labels`,
+            const issue = await openIssue(
+              github,
+              owner,
+              configRepo,
+              title,
+              body,
             )
 
-            /* Performs sync. */
-            for (const repo in config!.repos) {
-              await Promise.all([
-                handleLabelSync(github, owner, repo, config!.repos[repo], true),
-              ])
-            }
+            await logger.info(
+              { owner, event: 'installation.created' },
+              `opened error issue ${issue.number}`,
+            )
 
             return
           }
-          case 'Insufficient': {
-            await logger.info(
-              { owner, event: 'installation.created' },
-              `insufficient permissions ${access}`,
-            )
 
-            /* Opens up an issue about insufficient permissions. */
-            const title = 'LabelSync - Insufficient permissions'
-            const body = ml`
+          /* Verify that we can access all configured files. */
+          const access = await checkInstallationAccess(
+            github,
+            Object.keys(config!.repos),
+          )
+
+          await logger.debug(
+            { owner, event: 'installation.created' },
+            { access },
+            `obtained access status`,
+          )
+
+          switch (access.status) {
+            case 'Sufficient': {
+              await logger.info(
+                { owner, event: 'installation.created' },
+                `syncing labels`,
+              )
+
+              /* Performs sync. */
+              for (const repo in config!.repos) {
+                await Promise.all([
+                  handleLabelSync(
+                    github,
+                    owner,
+                    repo,
+                    config!.repos[repo],
+                    true,
+                  ),
+                ])
+              }
+
+              return
+            }
+            case 'Insufficient': {
+              await logger.info(
+                { owner, event: 'installation.created' },
+                `insufficient permissions ${access}`,
+              )
+
+              /* Opens up an issue about insufficient permissions. */
+              const title = 'LabelSync - Insufficient permissions'
+              const body = ml`
             | # Insufficient permissions
             |
             | Hi there,
@@ -257,91 +270,100 @@ module.exports = (
             | LabelSync Team
             `
 
-            const issue = await openIssue(
-              github,
-              owner,
-              configRepo,
-              title,
-              body,
-            )
+              const issue = await openIssue(
+                github,
+                owner,
+                configRepo,
+                title,
+                body,
+              )
 
-            await logger.info(
-              { owner, event: 'installation.created' },
-              `opened issue ${issue.number} for insufficient persmissions`,
-            )
+              await logger.info(
+                { owner, event: 'installation.created' },
+                `opened issue ${issue.number} for insufficient persmissions`,
+              )
 
-            return
+              return
+            }
+          }
+        }
+
+        case 'Unknown': {
+          await logger.info(
+            { owner, event: 'installation.created' },
+            `no existing repository for ${owner}`,
+          )
+
+          /**
+           * Bootstrap the configuration depending on the
+           * type of the installation account.
+           */
+          switch (payload.installation.account.type) {
+            /* istanbul ignore next */
+            case 'User': {
+              // TODO: Update once Github changes the settings
+              await logger.info(
+                { owner, event: 'installation.created' },
+                `skip bootstrap for User accounts`,
+              )
+              return
+            }
+            case 'Organization': {
+              /**
+               * Tempalte using for onboarding new customers.
+               */
+
+              await logger.info(
+                { owner, event: 'installation.created' },
+                `bootstraping config repo`,
+              )
+
+              const template: GHTree = loadTreeFromPath(TEMPLATES.yaml, [
+                'dist',
+                'node_modules',
+                '.DS_Store',
+                /.*\.log.*/,
+                /.*\.lock.*/,
+              ])
+
+              /* Bootstrap a configuration repository in organisation. */
+              const personalisedTemplate = populateTempalte(template, {
+                repository: configRepo,
+                repositories: payload.repositories,
+              })
+
+              await bootstrapConfigRepository(
+                github,
+                { owner, repo: configRepo },
+                personalisedTemplate,
+              )
+
+              await logger.info(
+                { owner, event: 'installation.created' },
+                `bootstraped repository: ${configRepo}`,
+              )
+
+              return
+            }
+            /* istanbul ignore next */
+            default: {
+              await logger.warn(
+                { owner, event: 'installation.created' },
+                `unsupported bootstrap type: ${payload.installation.account.type}`,
+              )
+              return
+            }
           }
         }
       }
-
-      case 'Unknown': {
-        await logger.info(
-          { owner, event: 'installation.created' },
-          `no existing repository for ${owner}`,
-        )
-
-        /**
-         * Bootstrap the configuration depending on the
-         * type of the installation account.
-         */
-        switch (payload.installation.account.type) {
-          /* istanbul ignore next */
-          case 'User': {
-            // TODO: Update once Github changes the settings
-            await logger.info(
-              { owner, event: 'installation.created' },
-              `skip bootstrap for User accounts`,
-            )
-            return
-          }
-          case 'Organization': {
-            /**
-             * Tempalte using for onboarding new customers.
-             */
-
-            await logger.info(
-              { owner, event: 'installation.created' },
-              `bootstraping config repo`,
-            )
-
-            const template: GHTree = loadTreeFromPath(TEMPLATES.yaml, [
-              'dist',
-              'node_modules',
-              '.DS_Store',
-              /.*\.log.*/,
-              /.*\.lock.*/,
-            ])
-
-            /* Bootstrap a configuration repository in organisation. */
-            const personalisedTemplate = populateTempalte(template, {
-              repository: configRepo,
-              repositories: payload.repositories,
-            })
-
-            await bootstrapConfigRepository(
-              github,
-              { owner, repo: configRepo },
-              personalisedTemplate,
-            )
-
-            await logger.info(
-              { owner, event: 'installation.created' },
-              `bootstraped repository: ${configRepo}`,
-            )
-
-            return
-          }
-          /* istanbul ignore next */
-          default: {
-            await logger.warn(
-              { owner, event: 'installation.created' },
-              `unsupported bootstrap type: ${payload.installation.account.type}`,
-            )
-            return
-          }
-        }
-      }
+    } catch (err) /* istanbul ignore next */ {
+      await logger.warn(
+        {
+          owner: payload.installation.account.login,
+          event: 'installation.created',
+        },
+        err.message,
+      )
     }
   })
 
@@ -364,145 +386,158 @@ module.exports = (
       const ref = payload.ref
       const defaultRef = `refs/heads/${payload.repository.default_branch}`
 
-      const configRepo = getLSConfigRepoName(owner)
+      try {
+        const configRepo = getLSConfigRepoName(owner)
 
-      /* Skip non default branch and other repos pushes. */
-      /* istanbul ignore if */
-      if (defaultRef !== ref || configRepo !== repo) {
-        await logger.debug(
-          { owner, event: 'push' },
-          { defaultRef, ref, configRepo, repo },
-          `skipping sync`,
-        )
-        return
-      }
-
-      /* Load configuration */
-      const configRaw = await getFile(
-        github,
-        { owner, repo, ref },
-        LS_CONFIG_PATH,
-      )
-
-      /* Skip altogether if there's no configuration. */
-      /* istanbul ignore next */
-      if (configRaw === null) {
-        await logger.info({ owner, event: 'push' }, `no configuration`)
-        return
-      }
-
-      const [error, config] = parseConfig(purchase, configRaw)
-
-      await logger.debug(
-        { owner, event: 'push' },
-        { config },
-        `loaded configuration for ${owner}`,
-      )
-
-      /* Open an issue about invalid configuration. */
-      if (error !== null) {
-        await logger.debug(
-          { owner, event: 'push' },
-          { config },
-          `error in config ${error}`,
-        )
-
-        const title = 'LabelSync - Invalid configuration'
-        const body = ml`
-      | # Invalid configuration
-      |
-      | Hi there,
-      | Thank you for using LabelSync. It seems like your configuration
-      | uses a format unknown to us. That might be a consequence of invalid yaml 
-      | cofiguration file. 
-      |
-      | \`\`\`
-      | ${error}
-      | \`\`\`
-      |
-      | Best,
-      | LabelSync Team
-      `
-
-        const issue = await openIssue(github, owner, configRepo, title, body)
-
-        await logger.info(
-          { owner, event: 'push' },
-          `opened issue ${issue.number}`,
-        )
-
-        return
-      }
-
-      /* Verify that we can access all configured files. */
-      const access = await checkInstallationAccess(
-        github,
-        Object.keys(config!.repos),
-      )
-
-      await logger.debug(
-        { owner, event: 'push' },
-        { access },
-        `checking access`,
-      )
-
-      /* Skip configurations that we can't access. */
-      switch (access.status) {
-        case 'Sufficient': {
-          await logger.info({ owner, event: 'push' }, `performing label sync`)
-
-          /* Performs sync. */
-          for (const repo in config!.repos) {
-            await Promise.all([
-              handleLabelSync(github, owner, repo, config!.repos[repo], true),
-            ])
-          }
-
+        /* Skip non default branch and other repos pushes. */
+        /* istanbul ignore if */
+        if (defaultRef !== ref || configRepo !== repo) {
           await logger.debug(
-            { owner, event: 'push' },
-            { config },
-            `sync completed`,
+            { owner, repo, event: 'push' },
+            { defaultRef, ref, configRepo, repo },
+            `skipping sync`,
           )
-
-          /* Closes issues */
-
-          // TODO: close issues on successful sync.
-
           return
         }
-        case 'Insufficient': {
+
+        /* Load configuration */
+        const configRaw = await getFile(
+          github,
+          { owner, repo, ref },
+          LS_CONFIG_PATH,
+        )
+
+        /* Skip altogether if there's no configuration. */
+        /* istanbul ignore next */
+        if (configRaw === null) {
+          await logger.info({ owner, repo, event: 'push' }, `no configuration`)
+          return
+        }
+
+        const [error, config] = parseConfig(purchase, configRaw)
+
+        await logger.debug(
+          { owner, repo, event: 'push' },
+          { config },
+          `loaded configuration for ${owner}`,
+        )
+
+        /* Open an issue about invalid configuration. */
+        if (error !== null) {
           await logger.debug(
-            { owner, event: 'push' },
-            { config, access },
-            `insufficient permissions: ${access.missing.join(', ')}`,
+            { owner, repo, event: 'push' },
+            { config },
+            `error in config ${error}`,
           )
 
-          /* Opens up an issue about insufficient permissions. */
-          const title = 'LabelSync - Insufficient permissions'
+          const title = 'LabelSync - Invalid configuration'
           const body = ml`
-        | # Insufficient permissions
-        |
-        | Hi there,
-        | We have noticed that your configuration stretches beyond
-        | repositories we can access. Please update it so we can help
-        | you as best as we can.
-        |
-        | _Missing repositories:_
-        | ${access.missing.map((missing) => ` * ${missing}`).join(os.EOL)}
-        |
-        | Best,
-        | LabelSync Team
-        `
+          | # Invalid configuration
+          |
+          | Hi there,
+          | Thank you for using LabelSync. It seems like your configuration
+          | uses a format unknown to us. That might be a consequence of invalid yaml 
+          | cofiguration file. 
+          |
+          | \`\`\`
+          | ${error}
+          | \`\`\`
+          |
+          | Best,
+          | LabelSync Team
+          `
 
           const issue = await openIssue(github, owner, configRepo, title, body)
 
           await logger.info(
-            { owner, event: 'push' },
+            { owner, repo, event: 'push' },
             `opened issue ${issue.number}`,
           )
 
           return
         }
+
+        /* Verify that we can access all configured files. */
+        const access = await checkInstallationAccess(
+          github,
+          Object.keys(config!.repos),
+        )
+
+        await logger.debug(
+          { owner, repo, event: 'push' },
+          { access },
+          `checking access`,
+        )
+
+        /* Skip configurations that we can't access. */
+        switch (access.status) {
+          case 'Sufficient': {
+            await logger.info(
+              { owner, repo, event: 'push' },
+              `performing label sync`,
+            )
+
+            /* Performs sync. */
+            for (const repo in config!.repos) {
+              await Promise.all([
+                handleLabelSync(github, owner, repo, config!.repos[repo], true),
+              ])
+            }
+
+            await logger.debug(
+              { owner, repo, event: 'push' },
+              { config },
+              `sync completed`,
+            )
+
+            /* Closes issues */
+
+            // TODO: close issues on successful sync.
+
+            return
+          }
+          case 'Insufficient': {
+            await logger.debug(
+              { owner, repo, event: 'push' },
+              { config, access },
+              `insufficient permissions: ${access.missing.join(', ')}`,
+            )
+
+            /* Opens up an issue about insufficient permissions. */
+            const title = 'LabelSync - Insufficient permissions'
+            const body = ml`
+            | # Insufficient permissions
+            |
+            | Hi there,
+            | We have noticed that your configuration stretches beyond
+            | repositories we can access. Please update it so we can help
+            | you as best as we can.
+            |
+            | _Missing repositories:_
+            | ${access.missing.map((missing) => ` * ${missing}`).join(os.EOL)}
+            |
+            | Best,
+            | LabelSync Team
+            `
+
+            const issue = await openIssue(
+              github,
+              owner,
+              configRepo,
+              title,
+              body,
+            )
+
+            await logger.info(
+              { owner, repo, event: 'push' },
+              `opened issue ${issue.number}`,
+            )
+
+            return
+          }
+        }
+      } catch (err) /* istanbul ignore next */ {
+        await logger.warn({ owner, repo, event: 'push' }, err.message)
       }
     }),
   )
@@ -522,188 +557,194 @@ module.exports = (
       const repo = payload.repository.name
       const ref = payload.pull_request.head.ref
       const number = payload.pull_request.number
+      try {
+        const configRepo = getLSConfigRepoName(owner)
 
-      const configRepo = getLSConfigRepoName(owner)
-
-      await logger.info(
-        { owner, event: 'pullrequest' },
-        `pr action ${payload.action}`,
-      )
-
-      /* istanbul ignore if */
-      if (configRepo !== repo) return
-
-      /* Check changed files */
-      const compare = await github.repos.compareCommits({
-        owner: owner,
-        repo: repo,
-        base: payload.pull_request.base.ref,
-        head: payload.pull_request.head.ref,
-      })
-
-      /* istanbul ignore next */
-      if (
-        compare.data.files.every((file) => file.filename !== LS_CONFIG_PATH)
-      ) {
-        await logger.debug(
-          { owner, event: 'pullrequest' },
-          { files: compare.data.files },
-          `no merge comment, configuration didn't change.`,
+        await logger.info(
+          { owner, repo, event: 'pullrequest' },
+          `pr action ${payload.action}`,
         )
-        return
-      }
 
-      /* Load configuration */
-      const configRaw = await getFile(
-        github,
-        { owner, repo, ref },
-        LS_CONFIG_PATH,
-      )
+        /* istanbul ignore if */
+        if (configRepo !== repo) return
 
-      /* Skip the pull request if there's no configuraiton. */
-      /* istanbul ignore next */
-      if (configRaw === null) {
-        await logger.info({ owner, event: 'pullrequest' }, `no configuration`)
-        return
-      }
+        /* Check changed files */
+        const compare = await github.repos.compareCommits({
+          owner: owner,
+          repo: repo,
+          base: payload.pull_request.base.ref,
+          head: payload.pull_request.head.ref,
+        })
 
-      const [error, config] = parseConfig(purchase, configRaw)
-
-      await logger.debug(
-        { owner, event: 'pullrequest' },
-        { config },
-        `loaded configuration on ${ref}`,
-      )
-
-      /* Skips invalid configuration. */
-      /* istanbul ignore if */
-      if (error !== null) return
-
-      switch (payload.action) {
-        case 'opened':
-        case 'reopened':
-        case 'ready_for_review':
-        case 'review_requested':
-        case 'synchronize':
-        case 'edited': {
-          /* Review pull request. */
-
-          /* Verify that we can access all configured files. */
-          const access = await checkInstallationAccess(
-            github,
-            Object.keys(config!.repos),
-          )
-
+        /* istanbul ignore next */
+        if (
+          compare.data.files.every((file) => file.filename !== LS_CONFIG_PATH)
+        ) {
           await logger.debug(
-            { owner, event: 'pullrequest' },
-            { access },
-            `checking access`,
+            { owner, repo, event: 'pullrequest' },
+            { files: compare.data.files },
+            `no merge comment, configuration didn't change.`,
           )
+          return
+        }
 
-          /* Skip configurations that we can't access. */
-          switch (access.status) {
-            case 'Sufficient': {
-              await logger.info(
-                { owner, event: 'pullrequest' },
-                `simulating sync`,
-              )
+        /* Load configuration */
+        const configRaw = await getFile(
+          github,
+          { owner, repo, ref },
+          LS_CONFIG_PATH,
+        )
 
-              /* Fetch changes to repositories. */
-              const reports = await Promise.all(
-                Object.keys(config!.repos).map((repo) =>
-                  handleLabelSync(
-                    github,
-                    owner,
-                    repo,
-                    config!.repos[repo],
-                    false,
+        /* Skip the pull request if there's no configuraiton. */
+        /* istanbul ignore next */
+        if (configRaw === null) {
+          await logger.info(
+            { owner, repo, event: 'pullrequest' },
+            `no configuration`,
+          )
+          return
+        }
+
+        const [error, config] = parseConfig(purchase, configRaw)
+
+        await logger.debug(
+          { owner, repo, event: 'pullrequest' },
+          { config },
+          `loaded configuration on ${ref}`,
+        )
+
+        /* Skips invalid configuration. */
+        /* istanbul ignore if */
+        if (error !== null) return
+
+        switch (payload.action) {
+          case 'opened':
+          case 'reopened':
+          case 'ready_for_review':
+          case 'review_requested':
+          case 'synchronize':
+          case 'edited': {
+            /* Review pull request. */
+
+            /* Verify that we can access all configured files. */
+            const access = await checkInstallationAccess(
+              github,
+              Object.keys(config!.repos),
+            )
+
+            await logger.debug(
+              { owner, repo, event: 'pullrequest' },
+              { access },
+              `checking access`,
+            )
+
+            /* Skip configurations that we can't access. */
+            switch (access.status) {
+              case 'Sufficient': {
+                await logger.info(
+                  { owner, repo, event: 'pullrequest' },
+                  `simulating sync`,
+                )
+
+                /* Fetch changes to repositories. */
+                const reports = await Promise.all(
+                  Object.keys(config!.repos).map((repo) =>
+                    handleLabelSync(
+                      github,
+                      owner,
+                      repo,
+                      config!.repos[repo],
+                      false,
+                    ),
                   ),
-                ),
-              )
+                )
 
-              const report = generateHumanReadableReport(reports)
+                const report = generateHumanReadableReport(reports)
 
-              /* Comment on a PR in a human friendly way. */
-              const comment = await createPRComment(
-                github,
-                owner,
-                configRepo,
-                number,
-                report,
-              )
+                /* Comment on a PR in a human friendly way. */
+                const comment = await createPRComment(
+                  github,
+                  owner,
+                  configRepo,
+                  number,
+                  report,
+                )
 
-              await logger.info(
-                { owner, event: 'pullrequest' },
-                `commented on pr ${comment.id}`,
-              )
+                await logger.info(
+                  { owner, repo, event: 'pullrequest' },
+                  `commented on pr ${comment.id}`,
+                )
 
-              return
-            }
-            case 'Insufficient': {
-              await logger.debug(
-                { owner, event: 'pullrequest' },
-                { config, access },
-                `insufficient permissions`,
-              )
+                return
+              }
+              case 'Insufficient': {
+                await logger.debug(
+                  { owner, repo, event: 'pullrequest' },
+                  { config, access },
+                  `insufficient permissions`,
+                )
 
-              /* Opens up an issue about insufficient permissions. */
-              const body = ml`
+                /* Opens up an issue about insufficient permissions. */
+                const body = ml`
             | It seems like this configuration stretches beyond repositories we can access. Please update it so we can help you as best as we can.
             |
             | _Missing repositories:_
             | ${access.missing.map((missing) => ` * ${missing}`).join(os.EOL)}
             `
 
-              const comment = await createPRComment(
-                github,
-                owner,
-                configRepo,
-                number,
-                body,
-              )
+                const comment = await createPRComment(
+                  github,
+                  owner,
+                  configRepo,
+                  number,
+                  body,
+                )
 
-              await logger.info(
-                { owner, event: 'pullrequest' },
-                `commented on pr ${comment.id}`,
-              )
+                await logger.info(
+                  { owner, repo, event: 'pullrequest' },
+                  `commented on pr ${comment.id}`,
+                )
 
-              return
+                return
+              }
             }
           }
-        }
-        /* istanbul ignore next */
-        case 'assigned':
-        /* istanbul ignore next */
-        case 'closed':
-        /* istanbul ignore next */
-        case 'labeled':
-        /* istanbul ignore next */
-        case 'locked':
-        /* istanbul ignore next */
-        case 'review_request_removed':
-        /* istanbul ignore next */
-        case 'unassigned':
-        /* istanbul ignore next */
-        case 'unlabeled':
-        /* istanbul ignore next */
-        case 'unlocked': {
-          /* Ignore other events. */
-          await logger.info(
-            { owner, event: 'pullrequest' },
-            `ignoring event ${payload.action}`,
-          )
-          return
-        }
-        /* istanbul ignore next */
-        default: {
-          /* Log unsupported pull_request action. */
-          await logger.warn(
-            { owner, event: 'pullrequest' },
-            `unsupported event: ${payload.action}`,
-          )
+          /* istanbul ignore next */
+          case 'assigned':
+          /* istanbul ignore next */
+          case 'closed':
+          /* istanbul ignore next */
+          case 'labeled':
+          /* istanbul ignore next */
+          case 'locked':
+          /* istanbul ignore next */
+          case 'review_request_removed':
+          /* istanbul ignore next */
+          case 'unassigned':
+          /* istanbul ignore next */
+          case 'unlabeled':
+          /* istanbul ignore next */
+          case 'unlocked': {
+            /* Ignore other events. */
+            await logger.info(
+              { owner, repo, event: 'pullrequest' },
+              `ignoring event ${payload.action}`,
+            )
+            return
+          }
+          /* istanbul ignore next */
+          default: {
+            /* Log unsupported pull_request action. */
+            await logger.warn(
+              { owner, repo, event: 'pullrequest' },
+              `unsupported event: ${payload.action}`,
+            )
 
-          return
+            return
+          }
         }
+      } catch (err) /* istanbul ignore next */ {
+        await logger.warn({ owner, repo, event: 'pullrequest' }, err.message)
       }
     }),
   )
@@ -723,50 +764,57 @@ module.exports = (
       const config = ctx.sources.config.repos[repo]
       const label = ctx.payload.label as GithubLabel
 
-      await logger.info(
-        { owner, repo, event: 'label.created' },
-        `created new label ${label.name}`,
-      )
-
-      /* Ignore no configuration. */
-      /* istanbul ignore if */
-      if (!config) {
-        await logger.info({ owner, repo, event: 'label.created' }, `no config`)
-        return
-      }
-
-      /* Ignore complying changes. */
-      /* istanbul ignore if */
-      if (config.labels.hasOwnProperty(label.name)) {
+      try {
         await logger.info(
           { owner, repo, event: 'label.created' },
-          `label in configuration`,
-        )
-        return
-      }
-
-      /* Config */
-      const removeUnconfiguredLabels = withDefault(
-        false,
-        config.config?.removeUnconfiguredLabels,
-      )
-
-      if (removeUnconfiguredLabels) {
-        await logger.info(
-          { owner, repo, event: 'label.created' },
-          `removing label ${label.name}`,
+          `created new label ${label.name}`,
         )
 
-        /* Prune unsupported labels in strict repositories. */
-        await removeLabelsFromRepository(
-          ctx.github,
-          { repo, owner },
-          [label],
-          removeUnconfiguredLabels,
+        /* Ignore no configuration. */
+        /* istanbul ignore if */
+        if (!config) {
+          await logger.info(
+            { owner, repo, event: 'label.created' },
+            `no config`,
+          )
+          return
+        }
+
+        /* Ignore complying changes. */
+        /* istanbul ignore if */
+        if (config.labels.hasOwnProperty(label.name)) {
+          await logger.info(
+            { owner, repo, event: 'label.created' },
+            `label in configuration`,
+          )
+          return
+        }
+
+        /* Config */
+        const removeUnconfiguredLabels = withDefault(
+          false,
+          config.config?.removeUnconfiguredLabels,
         )
 
-        /* prettier-ignore */
-        await logger.info({ owner, repo, event: 'label.created' }, ` removed label ${label.name}`)
+        if (removeUnconfiguredLabels) {
+          await logger.info(
+            { owner, repo, event: 'label.created' },
+            `removing label ${label.name}`,
+          )
+
+          /* Prune unsupported labels in strict repositories. */
+          await removeLabelsFromRepository(
+            ctx.github,
+            { repo, owner },
+            [label],
+            removeUnconfiguredLabels,
+          )
+
+          /* prettier-ignore */
+          await logger.info({ owner, repo, event: 'label.created' }, ` removed label ${label.name}`)
+        }
+      } catch (err) /* istanbul ignore next */ {
+        await logger.warn({ owner, event: 'label.created' }, err.message)
       }
     }),
   )
@@ -787,44 +835,48 @@ module.exports = (
       const label = ((ctx.payload as any) as { label: GithubLabel }).label
       const issue = ctx.payload.issue
 
-      await logger.info(
-        { owner, repo, event: 'issues.labeled' },
-        `labeled issue ${issue.number} with ${label.name}`,
-      )
+      try {
+        await logger.info(
+          { owner, repo, event: 'issues.labeled' },
+          `labeled issue ${issue.number} with ${label.name}`,
+        )
 
-      /* Ignore changes in non-strict config */
-      /* istanbul ignore if */
-      if (!config) {
+        /* Ignore changes in non-strict config */
+        /* istanbul ignore if */
+        if (!config) {
+          /* prettier-ignore */
+          await logger.info({ owner, repo, event: 'label.created' }, `${issue.number}:issues.labeled:${label.name} no configuration`)
+          return
+        }
+
+        /* istanbul ignore if */
+        if (!config.labels.hasOwnProperty(label.name)) {
+          /* prettier-ignore */
+          await logger.info({ owner, repo, event: 'label.created' }, `${issue.number}:issues.labeled:${label.name} unconfigured label`)
+          return
+        }
+
+        /* Find siblings. */
+        const siblings = withDefault([], config.labels[label.name]?.siblings)
+        const ghSiblings = siblings.map((sibling) => ({ name: sibling }))
+
         /* prettier-ignore */
-        await logger.info({ owner, repo, event: 'label.created' }, `${issue.number}:issues.labeled:${label.name} no configuration`)
-        return
-      }
-
-      /* istanbul ignore if */
-      if (!config.labels.hasOwnProperty(label.name)) {
+        await logger.info({ owner, repo, event: 'label.created' }, `siblings on issue ${issue.number}: ${siblings.join(', ')}`)
         /* prettier-ignore */
-        await logger.info({ owner, repo, event: 'label.created' }, `${issue.number}:issues.labeled:${label.name} unconfigured label`)
-        return
+        await logger.debug({ owner, repo, event: 'label.created' }, {siblings}, `issue ${issue.number} adding siblings to ${label.name}`)
+
+        await addLabelsToIssue(
+          ctx.github,
+          { repo, owner, issue: issue.number },
+          ghSiblings,
+          true,
+        )
+
+        /* prettier-ignore */
+        await logger.info({ owner, repo, event: 'label.created' }, `issue ${issue.number} added siblings to ${label.name}`)
+      } catch (err) /* istanbul ignore next */ {
+        await logger.warn({ owner, repo, event: 'label.created' }, err.message)
       }
-
-      /* Find siblings. */
-      const siblings = withDefault([], config.labels[label.name]?.siblings)
-      const ghSiblings = siblings.map((sibling) => ({ name: sibling }))
-
-      /* prettier-ignore */
-      await logger.info({ owner, repo, event: 'label.created' }, `siblings on issue ${issue.number}: ${siblings.join(', ')}`)
-      /* prettier-ignore */
-      await logger.debug({ owner, repo, event: 'label.created' }, {siblings}, `issue ${issue.number} adding siblings to ${label.name}`)
-
-      await addLabelsToIssue(
-        ctx.github,
-        { repo, owner, issue: issue.number },
-        ghSiblings,
-        true,
-      )
-
-      /* prettier-ignore */
-      await logger.info({ owner, repo, event: 'label.created' }, `issue ${issue.number} added siblings to ${label.name}`)
     }),
   )
 }
