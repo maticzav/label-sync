@@ -478,17 +478,30 @@ module.exports = (
             )
 
             /* Performs sync. */
-            for (const repo in config!.repos) {
-              await Promise.all([
+
+            const reports = await Promise.all(
+              Object.keys(config!.repos).map((repo) =>
                 handleLabelSync(github, owner, repo, config!.repos[repo], true),
-              ])
-            }
+              ),
+            )
 
             await logger.debug(
               { owner, repo, event: 'push' },
               { config },
               `sync completed`,
             )
+
+            /* Comment on commit */
+
+            const report = generateHumanReadableReport(reports)
+            const commit_sha: string = payload.after
+
+            await github.repos.createCommitComment({
+              owner,
+              repo,
+              commit_sha,
+              body: report,
+            })
 
             /* Closes issues */
 
