@@ -92,7 +92,21 @@ describe('make:', () => {
 
     expect(file).toMatchSnapshot()
 
-    const [errors, config] = parseConfig(file)
+    const [errors, config] = parseConfig(
+      {
+        id: 'id',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        email: 'email',
+        owner: 'test',
+        plan: 'free',
+        type: 'USER',
+        trial: false,
+        planId: 3,
+        tier: 'BASIC',
+      },
+      file,
+    )
     expect(errors).toBeNull()
     expect(config).toMatchSnapshot()
   })

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`configurations: anchors.yml 1`] = `
+exports[`configurations: anchors.yml on BASIC 1`] = `
 Array [
   null,
   Object {
@@ -74,7 +74,81 @@ Array [
 ]
 `;
 
-exports[`configurations: basic.yml 1`] = `
+exports[`configurations: anchors.yml on FREE 1`] = `
+Array [
+  null,
+  Object {
+    "colors": Object {
+      "area": "#FFD700",
+      "bug": "#EE0000",
+      "kind": "#3B5BDB",
+      "priority": "#F783AC",
+      "process": "#EB9100",
+      "release": "#A5D8ff",
+      "scope": "#27CF79",
+      "status": "#F8F9FA",
+      "team": null,
+    },
+    "labels": Object {
+      "bug/0-needs-info": Object {
+        "color": null,
+        "description": "More information is needed for reproduction.",
+      },
+      "bug/1-repro-available": Object {
+        "color": null,
+        "description": "A reproduction exists and needs to be confirmed.",
+      },
+      "bug/2-confirmed": Object {
+        "color": null,
+        "description": "We have confirmed that this is a bug.",
+      },
+      "kind/bug": Object {
+        "color": null,
+        "description": "A reported bug.",
+      },
+      "kind/discussion": Object {
+        "color": null,
+        "description": "Discussion is required.",
+      },
+      "kind/docs": Object {
+        "color": null,
+        "description": "A documentation change is required.",
+      },
+      "kind/feature": Object {
+        "color": null,
+        "description": "A request for a new feature.",
+      },
+      "kind/improvement": Object {
+        "color": null,
+        "description": "An improvement to existing feature and code.",
+      },
+      "kind/question": Object {
+        "color": null,
+        "description": "Developer asked a question. No code changes required.",
+      },
+      "kind/regression": Object {
+        "color": null,
+        "description": "A reported bug in functionality that used to work before.",
+      },
+      "process/candidate": Object {
+        "color": null,
+        "description": "Candidate for next Milestone.",
+      },
+      "process/next-milestone": Object {
+        "color": null,
+        "description": "Issue earmarked for next Milestone.",
+      },
+      "process/product": Object {
+        "color": null,
+        "description": "Temporary label to export products issues from the Engineering process",
+      },
+    },
+    "repos": Object {},
+  },
+]
+`;
+
+exports[`configurations: basic.yml on BASIC 1`] = `
 Array [
   null,
   Object {
@@ -105,7 +179,38 @@ Array [
 ]
 `;
 
-exports[`configurations: duplicate_aliases.yml 1`] = `
+exports[`configurations: basic.yml on FREE 1`] = `
+Array [
+  null,
+  Object {
+    "repos": Object {
+      "prisma-test-utils": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+          "bug/1-has-reproduction": Object {
+            "color": "ff0022",
+            "description": "Indicates that an issue has reproduction",
+          },
+          "bug/2-bug-confirmed": Object {
+            "color": "red",
+          },
+          "bug/3-fixing": Object {
+            "color": "00ff22",
+            "description": "Indicates that we are working on fixing the issue.",
+          },
+        },
+      },
+    },
+  },
+]
+`;
+
+exports[`configurations: duplicate_aliases.yml on BASIC 1`] = `
 Array [
   "Configuration references same old label twice in alias:
 * \`alias\` appears in repo-two:label/4, label/5
@@ -114,7 +219,16 @@ Each legacy label may only be referenced once in alias.",
 ]
 `;
 
-exports[`configurations: empty.yml 1`] = `
+exports[`configurations: duplicate_aliases.yml on FREE 1`] = `
+Array [
+  "Configuration references same old label twice in alias:
+* \`alias\` appears in repo-two:label/4, label/5
+
+Each legacy label may only be referenced once in alias.",
+]
+`;
+
+exports[`configurations: empty.yml on BASIC 1`] = `
 Array [
   null,
   Object {
@@ -123,13 +237,73 @@ Array [
 ]
 `;
 
-exports[`configurations: invalid.yml 1`] = `
+exports[`configurations: empty.yml on FREE 1`] = `
+Array [
+  null,
+  Object {
+    "repos": Object {},
+  },
+]
+`;
+
+exports[`configurations: free.yml on BASIC 1`] = `
+Array [
+  null,
+  Object {
+    "repos": Object {
+      "emma-cli": Object {
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "label-sync": Object {
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "overthetop": Object {
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "prisma-test-utils": Object {
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+    },
+  },
+]
+`;
+
+exports[`configurations: free.yml on FREE 1`] = `
+Array [
+  "You are trying to configure more repositories than there are available in your plan.
+Update your current plan to access all the features LabelSync offers.",
+]
+`;
+
+exports[`configurations: invalid.yml on BASIC 1`] = `
 Array [
   "Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }",
 ]
 `;
 
-exports[`configurations: missing_siblings.yml 1`] = `
+exports[`configurations: invalid.yml on FREE 1`] = `
+Array [
+  "Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }",
+]
+`;
+
+exports[`configurations: missing_siblings.yml on BASIC 1`] = `
 Array [
   "Configuration references unconfigured siblings:
 * \`label/6\` in repo-one:label/1
@@ -138,7 +312,25 @@ Array [
 ]
 `;
 
-exports[`configurations: multiple_aliases.yml 1`] = `
+exports[`configurations: missing_siblings.yml on FREE 1`] = `
+Array [
+  "Configuration references unconfigured siblings:
+* \`label/6\` in repo-one:label/1
+* \`label/7\` in repo-one:label/1
+* \`label/8\` in repo-two:label/4",
+]
+`;
+
+exports[`configurations: multiple_aliases.yml on BASIC 1`] = `
+Array [
+  "Configuration references multiple old aliases in some label definitions:
+* \`repo-one\`:label/1 reference more than one alias
+
+This is the current limitation of LabelSync and will change shortly.",
+]
+`;
+
+exports[`configurations: multiple_aliases.yml on FREE 1`] = `
 Array [
   "Configuration references multiple old aliases in some label definitions:
 * \`repo-one\`:label/1 reference more than one alias

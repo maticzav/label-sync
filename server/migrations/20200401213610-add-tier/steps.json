@@ -1,0 +1,45 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateEnum",
+      "enum": "Tier",
+      "values": [
+        "FREE",
+        "BASIC"
+      ]
+    },
+    {
+      "tag": "CreateField",
+      "model": "Purchase",
+      "field": "tier",
+      "type": "Tier",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Purchase",
+          "field": "tier"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Purchase",
+          "field": "tier"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "FREE"
+    }
+  ]
+}

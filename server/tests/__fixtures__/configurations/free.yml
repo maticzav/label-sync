@@ -1,0 +1,17 @@
+repos:
+  prisma-test-utils:
+    labels:
+      bug/0-needs-reproduction:
+        color: '#ff0022'
+  label-sync:
+    labels:
+      bug/0-needs-reproduction:
+        color: '#ff0022'
+  emma-cli:
+    labels:
+      bug/0-needs-reproduction:
+        color: '#ff0022'
+  overthetop:
+    labels:
+      bug/0-needs-reproduction:
+        color: '#ff0022'

@@ -2,5 +2,8 @@
   "editor.tabSize": 2,
   "prettier.tabWidth": 2,
   "editor.formatOnSave": true,
-  "prettier.prettierPath": "./node_modules/prettier"
+  "prettier.prettierPath": "./node_modules/prettier",
+  "[prisma]": {
+    "editor.formatOnSave": true
+  }
 }

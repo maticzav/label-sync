@@ -18,25 +18,96 @@ LabelSync Team",
 }
 `;
 
-exports[`bot: installation invalid config issue 1`] = `
+exports[`bot: installation event insufficient permissions 2`] = `
 Object {
-  "body": "# Invalid configuration
+  "body": "# Insufficient permissions
 
 Hi there,
-Thank you for using LabelSync. It seems like there are some problems with your
-configuration. Here's what our parser reported:
+Thank you for installing LabelSync. We have noticed that your configuration stretches beyond repositories we can access. We assume that you forgot to allow access to certain repositories.
+
+Please update your installation. 
+
+_Missing repositories:_
+ * emma-cli
+
+Best,
+LabelSync Team",
+  "title": "LabelSync - Insufficient permissions",
+}
+`;
+
+exports[`bot: installation invalid config issue 1`] = `
+Object {
+  "body": "# Welcome to LabelSync!
+
+Hi there,
+Thank you for using LabelSync. We hope you enjoyed the experience so far.
+It seems like there are some problems with your configuration.
+Our parser reported that:
 
 \\\\\`\\\\\`\\\\\`
 Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }
 \\\\\`\\\\\`\\\\\`
 
+Let us know if we can help you with the configuration by sending us an email to support@label-sync.com. We'll try to get back to you as quickly as possible.
+
 Best,
 LabelSync Team",
-  "title": "LabelSync - Invalid configuration",
+  "title": "LabelSync - Onboarding configuration",
+}
+`;
+
+exports[`bot: installation invalid config issue 2`] = `
+Object {
+  "body": "# Welcome to LabelSync!
+
+Hi there,
+Thank you for using LabelSync. We hope you enjoyed the experience so far.
+It seems like there are some problems with your configuration.
+Our parser reported that:
+
+\\\\\`\\\\\`\\\\\`
+Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }
+\\\\\`\\\\\`\\\\\`
+
+Let us know if we can help you with the configuration by sending us an email to support@label-sync.com. We'll try to get back to you as quickly as possible.
+
+Best,
+LabelSync Team",
+  "title": "LabelSync - Onboarding configuration",
 }
 `;
 
 exports[`bot: pull_request 1`] = `
+Object {
+  "body": "## LabelSync Overview 
+> NOTE: This is only a preview of what will happen. Nothing has been changed yet.
+
+### \`graphql-shield\`
+
+__New labels:__
+ * bug/3-fixing
+
+__Changed labels:__
+ * bug/2-bug-confirmed
+
+__Removed labels:__
+ * bug/4-fixed
+---
+### \`emma-cli\`
+
+__New labels:__
+No new labels created.
+
+__Changed labels:__
+ * bug/2-bug-confirmed
+
+__Unconfigured labels.__
+You have no unconfigured labels - you could make this repository \`strict\`.",
+}
+`;
+
+exports[`bot: pull_request 2`] = `
 Object {
   "body": "## LabelSync Overview 
 > NOTE: This is only a preview of what will happen. Nothing has been changed yet.
@@ -74,6 +145,15 @@ _Missing repositories:_
 }
 `;
 
+exports[`bot: pull_request with insufficient permissions 2`] = `
+Object {
+  "body": "It seems like this configuration stretches beyond repositories we can access. Please update it so we can help you as best as we can.
+
+_Missing repositories:_
+ * emma-cli",
+}
+`;
+
 exports[`bot: push event invalid configuration 1`] = `
 Object {
   "body": "# Invalid configuration
@@ -93,7 +173,44 @@ LabelSync Team",
 }
 `;
 
+exports[`bot: push event invalid configuration 2`] = `
+Object {
+  "body": "# Invalid configuration
+
+Hi there,
+Thank you for using LabelSync. It seems like your configuration
+uses a format unknown to us. That might be a consequence of invalid yaml 
+cofiguration file. 
+
+\\\\\`\\\\\`\\\\\`
+Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }
+\\\\\`\\\\\`\\\\\`
+
+Best,
+LabelSync Team",
+  "title": "LabelSync - Invalid configuration",
+}
+`;
+
 exports[`bot: push event with insufficient premissions 1`] = `
+Object {
+  "body": "# Insufficient permissions
+
+Hi there,
+We have noticed that your configuration stretches beyond
+repositories we can access. Please update it so we can help
+you as best as we can.
+
+_Missing repositories:_
+ * emma-cli
+
+Best,
+LabelSync Team",
+  "title": "LabelSync - Insufficient permissions",
+}
+`;
+
+exports[`bot: push event with insufficient premissions 2`] = `
 Object {
   "body": "# Insufficient permissions
 

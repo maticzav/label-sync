@@ -1,3 +1,4 @@
+import { Purchase } from '@prisma/client'
 import * as t from 'io-ts'
 import { PathReporter } from 'io-ts/lib/PathReporter'
 import yaml from 'js-yaml'
@@ -6,6 +7,10 @@ import * as os from 'os'
 
 import { mapEntries } from './data/dict'
 import { withDefault } from './utils'
+
+/* Constants */
+
+const NUMBER_OF_FREE_TIERS = 3
 
 /**
  * Configuration repository is the repository which LabelSync
@@ -83,6 +88,7 @@ export interface LSCConfiguration extends t.TypeOf<typeof LSCConfiguration> {}
  * @param input
  */
 export function parseConfig(
+  purchase: Purchase | null | undefined,
   input: string,
   logger?: (err: any) => any,
 ): [string] | [null, LSCConfiguration] {
@@ -95,14 +101,66 @@ export function parseConfig(
     }
 
     /* Perform checks on the content */
-    const parsedConfig = checkLimitations(
-      checkAliaii(checkSiblings(fixConfig(config.right))),
+    const parsedConfig = checkPurchase(
+      purchase,
+      checkLimitations(checkAliaii(checkSiblings(fixConfig(config.right)))),
     )
 
     return [null, parsedConfig]
   } catch (err) /* istanbul ignore next */ {
     if (logger) logger(err)
     return [err.message]
+  }
+}
+
+/**
+ * Makes sure that none of LabelSync limitations appears in the cofnig.
+ * @param config
+ */
+function checkPurchase(
+  purchase: Purchase | null | undefined,
+  config: LSCConfiguration,
+): LSCConfiguration {
+  /* Data */
+  const numberOfConfiguredRepos = Object.keys(config.repos).length
+  let hasSiblings = false
+
+  /* Analyse configuraiton */
+  for (const repo in config.repos) {
+    const repoConfig = config.repos[repo]
+    for (const label in repoConfig.labels) {
+      const labelConfig = repoConfig.labels[label]
+      const siblings = withDefault([], labelConfig.siblings)
+      if (siblings.length > 0) {
+        hasSiblings = true
+      }
+    }
+  }
+
+  /* Tier limitations */
+  const tier = withDefault('FREE', purchase?.tier)
+  switch (tier) {
+    case 'FREE': {
+      /**
+       * Report too many configurations.
+       */
+      if (numberOfConfiguredRepos >= NUMBER_OF_FREE_TIERS) {
+        const report = ml`
+        | You are trying to configure more repositories than there are available in your plan.
+        | Update your current plan to access all the features LabelSync offers.
+        `
+        throw new Error(report)
+      }
+
+      return config
+    }
+    case 'BASIC': {
+      return config
+    }
+    /* istanbul ignore next */
+    default: {
+      return config
+    }
   }
 }
 

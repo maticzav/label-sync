@@ -1,5 +1,5 @@
 import Webhooks = require('@octokit/webhooks')
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Purchase } from '@prisma/client'
 import ml from 'multilines'
 import os from 'os'
 import path from 'path'
@@ -56,6 +56,9 @@ module.exports = (
     const purchase = ctx.payload.marketplace_purchase
     const owner = purchase.account
 
+    // TODO: Add tier appropreately.
+    const tier = ctx.payload.marketplace_purchase.plan.unit_name
+
     try {
       const dbpurchase = await prisma.purchase.create({
         data: {
@@ -63,6 +66,7 @@ module.exports = (
           email: owner.organization_billing_email,
           plan: purchase.plan.name,
           planId: purchase.plan.id,
+          tier: 'BASIC',
           type: owner.type === 'User' ? 'USER' : 'ORGANIZATION',
         },
       })
@@ -124,9 +128,11 @@ module.exports = (
     const owner = payload.installation.account.login
     const configRepo = getLSConfigRepoName(owner)
 
+    const purchase = await prisma.purchase.findOne({ where: { owner } })
+
     await logger.info(
       { owner, event: 'installation.created' },
-      `onboarding ${configRepo}`,
+      `onboarding ${configRepo}, purchased tier: ${purchase?.tier}`,
     )
 
     /* See if config repository exists. */
@@ -160,7 +166,7 @@ module.exports = (
           return
         }
 
-        const [error, config] = parseConfig(configRaw)
+        const [error, config] = parseConfig(purchase, configRaw)
 
         /* Wrong configuration, open the issue. */
         if (error !== null) {
@@ -171,17 +177,20 @@ module.exports = (
           )
 
           /* Open an issue about invalid configuration. */
-          const title = 'LabelSync - Invalid configuration'
+          const title = 'LabelSync - Onboarding configuration'
           const body = ml`
-          | # Invalid configuration
+          | # Welcome to LabelSync!
           |
           | Hi there,
-          | Thank you for using LabelSync. It seems like there are some problems with your
-          | configuration. Here's what our parser reported:
+          | Thank you for using LabelSync. We hope you enjoyed the experience so far.
+          | It seems like there are some problems with your configuration.
+          | Our parser reported that:
           |
           | \`\`\`
           | ${error}
           | \`\`\`
+          |
+          | Let us know if we can help you with the configuration by sending us an email to support@label-sync.com. We'll try to get back to you as quickly as possible.
           |
           | Best,
           | LabelSync Team
@@ -347,57 +356,59 @@ module.exports = (
    *    on master branch,
    *  - perform check runs on non-master branch.
    */
-  app.on('push', async ({ payload, github, log }) => {
-    const owner = payload.repository.owner.login
-    const repo = payload.repository.name
-    const ref = payload.ref
-    const defaultRef = `refs/heads/${payload.repository.default_branch}`
+  app.on(
+    'push',
+    withPurchase(prisma, async ({ payload, purchase, github, log }) => {
+      const owner = payload.repository.owner.login
+      const repo = payload.repository.name
+      const ref = payload.ref
+      const defaultRef = `refs/heads/${payload.repository.default_branch}`
 
-    const configRepo = getLSConfigRepoName(owner)
+      const configRepo = getLSConfigRepoName(owner)
 
-    /* Skip non default branch and other repos pushes. */
-    /* istanbul ignore if */
-    if (defaultRef !== ref || configRepo !== repo) {
-      await logger.debug(
-        { owner, event: 'push' },
-        { defaultRef, ref, configRepo, repo },
-        `skipping sync`,
+      /* Skip non default branch and other repos pushes. */
+      /* istanbul ignore if */
+      if (defaultRef !== ref || configRepo !== repo) {
+        await logger.debug(
+          { owner, event: 'push' },
+          { defaultRef, ref, configRepo, repo },
+          `skipping sync`,
+        )
+        return
+      }
+
+      /* Load configuration */
+      const configRaw = await getFile(
+        github,
+        { owner, repo, ref },
+        LS_CONFIG_PATH,
       )
-      return
-    }
 
-    /* Load configuration */
-    const configRaw = await getFile(
-      github,
-      { owner, repo, ref },
-      LS_CONFIG_PATH,
-    )
+      /* Skip altogether if there's no configuration. */
+      /* istanbul ignore next */
+      if (configRaw === null) {
+        await logger.info({ owner, event: 'push' }, `no configuration`)
+        return
+      }
 
-    /* Skip altogether if there's no configuration. */
-    /* istanbul ignore next */
-    if (configRaw === null) {
-      await logger.info({ owner, event: 'push' }, `no configuration`)
-      return
-    }
+      const [error, config] = parseConfig(purchase, configRaw)
 
-    const [error, config] = parseConfig(configRaw)
-
-    await logger.debug(
-      { owner, event: 'push' },
-      { config },
-      `loaded configuration for ${owner}`,
-    )
-
-    /* Open an issue about invalid configuration. */
-    if (error !== null) {
       await logger.debug(
         { owner, event: 'push' },
         { config },
-        `error in config ${error}`,
+        `loaded configuration for ${owner}`,
       )
 
-      const title = 'LabelSync - Invalid configuration'
-      const body = ml`
+      /* Open an issue about invalid configuration. */
+      if (error !== null) {
+        await logger.debug(
+          { owner, event: 'push' },
+          { config },
+          `error in config ${error}`,
+        )
+
+        const title = 'LabelSync - Invalid configuration'
+        const body = ml`
       | # Invalid configuration
       |
       | Hi there,
@@ -413,58 +424,62 @@ module.exports = (
       | LabelSync Team
       `
 
-      const issue = await openIssue(github, owner, configRepo, title, body)
+        const issue = await openIssue(github, owner, configRepo, title, body)
 
-      await logger.info(
-        { owner, event: 'push' },
-        `opened issue ${issue.number}`,
-      )
-
-      return
-    }
-
-    /* Verify that we can access all configured files. */
-    const access = await checkInstallationAccess(
-      github,
-      Object.keys(config!.repos),
-    )
-
-    await logger.debug({ owner, event: 'push' }, { access }, `checking access`)
-
-    /* Skip configurations that we can't access. */
-    switch (access.status) {
-      case 'Sufficient': {
-        await logger.info({ owner, event: 'push' }, `performing label sync`)
-
-        /* Performs sync. */
-        for (const repo in config!.repos) {
-          await Promise.all([
-            handleLabelSync(github, owner, repo, config!.repos[repo], true),
-          ])
-        }
-
-        await logger.debug(
+        await logger.info(
           { owner, event: 'push' },
-          { config },
-          `sync completed`,
+          `opened issue ${issue.number}`,
         )
-
-        /* Closes issues */
-
-        // TODO: close issues on successful sync.
 
         return
       }
-      case 'Insufficient': {
-        await logger.debug(
-          { owner, event: 'push' },
-          { config, access },
-          `insufficient permissions: ${access.missing.join(', ')}`,
-        )
 
-        /* Opens up an issue about insufficient permissions. */
-        const title = 'LabelSync - Insufficient permissions'
-        const body = ml`
+      /* Verify that we can access all configured files. */
+      const access = await checkInstallationAccess(
+        github,
+        Object.keys(config!.repos),
+      )
+
+      await logger.debug(
+        { owner, event: 'push' },
+        { access },
+        `checking access`,
+      )
+
+      /* Skip configurations that we can't access. */
+      switch (access.status) {
+        case 'Sufficient': {
+          await logger.info({ owner, event: 'push' }, `performing label sync`)
+
+          /* Performs sync. */
+          for (const repo in config!.repos) {
+            await Promise.all([
+              handleLabelSync(github, owner, repo, config!.repos[repo], true),
+            ])
+          }
+
+          await logger.debug(
+            { owner, event: 'push' },
+            { config },
+            `sync completed`,
+          )
+
+          /* Closes issues */
+
+          // TODO: close issues on successful sync.
+
+          return
+        }
+        case 'Insufficient': {
+          await logger.debug(
+            { owner, event: 'push' },
+            { config, access },
+            `insufficient permissions: ${access.missing.join(', ')}`,
+          )
+
+          /* Opens up an issue about insufficient permissions. */
+          const title = 'LabelSync - Insufficient permissions'
+          const body = ml`
         | # Insufficient permissions
         |
         | Hi there,
@@ -479,17 +494,18 @@ module.exports = (
         | LabelSync Team
         `
 
-        const issue = await openIssue(github, owner, configRepo, title, body)
+          const issue = await openIssue(github, owner, configRepo, title, body)
 
-        await logger.info(
-          { owner, event: 'push' },
-          `opened issue ${issue.number}`,
-        )
+          await logger.info(
+            { owner, event: 'push' },
+            `opened issue ${issue.number}`,
+          )
 
-        return
+          return
+        }
       }
-    }
-  })
+    }),
+  )
 
   /**
    * Pull Request event
@@ -499,193 +515,198 @@ module.exports = (
    *  - open issues,
    *  - review changes.
    */
-  app.on('pull_request', async ({ github, payload, log }) => {
-    const owner = payload.repository.owner.login
-    const repo = payload.repository.name
-    const ref = payload.pull_request.head.ref
-    const number = payload.pull_request.number
+  app.on(
+    'pull_request',
+    withPurchase(prisma, async ({ github, purchase, payload, log }) => {
+      const owner = payload.repository.owner.login
+      const repo = payload.repository.name
+      const ref = payload.pull_request.head.ref
+      const number = payload.pull_request.number
 
-    const configRepo = getLSConfigRepoName(owner)
+      const configRepo = getLSConfigRepoName(owner)
 
-    await logger.info(
-      { owner, event: 'pullrequest' },
-      `pr action ${payload.action}`,
-    )
-
-    /* istanbul ignore if */
-    if (configRepo !== repo) return
-
-    /* Check changed files */
-    const compare = await github.repos.compareCommits({
-      owner: owner,
-      repo: repo,
-      base: payload.pull_request.base.ref,
-      head: payload.pull_request.head.ref,
-    })
-
-    /* istanbul ignore next */
-    if (compare.data.files.every((file) => file.filename !== LS_CONFIG_PATH)) {
-      await logger.debug(
+      await logger.info(
         { owner, event: 'pullrequest' },
-        { files: compare.data.files },
-        `no merge comment, configuration didn't change.`,
+        `pr action ${payload.action}`,
       )
-      return
-    }
 
-    /* Load configuration */
-    const configRaw = await getFile(
-      github,
-      { owner, repo, ref },
-      LS_CONFIG_PATH,
-    )
+      /* istanbul ignore if */
+      if (configRepo !== repo) return
 
-    /* Skip the pull request if there's no configuraiton. */
-    /* istanbul ignore next */
-    if (configRaw === null) {
-      await logger.info({ owner, event: 'pullrequest' }, `no configuration`)
-      return
-    }
+      /* Check changed files */
+      const compare = await github.repos.compareCommits({
+        owner: owner,
+        repo: repo,
+        base: payload.pull_request.base.ref,
+        head: payload.pull_request.head.ref,
+      })
 
-    const [error, config] = parseConfig(configRaw)
-
-    await logger.debug(
-      { owner, event: 'pullrequest' },
-      { config },
-      `loaded configuration on ${ref}`,
-    )
-
-    /* Skips invalid configuration. */
-    /* istanbul ignore if */
-    if (error !== null) return
-
-    switch (payload.action) {
-      case 'opened':
-      case 'reopened':
-      case 'ready_for_review':
-      case 'review_requested':
-      case 'synchronize':
-      case 'edited': {
-        /* Review pull request. */
-
-        /* Verify that we can access all configured files. */
-        const access = await checkInstallationAccess(
-          github,
-          Object.keys(config!.repos),
-        )
-
+      /* istanbul ignore next */
+      if (
+        compare.data.files.every((file) => file.filename !== LS_CONFIG_PATH)
+      ) {
         await logger.debug(
           { owner, event: 'pullrequest' },
-          { access },
-          `checking access`,
+          { files: compare.data.files },
+          `no merge comment, configuration didn't change.`,
         )
+        return
+      }
 
-        /* Skip configurations that we can't access. */
-        switch (access.status) {
-          case 'Sufficient': {
-            await logger.info(
-              { owner, event: 'pullrequest' },
-              `simulating sync`,
-            )
+      /* Load configuration */
+      const configRaw = await getFile(
+        github,
+        { owner, repo, ref },
+        LS_CONFIG_PATH,
+      )
 
-            /* Fetch changes to repositories. */
-            const reports = await Promise.all(
-              Object.keys(config!.repos).map((repo) =>
-                handleLabelSync(
-                  github,
-                  owner,
-                  repo,
-                  config!.repos[repo],
-                  false,
+      /* Skip the pull request if there's no configuraiton. */
+      /* istanbul ignore next */
+      if (configRaw === null) {
+        await logger.info({ owner, event: 'pullrequest' }, `no configuration`)
+        return
+      }
+
+      const [error, config] = parseConfig(purchase, configRaw)
+
+      await logger.debug(
+        { owner, event: 'pullrequest' },
+        { config },
+        `loaded configuration on ${ref}`,
+      )
+
+      /* Skips invalid configuration. */
+      /* istanbul ignore if */
+      if (error !== null) return
+
+      switch (payload.action) {
+        case 'opened':
+        case 'reopened':
+        case 'ready_for_review':
+        case 'review_requested':
+        case 'synchronize':
+        case 'edited': {
+          /* Review pull request. */
+
+          /* Verify that we can access all configured files. */
+          const access = await checkInstallationAccess(
+            github,
+            Object.keys(config!.repos),
+          )
+
+          await logger.debug(
+            { owner, event: 'pullrequest' },
+            { access },
+            `checking access`,
+          )
+
+          /* Skip configurations that we can't access. */
+          switch (access.status) {
+            case 'Sufficient': {
+              await logger.info(
+                { owner, event: 'pullrequest' },
+                `simulating sync`,
+              )
+
+              /* Fetch changes to repositories. */
+              const reports = await Promise.all(
+                Object.keys(config!.repos).map((repo) =>
+                  handleLabelSync(
+                    github,
+                    owner,
+                    repo,
+                    config!.repos[repo],
+                    false,
+                  ),
                 ),
-              ),
-            )
+              )
 
-            const report = generateHumanReadableReport(reports)
+              const report = generateHumanReadableReport(reports)
 
-            /* Comment on a PR in a human friendly way. */
-            const comment = await createPRComment(
-              github,
-              owner,
-              configRepo,
-              number,
-              report,
-            )
+              /* Comment on a PR in a human friendly way. */
+              const comment = await createPRComment(
+                github,
+                owner,
+                configRepo,
+                number,
+                report,
+              )
 
-            await logger.info(
-              { owner, event: 'pullrequest' },
-              `commented on pr ${comment.id}`,
-            )
+              await logger.info(
+                { owner, event: 'pullrequest' },
+                `commented on pr ${comment.id}`,
+              )
 
-            return
-          }
-          case 'Insufficient': {
-            await logger.debug(
-              { owner, event: 'pullrequest' },
-              { config, access },
-              `insufficient permissions`,
-            )
+              return
+            }
+            case 'Insufficient': {
+              await logger.debug(
+                { owner, event: 'pullrequest' },
+                { config, access },
+                `insufficient permissions`,
+              )
 
-            /* Opens up an issue about insufficient permissions. */
-            const body = ml`
+              /* Opens up an issue about insufficient permissions. */
+              const body = ml`
             | It seems like this configuration stretches beyond repositories we can access. Please update it so we can help you as best as we can.
             |
             | _Missing repositories:_
             | ${access.missing.map((missing) => ` * ${missing}`).join(os.EOL)}
             `
 
-            const comment = await createPRComment(
-              github,
-              owner,
-              configRepo,
-              number,
-              body,
-            )
+              const comment = await createPRComment(
+                github,
+                owner,
+                configRepo,
+                number,
+                body,
+              )
 
-            await logger.info(
-              { owner, event: 'pullrequest' },
-              `commented on pr ${comment.id}`,
-            )
+              await logger.info(
+                { owner, event: 'pullrequest' },
+                `commented on pr ${comment.id}`,
+              )
 
-            return
+              return
+            }
           }
         }
-      }
-      /* istanbul ignore next */
-      case 'assigned':
-      /* istanbul ignore next */
-      case 'closed':
-      /* istanbul ignore next */
-      case 'labeled':
-      /* istanbul ignore next */
-      case 'locked':
-      /* istanbul ignore next */
-      case 'review_request_removed':
-      /* istanbul ignore next */
-      case 'unassigned':
-      /* istanbul ignore next */
-      case 'unlabeled':
-      /* istanbul ignore next */
-      case 'unlocked': {
-        /* Ignore other events. */
-        await logger.info(
-          { owner, event: 'pullrequest' },
-          `ignoring event ${payload.action}`,
-        )
-        return
-      }
-      /* istanbul ignore next */
-      default: {
-        /* Log unsupported pull_request action. */
-        await logger.warn(
-          { owner, event: 'pullrequest' },
-          `unsupported event: ${payload.action}`,
-        )
+        /* istanbul ignore next */
+        case 'assigned':
+        /* istanbul ignore next */
+        case 'closed':
+        /* istanbul ignore next */
+        case 'labeled':
+        /* istanbul ignore next */
+        case 'locked':
+        /* istanbul ignore next */
+        case 'review_request_removed':
+        /* istanbul ignore next */
+        case 'unassigned':
+        /* istanbul ignore next */
+        case 'unlabeled':
+        /* istanbul ignore next */
+        case 'unlocked': {
+          /* Ignore other events. */
+          await logger.info(
+            { owner, event: 'pullrequest' },
+            `ignoring event ${payload.action}`,
+          )
+          return
+        }
+        /* istanbul ignore next */
+        default: {
+          /* Log unsupported pull_request action. */
+          await logger.warn(
+            { owner, event: 'pullrequest' },
+            `unsupported event: ${payload.action}`,
+          )
 
-        return
+          return
+        }
       }
-    }
-  })
+    }),
+  )
 
   /**
    * Label Created
@@ -696,7 +717,7 @@ module.exports = (
    */
   app.on(
     'label.created',
-    withSources(async (ctx) => {
+    withSources(prisma, async (ctx) => {
       const owner = ctx.payload.sender.login
       const repo = ctx.payload.repository.name
       const config = ctx.sources.config.repos[repo]
@@ -759,7 +780,7 @@ module.exports = (
    */
   app.on(
     'issues.labeled',
-    withSources(async (ctx) => {
+    withSources(prisma, async (ctx) => {
       const owner = ctx.payload.sender.login
       const repo = ctx.payload.repository.name
       const config = ctx.sources.config.repos[repo]
@@ -823,9 +844,10 @@ function withSources<
     | Webhooks.WebhookPayloadPullRequest,
   T
 >(
+  prisma: PrismaClient,
   fn: (ctx: Context<C> & { sources: Sources }) => Promise<T>,
-): (ctx: Context<C>) => Promise<T | undefined> {
-  return async (ctx) => {
+): (ctx: Context<C> & { purchase?: Purchase }) => Promise<T | undefined> {
+  return withPurchase(prisma, async (ctx) => {
     const owner = ctx.payload.sender.login
     const repo = getLSConfigRepoName(owner)
     const ref = `refs/heads/${ctx.payload.repository.default_branch}`
@@ -841,7 +863,7 @@ function withSources<
     /* istanbul ignore next */
     if (configRaw === null) return
 
-    const [error, config] = parseConfig(configRaw)
+    const [error, config] = parseConfig(ctx.purchase, configRaw)
 
     /* Skips invlaid config. */
     /* istanbul ignore if */
@@ -849,35 +871,50 @@ function withSources<
     ;(ctx as Context<C> & { sources: Sources }).sources = { config: config! }
 
     return fn(ctx as Context<C> & { sources: Sources })
-  }
+  })
 }
 
-// /**
-//  * Wraps a function inside a sources loader.
-//  */
-// function withPurchase<
-//   C extends
-//     | Webhooks.WebhookPayloadCheckRun
-//     | Webhooks.WebhookPayloadIssues
-//     | Webhooks.WebhookPayloadLabel
-//     | Webhooks.WebhookPayloadPullRequest
-//     | Webhooks.WebhookPayloadInstallation,
-//   T
-// >(
-//   fn: (ctx: Context<C> & { sources: Sources }) => Promise<T>,
-// ): (ctx: Context<C>) => Promise<T | undefined> {
-//   return async (ctx) => {
-//     const owner = ctx.payload.sender.login
+/**
+ * Wraps a function inside a sources loader.
+ */
+function withPurchase<
+  C extends
+    | Webhooks.WebhookPayloadCheckRun
+    | Webhooks.WebhookPayloadCheckSuite
+    | Webhooks.WebhookPayloadCommitComment
+    | Webhooks.WebhookPayloadLabel
+    | Webhooks.WebhookPayloadIssues
+    | Webhooks.WebhookPayloadIssueComment
+    | Webhooks.WebhookPayloadPullRequest
+    | Webhooks.WebhookPayloadPullRequestReview
+    | Webhooks.WebhookPayloadPullRequestReviewComment
+    | Webhooks.WebhookPayloadPush,
+  T
+>(
+  prisma: PrismaClient,
+  fn: (ctx: Context<C> & { purchase?: Purchase | null }) => Promise<T>,
+): (ctx: Context<C>) => Promise<T | undefined> {
+  return async (ctx) => {
+    const owner = ctx.payload.repository.owner.login
 
-//     /* Skip if there's no configuration. */
-//     /* istanbul ignore next */
-//     if (configRaw === null) return
+    try {
+      /* Try to find the purchase in the database. */
+      const purchase = await prisma.purchase.findOne({ where: { owner } })
 
-//     /* Skips invlaid config. */
-//     /* istanbul ignore if */
-//     if (error !== null) return
-//     ;(ctx as Context<C> & { sources: Sources }).sources = { config: config! }
+      ;(ctx as Context<C> & { purchase?: Purchase | null }).purchase = purchase
 
-//     return fn(ctx as Context<C> & { sources: Sources })
-//   }
-// }
+      return fn(ctx as Context<C> & { purchase?: Purchase | null })
+    } catch (err) /* istanbul ignore next */ {
+      /* Report the error and skip evaluation. */
+      await prisma.log.create({
+        data: {
+          event: 'purchase.load',
+          message: `there was an error during loading the purchase`,
+          type: 'WARN',
+          owner,
+        },
+      })
+      return
+    }
+  }
+}
