@@ -42,7 +42,6 @@ LabelSync Team",
 exports[`bot: BASIC pull_request 1`] = `
 Object {
   "body": "## LabelSync Overview 
-> NOTE: This is only a preview of what will happen. Nothing has been changed yet.
 
 ### \`graphql-shield\`
 
@@ -80,7 +79,6 @@ _Missing repositories:_
 exports[`bot: BASIC push event 1`] = `
 Object {
   "body": "## LabelSync Overview 
-> NOTE: This is only a preview of what will happen. Nothing has been changed yet.
 
 ### \`graphql-shield\`
 
@@ -185,7 +183,6 @@ LabelSync Team",
 exports[`bot: FREE pull_request 1`] = `
 Object {
   "body": "## LabelSync Overview 
-> NOTE: This is only a preview of what will happen. Nothing has been changed yet.
 
 ### \`graphql-shield\`
 
@@ -223,7 +220,6 @@ _Missing repositories:_
 exports[`bot: FREE push event 1`] = `
 Object {
   "body": "## LabelSync Overview 
-> NOTE: This is only a preview of what will happen. Nothing has been changed yet.
 
 ### \`graphql-shield\`
 

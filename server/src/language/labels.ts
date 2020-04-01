@@ -17,8 +17,7 @@ export function generateHumanReadableReport(
 
   return ml`
   | ## LabelSync Overview 
-  | > NOTE: This is only a preview of what will happen. Nothing has been changed yet.
-  | 
+  |
   | ${body}
   `
 }

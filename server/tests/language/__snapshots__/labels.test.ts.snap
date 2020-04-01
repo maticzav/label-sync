@@ -2,7 +2,6 @@
 
 exports[`language: correctly generates human readable report 1`] = `
 "## LabelSync Overview 
-> NOTE: This is only a preview of what will happen. Nothing has been changed yet.
 
 #### \\\\\`labelsync\\\\\`
 
