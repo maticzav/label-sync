@@ -42,7 +42,7 @@ npm init label-sync
 
 **Organisations:**
 
-1. Start by installing the [LabelSync Manager Github Application](https://github.com/apps/labelsync-manager). I recommend you install it across your entire fleet - LabelSync won't modify repositories that you haven't configured.
+1. Start by installing the [LabelSync Manager Github Application](https://github.com/apps/labelsync-manager). I recommend you start by installing it on a small selection of repositories - LabelSync will scaffold a getting started configuration for you based on your selection. (Nothing will be changed at that point though.)
 2. LabelSync Manager created a `<org>-labelsync` repository for you, where `<org>` represents the name of your organisation or account.
    That's where your configuration resides. We've included the labels and repository configurations that we found most useful and encourage you to use them as your starting point.
 
