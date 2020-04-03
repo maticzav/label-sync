@@ -18,7 +18,7 @@
     "codecov": "3.6.5",
     "execa": "4.0.0",
     "husky": "4.2.3",
-    "jest": "25.2.2",
+    "jest": "25.2.7",
     "jest-serializer-ansi": "1.0.3",
     "lerna": "3.20.2",
     "prettier": "2.0.2",
