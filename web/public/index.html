@@ -65,6 +65,46 @@
       src="https://www.google-analytics.com/analytics.js"
     ></script>
 
+    <!-- Stripe -->
+
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <script>
+      var stripe = Stripe('pk_test_yq1HKJjV7WxHoJpPlVEIFPSD00imxFobn7')
+
+      async function purchase(event) {
+        event.preventDefault()
+
+        var form = new FormData(document.getElementById('subscribe'))
+        var owner = form.get('owner')
+
+        var session = await fetch(
+          'https://webhook.label-sync.com/subscribe/session',
+          {
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'same-origin',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              owner: owner,
+            }),
+          },
+        )
+
+        const redirect = await stripe.redirectToCheckout({
+          // Make the id field from the Checkout Session creation API response
+          // available to this file, so you can provide it as parameter here
+          // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
+          sessionId: session,
+        })
+
+        /* prevent default */
+        return false
+      }
+    </script>
+
     <!-- Scrolling -->
 
     <script>
@@ -301,6 +341,77 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- INTRODUCTION -->
+
+    <div class="py-15 bg-gray-30 overflow-hidden md:py-20 lg:py-24">
+      <!-- Leading text -->
+
+      <div class="text-center">
+        <h2
+          class="inline-block text-2xl tracking-tight leading-10 font-extrabold text-gray-900 sm:leading-none sm:text-4xl lg:text-4xl xl:text-4xl underline-green"
+        >
+          Hey! How are you doing?
+        </h2>
+      </div>
+
+      <!-- Testimonial -->
+      <div class="relative mt-10 container mx-auto px-4 sm:px-6 lg:px-8">
+        <blockquote class="relative">
+          <div
+            class="max-w-3xl mx-auto text-center text-2xl leading-9 font-medium text-gray-900"
+          >
+            <p>
+              While working at Prisma, I discovered that many companies struggle
+              with repository organisation. In particular, companies struggle
+              with managing labels across multiple repositories in their
+              organisation. That's whay LabelSync is about - amplyfying the best
+              of labels.
+            </p>
+          </div>
+          <footer class="mt-8">
+            <div class="md:flex md:items-center md:justify-center">
+              <div class="md:flex-shrink-0">
+                <picture>
+                  <source
+                    type="image/webp"
+                    srcset="/img/testimonial/matic.webp"
+                  />
+                  <source
+                    type="image/jpeg"
+                    srcset="/img/testimonial/matic.jpg"
+                  />
+                  <img
+                    class="mx-auto h-10 w-10 rounded-full"
+                    src="/img/testimonial/matic.jpg"
+                    alt="Matic Zavadlal"
+                  />
+                </picture>
+              </div>
+              <div
+                class="mt-3 text-center md:mt-0 md:ml-4 md:flex md:items-center"
+              >
+                <div class="text-base leading-6 font-medium text-gray-900">
+                  Matic Zavadlal
+                </div>
+
+                <svg
+                  class="hidden md:block mx-1 h-5 w-5 text-green-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M11 0h3L9 20H6l5-20z" />
+                </svg>
+
+                <div class="text-base leading-6 font-medium text-gray-500">
+                  LabelSync
+                </div>
+              </div>
+            </div>
+          </footer>
+        </blockquote>
       </div>
     </div>
 
@@ -1085,6 +1196,9 @@
                         </p>
                       </li>
                     </ul>
+
+                    <!-- Purchase  -->
+
                     <div class="mt-6 rounded-md shadow">
                       <a
                         href="http://github.com/marketplace/labelsync-manager"
@@ -1226,14 +1340,32 @@
                       </p>
                     </li>
                   </ul>
-                  <div class="mt-6 rounded-md shadow">
-                    <a
-                      href="https://github.com/apps/labelsync-manager"
-                      class="flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
-                    >
-                      Sync my labels
-                    </a>
-                  </div>
+
+                  <!-- Purchase -->
+
+                  <form
+                    id="subscribe"
+                    class="mt-6"
+                    onsubmit="return purchase(event)"
+                  >
+                    <input
+                      aria-label="Github name"
+                      name="owner"
+                      type="text"
+                      required
+                      class="appearance-none w-full px-5 py-3 border border-transparent text-base leading-6 rounded-md text-gray-900 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 transition duration-150 ease-in-out"
+                      placeholder="Enter your GitHub name"
+                    />
+                    <div class="mt-3 rounded-md shadow">
+                      <button
+                        class="w-full flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
+                      >
+                        Sync my labels
+                      </button>
+                    </div>
+                  </form>
+
+                  <!--  -->
                 </div>
               </div>
               <!--  -->

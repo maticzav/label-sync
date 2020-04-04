@@ -1,5 +1,6 @@
 import Webhooks = require('@octokit/webhooks')
 import { PrismaClient, Purchase } from '@prisma/client'
+import bodyParser from 'body-parser'
 import ml from 'multilines'
 import os from 'os'
 import path from 'path'
@@ -28,6 +29,7 @@ import { handleLabelSync } from './handlers/labels'
 import { generateHumanReadableReport } from './language/labels'
 import { Logger } from './logger'
 import { loadTreeFromPath, withDefault } from './utils'
+import { Payments } from './payment'
 
 /* Templates */
 
@@ -45,6 +47,84 @@ module.exports = (
   app.log(`LabelSync manager up and running! 🚀`)
 
   const logger = new Logger(prisma)
+  const payments = new Payments(
+    process.env.STRIPE_API_KEY!,
+    process.env.STRIPE_ENDPOINT_SECRET!,
+  )
+
+  /* API */
+
+  const api = app.route('/subscribe')
+
+  api.use(bodyParser.json())
+
+  api.post('/session', async (req, res) => {
+    try {
+      const owner = req.body.owner
+      if (!owner) {
+        res.sendStatus(400)
+      }
+
+      const session = await payments.getSession(owner)
+      return res.status(200).send(session.id)
+    } catch (err) {
+      return res.sendStatus(500)
+    }
+  })
+
+  /* Stripe */
+
+  const router = app.route('/stripe')
+
+  router.post(
+    '/webhook',
+    bodyParser.raw({ type: 'application/json' }),
+    async (req, res) => {
+      let event
+
+      try {
+        event = await payments.constructEvent(
+          req.body,
+          req.headers['stripe-signature'] as string,
+        )
+      } catch (err) {
+        return res.status(400).send(`Webhook Error: ${err.message}`)
+      }
+
+      /* Event handlers */
+      switch (event.type) {
+        case 'checkout.session.completed': {
+          const session = event.data.object as {
+            metadata: { owner: string }
+            customer: { email: string }
+          }
+          const email = session.customer.email
+          const owner = session.metadata.owner
+
+          await prisma.purchase.create({
+            data: {
+              owner,
+              plan: 'stripe-basic',
+              planId: 42,
+              email,
+              tier: 'BASIC',
+              type: 'ORGANIZATION',
+              trial: false,
+            },
+          })
+
+          break
+        }
+        default: {
+          return res.status(400).end()
+        }
+      }
+
+      return res.json({ received: true })
+    },
+  )
+
+  /* Github. */
 
   /**
    * Marketplace purchase event

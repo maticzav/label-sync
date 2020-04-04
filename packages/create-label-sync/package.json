@@ -12,12 +12,12 @@
   ],
   "scripts": {},
   "dependencies": {
-    "chalk": "^3.0.0",
+    "chalk": "^4.0.0",
     "creato": "^1.0.5",
-    "handlebars": "^4.7.3",
+    "handlebars": "^4.7.6",
     "inquirer": "^7.1.0",
     "meow": "^6.1.0",
-    "mkdirp": "^1.0.3",
+    "mkdirp": "^1.0.4",
     "multilines": "^1.0.3",
     "ora": "^4.0.0",
     "prettier": "^2.0.2"
@@ -26,8 +26,8 @@
     "@types/inquirer": "6.5.0",
     "@types/meow": "5.0.0",
     "@types/mkdirp": "1.0.0",
-    "@types/node": "12.12.34",
-    "@types/prettier": "1.19.1"
+    "@types/node": "13.11.0",
+    "@types/prettier": "2.0.0"
   },
   "license": "MIT"
 }
