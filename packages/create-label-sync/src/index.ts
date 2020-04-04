@@ -1,18 +1,23 @@
 #!/usr/bin/env node
 
+import * as creato from 'creato'
+import * as fs from 'fs'
+import * as handlebars from 'handlebars'
 import * as inquirer from 'inquirer'
 import meow from 'meow'
-import * as handlebars from 'handlebars'
+import * as mkdirp from 'mkdirp'
+import { ml } from 'multilines'
 import ora from 'ora'
 import * as path from 'path'
 import * as prettier from 'prettier'
-import * as fs from 'fs'
-import * as mkdirp from 'mkdirp'
-import * as creato from 'creato'
+
 import { loadTreeFromPath, mapEntries, writeTreeToPath } from './utils'
 
-export const templates: creato.Template[] = [
+/* Templates */
+
+export const templates: (creato.Template & { identifier: string })[] = [
   {
+    identifier: 'yaml',
     name: 'YAML configuraiton',
     description: '',
     repo: {
@@ -22,6 +27,7 @@ export const templates: creato.Template[] = [
     },
   },
   {
+    identifier: 'typescript',
     name: 'TypeScript configuration',
     description: '',
     repo: {
@@ -32,16 +38,25 @@ export const templates: creato.Template[] = [
   },
 ]
 
-const cli = meow(
-  `
-    create-label-sync
+/* Main */
 
-    > Scaffolds the configuration repostiory for Github Labels manager.
-`,
-  {},
-)
-
-async function main() {
+async function main(
+  cli: meow.Result<{
+    force: {
+      alias: string
+      type: 'boolean'
+      default: false
+    }
+    template: {
+      alias: string
+      type: 'string'
+    }
+    path: {
+      alias: string
+      type: 'string'
+    }
+  }>,
+) {
   /* Owner, repository */
 
   const { owner } = await inquirer.prompt<{ owner: string }>([
@@ -74,42 +89,95 @@ async function main() {
 
   /* Template */
 
-  const { template } = await inquirer.prompt<{ template: creato.Template }>([
-    {
-      name: 'template',
-      message: 'Choose a LabelSync configuraiton template:',
-      type: 'list',
-      choices: templates.map((template) => ({
-        name: template.name,
-        value: template,
-      })),
-    },
-  ])
+  let template
+
+  /* Process user input */
+  if (cli.flags.template) {
+    const matchingTemplate = templates.find(
+      (temp) => temp.identifier === cli.flags.template,
+    )
+
+    if (!matchingTemplate) {
+      const availableTemplates = templates
+        .map((temp) => `"${temp.identifier}"`)
+        .join(', ')
+
+      console.warn(
+        /* prettier-ignore */
+        `Couldn't find a template ${cli.flags.template}. You may choose among ${availableTemplates}`,
+      )
+
+      process.exit(1)
+    }
+
+    template = matchingTemplate
+  }
+
+  /* Prompt for templte */
+  if (!template) {
+    template = await inquirer
+      .prompt<{ template: creato.Template }>([
+        {
+          name: 'template',
+          message: 'Choose a LabelSync configuraiton template:',
+          type: 'list',
+          choices: templates.map((template) => ({
+            name: template.name,
+            value: template,
+          })),
+        },
+      ])
+      .then((res) => res.template)
+  }
+
+  /* Check whether we already are in configuration repository. */
+
+  let dist = repository
+
+  if (process.cwd().endsWith('labelsync')) {
+    dist = '.'
+  }
+
+  if (cli.flags.path) {
+    dist = cli.flags.path
+  }
+
+  // make dist absolute
+  dist = path.resolve(process.cwd(), dist)
 
   /* Scaffold */
+  let approve = cli.flags.force
 
-  const { approve } = await inquirer.prompt<{ approve: boolean }>([
-    {
-      name: 'approve',
-      message: `We'll scaffold configuration to ${repository}`,
-      type: 'confirm',
-    },
-  ])
+  /* Prompt for approval if not forced. */
+  if (!approve) {
+    approve = await inquirer
+      .prompt<{ approve: boolean }>([
+        {
+          name: 'approve',
+          message: `We'll scaffold configuration to ${dist}`,
+          type: 'confirm',
+        },
+      ])
+      .then((res) => res.approve)
+  }
 
-  if (!approve) return
+  if (!approve) {
+    console.log(`OK! Not scaffolding.`)
+    process.exit(0)
+  }
 
-  const dist = path.resolve(process.cwd(), repository)
-  if (fs.existsSync(dist)) {
-    console.log(`Directory ${dist} must be empty.`)
-    return
-  } else {
+  /**
+   * Scaffold the template.
+   */
+
+  if (!fs.existsSync(dist)) {
     mkdirp.sync(dist)
   }
 
   /* Load template */
 
   const templateSpinner = ora({
-    text: `Loading ${template.name} template.`,
+    text: `Downloading ${template.name} template.`,
   }).start()
 
   const res = await creato.loadTemplate(template, dist)
@@ -158,7 +226,7 @@ async function main() {
     })
     writeTreeToPath(dist, populatedTree)
 
-    populateSpinner.succeed()
+    populateSpinner.succeed(`Template loaded inside ${dist}!`)
   } catch (err) {
     templateSpinner.fail()
     console.warn(res.message)
@@ -166,7 +234,41 @@ async function main() {
   }
 }
 
+/* CLI */
+
+const cli = meow(
+  ml`
+  | create-label-sync
+  |
+  | > Scaffolds the configuration repostiory for Github Labels manager.
+  |
+  | Flags:
+  |    - force (f): force creates the repository
+  |    - template (t): ${templates
+    .map((temp) => `"${temp.identifier}"`)
+    .join(', ')}
+  |    - path (p): folder to scaffold the configuration to 
+`,
+  {
+    flags: {
+      force: {
+        alias: 'f',
+        type: 'boolean',
+        default: false,
+      },
+      template: {
+        alias: 't',
+        type: 'string',
+      },
+      path: {
+        alias: 'p',
+        type: 'string',
+      },
+    },
+  },
+)
+
 /* istanbul ignore next */
 if (require.main?.filename === __filename) {
-  main()
+  main(cli)
 }

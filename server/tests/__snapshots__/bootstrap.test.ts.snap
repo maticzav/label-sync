@@ -351,6 +351,7 @@ labels: &common
     description: Developer asked a question. No code changes required.
     alias: [\\"question\\"]
 
+# Repositories
 repos:
   graphql-shield:
     config:

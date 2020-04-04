@@ -1,10 +1,10 @@
+{{! we use Handlebars to personalise initial configuration. }}
+
 import { labelsync, repo } from 'label-sync'
 
 /* Repository */
 import { prisma } from './repos/prisma'
 import { github } from './repos/github'
-
-{{! we use Handlebars to personalise initial configuration. }}
 
 /* Config */
 labelsync({

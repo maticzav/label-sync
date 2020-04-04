@@ -1,3 +1,5 @@
+{{! we use Handlebars to personalise initial configuration. }}
+
 # Colors
 colors:
   area: &area '#FFD700'
@@ -50,7 +52,7 @@ labels: &common
     description: Developer asked a question. No code changes required.
     alias: ["question"]
 
-{{! we use Handlebars to personalise initial configuration. }}
+# Repositories
 repos:
   {{#each repositories}}
   {{#with this}}

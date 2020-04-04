@@ -109,3 +109,13 @@ export function mapKeys<T>(
     }),
   )
 }
+
+/**
+ * Creates a fallback default value.
+ * @param fallback
+ * @param value
+ */
+export function withDefault<T>(fallback: T, value: T | undefined): T {
+  if (value) return value
+  else return fallback
+}
