@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "@octokit/rest": "17.1.4",
-    "@prisma/client": "^2.0.0-beta.1",
-    "body-parser": "^1.19.0",
+    "@prisma/client": "2.0.0-beta.1",
+    "body-parser": "1.19.0",
     "express": "4.17.1",
     "fp-ts": "2.5.3",
     "handlebars": "4.7.6",
@@ -19,7 +19,7 @@
     "multilines": "1.0.3",
     "prettier": "2.0.2",
     "probot": "9.11.2",
-    "stripe": "^8.39.0"
+    "stripe": "8.39.0"
   },
   "devDependencies": {
     "@prisma/cli": "2.0.0-beta.1",
@@ -29,7 +29,7 @@
     "@types/nock": "11.1.0",
     "@types/node": "13.11.0",
     "@types/prettier": "2.0.0",
-    "@types/stripe": "^7.13.22",
+    "@types/stripe": "7.13.22",
     "js-yaml": "3.13.1",
     "nock": "12.0.3"
   },
