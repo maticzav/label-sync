@@ -91,7 +91,9 @@
               owner: owner,
             }),
           },
-        )
+        ).then((res) => res.text())
+
+        console.log(session)
 
         const redirect = await stripe.redirectToCheckout({
           // Make the id field from the Checkout Session creation API response

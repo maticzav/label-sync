@@ -77,7 +77,7 @@ module.exports = (
   const router = app.route('/stripe')
 
   router.post(
-    '/webhook',
+    '/',
     bodyParser.raw({ type: 'application/json' }),
     async (req, res) => {
       let event
