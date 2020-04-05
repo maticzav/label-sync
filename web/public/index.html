@@ -79,6 +79,7 @@
         var owner = form.get('owner')
 
         try {
+          var body = JSON.stringify({ owner: owner })
           var res = await fetch(
             'https://app.label-sync.com/subscribe/session',
             {
@@ -86,9 +87,10 @@
               mode: 'cors',
               credentials: 'same-origin',
               headers: {
+                Accept: 'application/json',
                 'Content-Type': 'application/json',
               },
-              body: { owner: owner },
+              body: body,
             },
           )
 
