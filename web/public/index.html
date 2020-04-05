@@ -95,8 +95,9 @@
           )
 
           if (res.ok) {
-            const redirect = await stripe.redirectToCheckout({
-              sessionId: res.text(),
+            var sessionId = await res.text()
+            var redirect = await stripe.redirectToCheckout({
+              sessionId: sessionId,
             })
           } else {
             console.error(res)
