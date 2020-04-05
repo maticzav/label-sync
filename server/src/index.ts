@@ -59,7 +59,12 @@ module.exports = (
 
   api.use(
     cors({
-      origin: ['https://label-sync.com', 'https://app.label-sync.com'],
+      origin: [
+        'https://label-sync.com',
+        'https://webhook.label-sync.com',
+        'https://app.label-sync.com',
+      ],
+      preflightContinue: true,
     }),
   )
   api.use(bodyParser.json())
