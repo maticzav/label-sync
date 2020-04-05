@@ -1,6 +1,7 @@
 import Webhooks = require('@octokit/webhooks')
 import { PrismaClient, Purchase } from '@prisma/client'
 import bodyParser from 'body-parser'
+import cors from 'cors'
 import ml from 'multilines'
 import os from 'os'
 import path from 'path'
@@ -56,13 +57,26 @@ module.exports = (
 
   const api = app.route('/subscribe')
 
+  api.use(
+    cors({
+      origin: ['https://label-sync.com', 'https://app.label-sync.com'],
+    }),
+  )
   api.use(bodyParser.json())
 
   api.post('/session', async (req, res) => {
     try {
       const owner = req.body.owner
       if (!owner) {
-        res.sendStatus(400)
+        return res.sendStatus(404)
+      }
+
+      const existingPurchase = await prisma.purchase.findOne({
+        where: { owner },
+      })
+
+      if (existingPurchase) {
+        return res.sendStatus(403)
       }
 
       const session = await payments.getSession(owner)

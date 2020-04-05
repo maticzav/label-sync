@@ -78,29 +78,30 @@
         var form = new FormData(document.getElementById('subscribe'))
         var owner = form.get('owner')
 
-        var session = await fetch(
-          'https://webhook.label-sync.com/subscribe/session',
-          {
-            method: 'POST',
-            mode: 'no-cors',
-            credentials: 'same-origin',
-            headers: {
-              'Content-Type': 'application/json',
+        try {
+          var res = await fetch(
+            'https://webhook.label-sync.com/subscribe/session',
+            {
+              method: 'POST',
+              mode: 'cors',
+              credentials: 'same-origin',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: { owner: owner },
             },
-            body: JSON.stringify({
-              owner: owner,
-            }),
-          },
-        ).then((res) => res.text())
+          )
 
-        console.log(session)
-
-        const redirect = await stripe.redirectToCheckout({
-          // Make the id field from the Checkout Session creation API response
-          // available to this file, so you can provide it as parameter here
-          // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
-          sessionId: session,
-        })
+          if (res.ok) {
+            const redirect = await stripe.redirectToCheckout({
+              sessionId: res.text(),
+            })
+          } else {
+            console.error(res)
+          }
+        } catch (err) {
+          console.error(err)
+        }
 
         /* prevent default */
         return false
@@ -370,8 +371,8 @@
               While working at Prisma, I discovered that many companies struggle
               with repository organisation. In particular, companies struggle
               with managing labels across multiple repositories in their
-              organisation. That's whay LabelSync is about - amplyfying the best
-              of labels.
+              organisation. That's why I craeated LabelSync - to help you get to
+              the best parts of labels more quickly.
             </p>
           </div>
           <footer class="mt-8">
