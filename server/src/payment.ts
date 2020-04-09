@@ -47,8 +47,7 @@ export class Payments {
       metadata: {
         owner: owner,
       },
-      success_url:
-        'https://www.notion.so/LabelSync-Docs-7c004894c8994ecfbd9fb619d2417210?session_id',
+      success_url: 'https://github.com/apps/labelsync-manager',
       cancel_url: 'https://label-sync.com',
     })
   }
