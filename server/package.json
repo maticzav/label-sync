@@ -19,7 +19,7 @@
     "jsonwebtoken": "8.5.1",
     "multilines": "1.0.3",
     "prettier": "2.0.2",
-    "probot": "9.11.2",
+    "probot": "9.11.3",
     "stripe": "8.39.2"
   },
   "devDependencies": {
