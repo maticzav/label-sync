@@ -29,7 +29,7 @@
     "@types/js-yaml": "3.12.3",
     "@types/jsonwebtoken": "8.3.9",
     "@types/nock": "11.1.0",
-    "@types/node": "13.13.0",
+    "@types/node": "13.13.1",
     "@types/prettier": "2.0.0",
     "@types/stripe": "7.13.23",
     "js-yaml": "3.13.1",
