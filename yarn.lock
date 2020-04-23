@@ -1545,10 +1545,10 @@
     mini-svg-data-uri "^1.0.3"
     traverse "^0.6.6"
 
-"@tailwindcss/ui@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@tailwindcss/ui/-/ui-0.2.0.tgz#897a88b4d7542b701928e7283b68b034e61cced5"
-  integrity sha512-r9bxAW6pdOMkmfCc2ZOfn2iHmeScz322r3mGiG4ZTF8TDDWCL7YVldKebsBvFFrMxmXIJY9xynpX7i9+cxPO/Q==
+"@tailwindcss/ui@0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@tailwindcss/ui/-/ui-0.2.2.tgz#bdf558eed7e9c87b882acba502ac48081133a38c"
+  integrity sha512-Qj9ez4Q683fKfwTDse4EA2ote70RfNFJLlbfYzsoIz/SSdP0z3C1jtwSOBOvpA/Z1jlIbkHSZ56o76jcsjP0Fg==
   dependencies:
     "@tailwindcss/custom-forms" "^0.2.1"
     hex-rgb "^4.1.0"
