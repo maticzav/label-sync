@@ -24,7 +24,7 @@
     "@types/debug": "4.1.5",
     "@types/glob": "7.1.1",
     "@types/js-yaml": "3.12.3",
-    "@types/node": "13.13.2",
+    "@types/node": "13.13.3",
     "@zeit/ncc": "0.22.1"
   },
   "license": "MIT"
