@@ -3,6 +3,47 @@ import React from 'react'
 import { scrollToId } from '../lib/scroll'
 
 export default function Footer() {
+  const groups = [
+    {
+      name: 'Support',
+      links: [
+        {
+          label: 'Documentation',
+          href:
+            'https://www.notion.so/LabelSync-Docs-7c004894c8994ecfbd9fb619d2417210',
+        },
+        {
+          label: 'Pricing',
+          href: '#',
+          onClick: () => scrollToId('pricing'),
+        },
+        {
+          href: 'https://labelsync.statuspage.io',
+          label: 'Status',
+        },
+        {
+          label: 'Support',
+          href: 'mailto:support@labelsync.com',
+        },
+      ],
+    },
+    {
+      name: 'Legal',
+      links: [
+        {
+          label: 'Terms of Service',
+          href:
+            'https://www.notion.so/LabelSync-s-Terms-of-Service-and-Privacy-Policy-cea6dddad9294eddb95a61fb361e5d2f',
+        },
+        {
+          label: 'Privacy Policy',
+          href:
+            'https://www.notion.so/LabelSync-s-Terms-of-Service-and-Privacy-Policy-cea6dddad9294eddb95a61fb361e5d2f',
+        },
+      ],
+    },
+  ]
+
   return (
     <div className="bg-white">
       <div className="max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
@@ -62,67 +103,33 @@ export default function Footer() {
           {/* <!-- Links --> */}
 
           <div className="mt-12 grid grid-cols-2 gap-8 md:w-1/2 xl:mt-0">
-            <div className="md:grid">
-              <div>
-                <h4 className="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase">
-                  Support
-                </h4>
-                <ul className="mt-4">
-                  <li>
-                    <a
-                      href="#"
-                      onClick={() => scrollToId('pricing')}
-                      className="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Pricing
-                    </a>
-                  </li>
-                  <li className="mt-4">
-                    <a
-                      href="https://github.com/maticzav/label-sync"
-                      className="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Documentation
-                    </a>
-                  </li>
-                  <li className="mt-4 flex align-middle">
-                    <span className="text-base leading-6 text-gray-500 hover:text-gray-900">
-                      Guides
-                    </span>
-                    <span className="ml-2 text-xs py-1 font-semibold text-gray-600 tracking-wide">
-                      (soon)
-                    </span>
-                  </li>
-                </ul>
+            {/* Groups grid */}
+            {groups.map((group) => (
+              <div className="md:grid">
+                <div key={group.name}>
+                  <h4 className="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase">
+                    {group.name}
+                  </h4>
+                  <ul>
+                    {group.links.map((link) => (
+                      <li key={link.label} className="mt-4">
+                        <a
+                          href={link.href}
+                          onClick={link.onClick}
+                          className="text-base leading-6 text-gray-500 hover:text-gray-900"
+                        >
+                          {link.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-            </div>
-            <div>
-              <div>
-                <h4 className="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase">
-                  Legal
-                </h4>
-                <ul className="mt-4">
-                  <li className="mt-4">
-                    <a
-                      href="https://www.notion.so/LabelSync-s-Terms-of-Service-and-Privacy-Policy-cea6dddad9294eddb95a61fb361e5d2f"
-                      className="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Privacy
-                    </a>
-                  </li>
-                  <li className="mt-4">
-                    <a
-                      href="https://www.notion.so/LabelSync-s-Terms-of-Service-and-Privacy-Policy-cea6dddad9294eddb95a61fb361e5d2f"
-                      className="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Terms
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
+
+        {/* Rights */}
         <div className="mt-12 border-t border-gray-200 pt-8">
           <p className="text-base leading-6 text-gray-400 xl:text-center">
             &copy; 2020 Matic Zavadlal. All rights reserved.
