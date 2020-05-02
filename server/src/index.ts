@@ -1116,7 +1116,7 @@ function withUserContextLogger<
     try {
       timber.use(addCurrentUser)
       ;(ctx as Context<C> & { logger: Timber }).logger = timber
-      return fn(ctx as Context<C> & { logger: Timber })
+      return await fn(ctx as Context<C> & { logger: Timber })
     } catch (err) /* istanbul ignore next */ {
       /* Report the error and skip evaluation. */
       await timber.warn(`Event resulted in error.`, { error: err.message })
@@ -1174,7 +1174,7 @@ function withLogger<
     try {
       timber.use(addEvent)
       ;(ctx as Context<C> & { logger: Timber }).logger = timber
-      return fn(ctx as Context<C> & { logger: Timber })
+      return await fn(ctx as Context<C> & { logger: Timber })
     } catch (err) /* istanbul ignore next */ {
       /* Report the error and skip evaluation. */
       await timber.warn(`Event resulted in error.`, { error: err.message })

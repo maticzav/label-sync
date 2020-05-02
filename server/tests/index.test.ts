@@ -28,15 +28,17 @@ describe('bot:', () => {
   beforeAll(async () => {
     // Network settings
     nock.disableNetConnect()
-
-    nock.enableNetConnect('127.0.0.1')
-    nock.enableNetConnect('localhost')
-    client = new PrismaClient()
-
-    nock.enableNetConnect('https://logs.timber.io/')
+    // local servers
+    nock.enableNetConnect((host) => {
+      return (
+        host.includes('localhost') ||
+        host.includes('127.0.0.1') ||
+        host.includes('logs.timber.io')
+      )
+    })
 
     // DataStores
-
+    client = new PrismaClient()
     timber = new Timber(
       process.env.TIMBER_API_KEY!,
       process.env.TIMBER_SOURCE_ID!,
