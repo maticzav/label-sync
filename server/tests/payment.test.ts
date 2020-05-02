@@ -10,16 +10,18 @@ describe('payments:', () => {
 
   test('sets right expiration date:', () => {
     expect(
-      moment(payments.getExpirationDateFromNow('ANNUALLY')).diff(
-        moment(),
-        'day',
-      ),
-    ).toBe(364)
+      366 -
+        moment(payments.getExpirationDateFromNow('ANNUALLY')).diff(
+          moment(),
+          'day',
+        ),
+    ).toBeLessThan(3)
     expect(
-      moment(payments.getExpirationDateFromNow('MONTHLY')).diff(
-        moment(),
-        'day',
-      ),
-    ).toBe(31)
+      31 -
+        moment(payments.getExpirationDateFromNow('MONTHLY')).diff(
+          moment(),
+          'day',
+        ),
+    ).toBeLessThan(3)
   })
 })
