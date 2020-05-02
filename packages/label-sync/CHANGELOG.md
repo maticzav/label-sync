@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/matizav/label-sync/compare/label-sync@3.1.24...label-sync@3.2.0) (2020-05-02)
+
+
+### Features
+
+* nextjs website ([e3a85e5](https://github.com/matizav/label-sync/commit/e3a85e5aaa5cb3c3b37d91f23d76bd686caa5dca))
+
+
+
+
+
 ## [3.1.24](https://github.com/matizav/label-sync/compare/label-sync@3.1.23...label-sync@3.1.24) (2020-04-26)
 
 **Note:** Version bump only for package label-sync

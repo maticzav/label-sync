@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.4.0](https://github.com/maticzav/label-sync/compare/create-label-sync@2.3.79...create-label-sync@2.4.0) (2020-05-02)
+
+
+### Features
+
+* nextjs website ([e3a85e5](https://github.com/maticzav/label-sync/commit/e3a85e5aaa5cb3c3b37d91f23d76bd686caa5dca))
+
+
+
+
+
 ## [2.3.79](https://github.com/maticzav/label-sync/compare/create-label-sync@2.3.78...create-label-sync@2.3.79) (2020-04-26)
 
 **Note:** Version bump only for package create-label-sync
