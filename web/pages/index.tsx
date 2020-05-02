@@ -485,23 +485,35 @@ function Pricing() {
       </div>
 
       {/* Period changer */}
+
       <div className="block mx-auto flex justify-center mt-8 lg:mt-12">
         <span className="mr-3 text-gray-200 font-semibold align-baseline">
-          Pay annualy
+          Pay monthly
         </span>
+
+        {/*
+          Simple toggle
+
+          On: "bg-green-500", Off: "bg-gray-200"
+        */}
         <span
           onClick={toggle}
-          className="align-middle leading-1 w-8 h-5 padding-2 cursor-pointer flex flex-col justify-center rounded-full bg-green-400 hover:bg-green-450 ease-in duration-200"
+          className={
+            'relative inline-block flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline ' +
+            (period === 'yearly' ? 'bg-green-400' : 'bg-gray-200')
+          }
         >
-          {period === 'yearly' && (
-            <span className="inline-block w-4 h-4 bg-gray-100 rounded-full"></span>
-          )}
-          {period === 'monthly' && (
-            <span className="self-end inline-block w-4 h-4 bg-gray-100 rounded-full"></span>
-          )}
+          {/* On: "translate-x-5", Off: "translate-x-0" */}
+          <span
+            className={
+              'inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200 ' +
+              (period === 'yearly' ? 'translate-x-5' : 'translate-x-0')
+            }
+          ></span>
         </span>
+
         <span className="align-baseline font-semibold ml-3 text-gray-200">
-          Pay monthly
+          Pay annualy
         </span>
       </div>
 

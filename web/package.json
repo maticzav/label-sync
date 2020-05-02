@@ -8,12 +8,14 @@
     "type-check": "tsc"
   },
   "dependencies": {
+    "@stripe/stripe-js": "^1.5.0",
     "multilines": "^1.0.3",
     "next": "^9.3.6",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-ga": "^2.7.0",
-    "react-transition-group": "^4.3.0"
+    "react-transition-group": "^4.3.0",
+    "swr": "^0.2.0"
   },
   "devDependencies": {
     "@tailwindcss/ui": "0.3.0",
