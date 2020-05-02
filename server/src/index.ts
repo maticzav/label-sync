@@ -81,11 +81,14 @@ module.exports = (
       })
 
       if (existingPurchase) {
-        return res.sendStatus(403)
+        return res.send({
+          status: 'err',
+          message: 'You are already subscribed.',
+        })
       }
 
       const session = await payments.getSession(owner)
-      return res.status(200).send(session.id)
+      return res.send({ status: 'ok', session: session.id })
     } catch (err) {
       return res.sendStatus(500)
     }

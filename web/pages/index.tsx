@@ -78,6 +78,10 @@ function Title() {
                 'https://www.notion.so/LabelSync-Docs-7c004894c8994ecfbd9fb619d2417210',
             },
             {
+              label: 'Install',
+              href: 'http://github.com/marketplace/labelsync-manage',
+            },
+            {
               label: 'Pricing',
               href: '#',
               onClick: () => scrollToId('pricing'),
@@ -618,10 +622,12 @@ function FAQ() {
                 </dt>
                 <dd className="mt-2">
                   <p className="text-base leading-6 text-gray-500">
-                    Please open up an issue describing your problem, or send us
-                    an
-                    <a href="mailto:support@label-sync.com">email</a> to our
-                    support team.
+                    Please send us an
+                    <a className="mx-1" href="mailto:support@label-sync.com">
+                      email
+                    </a>
+                    to our support team. We'll try to get back to you as soon as
+                    possible.
                   </p>
                 </dd>
               </div>
@@ -636,7 +642,7 @@ function FAQ() {
                 <dd className="mt-2">
                   <p className="text-base leading-6 text-gray-500">
                     Please reach out to
-                    <a href="mailto:matic@label-sync.com">
+                    <a href="mailto:matic@label-sync.com" className=" ml-1">
                       matic@label-sync.com
                     </a>
                     . I'd be more than happy to chat about LabelSync with you!

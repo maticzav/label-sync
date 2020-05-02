@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import { loadStripe } from '@stripe/stripe-js'
-import useSWR, { mutate } from 'swr'
 
 import Navigation from '../components/Navigation'
 import Footer from '../components/Footer'
@@ -34,9 +33,17 @@ export const Subscribe = ({}) => {
   const [period, setPeriod] = useState<'yearly' | 'monthly'>(defaultPeriod)
   const [agreed, setAgree] = useState(false)
 
-  const [fetching, setFetching] = useState(false)
+  type Fetching =
+    | { status: 'NOT_REQUESTED' }
+    | { status: 'LOADING' }
+    | { status: 'SUCCESS' }
+    | { status: 'ERR'; message: string }
 
-  const response = useSWR('https://app.label-sync.com/subscribe/session')
+  const [fetching, setFetching] = useState<Fetching>({
+    status: 'NOT_REQUESTED',
+    // status: 'ERR',
+    // message: 'Something went wrong.',
+  })
 
   /**
    * Performs a call.
@@ -50,43 +57,47 @@ export const Subscribe = ({}) => {
     if (!agreed) return
 
     // Contact server
-    setFetching(true)
+    setFetching({ status: 'LOADING' })
+    try {
+      const body = JSON.stringify({
+        email,
+        firstName,
+        lastName,
+        account,
+        company,
+        agreed,
+        period,
+      })
 
-    const body = JSON.stringify({
-      email,
-      firstName,
-      lastName,
-      account,
-      company,
-      agreed,
-      period,
-    })
+      const res = (await fetch('https://app.label-sync.com/subscribe/session', {
+        method: 'POST',
+        mode: 'cors',
+        credentials: 'same-origin',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      }).then((res) => res.json())) as
+        | { status: 'ok'; session: string }
+        | { status: 'err'; message: string }
 
-    const res = await fetch('https://app.label-sync.com/subscribe/session', {
-      method: 'POST',
-      mode: 'cors',
-      credentials: 'same-origin',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: body,
-    })
-
-    if (res.ok) {
-      const sessionId = await res.text()
-      const redirect = await stripeLoader
-        .then((stripe) =>
-          stripe!.redirectToCheckout({
-            sessionId: sessionId,
-          }),
-        )
-        .catch((err) => console.log(err))
-    } else {
-      console.error(res)
+      if (res.status === 'ok') {
+        setFetching({ status: 'SUCCESS' })
+        /* redirect to stripe */
+        await stripeLoader
+          .then((stripe) =>
+            stripe!.redirectToCheckout({
+              sessionId: res.session,
+            }),
+          )
+          .catch((err) => console.log(err))
+      } else {
+        setFetching({ status: 'ERR', message: res.message })
+      }
+    } catch (err) {
+      setFetching({ status: 'ERR', message: err.message })
     }
-
-    setFetching(false)
   }
 
   return (
@@ -103,6 +114,10 @@ export const Subscribe = ({}) => {
                 href:
                   'https://www.notion.so/LabelSync-Docs-7c004894c8994ecfbd9fb619d2417210',
               },
+              {
+                label: 'Install',
+                href: 'http://github.com/marketplace/labelsync-manage',
+              },
 
               {
                 label: 'Support',
@@ -115,8 +130,8 @@ export const Subscribe = ({}) => {
 
       {/* Form */}
 
-      <div className="bg-white pt-5 pb-10 lg:pb-24 px-4 overflow-hidden sm:px-6 lg:px-8">
-        <div className="relative max-w-xl mx-auto">
+      <div className="pt-2 pb-10 lg:pb-24 px-4 overflow-hidden sm:px-6 lg:px-8">
+        <div className="max-w-xl mx-auto">
           {/* Heading */}
           <div className="text-center">
             <h2 className="text-3xl leading-9 font-extrabold tracking-tight text-gray-900 sm:text-4xl sm:leading-10">
@@ -292,16 +307,35 @@ export const Subscribe = ({}) => {
                 </div>
               </div>
 
+              {/* Submit */}
               <div className="sm:col-span-2 mt-4">
                 <span className="w-full inline-flex rounded-md shadow-sm">
                   <button
                     onClick={subscribe}
                     type="button"
+                    disabled={fetching.status === 'LOADING'}
                     className="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-outline-indigo active:bg-green-700 transition ease-in-out duration-150"
                   >
                     Subscribe
                   </button>
                 </span>
+              </div>
+
+              {/* Errors and messages */}
+              <div className="sm:col-span-2">
+                {fetching.status === 'ERR' && (
+                  <div
+                    className="p-2 bg-pink-800 items-center text-pink-100 leading-none lg:rounded-full flex lg:inline-flex"
+                    role="alert"
+                  >
+                    <span className="flex rounded-full bg-pink-500 uppercase px-2 py-1 text-xs font-bold mr-3">
+                      Error
+                    </span>
+                    <span className="font-semibold mr-2 text-left flex-auto">
+                      {fetching.message}
+                    </span>
+                  </div>
+                )}
               </div>
             </form>
           </div>
