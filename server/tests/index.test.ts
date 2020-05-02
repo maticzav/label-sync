@@ -1,7 +1,9 @@
+import { Timber } from '@timberio/node'
 import fs from 'fs'
 import nock from 'nock'
 import path from 'path'
 import { Probot } from 'probot'
+import moment from 'moment'
 
 const manager = require('../src')
 
@@ -13,47 +15,41 @@ const configFixture = fs.readFileSync(
 import labelCreatedPayload from './__fixtures__/github/label.created'
 import installationPayload from './__fixtures__/github/installation.created'
 import issuesLabeledPayload from './__fixtures__/github/issues.labeled'
-import marketplacePurchasePayload from './__fixtures__/github/marketplace_purchase.purchased'
-import marketplaceCancelPayload from './__fixtures__/github/marketplace_purchase.cancelled'
+// import marketplacePurchasePayload from './__fixtures__/github/marketplace_purchase.purchased'
+// import marketplaceCancelPayload from './__fixtures__/github/marketplace_purchase.cancelled'
 import prPayload from './__fixtures__/github/pullrequest.opened'
 import pushPayload from './__fixtures__/github/push'
-import { PrismaClient, Tier } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 
 describe('bot:', () => {
   let client: PrismaClient
+  let timber: Timber
 
   beforeAll(async () => {
+    // Network settings
     nock.disableNetConnect()
+
     nock.enableNetConnect('127.0.0.1')
     nock.enableNetConnect('localhost')
     client = new PrismaClient()
 
-    /* Clear db */
+    nock.enableNetConnect('https://logs.timber.io/')
 
-    await client.log.deleteMany({ where: {} })
+    // DataStores
 
-    await client.log.create({
-      data: {
-        event: 'START TEST',
-        type: 'INFO',
-        owner: 'maticzav',
-        message: 'started tests',
+    timber = new Timber(
+      process.env.TIMBER_API_KEY!,
+      process.env.TIMBER_SOURCE_ID!,
+      {
+        ignoreExceptions: false,
       },
-    })
+    )
   })
 
   afterAll(async () => {
     nock.cleanAll()
     nock.enableNetConnect()
 
-    await client.log.create({
-      data: {
-        event: 'END TEST',
-        type: 'INFO',
-        owner: 'maticzav',
-        message: 'ended tests',
-      },
-    })
     await client.disconnect()
   })
 
@@ -61,7 +57,7 @@ describe('bot:', () => {
 
   beforeEach(() => {
     probot = new Probot({ id: 123, githubToken: 'token' })
-    const app = probot.load((app) => manager(app, client))
+    const app = probot.load((app) => manager(app, client, timber))
 
     app.app = {
       getSignedJsonWebToken: () => 'jwt',
@@ -79,67 +75,74 @@ describe('bot:', () => {
 
   /* Tests on each tier. */
 
-  const tiers: Tier[] = ['FREE', 'BASIC']
+  const tiers = ['FREE', 'PAID']
 
   for (const tier of tiers) {
     describe(tier, () => {
       beforeEach(async () => {
+        await client.bill.deleteMany({ where: {} })
         await client.purchase.deleteMany({ where: {} })
-        await client.purchase.create({
-          data: {
-            owner: 'maticzav',
-            tier: 'BASIC',
-            plan: 'basic',
-            planId: 1,
-            trial: false,
-            email: 'email',
-            type: 'USER',
-          },
-        })
-      })
-
-      test(
-        'marketplace purchase event',
-        async () => {
-          await probot.receive({
-            id: 'marketplace.purchased',
-            name: 'marketplace_purchase',
-            payload: marketplacePurchasePayload,
-          })
-
-          /* Tests */
-
-          const purchase = await client.purchase.findOne({
-            where: { owner: 'username' },
-          })
-
-          expect(purchase).not.toBeNull()
-          expect(purchase).not.toBeUndefined()
-        },
-        5 * 60 * 1000,
-      )
-
-      test(
-        'marketplace cancel event',
-        async () => {
-          await probot.receive({
-            id: 'marketplace.cancel',
-            name: 'marketplace_purchase',
-            payload: marketplaceCancelPayload,
-          })
-
-          /* Tests */
-
-          const purchases = await client.purchase.findMany({
-            where: {
-              owner: 'maticzav',
+        // Create a paid purchase.
+        if (tier === 'PAID') {
+          await client.purchase.create({
+            data: {
+              ghAccount: 'maticzav',
+              company: 'ACME',
+              name: 'Foo Bar',
+              email: 'email',
+              bills: {
+                create: {
+                  period: 'MONTHLY',
+                  expires: moment().add(1, 'h').toDate(),
+                },
+              },
             },
           })
+        }
+      })
 
-          expect(purchases.length).toBe(0)
-        },
-        5 * 60 * 1000,
-      )
+      // test(
+      //   'marketplace purchase event',
+      //   async () => {
+      //     await probot.receive({
+      //       id: 'marketplace.purchased',
+      //       name: 'marketplace_purchase',
+      //       payload: marketplacePurchasePayload,
+      //     })
+
+      //     /* Tests */
+
+      //     const purchase = await client.purchase.findOne({
+      //       where: { owner: 'username' },
+      //     })
+
+      //     expect(purchase).not.toBeNull()
+      //     expect(purchase).not.toBeUndefined()
+      //   },
+      //   5 * 60 * 1000,
+      // )
+
+      // test(
+      //   'marketplace cancel event',
+      //   async () => {
+      //     await probot.receive({
+      //       id: 'marketplace.cancel',
+      //       name: 'marketplace_purchase',
+      //       payload: marketplaceCancelPayload,
+      //     })
+
+      //     /* Tests */
+
+      //     const purchases = await client.purchase.findMany({
+      //       where: {
+      //         owner: 'maticzav',
+      //       },
+      //     })
+
+      //     expect(purchases.length).toBe(0)
+      //   },
+      //   5 * 60 * 1000,
+      // )
 
       test(
         'installation event bootstrap config',
@@ -733,9 +736,12 @@ describe('bot:', () => {
             content: Buffer.from('invalid: invalid').toString('base64'),
           })
 
-          const issuesEndpoint = jest.fn().mockImplementation((uri, body) => {
-            expect(body).toMatchSnapshot()
-          })
+          const commitCommentEndpoint = jest
+            .fn()
+            .mockImplementation((uri, body) => {
+              expect(body).toMatchSnapshot()
+              return
+            })
 
           /* Mocks */
 
@@ -750,8 +756,10 @@ describe('bot:', () => {
             .reply(200, configEndpoint)
 
           nock('https://api.github.com')
-            .post('/repos/maticzav/maticzav-labelsync/issues')
-            .reply(200, issuesEndpoint)
+            .post(
+              '/repos/maticzav/maticzav-labelsync/commits/0000000000000000000000000000000000000000/comments',
+            )
+            .reply(200, commitCommentEndpoint)
             .persist()
 
           await probot.receive({
@@ -763,7 +771,7 @@ describe('bot:', () => {
           /* Tests */
 
           expect(configEndpoint).toBeCalledTimes(1)
-          expect(issuesEndpoint).toBeCalledTimes(1)
+          expect(commitCommentEndpoint).toBeCalledTimes(1)
         },
         5 * 60 * 1000,
       )
@@ -798,10 +806,13 @@ describe('bot:', () => {
             .reply(200, installationsEndpoint)
 
           nock('https://api.github.com')
-            .post('/repos/maticzav/maticzav-labelsync/issues')
+            .post(
+              '/repos/maticzav/maticzav-labelsync/commits/0000000000000000000000000000000000000000/comments',
+            )
             .reply(200, (uri, body) => {
               expect(body).toMatchSnapshot()
             })
+            .persist()
 
           await probot.receive({
             id: 'pushinsufficient',
@@ -1110,11 +1121,9 @@ describe('bot:', () => {
         5 * 60 * 1000,
       )
 
-      test('logs are saving correctly', async () => {
-        const logs = await client.log.findMany()
-
-        expect(logs.length > 0).toBeTruthy()
-      })
+      // test('logs are reporting correctly', async () => {
+      //   expect(logStream).toMatchSnapshot()
+      // })
     })
   }
 })

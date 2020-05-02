@@ -1,23 +1,13 @@
 {
   "compilerOptions": {
     "rootDir": ".",
-
     "module": "esnext",
     "lib": ["dom", "es2017", "es2019"],
     "declaration": true,
     "declarationMap": true,
-    // "importHelpers": true,
-    // "isolatedModules": true,
-
     "strict": true,
-
-    /* Additional Checks */
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-
-    /* Module Resolution Options */
     "moduleResolution": "node",
     "esModuleInterop": true,
     "resolveJsonModule": true,
@@ -26,8 +16,11 @@
     "jsx": "preserve",
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "target": "es5",
+    "allowJs": true
   },
   "references": [],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
 }

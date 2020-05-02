@@ -1,6 +1,6 @@
 datasource postgresql {
   provider = "postgresql"
-  url      = env("POSTGRESQL_URL")
+  url = "***"
 }
 
 generator client {
@@ -8,14 +8,15 @@ generator client {
 }
 
 model Purchase {
-  id        String   @default(cuid()) @id
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String           @default(cuid()) @id
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
   // Installation Info
-  ghAccount String   @unique
+  ghAccount String           @unique
   name      String
   company   String?
   email     String
+  type      InstallationType
   // Billing
   bills     Bill[]
 }
@@ -35,6 +36,11 @@ model Bill {
 enum Period {
   ANNUALLY
   MONTHLY
+}
+
+enum InstallationType {
+  ORGANIZATION
+  USER
 }
 
 model StripeBill {

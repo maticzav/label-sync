@@ -7,10 +7,11 @@ import * as os from 'os'
 
 import { mapEntries } from './data/dict'
 import { withDefault } from './utils'
+import { isNullOrUndefined } from 'util'
 
 /* Constants */
 
-const NUMBER_OF_FREE_TIERS = 3
+const NUMBER_OF_FREE_TIERS = 5
 
 /**
  * Configuration repository is the repository which LabelSync
@@ -137,30 +138,23 @@ function checkPurchase(
     }
   }
 
-  /* Tier limitations */
-  const tier = withDefault('FREE', purchase?.tier)
-  switch (tier) {
-    case 'FREE': {
-      /**
-       * Report too many configurations.
-       */
-      if (numberOfConfiguredRepos >= NUMBER_OF_FREE_TIERS) {
-        const report = ml`
+  /* Tier limitations for free tiers. */
+  if (isNullOrUndefined(purchase)) {
+    /* FREE */
+    /**
+     * Report too many configurations.
+     */
+    if (numberOfConfiguredRepos >= NUMBER_OF_FREE_TIERS) {
+      const report = ml`
         | You are trying to configure more repositories than there are available in your plan.
         | Update your current plan to access all the features LabelSync offers.
         `
-        throw new Error(report)
-      }
-
-      return config
+      throw new Error(report)
     }
-    case 'BASIC': {
-      return config
-    }
-    /* istanbul ignore next */
-    default: {
-      return config
-    }
+    return config
+  } else {
+    /* PAID */
+    return config
   }
 }
 

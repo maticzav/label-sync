@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { NOTION_DOCS_URL, NOTION_PRIVACY_TOS_URL } from '../constants'
 import { scrollToId } from '../lib/scroll'
 
 export default function Footer() {
@@ -9,8 +10,7 @@ export default function Footer() {
       links: [
         {
           label: 'Documentation',
-          href:
-            'https://www.notion.so/LabelSync-Docs-7c004894c8994ecfbd9fb619d2417210',
+          href: NOTION_DOCS_URL,
         },
         {
           label: 'Pricing',
@@ -32,13 +32,11 @@ export default function Footer() {
       links: [
         {
           label: 'Terms of Service',
-          href:
-            'https://www.notion.so/LabelSync-s-Terms-of-Service-and-Privacy-Policy-cea6dddad9294eddb95a61fb361e5d2f',
+          href: NOTION_PRIVACY_TOS_URL,
         },
         {
           label: 'Privacy Policy',
-          href:
-            'https://www.notion.so/LabelSync-s-Terms-of-Service-and-Privacy-Policy-cea6dddad9294eddb95a61fb361e5d2f',
+          href: NOTION_PRIVACY_TOS_URL,
         },
       ],
     },
@@ -132,7 +130,7 @@ export default function Footer() {
         {/* Rights */}
         <div className="mt-12 border-t border-gray-200 pt-8">
           <p className="text-base leading-6 text-gray-400 xl:text-center">
-            &copy; 2020 Matic Zavadlal. All rights reserved.
+            &copy; 2020 ZAUM. All rights reserved.
           </p>
         </div>
       </div>

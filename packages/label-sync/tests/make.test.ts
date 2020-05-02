@@ -94,16 +94,13 @@ describe('make:', () => {
 
     const [errors, config] = parseConfig(
       {
-        id: 'id',
+        id: '1',
         createdAt: new Date(),
         updatedAt: new Date(),
-        email: 'email',
-        owner: 'test',
-        plan: 'free',
-        type: 'USER',
-        trial: false,
-        planId: 3,
-        tier: 'BASIC',
+        company: 'ACME',
+        ghAccount: 'test',
+        name: 'Foo Bar',
+        email: 'foo@acme.com',
       },
       file,
     )

@@ -16,7 +16,7 @@
     "creato": "^1.0.5",
     "handlebars": "^4.7.6",
     "inquirer": "^7.1.0",
-    "meow": "^6.1.0",
+    "meow": "^6.1.1",
     "mkdirp": "^1.0.4",
     "multilines": "^1.0.3",
     "ora": "^4.0.0",

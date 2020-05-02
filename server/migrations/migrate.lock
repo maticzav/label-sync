@@ -1,14 +1,8 @@
 # IF THERE'S A GIT CONFLICT IN THIS FILE, DON'T SOLVE IT MANUALLY!
-# INSTEAD EXECUTE `prisma2 migrate fix`
+# INSTEAD EXECUTE `prisma migrate fix`
 # Prisma Migrate lockfile v1
 # Read more about conflict resolution here: TODO
 
-20200326221354-create-log-model
-20200326221557-add-data-field-to-log
-20200326222204-add-event-field-to-log
-20200328230451-add-purchase-model
-20200328230542-make-purchase-owner-unique
-20200328230802-make-plan-id-number
-20200328231241-add-purchase-email
-20200328231415-make-purchase-email-optional
-20200401213610-add-tier
+20200502145238-init
+20200502151826-bills
+20200502153017-remove-installation

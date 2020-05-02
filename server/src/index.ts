@@ -1,7 +1,10 @@
 import Webhooks = require('@octokit/webhooks')
-import { PrismaClient, Purchase } from '@prisma/client'
+import { PrismaClient, Purchase, Period } from '@prisma/client'
+import { Timber } from '@timberio/node'
+import { ITimberLog } from '@timberio/types'
 import bodyParser from 'body-parser'
 import cors from 'cors'
+import moment, { now } from 'moment'
 import ml from 'multilines'
 import os from 'os'
 import path from 'path'
@@ -28,9 +31,8 @@ import {
 } from './github'
 import { handleLabelSync } from './handlers/labels'
 import { generateHumanReadableReport } from './language/labels'
-import { Logger } from './logger'
-import { loadTreeFromPath, withDefault } from './utils'
 import { Payments } from './payment'
+import { loadTreeFromPath, withDefault } from './utils'
 
 /* Templates */
 
@@ -43,15 +45,19 @@ const TEMPLATES = {
 
 module.exports = (
   app: Application,
+  /* Stored here for testing */
   prisma: PrismaClient = new PrismaClient(),
-) => {
-  app.log(`LabelSync manager up and running! 🚀`)
-
-  const logger = new Logger(prisma)
-  const payments = new Payments(
+  timber: Timber = new Timber(
+    process.env.TIMBER_API_KEY!,
+    process.env.TIMBER_SOURCE_ID!,
+    { ignoreExceptions: true },
+  ),
+  payments: Payments = new Payments(
     process.env.STRIPE_API_KEY!,
     process.env.STRIPE_ENDPOINT_SECRET!,
-  )
+  ),
+) => {
+  app.log(`LabelSync manager up and running! 🚀`)
 
   /* API */
 
@@ -71,26 +77,73 @@ module.exports = (
 
   api.post('/session', async (req, res) => {
     try {
-      const owner = req.body.owner
-      if (!owner) {
-        return res.sendStatus(404)
-      }
+      const {
+        email,
+        firstName,
+        lastName,
+        account,
+        company,
+        agreed,
+        period,
+        coupon,
+      } = req.body.owner
 
-      const existingPurchase = await prisma.purchase.findOne({
-        where: { owner },
-      })
-
-      if (existingPurchase) {
+      if (
+        [email, firstName, lastName, account].some((val) => val.trim() === '')
+      ) {
         return res.send({
           status: 'err',
-          message: 'You are already subscribed.',
+          message: 'Some fields are missing.',
         })
       }
 
-      const session = await payments.getSession(owner)
+      /* Terms of Service */
+      if (!agreed) {
+        return res.send({
+          status: 'err',
+          message: 'You must agree with Terms of Service and Privacy Policy.',
+        })
+      }
+
+      // Check for existing purchuses.
+
+      /**
+       * People shouldn't be able to change purchase information afterwards.
+       */
+      const now = moment()
+      const installtion = await prisma.purchase.upsert({
+        where: { ghAccount: account },
+        create: {
+          company,
+          email,
+          name: `${firstName} ${lastName}`,
+          ghAccount: account,
+        },
+        update: {},
+        include: {
+          bills: {
+            where: {
+              expires: { gte: now.toDate() },
+            },
+          },
+        },
+      })
+
+      if (installtion.bills.length > 0) {
+        return res.send({
+          status: 'err',
+          message: 'Your subscription is already active.',
+        })
+      }
+
+      const session = await payments.getSession({
+        ghAccount: account,
+        period,
+        coupon,
+      })
       return res.send({ status: 'ok', session: session.id })
     } catch (err) {
-      return res.sendStatus(500)
+      return res.send({ status: 'err', message: err.message })
     }
   })
 
@@ -117,21 +170,19 @@ module.exports = (
       switch (event.type) {
         case 'checkout.session.completed': {
           const session = event.data.object as {
-            metadata: { owner: string }
-            customer: { email: string }
+            metadata: { ghAccount: string; period: Period }
+            customer: { email?: string }
           }
-          const email = session.customer.email
-          const owner = session.metadata.owner
 
-          await prisma.purchase.create({
+          await prisma.bill.create({
             data: {
-              owner,
-              plan: 'stripe-basic',
-              planId: 42,
-              email,
-              tier: 'BASIC',
-              type: 'ORGANIZATION',
-              trial: false,
+              purchase: {
+                connect: { ghAccount: session.metadata.ghAccount },
+              },
+              expires: payments.getExpirationDateFromNow(
+                session.metadata.period,
+              ),
+              period: session.metadata.period,
             },
           })
 
@@ -154,37 +205,29 @@ module.exports = (
    * Tasks:
    *  - reference the purchase in the database.
    */
-  app.on('marketplace_purchase.purchased', async (ctx) => {
-    const purchase = ctx.payload.marketplace_purchase
-    const owner = purchase.account
+  // app.on('marketplace_purchase.purchased', async (ctx) => {
+  //   // TODO: Github Marketplace.
+  //   const purchase = ctx.payload.marketplace_purchase
+  //   const owner = purchase.account
 
-    // TODO: Add tier appropreately.
-    const tier = ctx.payload.marketplace_purchase.plan.unit_name
+  //   // TODO: Add tier appropreately.
+  //   const tier = ctx.payload.marketplace_purchase.plan.unit_name
 
-    try {
-      const dbpurchase = await prisma.purchase.create({
-        data: {
-          owner: owner.login,
-          email: owner.organization_billing_email,
-          plan: purchase.plan.name,
-          planId: purchase.plan.id,
-          tier: 'BASIC',
-          type: owner.type === 'User' ? 'USER' : 'ORGANIZATION',
-        },
-      })
+  //   const dbpurchase = await prisma.purchase.create({
+  //     data: {
+  //       owner: owner.login,
+  //       email: owner.organization_billing_email,
+  //       plan: purchase.plan.name,
+  //       planId: purchase.plan.id,
+  //       tier: 'BASIC',
+  //       type: owner.type === 'User' ? 'USER' : 'ORGANIZATION',
+  //     },
+  //   })
 
-      await logger.info(
-        { owner: owner.login, event: 'marketplace_purchase.purchased' },
-        `${owner.login}: ${owner.type} purchased LabelSync plan ${dbpurchase.planId}`,
-      )
-    } catch (err) /* istanbul ignore next */ {
-      await logger.debug(
-        { owner: owner.login, event: 'marketplace_purchase.purchased' },
-        err,
-        `couldn't process a marketplace purchase`,
-      )
-    }
-  })
+  // await ctx.logger.info(
+  //   `${owner.login}: ${owner.type} purchased LabelSync plan ${dbpurchase.planId}`,
+  // )
+  // })
 
   /**
    * Marketplace purchase event
@@ -192,29 +235,22 @@ module.exports = (
    * Tasks:
    *  - reference the purchase in the database.
    */
-  app.on('marketplace_purchase.cancelled', async (ctx) => {
-    const purchase = ctx.payload.marketplace_purchase
-    const owner = purchase.account
+  // app.on('marketplace_purchase.cancelled', async (ctx) => {
+  //   // TODO: Github Marketplace.
+  //   const purchase = ctx.payload.marketplace_purchase
+  //   const owner = purchase.account
 
-    try {
-      const dbpurchase = await prisma.purchase.delete({
-        where: {
-          owner: owner.login,
-        },
-      })
+  //   const dbpurchase = await prisma.purchase.delete({
+  //     where: {
+  //       owner: owner.login,
+  //     },
+  //   })
 
-      await logger.info(
-        { owner: owner.login, event: 'marketplace_purchase.cancelled' },
-        `${owner.login} cancelled LabelSync plan ${dbpurchase.planId}`,
-      )
-    } catch (err) /* istanbul ignore next */ {
-      await logger.debug(
-        { owner: owner.login, event: 'marketplace_purchase.cancelled' },
-        err,
-        `couldn't process a marketplace cancellation`,
-      )
-    }
-  })
+  // await ctx.logger.info(
+  //   { owner: owner.login, event: 'marketplace_purchase.cancelled' },
+  //   `${owner.login} cancelled LabelSync plan ${dbpurchase.planId}`,
+  // )
+  // })
 
   /**
    * Installation event
@@ -226,35 +262,45 @@ module.exports = (
    *  - check whether there exists a configuration repository,
    *  - create a configuration repository from template.
    */
-  app.on('installation.created', async ({ github, log, payload }) => {
-    const owner = payload.installation.account.login
-    try {
+  app.on(
+    'installation.created',
+    withLogger(timber, async (ctx) => {
+      const owner = ctx.payload.installation.account.login
+
       const configRepo = getLSConfigRepoName(owner)
 
-      const purchase = await prisma.purchase.findOne({ where: { owner } })
+      const now = moment()
+      const purchase = await prisma.purchase.findOne({
+        where: { ghAccount: owner },
+        include: {
+          bills: {
+            where: {
+              expires: { gte: now.toDate() },
+            },
+          },
+        },
+      })
 
-      await logger.info(
-        { owner, event: 'installation.created' },
-        `onboarding ${configRepo}, purchased tier: ${purchase?.tier}`,
-      )
+      await ctx.logger.info(`Onboarding ${owner}.`, {
+        tier: withDefault([], purchase?.bills).length > 0 ? 'paid' : 'free',
+      })
 
       /* See if config repository exists. */
-      const repo = await getRepo(github, owner, configRepo)
+      const repo = await getRepo(ctx.github, owner, configRepo)
 
       switch (repo.status) {
         case 'Exists': {
           /* Perform sync. */
 
-          await logger.info(
-            { owner, event: 'installation.created' },
-            `user has existing repository in ${configRepo}`,
+          await ctx.logger.info(
+            `User has existing repository in ${configRepo}, performing sync.`,
           )
 
           const ref = `refs/heads/${repo.repo.default_branch}`
 
           /* Load configuration */
           const configRaw = await getFile(
-            github,
+            ctx.github,
             { owner, repo: configRepo, ref },
             LS_CONFIG_PATH,
           )
@@ -262,10 +308,7 @@ module.exports = (
           /* No configuration, skip the evaluation. */
           /* istanbul ignore next */
           if (configRaw === null) {
-            await logger.info(
-              { owner, event: 'installation.created' },
-              `no configuration`,
-            )
+            await ctx.logger.info(`No configuration, skipping sync.`)
             return
           }
 
@@ -273,72 +316,58 @@ module.exports = (
 
           /* Wrong configuration, open the issue. */
           if (error !== null) {
-            await logger.debug(
-              { owner, event: 'installation.created' },
-              { config },
-              `error in config ${error}`,
-            )
+            await ctx.logger.debug(`Error in config, skipping sync.`, {
+              config: JSON.stringify(config),
+              error: error,
+            })
 
             /* Open an issue about invalid configuration. */
             const title = 'LabelSync - Onboarding configuration'
             const body = ml`
-          | # Welcome to LabelSync!
-          |
-          | Hi there,
-          | Thank you for using LabelSync. We hope you enjoyed the experience so far.
-          | It seems like there are some problems with your configuration.
-          | Our parser reported that:
-          |
-          | \`\`\`
-          | ${error}
-          | \`\`\`
-          |
-          | Let us know if we can help you with the configuration by sending us an email to support@label-sync.com. We'll try to get back to you as quickly as possible.
-          |
-          | Best,
-          | LabelSync Team
-          `
+            | # Welcome to LabelSync!
+            |
+            | Hi there,
+            | Thank you for using LabelSync. We hope you enjoyed the experience so far.
+            | It seems like there are some problems with your configuration.
+            | Our parser reported that:
+            |
+            | \`\`\`
+            | ${error}
+            | \`\`\`
+            |
+            | Let us know if we can help you with the configuration by sending us an email to support@label-sync.com. We'll try to get back to you as quickly as possible.
+            |
+            | Best,
+            | LabelSync Team
+            `
 
             const issue = await openIssue(
-              github,
+              ctx.github,
               owner,
               configRepo,
               title,
               body,
             )
 
-            await logger.info(
-              { owner, event: 'installation.created' },
-              `opened error issue ${issue.number}`,
-            )
-
+            await ctx.logger.info(`Opened issue ${issue.number}.`)
             return
           }
 
           /* Verify that we can access all configured files. */
           const access = await checkInstallationAccess(
-            github,
+            ctx.github,
             Object.keys(config!.repos),
-          )
-
-          await logger.debug(
-            { owner, event: 'installation.created' },
-            { access },
-            `obtained access status`,
           )
 
           switch (access.status) {
             case 'Sufficient': {
-              await logger.info(
-                { owner, event: 'installation.created' },
-                `syncing labels`,
-              )
+              await ctx.logger.info(`Performing sync.`)
 
               /* Performs sync. */
               for (const repo in config!.repos) {
                 await Promise.all([
                   handleLabelSync(
-                    github,
+                    ctx.github,
                     owner,
                     repo,
                     config!.repos[repo],
@@ -350,64 +379,59 @@ module.exports = (
               return
             }
             case 'Insufficient': {
-              await logger.info(
-                { owner, event: 'installation.created' },
-                `insufficient permissions ${access}`,
+              await ctx.logger.info(
+                `Insufficient permissions, skipping sync.`,
+                {
+                  access: JSON.stringify(access),
+                },
               )
 
               /* Opens up an issue about insufficient permissions. */
               const title = 'LabelSync - Insufficient permissions'
               const body = ml`
-            | # Insufficient permissions
-            |
-            | Hi there,
-            | Thank you for installing LabelSync. We have noticed that your configuration stretches beyond repositories we can access. We assume that you forgot to allow access to certain repositories.
-            |
-            | Please update your installation. 
-            |
-            | _Missing repositories:_
-            | ${access.missing.map((missing) => ` * ${missing}`).join(os.EOL)}
-            |
-            | Best,
-            | LabelSync Team
-            `
+              | # Insufficient permissions
+              |
+              | Hi there,
+              | Thank you for installing LabelSync. We have noticed that your configuration stretches beyond repositories we can access. We assume that you forgot to allow access to certain repositories.
+              |
+              | Please update your installation. 
+              |
+              | _Missing repositories:_
+              | ${access.missing.map((missing) => ` * ${missing}`).join(os.EOL)}
+              |
+              | Best,
+              | LabelSync Team
+              `
 
               const issue = await openIssue(
-                github,
+                ctx.github,
                 owner,
                 configRepo,
                 title,
                 body,
               )
 
-              await logger.info(
-                { owner, event: 'installation.created' },
-                `opened issue ${issue.number} for insufficient persmissions`,
-              )
-
+              await ctx.logger.info(`Opened issue ${issue.number}.`)
               return
             }
           }
         }
 
         case 'Unknown': {
-          await logger.info(
-            { owner, event: 'installation.created' },
-            `no existing repository for ${owner}`,
+          await ctx.logger.info(
+            `No existing repository for ${owner}, start onboarding.`,
           )
 
           /**
            * Bootstrap the configuration depending on the
            * type of the installation account.
            */
-          switch (payload.installation.account.type) {
+          const accountType = ctx.payload.installation.account.type
+          switch (accountType) {
             /* istanbul ignore next */
             case 'User': {
               // TODO: Update once Github changes the settings
-              await logger.info(
-                { owner, event: 'installation.created' },
-                `skip bootstrap for User accounts`,
-              )
+              await ctx.logger.info(`User account, skipping onboarding.`)
               return
             }
             case 'Organization': {
@@ -415,10 +439,7 @@ module.exports = (
                * Tempalte using for onboarding new customers.
                */
 
-              await logger.info(
-                { owner, event: 'installation.created' },
-                `bootstraping config repo`,
-              )
+              await ctx.logger.info(`Bootstraping configuration repository.`)
 
               const template: GHTree = loadTreeFromPath(TEMPLATES.yaml, [
                 'dist',
@@ -431,43 +452,29 @@ module.exports = (
               /* Bootstrap a configuration repository in organisation. */
               const personalisedTemplate = populateTempalte(template, {
                 repository: configRepo,
-                repositories: payload.repositories,
+                repositories: ctx.payload.repositories,
               })
 
               await bootstrapConfigRepository(
-                github,
+                ctx.github,
                 { owner, repo: configRepo },
                 personalisedTemplate,
               )
 
-              await logger.info(
-                { owner, event: 'installation.created' },
-                `bootstraped repository: ${configRepo}`,
-              )
+              await ctx.logger.info(`Onboarding complete for ${owner}.`)
 
               return
             }
             /* istanbul ignore next */
             default: {
-              await logger.warn(
-                { owner, event: 'installation.created' },
-                `unsupported bootstrap type: ${payload.installation.account.type}`,
-              )
+              await ctx.logger.warn(`Unsupported account type: ${accountType}`)
               return
             }
           }
         }
       }
-    } catch (err) /* istanbul ignore next */ {
-      await logger.warn(
-        {
-          owner: payload.installation.account.login,
-          event: 'installation.created',
-        },
-        err.message,
-      )
-    }
-  })
+    }),
+  )
 
   /**
    * Push Event
@@ -482,29 +489,29 @@ module.exports = (
    */
   app.on(
     'push',
-    withPurchase(prisma, async ({ payload, purchase, github, log }) => {
-      const owner = payload.repository.owner.login
-      const repo = payload.repository.name
-      const ref = payload.ref
-      const defaultRef = `refs/heads/${payload.repository.default_branch}`
+    withUserContextLogger(
+      timber,
+      withPurchase(prisma, async (ctx) => {
+        const owner = ctx.payload.repository.owner.login
+        const repo = ctx.payload.repository.name
+        const ref = ctx.payload.ref
+        const defaultRef = `refs/heads/${ctx.payload.repository.default_branch}`
 
-      try {
         const configRepo = getLSConfigRepoName(owner)
 
         /* Skip non default branch and other repos pushes. */
         /* istanbul ignore if */
         if (defaultRef !== ref || configRepo !== repo) {
-          await logger.debug(
-            { owner, repo, event: 'push' },
-            { defaultRef, ref, configRepo, repo },
-            `skipping sync`,
+          await ctx.logger.info(
+            `Ref and repo don't match configuration repo and ref. Skipping sync.`,
+            { ref, repo, defaultRef, configRepo },
           )
           return
         }
 
         /* Load configuration */
         const configRaw = await getFile(
-          github,
+          ctx.github,
           { owner, repo, ref },
           LS_CONFIG_PATH,
         )
@@ -512,149 +519,120 @@ module.exports = (
         /* Skip altogether if there's no configuration. */
         /* istanbul ignore next */
         if (configRaw === null) {
-          await logger.info({ owner, repo, event: 'push' }, `no configuration`)
+          await ctx.logger.info(`No configuration, skipping sync.`)
           return
         }
 
-        const [error, config] = parseConfig(purchase, configRaw)
-
-        await logger.debug(
-          { owner, repo, event: 'push' },
-          { config },
-          `loaded configuration for ${owner}`,
-        )
+        const [error, config] = parseConfig(ctx.purchase, configRaw)
 
         /* Open an issue about invalid configuration. */
         if (error !== null) {
-          await logger.debug(
-            { owner, repo, event: 'push' },
-            { config },
-            `error in config ${error}`,
-          )
+          await ctx.logger.info(`error in config ${error}`, {
+            config: JSON.stringify(config),
+            error: error,
+          })
 
-          const title = 'LabelSync - Invalid configuration'
-          const body = ml`
-          | # Invalid configuration
-          |
-          | Hi there,
-          | Thank you for using LabelSync. It seems like your configuration
-          | uses a format unknown to us. That might be a consequence of invalid yaml 
-          | cofiguration file. 
-          |
-          | \`\`\`
-          | ${error}
-          | \`\`\`
-          |
-          | Best,
-          | LabelSync Team
-          `
+          const commit_sha: string = ctx.payload.after
+          const report = ml`
+            | It seems like your configuration uses a bit strange format unknown to us. 
+            | That might be a consequence of invalid yaml cofiguration file. 
+            |
+            | Here's what I am having problems with:
+            |
+            | \`\`\`
+            | ${error}
+            | \`\`\`
+            `
 
-          const issue = await openIssue(github, owner, configRepo, title, body)
+          await ctx.github.repos.createCommitComment({
+            owner,
+            repo,
+            commit_sha,
+            body: report,
+          })
 
-          await logger.info(
-            { owner, repo, event: 'push' },
-            `opened issue ${issue.number}`,
-          )
-
+          await ctx.logger.info(`Commented on commit ${commit_sha}.`)
           return
         }
 
+        await ctx.logger.debug(`Configuration loaded.`, {
+          config: JSON.stringify(config),
+        })
+
         /* Verify that we can access all configured files. */
         const access = await checkInstallationAccess(
-          github,
+          ctx.github,
           Object.keys(config!.repos),
-        )
-
-        await logger.debug(
-          { owner, repo, event: 'push' },
-          { access },
-          `checking access`,
         )
 
         /* Skip configurations that we can't access. */
         switch (access.status) {
           case 'Sufficient': {
-            await logger.info(
-              { owner, repo, event: 'push' },
-              `performing label sync`,
-            )
+            await ctx.logger.info(`Performing label sync on ${owner}.`)
 
             /* Performs sync. */
 
             const reports = await Promise.all(
               Object.keys(config!.repos).map((repo) =>
-                handleLabelSync(github, owner, repo, config!.repos[repo], true),
+                handleLabelSync(
+                  ctx.github,
+                  owner,
+                  repo,
+                  config!.repos[repo],
+                  true,
+                ),
               ),
             )
 
-            await logger.debug(
-              { owner, repo, event: 'push' },
-              { config },
-              `sync completed`,
-            )
+            await ctx.logger.debug(`Sync completed.`, {
+              config: JSON.stringify(config),
+            })
 
             /* Comment on commit */
 
             const report = generateHumanReadableReport(reports)
-            const commit_sha: string = payload.after
+            const commit_sha: string = ctx.payload.after
 
-            await github.repos.createCommitComment({
+            await ctx.github.repos.createCommitComment({
               owner,
               repo,
               commit_sha,
               body: report,
             })
 
-            /* Closes issues */
-
-            // TODO: close issues on successful sync.
-
             return
           }
           case 'Insufficient': {
-            await logger.debug(
-              { owner, repo, event: 'push' },
-              { config, access },
-              `insufficient permissions: ${access.missing.join(', ')}`,
+            await ctx.logger.info(
+              `Insufficient permissions: ${access.missing.join(', ')}`,
+              {
+                config: JSON.stringify(config),
+                access: JSON.stringify(access),
+              },
             )
 
-            /* Opens up an issue about insufficient permissions. */
-            const title = 'LabelSync - Insufficient permissions'
-            const body = ml`
-            | # Insufficient permissions
-            |
-            | Hi there,
-            | We have noticed that your configuration stretches beyond
-            | repositories we can access. Please update it so we can help
-            | you as best as we can.
+            const commit_sha: string = ctx.payload.after
+            const report = ml`
+            | Your configuration stretches beyond repositories I can access. 
+            | Please update it so I may sync your labels.
             |
             | _Missing repositories:_
             | ${access.missing.map((missing) => ` * ${missing}`).join(os.EOL)}
-            |
-            | Best,
-            | LabelSync Team
             `
 
-            const issue = await openIssue(
-              github,
+            await ctx.github.repos.createCommitComment({
               owner,
-              configRepo,
-              title,
-              body,
-            )
+              repo,
+              commit_sha,
+              body: report,
+            })
 
-            await logger.info(
-              { owner, repo, event: 'push' },
-              `opened issue ${issue.number}`,
-            )
-
+            await ctx.logger.info(`Commented on commit ${commit_sha}.`)
             return
           }
         }
-      } catch (err) /* istanbul ignore next */ {
-        await logger.warn({ owner, repo, event: 'push' }, err.message)
-      }
-    }),
+      }),
+    ),
   )
 
   /**
@@ -667,45 +645,50 @@ module.exports = (
    */
   app.on(
     'pull_request',
-    withPurchase(prisma, async ({ github, purchase, payload, log }) => {
-      const owner = payload.repository.owner.login
-      const repo = payload.repository.name
-      const ref = payload.pull_request.head.ref
-      const number = payload.pull_request.number
-      try {
+    withUserContextLogger(
+      timber,
+      withPurchase(prisma, async (ctx) => {
+        const owner = ctx.payload.repository.owner.login
+        const repo = ctx.payload.repository.name
+        const ref = ctx.payload.pull_request.head.ref
+        const number = ctx.payload.pull_request.number
+
         const configRepo = getLSConfigRepoName(owner)
 
-        await logger.info(
-          { owner, repo, event: 'pullrequest' },
-          `pr action ${payload.action}`,
-        )
+        await ctx.logger.info(`PullRequest action: ${ctx.payload.action}`)
 
         /* istanbul ignore if */
-        if (configRepo !== repo) return
+        if (configRepo !== repo) {
+          await ctx.logger.info(
+            `Not configuration repository: ${configRepo} != ${repo}.`,
+          )
+          return
+        }
 
         /* Check changed files */
-        const compare = await github.repos.compareCommits({
+        const compare = await ctx.github.repos.compareCommits({
           owner: owner,
           repo: repo,
-          base: payload.pull_request.base.ref,
-          head: payload.pull_request.head.ref,
+          base: ctx.payload.pull_request.base.ref,
+          head: ctx.payload.pull_request.head.ref,
         })
 
         /* istanbul ignore next */
         if (
           compare.data.files.every((file) => file.filename !== LS_CONFIG_PATH)
         ) {
-          await logger.debug(
-            { owner, repo, event: 'pullrequest' },
-            { files: compare.data.files },
-            `no merge comment, configuration didn't change.`,
+          await ctx.logger.debug(
+            `Configuration didn't change, skipping comment.`,
+            {
+              files: compare.data.files.map((file) => file.filename).join(', '),
+            },
           )
           return
         }
 
         /* Load configuration */
         const configRaw = await getFile(
-          github,
+          ctx.github,
           { owner, repo, ref },
           LS_CONFIG_PATH,
         )
@@ -713,26 +696,48 @@ module.exports = (
         /* Skip the pull request if there's no configuraiton. */
         /* istanbul ignore next */
         if (configRaw === null) {
-          await logger.info(
-            { owner, repo, event: 'pullrequest' },
-            `no configuration`,
-          )
+          await ctx.logger.info(`No configuration, skipping comment.`)
           return
         }
 
-        const [error, config] = parseConfig(purchase, configRaw)
-
-        await logger.debug(
-          { owner, repo, event: 'pullrequest' },
-          { config },
-          `loaded configuration on ${ref}`,
-        )
+        const [error, config] = parseConfig(ctx.purchase, configRaw)
 
         /* Skips invalid configuration. */
         /* istanbul ignore if */
-        if (error !== null) return
+        if (error !== null) {
+          await ctx.logger.debug(`Invalid configuration on ${ref}`, {
+            config: JSON.stringify(config),
+            error: error,
+          })
 
-        switch (payload.action) {
+          const report = ml`
+          | Your configuration seems a bit strange. Here's what I am having problems with:
+          |
+          | \`\`\`
+          | ${error}
+          | \`\`\` 
+          `
+
+          /* Comment on a PR in a human friendly way. */
+          const comment = await createPRComment(
+            ctx.github,
+            owner,
+            configRepo,
+            number,
+            report,
+          )
+
+          await ctx.logger.info(`Commented on PullRequest (${comment.id})`)
+          return
+        }
+
+        await ctx.logger.debug(`Configration loaded configuration on ${ref}`, {
+          config: JSON.stringify(config),
+        })
+
+        /* Tackle PR Action */
+
+        switch (ctx.payload.action) {
           case 'opened':
           case 'reopened':
           case 'ready_for_review':
@@ -743,29 +748,20 @@ module.exports = (
 
             /* Verify that we can access all configured files. */
             const access = await checkInstallationAccess(
-              github,
+              ctx.github,
               Object.keys(config!.repos),
-            )
-
-            await logger.debug(
-              { owner, repo, event: 'pullrequest' },
-              { access },
-              `checking access`,
             )
 
             /* Skip configurations that we can't access. */
             switch (access.status) {
               case 'Sufficient': {
-                await logger.info(
-                  { owner, repo, event: 'pullrequest' },
-                  `simulating sync`,
-                )
+                await ctx.logger.info(`Simulating sync.`)
 
                 /* Fetch changes to repositories. */
                 const reports = await Promise.all(
                   Object.keys(config!.repos).map((repo) =>
                     handleLabelSync(
-                      github,
+                      ctx.github,
                       owner,
                       repo,
                       config!.repos[repo],
@@ -778,47 +774,41 @@ module.exports = (
 
                 /* Comment on a PR in a human friendly way. */
                 const comment = await createPRComment(
-                  github,
+                  ctx.github,
                   owner,
                   configRepo,
                   number,
                   report,
                 )
 
-                await logger.info(
-                  { owner, repo, event: 'pullrequest' },
-                  `commented on pr ${comment.id}`,
+                await ctx.logger.info(
+                  `Commented on PullRequest (${comment.id})`,
                 )
 
                 return
               }
               case 'Insufficient': {
-                await logger.debug(
-                  { owner, repo, event: 'pullrequest' },
-                  { config, access },
-                  `insufficient permissions`,
-                )
+                await ctx.logger.info(`Insufficient permissions`)
 
                 /* Opens up an issue about insufficient permissions. */
                 const body = ml`
-            | It seems like this configuration stretches beyond repositories we can access. Please update it so we can help you as best as we can.
-            |
-            | _Missing repositories:_
-            | ${access.missing.map((missing) => ` * ${missing}`).join(os.EOL)}
-            `
+                | It seems like this configuration stretches beyond repositories we can access. Please update it so we can help you as best as we can.
+                |
+                | _Missing repositories:_
+                | ${access.missing
+                  .map((missing) => ` * ${missing}`)
+                  .join(os.EOL)}
+                `
 
                 const comment = await createPRComment(
-                  github,
+                  ctx.github,
                   owner,
                   configRepo,
                   number,
                   body,
                 )
 
-                await logger.info(
-                  { owner, repo, event: 'pullrequest' },
-                  `commented on pr ${comment.id}`,
-                )
+                await ctx.logger.info(`Commented on PullRequest ${comment.id}`)
 
                 return
               }
@@ -841,27 +831,19 @@ module.exports = (
           /* istanbul ignore next */
           case 'unlocked': {
             /* Ignore other events. */
-            await logger.info(
-              { owner, repo, event: 'pullrequest' },
-              `ignoring event ${payload.action}`,
-            )
+            await ctx.logger.info(`Ignoring event ${ctx.payload.action}.`)
             return
           }
           /* istanbul ignore next */
           default: {
             /* Log unsupported pull_request action. */
-            await logger.warn(
-              { owner, repo, event: 'pullrequest' },
-              `unsupported event: ${payload.action}`,
-            )
-
+            /* prettier-ignore */
+            await ctx.logger.warn(`Unhandled PullRequest action: ${ctx.payload.action}`)
             return
           }
         }
-      } catch (err) /* istanbul ignore next */ {
-        await logger.warn({ owner, repo, event: 'pullrequest' }, err.message)
-      }
-    }),
+      }),
+    ),
   )
 
   /**
@@ -873,65 +855,56 @@ module.exports = (
    */
   app.on(
     'label.created',
-    withSources(prisma, async (ctx) => {
-      const owner = ctx.payload.sender.login
-      const repo = ctx.payload.repository.name
-      const config = ctx.sources.config.repos[repo]
-      const label = ctx.payload.label as GithubLabel
+    withUserContextLogger(
+      timber,
+      withPurchase(
+        prisma,
+        withSources(async (ctx) => {
+          const owner = ctx.payload.sender.login
+          const repo = ctx.payload.repository.name
+          const config = ctx.sources.config.repos[repo]
+          const label = ctx.payload.label as GithubLabel
 
-      try {
-        await logger.info(
-          { owner, repo, event: 'label.created' },
-          `created new label ${label.name}`,
-        )
+          await ctx.logger.info(`New label create in ${repo}: "${label.name}".`)
 
-        /* Ignore no configuration. */
-        /* istanbul ignore if */
-        if (!config) {
-          await logger.info(
-            { owner, repo, event: 'label.created' },
-            `no config`,
-          )
-          return
-        }
+          /* Ignore no configuration. */
+          /* istanbul ignore if */
+          if (!config) {
+            await ctx.logger.info(`No configuration, skipping`)
+            return
+          }
 
-        /* Ignore complying changes. */
-        /* istanbul ignore if */
-        if (config.labels.hasOwnProperty(label.name)) {
-          await logger.info(
-            { owner, repo, event: 'label.created' },
-            `label in configuration`,
-          )
-          return
-        }
+          /* Ignore complying changes. */
+          /* istanbul ignore if */
+          if (config.labels.hasOwnProperty(label.name)) {
+            await ctx.logger.info(`Label is configured, skipping removal.`)
+            return
+          }
 
-        /* Config */
-        const removeUnconfiguredLabels = withDefault(
-          false,
-          config.config?.removeUnconfiguredLabels,
-        )
-
-        if (removeUnconfiguredLabels) {
-          await logger.info(
-            { owner, repo, event: 'label.created' },
-            `removing label ${label.name}`,
+          /* Config */
+          const removeUnconfiguredLabels = withDefault(
+            false,
+            config.config?.removeUnconfiguredLabels,
           )
 
-          /* Prune unsupported labels in strict repositories. */
-          await removeLabelsFromRepository(
-            ctx.github,
-            { repo, owner },
-            [label],
-            removeUnconfiguredLabels,
-          )
+          if (removeUnconfiguredLabels) {
+            await ctx.logger.info(
+              `Removing label "${label.name}" from ${repo}.`,
+            )
 
-          /* prettier-ignore */
-          await logger.info({ owner, repo, event: 'label.created' }, ` removed label ${label.name}`)
-        }
-      } catch (err) /* istanbul ignore next */ {
-        await logger.warn({ owner, event: 'label.created' }, err.message)
-      }
-    }),
+            /* Prune unsupported labels in strict repositories. */
+            await removeLabelsFromRepository(
+              ctx.github,
+              { repo, owner },
+              [label],
+              removeUnconfiguredLabels,
+            )
+
+            await ctx.logger.info(`Removed label "${label.name}" from ${repo}.`)
+          }
+        }),
+      ),
+    ),
   )
 
   /**
@@ -943,56 +916,52 @@ module.exports = (
    */
   app.on(
     'issues.labeled',
-    withSources(prisma, async (ctx) => {
-      const owner = ctx.payload.sender.login
-      const repo = ctx.payload.repository.name
-      const config = ctx.sources.config.repos[repo]
-      const label = ((ctx.payload as any) as { label: GithubLabel }).label
-      const issue = ctx.payload.issue
+    withUserContextLogger(
+      timber,
+      withPurchase(
+        prisma,
+        withSources(async (ctx) => {
+          const owner = ctx.payload.sender.login
+          const repo = ctx.payload.repository.name
+          const config = ctx.sources.config.repos[repo]
+          const label = ((ctx.payload as any) as { label: GithubLabel }).label
+          const issue = ctx.payload.issue
 
-      try {
-        await logger.info(
-          { owner, repo, event: 'issues.labeled' },
-          `labeled issue ${issue.number} with ${label.name}`,
-        )
+          await ctx.logger.info(
+            `Issue (${issue.number}) has been labeled with "${label.name}".`,
+          )
 
-        /* Ignore changes in non-strict config */
-        /* istanbul ignore if */
-        if (!config) {
+          /* Ignore changes in non-strict config */
+          /* istanbul ignore if */
+          if (!config) {
+            await ctx.logger.info(`No configuration found, skipping.`)
+            return
+          }
+
+          /* istanbul ignore if */
+          if (!config.labels.hasOwnProperty(label.name)) {
+            await ctx.logger.info(
+              `Unconfigured label "${label.name}", skipping.`,
+            )
+            return
+          }
+
+          /* Find siblings. */
+          const siblings = withDefault([], config.labels[label.name]?.siblings)
+          const ghSiblings = siblings.map((sibling) => ({ name: sibling }))
+
+          await addLabelsToIssue(
+            ctx.github,
+            { repo, owner, issue: issue.number },
+            ghSiblings,
+            true,
+          )
+
           /* prettier-ignore */
-          await logger.info({ owner, repo, event: 'label.created' }, `${issue.number}:issues.labeled:${label.name} no configuration`)
-          return
-        }
-
-        /* istanbul ignore if */
-        if (!config.labels.hasOwnProperty(label.name)) {
-          /* prettier-ignore */
-          await logger.info({ owner, repo, event: 'label.created' }, `${issue.number}:issues.labeled:${label.name} unconfigured label`)
-          return
-        }
-
-        /* Find siblings. */
-        const siblings = withDefault([], config.labels[label.name]?.siblings)
-        const ghSiblings = siblings.map((sibling) => ({ name: sibling }))
-
-        /* prettier-ignore */
-        await logger.info({ owner, repo, event: 'label.created' }, `siblings on issue ${issue.number}: ${siblings.join(', ')}`)
-        /* prettier-ignore */
-        await logger.debug({ owner, repo, event: 'label.created' }, {siblings}, `issue ${issue.number} adding siblings to ${label.name}`)
-
-        await addLabelsToIssue(
-          ctx.github,
-          { repo, owner, issue: issue.number },
-          ghSiblings,
-          true,
-        )
-
-        /* prettier-ignore */
-        await logger.info({ owner, repo, event: 'label.created' }, `issue ${issue.number} added siblings to ${label.name}`)
-      } catch (err) /* istanbul ignore next */ {
-        await logger.warn({ owner, repo, event: 'label.created' }, err.message)
-      }
-    }),
+          await ctx.logger.info(`Added siblings of ${label.name} to issue ${issue.number}: ${siblings.join(', ')}`)
+        }),
+      ),
+    ),
   )
 }
 
@@ -1004,17 +973,20 @@ interface Sources {
  * Wraps a function inside a sources loader.
  */
 function withSources<
+  /* Context */
   C extends
     | Webhooks.WebhookPayloadCheckRun
     | Webhooks.WebhookPayloadIssues
     | Webhooks.WebhookPayloadLabel
     | Webhooks.WebhookPayloadPullRequest,
+  /* Additional context fields */
+  W extends { purchase?: Purchase | null },
+  /* Return type */
   T
 >(
-  prisma: PrismaClient,
-  fn: (ctx: Context<C> & { sources: Sources }) => Promise<T>,
-): (ctx: Context<C> & { purchase?: Purchase }) => Promise<T | undefined> {
-  return withPurchase(prisma, async (ctx) => {
+  fn: (ctx: Context<C> & W & { sources: Sources }) => Promise<T>,
+): (ctx: Context<C> & W) => Promise<T | undefined> {
+  return async (ctx) => {
     const owner = ctx.payload.sender.login
     const repo = getLSConfigRepoName(owner)
     const ref = `refs/heads/${ctx.payload.repository.default_branch}`
@@ -1035,16 +1007,19 @@ function withSources<
     /* Skips invlaid config. */
     /* istanbul ignore if */
     if (error !== null) return
-    ;(ctx as Context<C> & { sources: Sources }).sources = { config: config! }
+    ;(ctx as Context<C> & W & { sources: Sources }).sources = {
+      config: config!,
+    }
 
-    return fn(ctx as Context<C> & { sources: Sources })
-  })
+    return fn(ctx as Context<C> & W & { sources: Sources })
+  }
 }
 
 /**
  * Wraps a function inside a sources loader.
  */
 function withPurchase<
+  /* Context */
   C extends
     | Webhooks.WebhookPayloadCheckRun
     | Webhooks.WebhookPayloadCheckSuite
@@ -1056,32 +1031,157 @@ function withPurchase<
     | Webhooks.WebhookPayloadPullRequestReview
     | Webhooks.WebhookPayloadPullRequestReviewComment
     | Webhooks.WebhookPayloadPush,
+  /* Additional context fields */
+  W,
+  /* Return type */
   T
 >(
   prisma: PrismaClient,
-  fn: (ctx: Context<C> & { purchase?: Purchase | null }) => Promise<T>,
-): (ctx: Context<C>) => Promise<T | undefined> {
+  fn: (ctx: Context<C> & W & { purchase?: Purchase | null }) => Promise<T>,
+): (ctx: Context<C> & W) => Promise<T | undefined> {
   return async (ctx) => {
     const owner = ctx.payload.repository.owner.login
+    const now = moment()
 
+    /* Try to find the purchase in the database. */
+    let purchase = await prisma.purchase.findOne({
+      where: { ghAccount: owner },
+      include: {
+        bills: { where: { expires: { gte: now.toDate() } } },
+      },
+    })
+
+    /* Handle expired purchases */
+    if (purchase?.bills.length === 0) {
+      purchase = null
+    }
+
+    ;(ctx as Context<C> & { purchase?: Purchase | null }).purchase = purchase
+    return fn(ctx as Context<C> & W & { purchase?: Purchase | null })
+  }
+}
+
+/**
+ * Wraps event handler in logger and creates a context.
+ */
+function withUserContextLogger<
+  /* Context */
+  C extends
+    | Webhooks.WebhookPayloadCheckRun
+    | Webhooks.WebhookPayloadCheckSuite
+    | Webhooks.WebhookPayloadCommitComment
+    | Webhooks.WebhookPayloadLabel
+    | Webhooks.WebhookPayloadIssues
+    | Webhooks.WebhookPayloadIssueComment
+    | Webhooks.WebhookPayloadPullRequest
+    | Webhooks.WebhookPayloadPullRequestReview
+    | Webhooks.WebhookPayloadPullRequestReviewComment
+    | Webhooks.WebhookPayloadPush,
+  /* Return type */
+  T
+>(
+  timber: Timber,
+  fn: (ctx: Context<C> & { logger: Timber }) => Promise<T>,
+): (ctx: Context<C>) => Promise<T | undefined> {
+  return async (ctx) => {
+    const owner = ctx.payload.repository.owner
+    const repo = ctx.payload.repository
+
+    /**
+     * Current user context.
+     *  - webhook event,
+     *  - repo: name
+     *  - user: id, login (name), and type (Org, User)
+     */
+    async function addCurrentUser(log: ITimberLog): Promise<ITimberLog> {
+      return {
+        ...log,
+        event: ctx.event,
+        repo: {
+          name: repo.name,
+        },
+        user: {
+          id: owner.id,
+          owner: owner.login,
+          type: owner.type,
+        },
+      }
+    }
+
+    /**
+     * Attach the current user context.
+     * Run the event handler.
+     * Remove the middleware.
+     */
     try {
-      /* Try to find the purchase in the database. */
-      const purchase = await prisma.purchase.findOne({ where: { owner } })
-
-      ;(ctx as Context<C> & { purchase?: Purchase | null }).purchase = purchase
-
-      return fn(ctx as Context<C> & { purchase?: Purchase | null })
+      timber.use(addCurrentUser)
+      ;(ctx as Context<C> & { logger: Timber }).logger = timber
+      return fn(ctx as Context<C> & { logger: Timber })
     } catch (err) /* istanbul ignore next */ {
       /* Report the error and skip evaluation. */
-      await prisma.log.create({
-        data: {
-          event: 'purchase.load',
-          message: `there was an error during loading the purchase`,
-          type: 'WARN',
-          owner,
-        },
-      })
-      return
+      await timber.warn(`Event resulted in error.`, { error: err.message })
+    } finally {
+      timber.remove(addCurrentUser)
     }
+
+    return undefined
+  }
+}
+
+/**
+ * Wraps event handler in logger and creates a context.
+ */
+function withLogger<
+  /* Context */
+  C extends
+    | Webhooks.WebhookPayloadMarketplacePurchase
+    | Webhooks.WebhookPayloadInstallation
+    | Webhooks.WebhookPayloadCheckRun
+    | Webhooks.WebhookPayloadCheckSuite
+    | Webhooks.WebhookPayloadCommitComment
+    | Webhooks.WebhookPayloadLabel
+    | Webhooks.WebhookPayloadIssues
+    | Webhooks.WebhookPayloadIssueComment
+    | Webhooks.WebhookPayloadPullRequest
+    | Webhooks.WebhookPayloadPullRequestReview
+    | Webhooks.WebhookPayloadPullRequestReviewComment
+    | Webhooks.WebhookPayloadPush,
+  /* Return type */
+  T
+>(
+  timber: Timber,
+  fn: (ctx: Context<C> & { logger: Timber }) => Promise<T>,
+): (ctx: Context<C>) => Promise<T | undefined> {
+  return async (ctx) => {
+    /**
+     * Current user context.
+     *  - webhook event,
+     *  - repo: name
+     *  - user: id, login (name), and type (Org, User)
+     */
+    async function addEvent(log: ITimberLog): Promise<ITimberLog> {
+      return {
+        ...log,
+        event: ctx.event,
+      }
+    }
+
+    /**
+     * Attach the current user context.
+     * Run the event handler.
+     * Remove the middleware.
+     */
+    try {
+      timber.use(addEvent)
+      ;(ctx as Context<C> & { logger: Timber }).logger = timber
+      return fn(ctx as Context<C> & { logger: Timber })
+    } catch (err) /* istanbul ignore next */ {
+      /* Report the error and skip evaluation. */
+      await timber.warn(`Event resulted in error.`, { error: err.message })
+    } finally {
+      timber.remove(addEvent)
+    }
+
+    return undefined
   }
 }

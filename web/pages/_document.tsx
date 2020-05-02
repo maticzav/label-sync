@@ -12,7 +12,7 @@ export default class extends Document {
             name="viewport"
             content="width=device-width, initial-scale=1.0"
           />
-          <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+          <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
 
           {/* Twitter */}
           <meta name="og:title" content="Github LabelSync" />

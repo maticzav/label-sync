@@ -13,3 +13,10 @@
 .padding-2 {
   padding: 2px;
 }
+
+html,
+body,
+body > div {
+  width: 100%;
+  height: 100%;
+}

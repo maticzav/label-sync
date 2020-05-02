@@ -1,0 +1,14 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "DeleteEnum",
+      "enum": "InstallationType"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Purchase",
+      "field": "type"
+    }
+  ]
+}

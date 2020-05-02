@@ -4,6 +4,7 @@ import { loadStripe } from '@stripe/stripe-js'
 
 import Navigation from '../components/Navigation'
 import Footer from '../components/Footer'
+import { NOTION_DOCS_URL } from '../constants'
 
 /* Stripe */
 
@@ -31,6 +32,7 @@ export const Subscribe = ({}) => {
   const [company, setCompany] = useState('')
   const [account, setAccount] = useState('')
   const [period, setPeriod] = useState<'yearly' | 'monthly'>(defaultPeriod)
+  const [coupon, setCoupon] = useState('')
   const [agreed, setAgree] = useState(false)
 
   type Fetching =
@@ -50,14 +52,29 @@ export const Subscribe = ({}) => {
    */
   async function subscribe() {
     /* Required values */
-    if ([email, firstName, lastName, account].some((val) => val.trim() === ''))
+    if (
+      [email, firstName, lastName, account].some((val) => val.trim() === '')
+    ) {
+      setFetching({
+        status: 'ERR',
+        message: 'You must fill all the required fields.',
+      })
       return
+    }
 
     /* Terms of Service */
-    if (!agreed) return
+    if (!agreed) {
+      setFetching({
+        status: 'ERR',
+        message:
+          'You forgot to agree with Terms of Service and Privacy Policy.',
+      })
+      return
+    }
 
     // Contact server
     setFetching({ status: 'LOADING' })
+
     try {
       const body = JSON.stringify({
         email,
@@ -67,6 +84,7 @@ export const Subscribe = ({}) => {
         company,
         agreed,
         period,
+        coupon,
       })
 
       const res = (await fetch('https://app.label-sync.com/subscribe/session', {
@@ -111,8 +129,7 @@ export const Subscribe = ({}) => {
             links={[
               {
                 label: 'Documentation',
-                href:
-                  'https://www.notion.so/LabelSync-Docs-7c004894c8994ecfbd9fb619d2417210',
+                href: NOTION_DOCS_URL,
               },
               {
                 label: 'Install',
@@ -266,6 +283,25 @@ export const Subscribe = ({}) => {
                     <option value="yearly">Annualy</option>
                     <option value="monthly">Monthly</option>
                   </select>
+                </div>
+              </div>
+
+              {/* Github account */}
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="coupon"
+                  className="block text-sm font-medium leading-5 text-gray-700"
+                >
+                  Discount Coupon
+                </label>
+                <div className="mt-1 relative rounded-md shadow-sm">
+                  <input
+                    required
+                    value={coupon}
+                    onChange={(e) => setCoupon(e.target.value)}
+                    id="coupon"
+                    className="form-input py-3 px-4 block w-full transition ease-in-out duration-150"
+                  />
                 </div>
               </div>
 

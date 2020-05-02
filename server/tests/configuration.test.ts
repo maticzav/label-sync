@@ -16,36 +16,22 @@ describe('configurations:', () => {
   for (const { config, path } of configurations) {
     test(`${config} on FREE`, () => {
       const config = parseConfig(
-        {
-          id: 'id',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          email: 'email',
-          owner: 'test',
-          plan: 'free',
-          type: 'USER',
-          trial: false,
-          planId: 3,
-          tier: 'FREE',
-        },
+        undefined,
         fs.readFileSync(path, { encoding: 'utf-8' }),
       )
       expect(config).toMatchSnapshot()
     })
 
-    test(`${config} on BASIC`, () => {
+    test(`${config} on PAID`, () => {
       const config = parseConfig(
         {
-          id: 'id',
+          id: '1',
           createdAt: new Date(),
           updatedAt: new Date(),
-          email: 'email',
-          owner: 'test',
-          plan: 'free',
-          type: 'USER',
-          trial: false,
-          planId: 3,
-          tier: 'BASIC',
+          company: 'ACME',
+          ghAccount: 'test',
+          name: 'Foo Bar',
+          email: 'foo@acme.com',
         },
         fs.readFileSync(path, { encoding: 'utf-8' }),
       )

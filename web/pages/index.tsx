@@ -9,6 +9,8 @@ import Navigation from '../components/Navigation'
 import Tier from '../components/Tier'
 import Testimonial from '../components/Testimonial'
 
+import { NOTION_DOCS_URL } from '../constants'
+
 import * as gtag from '../lib/gtag'
 import { scrollToId } from '../lib/scroll'
 
@@ -74,8 +76,7 @@ function Title() {
           links={[
             {
               label: 'Documentation',
-              href:
-                'https://www.notion.so/LabelSync-Docs-7c004894c8994ecfbd9fb619d2417210',
+              href: NOTION_DOCS_URL,
             },
             {
               label: 'Install',
@@ -105,7 +106,7 @@ function Title() {
 
 function Introduction() {
   return (
-    <div className="py-10 bg-gray-30 overflow-hidden md:py-20 lg:py-24">
+    <div className="py-10 bg-gray-30 overflow-hidden md:py-14 lg:py-24">
       <Testimonial
         heading="Welcome to LabelSync!"
         name="Matic Zavadlal"
@@ -485,6 +486,13 @@ function Pricing() {
         <p className="mt-4 md:mt-6 text-xl mx-auto md:max-w-2xl leading-7 text-gray-200">
           We are also giving you an option for 14-day free trial to find out how
           the tool works and a free tier to see how great it is.
+        </p>
+      </div>
+
+      {/* Launch discount */}
+      <div className="mt-8 text-center sm:mt-8 lg:mt-12">
+        <p className="text-2xl leading-9 font-bold text-white sm:text-3xl sm:leading-none italic">
+          20% Launch Dicount
         </p>
       </div>
 
