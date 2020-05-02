@@ -105,8 +105,8 @@ export default function Footer() {
           <div className="mt-12 grid grid-cols-2 gap-8 md:w-1/2 xl:mt-0">
             {/* Groups grid */}
             {groups.map((group) => (
-              <div className="md:grid">
-                <div key={group.name}>
+              <div key={group.name} className="md:grid">
+                <div>
                   <h4 className="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase">
                     {group.name}
                   </h4>

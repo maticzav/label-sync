@@ -556,18 +556,27 @@ function Pricing() {
               <div className="mt-10 lg:mt-0">
                 <Tier
                   name="The Complete solution"
-                  description="Best for teams and users in need of rapid workflows and
-            clarity."
+                  description="Best for teams and users with rapid workflows."
                   price={
                     <>
-                      {period === 'yearly' && '$16'}
-                      {period === 'monthly' && '$20'}
-
-                      {/* Launch discount */}
-                      <span className="ml-1 text-2xl leading-8 font-medium text-gray-500 line-through">
-                        $20
-                      </span>
-
+                      {/* Yearly pricing */}
+                      {period === 'yearly' && (
+                        <>
+                          $12
+                          <span className="ml-1 text-2xl leading-8 font-medium text-gray-500 line-through">
+                            $16
+                          </span>
+                        </>
+                      )}
+                      {/* Monthly pricing */}
+                      {period === 'monthly' && (
+                        <>
+                          $16
+                          <span className="ml-1 text-2xl leading-8 font-medium text-gray-500 line-through">
+                            $20
+                          </span>
+                        </>
+                      )}
                       <span className="ml-1 text-2xl leading-8 font-medium text-gray-500">
                         /mo
                       </span>
