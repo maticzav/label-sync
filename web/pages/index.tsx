@@ -79,7 +79,7 @@ function Title() {
             },
             {
               label: 'Install',
-              href: 'http://github.com/marketplace/labelsync-manage',
+              href: 'https://github.com/apps/labelsync-manager',
             },
             {
               label: 'Pricing',
@@ -545,7 +545,7 @@ function Pricing() {
                     { name: 'Limited to 5 repositories' },
                   ]}
                   link={
-                    <a href="http://github.com/marketplace/labelsync-manage">
+                    <a href="https://github.com/apps/labelsync-manager">
                       <Button>Install LabelSync</Button>
                     </a>
                   }

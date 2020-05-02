@@ -116,7 +116,7 @@ export const Subscribe = ({}) => {
               },
               {
                 label: 'Install',
-                href: 'http://github.com/marketplace/labelsync-manage',
+                href: 'https://github.com/apps/labelsync-manager',
               },
 
               {
