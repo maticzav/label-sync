@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "jsx": "preserve",
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "module": "esnext",
+    "isolatedModules": true
+  },
+  "references": [],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
+}

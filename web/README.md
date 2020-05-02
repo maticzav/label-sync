@@ -41,3 +41,6 @@
   </div>
 </div>
 ```
+
+// "build": "postcss css/tailwind.css -o public/build/tailwind.css",
+// "dev": "live-server public",
