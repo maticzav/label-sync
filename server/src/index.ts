@@ -1105,6 +1105,9 @@ function withUserContextLogger<
           owner: owner.login,
           type: owner.type,
         },
+        context: {
+          user_id: owner.id,
+        },
       }
     }
 
