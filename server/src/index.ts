@@ -87,7 +87,7 @@ module.exports = (
         agreed,
         period,
         coupon,
-      } = req.body.owner
+      } = req.body
 
       if (
         [email, firstName, lastName, account].some((val) => val.trim() === '')
