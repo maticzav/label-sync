@@ -15,7 +15,7 @@ describe('templates:', () => {
     repository: 'maticzav-labelsync',
     repositories: [
       {
-        name: 'graphql-shield',
+        name: 'changed',
       },
       {
         name: 'label-sync',

@@ -1,31 +1,21 @@
 repos:
-  graphql-shield:
+  changed:
+    # needs sync
     config:
       removeUnconfiguredLabels: true
     labels:
-      kind/bug:
-        color: ff0022
-        alias: ['bug']
-      bug/0-needs-reproduction:
-        color: ff0022
-        siblings: ['kind/bug']
-      bug/1-has-reproduction:
-        color: ff0022
-        description: Indicates that an issue has reproduction
-      bug/2-bug-confirmed:
-        color: 00ff22
-      bug/3-fixing:
-        color: 00ff22
-        description: Indicates that we are working on fixing the issue.
-  emma-cli:
+      create/new:
+        color: '000000'
+      alias/new:
+        color: '000000'
+        alias: ['alias/old:1', 'alias/old:2']
+      update/color:
+        color: 'ffffff'
+      # remove:
+      #   color: "000000"
+
+  unchanged:
+    # configuration already matches
     labels:
-      bug/0-needs-reproduction:
-        color: ff0022
-      bug/1-has-reproduction:
-        color: ff0022
-        description: Indicates that an issue has reproduction
-      bug/2-bug-confirmed:
-        color: 00ff22
-      bug/3-fixing:
-        color: 00ff22
-        description: Indicates that we are working on fixing the issue.
+      'label-a':
+        color: '000000'

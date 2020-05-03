@@ -10,10 +10,10 @@ import { Dict } from '../data/dict'
 import {
   GithubLabel,
   getRepositoryLabels,
-  isLabel,
   addLabelsToRepository,
   updateLabelsInRepository,
   removeLabelsFromRepository,
+  aliasLabelsInRepository,
 } from '../github'
 import { withDefault } from '../utils'
 
@@ -25,6 +25,7 @@ export type LabelSyncReport =
       additions: GithubLabel[]
       updates: GithubLabel[]
       removals: GithubLabel[]
+      aliases: GithubLabel[]
       config: {
         config: Required<LSCRepositoryConfiguration>
         labels: Dict<LSCLabel>
@@ -90,19 +91,40 @@ export async function handleLabelSync(
     }
   }
 
-  const { added, changed, removed } = labelsDiff
+  const { added, changed, aliased, removed } = labelsDiff
 
   /* Perform sync */
-  const [additions, updates, removals] = await Promise.all([
-    addLabelsToRepository(octokit, { repo, owner }, added, persist),
-    updateLabelsInRepository(octokit, { repo, owner }, changed, persist),
-    removeLabelsFromRepository(
-      octokit,
-      { repo, owner },
-      removed,
-      removeUnconfiguredLabels && persist,
-    ),
-  ])
+  /**
+   * 1. Add new labels.
+   * 2. Perform updates.
+   * 3. Alias labels.
+   * 4. Remove labels.
+   */
+
+  const additions = await addLabelsToRepository(
+    octokit,
+    { repo, owner },
+    added,
+    persist,
+  )
+  const updates = await updateLabelsInRepository(
+    octokit,
+    { repo, owner },
+    changed,
+    persist,
+  )
+  const aliases = await aliasLabelsInRepository(
+    octokit,
+    { repo, owner },
+    aliased,
+    persist,
+  )
+  const removals = await removeLabelsFromRepository(
+    octokit,
+    { repo, owner },
+    removed,
+    removeUnconfiguredLabels && persist,
+  )
 
   return {
     status: 'Success',
@@ -111,6 +133,7 @@ export async function handleLabelSync(
     additions,
     updates,
     removals,
+    aliases,
     config: {
       config: {
         removeUnconfiguredLabels,

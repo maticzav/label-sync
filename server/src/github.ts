@@ -74,12 +74,7 @@ export async function getRepositoryLabels(
 }
 
 /**
- *
  * Create new labels in a repository.
- *
- * @param github
- * @param labels
- * @param repository
  */
 export async function addLabelsToRepository(
   github: Octokit,
@@ -119,10 +114,6 @@ export async function addLabelsToRepository(
  * Updates labels in repository.
  *
  * When old_name is specified in the label, we try to rename the label.
- *
- * @param github
- * @param labels
- * @param repository
  */
 export async function updateLabelsInRepository(
   github: Octokit,
@@ -159,12 +150,7 @@ export async function updateLabelsInRepository(
 }
 
 /**
- *
  * Removes labels from repository.
- *
- * @param github
- * @param labels
- * @param repository
  */
 export async function removeLabelsFromRepository(
   github: Octokit,
@@ -197,12 +183,63 @@ export async function removeLabelsFromRepository(
 }
 
 /**
- *
+ * Aliases labels in a repository by adding them to labels.
+ */
+export async function aliasLabelsInRepository(
+  github: Octokit,
+  { repo, owner }: { repo: string; owner: string },
+  labels: GithubLabel[],
+  persist: boolean,
+): Promise<GithubLabel[]> {
+  let page = 0
+
+  /* Skip on no labels */
+  if (labels.length === 0) return labels
+
+  await handler()
+
+  return labels
+
+  /* Paginates and performs changes. */
+  async function handler() {
+    const issues = await github.issues
+      .listForRepo({
+        owner,
+        repo,
+        per_page: 100,
+        page,
+      })
+      .then((res) => res.data)
+
+    /* Process all the issues. */
+    for (const issue of issues) {
+      /* Filter labels that should be in this issue but are not. */
+      const missingLabels = labels.filter((label) =>
+        issue.labels.some((issueLabel) => issueLabel.name === label.old_name),
+      )
+
+      if (missingLabels.length === 0) continue
+
+      /* Add all the missing labels. */
+      await addLabelsToIssue(
+        github,
+        { repo, owner, issue: issue.number },
+        missingLabels,
+        persist,
+      )
+    }
+
+    /* Rerun handler if there are more issues available. */
+    /* istanbul ignore next */
+    if (issues.length === 100) {
+      page += 1
+      await handler()
+    }
+  }
+}
+
+/**
  * Adds labels to an issue.
- *
- * @param github
- * @param labels
- * @param repository
  */
 export async function addLabelsToIssue(
   github: Octokit,
@@ -227,10 +264,7 @@ export async function addLabelsToIssue(
 }
 
 /**
- *
  * Compares two labels by comparing all of their keys.
- *
- * @param label
  */
 export function isLabel(local: GithubLabel): (remote: GithubLabel) => boolean {
   return (remote) =>
@@ -241,8 +275,6 @@ export function isLabel(local: GithubLabel): (remote: GithubLabel) => boolean {
 
 /**
  * Determines whether the two configurations configure the same label.
- *
- * @param local
  */
 export function isLabelDefinition(
   local: GithubLabel,
@@ -252,10 +284,6 @@ export function isLabelDefinition(
 
 /**
  * Opens an issue with a prescribed title and body.
- *
- * @param octokit
- * @param owner
- * @param reports
  */
 export async function openIssue(
   octokit: Octokit,
@@ -297,11 +325,6 @@ export async function openIssue(
 
 /**
  * Creates a comment on a dedicated pull request.
- * @param octokit
- * @param owner
- * @param repo
- * @param number
- * @param message
  */
 export async function createPRComment(
   octokit: Octokit,
@@ -322,10 +345,6 @@ export async function createPRComment(
 
 /**
  * Tries to fetch a repository.
- *
- * @param github
- * @param owner
- * @param repo
  */
 export async function getRepo(
   github: Octokit,
@@ -366,7 +385,6 @@ export type GHTree = { [path: string]: string }
 
 /**
  * Returns the files that are not nested.
- * @param tree
  */
 function getTreeFiles(tree: GHTree): Dict<string> {
   return Object.fromEntries(
@@ -378,7 +396,6 @@ function getTreeFiles(tree: GHTree): Dict<string> {
 
 /**
  * Returns a dictionary of remaining subtrees.
- * @param tree
  */
 function getTreeSubTrees(tree: GHTree): Dict<GHTree> {
   return Object.keys(tree)
@@ -396,8 +413,6 @@ function getTreeSubTrees(tree: GHTree): Dict<GHTree> {
 /**
  * Shifts path by one.
  * Returns the shifted part as first argument and remaining part as second.
- *
- * @param filepath
  */
 function shiftPath(filepath: string): [string, string] {
   const [dir, ...dirs] = filepath.split('/').filter(Boolean)
@@ -411,8 +426,6 @@ function shiftPath(filepath: string): [string, string] {
  * "/src/index.ts" -> false
  * "/index.ts" -> true
  * "index.ts" -> true
- *
- * @param filePath
  */
 function isFileInThisFolder(filePath: string): boolean {
   return ['.', '/'].includes(path.dirname(filePath))
@@ -421,9 +434,6 @@ function isFileInThisFolder(filePath: string): boolean {
 /**
  * Recursively creates a tree commit by creating blobs and generating
  * trees on folders.
- *
- * @param github
- * @param tree
  */
 async function createGhTree(
   github: Octokit,
@@ -464,10 +474,6 @@ async function createGhTree(
 
 /**
  * Creates a Github Blob from a File.
- *
- * @param github
- * @param param1
- * @param file
  */
 async function createGhBlob(
   github: Octokit,

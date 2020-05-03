@@ -258,13 +258,6 @@ Array [
   null,
   Object {
     "repos": Object {
-      "emma-cli": Object {
-        "labels": Object {
-          "bug/0-needs-reproduction": Object {
-            "color": "ff0022",
-          },
-        },
-      },
       "label-sync": Object {
         "labels": Object {
           "bug/0-needs-reproduction": Object {
@@ -294,6 +287,13 @@ Array [
         },
       },
       "prisma-test-utils": Object {
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "unchanged": Object {
         "labels": Object {
           "bug/0-needs-reproduction": Object {
             "color": "ff0022",
@@ -337,19 +337,75 @@ Array [
 
 exports[`configurations: multiple_aliases.yml on FREE 1`] = `
 Array [
-  "Configuration references multiple old aliases in some label definitions:
-* \`repo-one\`:label/1 reference more than one alias
-
-This is the current limitation of LabelSync and will change shortly.",
+  null,
+  Object {
+    "repos": Object {
+      "repo-one": Object {
+        "labels": Object {
+          "label/1": Object {
+            "alias": Array [
+              "alias",
+              "two",
+            ],
+            "color": "ff0022",
+          },
+          "label/2": Object {
+            "color": "ff0022",
+          },
+          "label/3": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "repo-two": Object {
+        "labels": Object {
+          "label/4": Object {
+            "alias": Array [
+              "alias",
+            ],
+            "color": "ff0022",
+          },
+        },
+      },
+    },
+  },
 ]
 `;
 
 exports[`configurations: multiple_aliases.yml on PAID 1`] = `
 Array [
-  "Configuration references multiple old aliases in some label definitions:
-* \`repo-one\`:label/1 reference more than one alias
-
-This is the current limitation of LabelSync and will change shortly.",
+  null,
+  Object {
+    "repos": Object {
+      "repo-one": Object {
+        "labels": Object {
+          "label/1": Object {
+            "alias": Array [
+              "alias",
+              "two",
+            ],
+            "color": "ff0022",
+          },
+          "label/2": Object {
+            "color": "ff0022",
+          },
+          "label/3": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "repo-two": Object {
+        "labels": Object {
+          "label/4": Object {
+            "alias": Array [
+              "alias",
+            ],
+            "color": "ff0022",
+          },
+        },
+      },
+    },
+  },
 ]
 `;
 
@@ -407,6 +463,58 @@ Array [
           "bug/3-fixing": Object {
             "color": "00ff22",
             "description": "Indicates that we are working on fixing the issue.",
+          },
+        },
+      },
+    },
+  },
+]
+`;
+
+exports[`configurations: siblings.yml on FREE 1`] = `
+Array [
+  null,
+  Object {
+    "repos": Object {
+      "changed": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "label/regular": Object {
+            "color": "000000",
+          },
+          "label/siblings": Object {
+            "color": "000000",
+            "siblings": Array [
+              "label/regular",
+            ],
+          },
+        },
+      },
+    },
+  },
+]
+`;
+
+exports[`configurations: siblings.yml on PAID 1`] = `
+Array [
+  null,
+  Object {
+    "repos": Object {
+      "changed": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "label/regular": Object {
+            "color": "000000",
+          },
+          "label/siblings": Object {
+            "color": "000000",
+            "siblings": Array [
+              "label/regular",
+            ],
           },
         },
       },

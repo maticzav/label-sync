@@ -12,8 +12,8 @@ export default {
   repository: {
     id: 186853002,
     node_id: 'MDEwOlJlcG9zaXRvcnkxODY4NTMwMDI=',
-    name: 'graphql-shield',
-    full_name: 'maticzav/graphql-shield',
+    name: 'changed',
+    full_name: 'maticzav/changed',
     private: false,
     owner: {
       login: 'maticzav',

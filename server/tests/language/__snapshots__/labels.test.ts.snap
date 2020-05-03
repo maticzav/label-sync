@@ -7,7 +7,7 @@ exports[`language: correctly generates human readable report 1`] = `
 
 Couldn't make a diff of labels.
 ---
-### \`graphql-shield\`
+### \`changed\`
 
 __New labels:__
  * bug/2
@@ -15,6 +15,9 @@ __New labels:__
 __Changed labels:__
  * bug/1
  * label/old => label/new
+
+__Aliased labels:__
+ * label/alias => label/new-alias
 
 __Removed labels:__
  * bug/3"

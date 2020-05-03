@@ -18,7 +18,7 @@ export default {
     number: 1,
     title: 'LabelSync - Invalid configuration',
     user: {
-      login: 'labelsync-manager[bot]',
+      login: 'labelsync-manager',
       id: 55896118,
       node_id: 'MDM6Qm90NTU4OTYxMTg=',
       avatar_url: 'https://avatars0.githubusercontent.com/in/42297?v=4',
@@ -46,18 +46,7 @@ export default {
       type: 'Bot',
       site_admin: false,
     },
-    labels: [
-      {
-        id: 1929933064,
-        node_id: 'MDU6TGFiZWwxOTI5OTMzMDY0',
-        url:
-          'https://api.github.com/repos/3-SemicolonClub/3-SemicolonClub-labelsync/labels/documentation',
-        name: 'documentation',
-        color: '0075ca',
-        default: true,
-        description: 'Improvements or additions to documentation',
-      },
-    ],
+    labels: [],
     state: 'open',
     locked: false,
     assignee: null,
@@ -76,7 +65,7 @@ export default {
     node_id: 'MDU6TGFiZWwxOTI5OTMzMDY0',
     url:
       'https://api.github.com/repos/3-SemicolonClub/3-SemicolonClub-labelsync/labels/documentation',
-    name: 'bug/0-needs-reproduction',
+    name: 'label/siblings',
     color: '0075ca',
     default: true,
     description: 'Improvements or additions to documentation',
@@ -84,8 +73,8 @@ export default {
   repository: {
     id: 249556373,
     node_id: 'MDEwOlJlcG9zaXRvcnkyNDk1NTYzNzM=',
-    name: 'graphql-shield',
-    full_name: 'maticzav/graphql-shield',
+    name: 'changed',
+    full_name: 'maticzav/changed',
     private: false,
     owner: {
       login: 'maticzav',

@@ -10,12 +10,38 @@ Thank you for installing LabelSync. We have noticed that your configuration stre
 Please update your installation. 
 
 _Missing repositories:_
- * emma-cli
+ * unchanged
 
 Best,
 LabelSync Team",
   "title": "LabelSync - Insufficient permissions",
 }
+`;
+
+exports[`bot: FREE installation event sync 1`] = `
+Array [
+  Object {
+    "body": Object {
+      "color": "000000",
+      "name": "alias/new",
+    },
+    "uri": "/repos/maticzav/changed/labels/alias/old:1",
+  },
+  Object {
+    "body": Object {
+      "color": "ffffff",
+      "name": "update/color",
+    },
+    "uri": "/repos/maticzav/changed/labels/update/color",
+  },
+]
+`;
+
+exports[`bot: FREE installation event sync 2`] = `
+Array [
+  "/repos/maticzav/changed/labels/alias/old:2",
+  "/repos/maticzav/changed/labels/remove",
+]
 `;
 
 exports[`bot: FREE installation invalid config issue 1`] = `
@@ -39,29 +65,42 @@ LabelSync Team",
 }
 `;
 
+exports[`bot: FREE issues.labeled adds siblings 1`] = `
+Array [
+  "label/regular",
+]
+`;
+
 exports[`bot: FREE pull_request 1`] = `
 Object {
   "body": "## LabelSync Overview 
 
-### \`graphql-shield\`
+### \`changed\`
 
 __New labels:__
- * kind/bug
- * bug/3-fixing
+ * create/new
 
 __Changed labels:__
- * bug/2-bug-confirmed
+ * alias/old:1 => alias/new
+ * update/color
+
+__Aliased labels:__
+ * alias/old:2 => alias/new
 
 __Removed labels:__
- * bug/4-fixed
+ * alias/old:2
+ * remove
 ---
-### \`emma-cli\`
+### \`unchanged\`
 
 __New labels:__
 No new labels created.
 
 __Changed labels:__
- * bug/2-bug-confirmed
+No changed labels.
+
+__Aliased labels:__
+No aliases.
 
 __Unconfigured labels.__
 You have no unconfigured labels - you could make this repository \`strict\`.",
@@ -73,7 +112,7 @@ Object {
   "body": "It seems like this configuration stretches beyond repositories we can access. Please update it so we can help you as best as we can.
 
 _Missing repositories:_
- * emma-cli",
+ * unchanged",
 }
 `;
 
@@ -81,18 +120,23 @@ exports[`bot: FREE push event 1`] = `
 Object {
   "body": "## LabelSync Overview 
 
-### \`graphql-shield\`
+### \`changed\`
 
 __New labels:__
- * bug/3-fixing
+ * create/new
 
 __Changed labels:__
- * bug/2-bug-confirmed
+ * alias/old:1 => alias/new
+ * update/color
+
+__Aliased labels:__
+ * alias/old:2 => alias/new
 
 __Removed labels:__
- * bug/4-fixed
+ * alias/old:2
+ * remove
 ---
-### \`emma-cli\`
+### \`unchanged\`
 
 __New labels:__
 No new labels created.
@@ -100,9 +144,55 @@ No new labels created.
 __Changed labels:__
 No changed labels.
 
+__Aliased labels:__
+No aliases.
+
 __Unconfigured labels.__
 You have no unconfigured labels - you could make this repository \`strict\`.",
 }
+`;
+
+exports[`bot: FREE push event 2`] = `
+Array [
+  Object {
+    "body": Object {
+      "color": "000000",
+      "name": "alias/new",
+    },
+    "uri": "/repos/maticzav/changed/labels/alias/old:1",
+  },
+  Object {
+    "body": Object {
+      "color": "ffffff",
+      "name": "update/color",
+    },
+    "uri": "/repos/maticzav/changed/labels/update/color",
+  },
+]
+`;
+
+exports[`bot: FREE push event 3`] = `
+Array [
+  "/repos/maticzav/changed/labels/alias/old:2",
+  "/repos/maticzav/changed/labels/remove",
+]
+`;
+
+exports[`bot: FREE push event 4`] = `
+Array [
+  Object {
+    "body": Array [
+      "alias/new",
+    ],
+    "uri": "/repos/maticzav/changed/issues/1/labels",
+  },
+  Object {
+    "body": Array [
+      "alias/new",
+    ],
+    "uri": "/repos/maticzav/changed/issues/4/labels",
+  },
+]
 `;
 
 exports[`bot: FREE push event invalid configuration 1`] = `
@@ -124,7 +214,7 @@ Object {
 Please update it so I may sync your labels.
 
 _Missing repositories:_
- * emma-cli",
+ * unchanged",
 }
 `;
 
@@ -138,12 +228,38 @@ Thank you for installing LabelSync. We have noticed that your configuration stre
 Please update your installation. 
 
 _Missing repositories:_
- * emma-cli
+ * unchanged
 
 Best,
 LabelSync Team",
   "title": "LabelSync - Insufficient permissions",
 }
+`;
+
+exports[`bot: PAID installation event sync 1`] = `
+Array [
+  Object {
+    "body": Object {
+      "color": "000000",
+      "name": "alias/new",
+    },
+    "uri": "/repos/maticzav/changed/labels/alias/old:1",
+  },
+  Object {
+    "body": Object {
+      "color": "ffffff",
+      "name": "update/color",
+    },
+    "uri": "/repos/maticzav/changed/labels/update/color",
+  },
+]
+`;
+
+exports[`bot: PAID installation event sync 2`] = `
+Array [
+  "/repos/maticzav/changed/labels/alias/old:2",
+  "/repos/maticzav/changed/labels/remove",
+]
 `;
 
 exports[`bot: PAID installation invalid config issue 1`] = `
@@ -167,29 +283,42 @@ LabelSync Team",
 }
 `;
 
+exports[`bot: PAID issues.labeled adds siblings 1`] = `
+Array [
+  "label/regular",
+]
+`;
+
 exports[`bot: PAID pull_request 1`] = `
 Object {
   "body": "## LabelSync Overview 
 
-### \`graphql-shield\`
+### \`changed\`
 
 __New labels:__
- * kind/bug
- * bug/3-fixing
+ * create/new
 
 __Changed labels:__
- * bug/2-bug-confirmed
+ * alias/old:1 => alias/new
+ * update/color
+
+__Aliased labels:__
+ * alias/old:2 => alias/new
 
 __Removed labels:__
- * bug/4-fixed
+ * alias/old:2
+ * remove
 ---
-### \`emma-cli\`
+### \`unchanged\`
 
 __New labels:__
 No new labels created.
 
 __Changed labels:__
- * bug/2-bug-confirmed
+No changed labels.
+
+__Aliased labels:__
+No aliases.
 
 __Unconfigured labels.__
 You have no unconfigured labels - you could make this repository \`strict\`.",
@@ -201,7 +330,7 @@ Object {
   "body": "It seems like this configuration stretches beyond repositories we can access. Please update it so we can help you as best as we can.
 
 _Missing repositories:_
- * emma-cli",
+ * unchanged",
 }
 `;
 
@@ -209,18 +338,23 @@ exports[`bot: PAID push event 1`] = `
 Object {
   "body": "## LabelSync Overview 
 
-### \`graphql-shield\`
+### \`changed\`
 
 __New labels:__
- * bug/3-fixing
+ * create/new
 
 __Changed labels:__
- * bug/2-bug-confirmed
+ * alias/old:1 => alias/new
+ * update/color
+
+__Aliased labels:__
+ * alias/old:2 => alias/new
 
 __Removed labels:__
- * bug/4-fixed
+ * alias/old:2
+ * remove
 ---
-### \`emma-cli\`
+### \`unchanged\`
 
 __New labels:__
 No new labels created.
@@ -228,9 +362,55 @@ No new labels created.
 __Changed labels:__
 No changed labels.
 
+__Aliased labels:__
+No aliases.
+
 __Unconfigured labels.__
 You have no unconfigured labels - you could make this repository \`strict\`.",
 }
+`;
+
+exports[`bot: PAID push event 2`] = `
+Array [
+  Object {
+    "body": Object {
+      "color": "000000",
+      "name": "alias/new",
+    },
+    "uri": "/repos/maticzav/changed/labels/alias/old:1",
+  },
+  Object {
+    "body": Object {
+      "color": "ffffff",
+      "name": "update/color",
+    },
+    "uri": "/repos/maticzav/changed/labels/update/color",
+  },
+]
+`;
+
+exports[`bot: PAID push event 3`] = `
+Array [
+  "/repos/maticzav/changed/labels/alias/old:2",
+  "/repos/maticzav/changed/labels/remove",
+]
+`;
+
+exports[`bot: PAID push event 4`] = `
+Array [
+  Object {
+    "body": Array [
+      "alias/new",
+    ],
+    "uri": "/repos/maticzav/changed/issues/1/labels",
+  },
+  Object {
+    "body": Array [
+      "alias/new",
+    ],
+    "uri": "/repos/maticzav/changed/issues/4/labels",
+  },
+]
 `;
 
 exports[`bot: PAID push event invalid configuration 1`] = `
@@ -252,6 +432,6 @@ Object {
 Please update it so I may sync your labels.
 
 _Missing repositories:_
- * emma-cli",
+ * unchanged",
 }
 `;

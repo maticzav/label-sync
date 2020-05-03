@@ -570,7 +570,7 @@ function Pricing() {
                       {/* Yearly pricing */}
                       {period === 'yearly' && (
                         <>
-                          $16 USD
+                          $16
                           {/* $12
                           <span className="ml-1 text-2xl leading-8 font-medium text-gray-500 line-through">
                             $16
@@ -580,7 +580,7 @@ function Pricing() {
                       {/* Monthly pricing */}
                       {period === 'monthly' && (
                         <>
-                          $20 USD
+                          $20
                           {/* $16
                           <span className="ml-1 text-2xl leading-8 font-medium text-gray-500 line-through">
                             $20

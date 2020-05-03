@@ -40,6 +40,9 @@ function parseLabelSyncReport(report: LabelSyncReport): string {
           | __Changed labels:__
           | ${ulOfLabels(report.updates, `No changed labels.`)}
           |
+          | __Aliased labels:__
+          | ${ulOfLabels(report.aliases, `No aliases.`)}
+          |
           | __Removed labels:__
           | ${ulOfLabels(report.removals, `You haven't removed any label.`)}
         `
@@ -53,6 +56,9 @@ function parseLabelSyncReport(report: LabelSyncReport): string {
           |
           | __Changed labels:__
           | ${ulOfLabels(report.updates, `No changed labels.`)}
+          |
+          | __Aliased labels:__
+          | ${ulOfLabels(report.aliases, `No aliases.`)}
           |
           | __Unconfigured labels.__
           | ${ulOfLabels(

@@ -62,7 +62,7 @@ exports[`make: integration test: compiles configuration to default path 1`] = `
         color: '#7057ff'
         alias: []
         siblings: []
-  graphql-shield:
+  changed:
     config:
       removeUnconfiguredLabels: true
     labels:
@@ -99,7 +99,7 @@ exports[`make: integration test: compiles configuration to default path 1`] = `
 exports[`make: integration test: compiles configuration to default path 2`] = `
 Object {
   "repos": Object {
-    "graphql-shield": Object {
+    "changed": Object {
       "config": Object {
         "removeUnconfiguredLabels": true,
       },

@@ -62,7 +62,7 @@ describe('make:', () => {
               ls.community('help-wanted'),
             ],
           }),
-          'graphql-shield': ls.repo({
+          changed: ls.repo({
             config: {
               removeUnconfiguredLabels: true,
             },

@@ -103,7 +103,7 @@ export function parseConfig(
     /* Perform checks on the content */
     const parsedConfig = checkPurchase(
       purchase,
-      checkLimitations(checkAliaii(checkSiblings(fixConfig(config.right)))),
+      checkAliaii(checkSiblings(fixConfig(config.right))),
     )
 
     return [null, parsedConfig]
@@ -165,56 +165,6 @@ function checkPurchase(
   }
 
   /* No limits on the account. */
-  return config
-}
-
-/**
- * Makes sure that none of LabelSync limitations appears in the cofnig.
- */
-function checkLimitations(config: LSCConfiguration): LSCConfiguration {
-  /* Check that each label on alias one old label. */
-  let multipleAliaiiLabels: { repo: string; labels: string[] }[] = []
-
-  /* Check each repository */
-  for (const repoName in config.repos) {
-    const repoConfig = config.repos[repoName]
-
-    let multipleAliaiiLabelsInRepo: string[] = []
-
-    /* Check every label for unconfigured siblings. */
-    for (const label in repoConfig.labels) {
-      const aliaii = withDefault([], repoConfig.labels[label].alias)
-      if (aliaii.length > 1) multipleAliaiiLabelsInRepo.push(label)
-    }
-
-    if (multipleAliaiiLabelsInRepo.length > 0) {
-      multipleAliaiiLabels.push({
-        repo: repoName,
-        labels: multipleAliaiiLabelsInRepo,
-      })
-    }
-  }
-
-  /**
-   * Reports missing siblings.
-   */
-  if (multipleAliaiiLabels.length !== 0) {
-    const report = ml`
-    | Configuration references multiple old aliases in some label definitions:
-    | ${multipleAliaiiLabels
-      .map(
-        (s) =>
-          `* \`${s.repo}\`:${s.labels.join(
-            ', ',
-          )} reference more than one alias`,
-      )
-      .join(os.EOL)}
-    |
-    | This is the current limitation of LabelSync and will change shortly.
-    `
-    throw new Error(report)
-  }
-
   return config
 }
 

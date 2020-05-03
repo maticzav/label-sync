@@ -29,7 +29,7 @@ describe('language:', () => {
       {
         status: 'Success',
         owner: 'maticzav',
-        repo: 'graphql-shield',
+        repo: 'changed',
         additions: [
           {
             name: 'bug/2',
@@ -54,6 +54,14 @@ describe('language:', () => {
           {
             name: 'bug/3',
             color: 'ff',
+            default: false,
+          },
+        ],
+        aliases: [
+          {
+            old_name: 'label/alias',
+            name: 'label/new-alias',
+            color: '00',
             default: false,
           },
         ],

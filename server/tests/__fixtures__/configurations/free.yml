@@ -7,7 +7,7 @@ repos:
     labels:
       bug/0-needs-reproduction:
         color: '#ff0022'
-  emma-cli:
+  unchanged:
     labels:
       bug/0-needs-reproduction:
         color: '#ff0022'

@@ -33,6 +33,11 @@ const newRepoConfigFixture = fs.readFileSync(
   { encoding: 'utf-8' },
 )
 
+const siblingsConfigFixture = fs.readFileSync(
+  path.resolve(__dirname, './__fixtures__/configurations/siblings.yml'),
+  { encoding: 'utf-8' },
+)
+
 /* Probot app */
 
 const manager = require('../src')
@@ -333,7 +338,7 @@ describe('bot:', () => {
       test(
         'installation event sync',
         async () => {
-          expect.assertions(10)
+          expect.assertions(11)
 
           const repoEndpoint = jest.fn().mockReturnValue({
             default_branch: 'master',
@@ -345,59 +350,47 @@ describe('bot:', () => {
 
           const installationsEndpoint = jest.fn().mockReturnValue({
             repositories: [
-              { name: 'graphql-shield' },
-              { name: 'emma-cli' },
-              { name: 'nookies' },
+              { name: 'changed' },
+              { name: 'unchanged' },
+              { name: 'other' },
             ],
           })
 
           const labelsEndpoint = jest.fn().mockImplementation((uri) => {
             switch (uri) {
-              case '/repos/maticzav/graphql-shield/labels': {
+              case '/repos/maticzav/changed/labels': {
                 return [
+                  // {
+                  //   name: 'create/new',
+                  //   color: '000000',
+                  // },
+                  // {
+                  //   name: 'alias/new',
+                  //   color: '000000',
+                  // },
                   {
-                    name: 'kind/bug',
-                    color: 'ff0022',
-                  },
-                  {
-                    name: 'bug/0-needs-reproduction',
-                    color: 'ff0022',
-                  },
-                  {
-                    name: 'bug/1-has-reproduction',
-                    color: 'ff0022',
-                    description: 'Indicates that an issue has reproduction',
-                  },
-                  {
-                    name: 'bug/2-bug-confirmed',
+                    name: 'alias/old:1',
                     color: '000000',
                   },
                   {
-                    name: 'bug/4-fixed',
-                    color: '222222',
+                    name: 'alias/old:2',
+                    color: '000000',
+                  },
+                  {
+                    name: 'update/color',
+                    color: '000000',
+                  },
+                  {
+                    name: 'remove',
+                    color: '000000',
                   },
                 ]
               }
-              case '/repos/maticzav/emma-cli/labels': {
+              case '/repos/maticzav/unchanged/labels': {
                 return [
                   {
-                    name: 'bug/0-needs-reproduction',
-                    color: 'ff0022',
-                  },
-                  {
-                    name: 'bug/1-has-reproduction',
-                    color: 'ff0022',
-                    description: 'Indicates that an issue has reproduction',
-                  },
-                  {
-                    name: 'bug/2-bug-confirmed',
-                    color: '00ff22',
-                  },
-                  {
-                    name: 'bug/3-fixing',
-                    color: '00ff22',
-                    description:
-                      'Indicates that we are working on fixing the issue.',
+                    name: 'label-a',
+                    color: '000000',
                   },
                 ]
               }
@@ -407,41 +400,39 @@ describe('bot:', () => {
             }
           })
 
+          const getIssuesForRepoEndpoint = jest
+            .fn()
+            .mockImplementation((uri, body) => {
+              return []
+            })
+
           const createLabelsEndpoint = jest
             .fn()
             .mockImplementation((uri, body) => {
               expect({ body, uri }).toEqual({
-                uri: '/repos/maticzav/graphql-shield/labels',
+                uri: '/repos/maticzav/changed/labels',
                 body: {
-                  color: '00ff22',
-                  description:
-                    'Indicates that we are working on fixing the issue.',
-                  name: 'bug/3-fixing',
+                  color: '000000',
+                  name: 'create/new',
                 },
               })
               return
             })
+
+          let updatedLabels: { uri: string; body: object }[] = []
 
           const updateLabelsEndpoint = jest
             .fn()
             .mockImplementation((uri, body) => {
-              expect({ uri, body }).toEqual({
-                uri:
-                  '/repos/maticzav/graphql-shield/labels/bug/2-bug-confirmed',
-                body: {
-                  color: '00ff22',
-                  name: 'bug/2-bug-confirmed',
-                },
-              })
+              updatedLabels.push({ uri, body })
               return
             })
 
+          let removedLabels: string[] = []
           const removeLabelsEndpoint = jest
             .fn()
             .mockImplementation((uri, body) => {
-              expect(uri).toBe(
-                '/repos/maticzav/graphql-shield/labels/bug/4-fixed',
-              )
+              removedLabels.push(uri)
               return
             })
 
@@ -468,22 +459,27 @@ describe('bot:', () => {
             .reply(200, installationsEndpoint)
 
           nock('https://api.github.com')
-            .get(/\/repos\/maticzav\/.*\/labels/)
+            .get(/\/repos\/maticzav\/\w+\/labels/)
             .reply(200, labelsEndpoint)
             .persist()
 
           nock('https://api.github.com')
-            .post(/\/repos\/maticzav\/.*\/labels/)
+            .get(/\/repos\/maticzav\/\w+\/issues\?per_page\=100\&page\=0/)
+            .reply(200, getIssuesForRepoEndpoint)
+            .persist()
+
+          nock('https://api.github.com')
+            .post(/\/repos\/maticzav\/\w+\/labels/)
             .reply(200, createLabelsEndpoint)
             .persist()
 
           nock('https://api.github.com')
-            .patch(/\/repos\/maticzav\/.*\/labels/)
+            .patch(/\/repos\/maticzav\/\w+\/labels/)
             .reply(200, updateLabelsEndpoint)
             .persist()
 
           nock('https://api.github.com')
-            .delete(/\/repos\/maticzav\/.*\/labels/)
+            .delete(/\/repos\/maticzav\/\w+\/labels/)
             .reply(200, removeLabelsEndpoint)
             .persist()
 
@@ -499,9 +495,12 @@ describe('bot:', () => {
           expect(configEndpoint).toBeCalledTimes(1)
           expect(installationsEndpoint).toBeCalledTimes(1)
           expect(labelsEndpoint).toBeCalledTimes(2)
+          expect(getIssuesForRepoEndpoint).toBeCalledTimes(1)
           expect(createLabelsEndpoint).toBeCalledTimes(1)
-          expect(updateLabelsEndpoint).toBeCalledTimes(1)
-          expect(removeLabelsEndpoint).toBeCalledTimes(1)
+          expect(updateLabelsEndpoint).toBeCalledTimes(2)
+          expect(removeLabelsEndpoint).toBeCalledTimes(2)
+          expect(updatedLabels).toMatchSnapshot()
+          expect(removedLabels).toMatchSnapshot()
         },
         5 * 60 * 1000,
       )
@@ -520,7 +519,7 @@ describe('bot:', () => {
           })
 
           const installationsEndpoint = jest.fn().mockReturnValue({
-            repositories: [{ name: 'graphql-shield' }],
+            repositories: [{ name: 'changed' }],
           })
 
           /* Mocks */
@@ -570,7 +569,7 @@ describe('bot:', () => {
       test(
         'push event',
         async () => {
-          expect.assertions(11)
+          expect.assertions(13)
 
           const configEndpoint = jest.fn().mockReturnValue({
             content: Buffer.from(configFixture).toString('base64'),
@@ -578,59 +577,47 @@ describe('bot:', () => {
 
           const installationsEndpoint = jest.fn().mockReturnValue({
             repositories: [
-              { name: 'graphql-shield' },
-              { name: 'emma-cli' },
-              { name: 'nookies' },
+              { name: 'unchanged' },
+              { name: 'changed' },
+              { name: 'other' },
             ],
           })
 
           const labelsEndpoint = jest.fn().mockImplementation((uri) => {
             switch (uri) {
-              case '/repos/maticzav/graphql-shield/labels': {
+              case '/repos/maticzav/changed/labels': {
                 return [
+                  // {
+                  //   name: 'create/new',
+                  //   color: '000000',
+                  // },
+                  // {
+                  //   name: 'alias/new',
+                  //   color: '000000',
+                  // },
                   {
-                    name: 'kind/bug',
-                    color: 'ff0022',
-                  },
-                  {
-                    name: 'bug/0-needs-reproduction',
-                    color: 'ff0022',
-                  },
-                  {
-                    name: 'bug/1-has-reproduction',
-                    color: 'ff0022',
-                    description: 'Indicates that an issue has reproduction',
-                  },
-                  {
-                    name: 'bug/2-bug-confirmed',
+                    name: 'alias/old:1',
                     color: '000000',
                   },
                   {
-                    name: 'bug/4-fixed',
-                    color: '222222',
+                    name: 'alias/old:2',
+                    color: '000000',
+                  },
+                  {
+                    name: 'update/color',
+                    color: '000000',
+                  },
+                  {
+                    name: 'remove',
+                    color: '000000',
                   },
                 ]
               }
-              case '/repos/maticzav/emma-cli/labels': {
+              case '/repos/maticzav/unchanged/labels': {
                 return [
                   {
-                    name: 'bug/0-needs-reproduction',
-                    color: 'ff0022',
-                  },
-                  {
-                    name: 'bug/1-has-reproduction',
-                    color: 'ff0022',
-                    description: 'Indicates that an issue has reproduction',
-                  },
-                  {
-                    name: 'bug/2-bug-confirmed',
-                    color: '00ff22',
-                  },
-                  {
-                    name: 'bug/3-fixing',
-                    color: '00ff22',
-                    description:
-                      'Indicates that we are working on fixing the issue.',
+                    name: 'label-a',
+                    color: '000000',
                   },
                 ]
               }
@@ -640,41 +627,59 @@ describe('bot:', () => {
             }
           })
 
+          const getIssuesForRepoEndpoint = jest
+            .fn()
+            .mockImplementation((uri, body) => {
+              return [
+                {
+                  number: 1,
+                  labels: [{ name: 'alias/old:1' }, { name: 'alias/old:2' }],
+                },
+                {
+                  number: 3,
+                  labels: [],
+                },
+                {
+                  number: 4,
+                  labels: [{ name: 'alias/old:2' }],
+                },
+              ]
+            })
+
           const createLabelsEndpoint = jest
             .fn()
             .mockImplementation((uri, body) => {
               expect({ body, uri }).toEqual({
-                uri: '/repos/maticzav/graphql-shield/labels',
+                uri: '/repos/maticzav/changed/labels',
                 body: {
-                  color: '00ff22',
-                  description:
-                    'Indicates that we are working on fixing the issue.',
-                  name: 'bug/3-fixing',
+                  color: '000000',
+                  name: 'create/new',
                 },
               })
               return
             })
 
+          let updatedLabels: { uri: string; body: object }[] = []
           const updateLabelsEndpoint = jest
             .fn()
             .mockImplementation((uri, body) => {
-              expect({ uri, body }).toEqual({
-                uri:
-                  '/repos/maticzav/graphql-shield/labels/bug/2-bug-confirmed',
-                body: {
-                  color: '00ff22',
-                  name: 'bug/2-bug-confirmed',
-                },
-              })
+              updatedLabels.push({ uri, body })
               return
             })
 
+          let removedLabels: string[] = []
           const removeLabelsEndpoint = jest
             .fn()
             .mockImplementation((uri, body) => {
-              expect(uri).toBe(
-                '/repos/maticzav/graphql-shield/labels/bug/4-fixed',
-              )
+              removedLabels.push(uri)
+              return
+            })
+
+          let aliasedLabels: { uri: string; body: object }[] = []
+          const issueLabelsEndpoint = jest
+            .fn()
+            .mockImplementation((uri, body) => {
+              aliasedLabels.push({ uri, body })
               return
             })
 
@@ -702,23 +707,33 @@ describe('bot:', () => {
             .reply(200, installationsEndpoint)
 
           nock('https://api.github.com')
-            .get(/\/repos\/maticzav\/.*\/labels/)
+            .get(/\/repos\/maticzav\/\w+\/labels/)
             .reply(200, labelsEndpoint)
             .persist()
 
           nock('https://api.github.com')
-            .post(/\/repos\/maticzav\/.*\/labels/)
+            .get(/\/repos\/maticzav\/\w+\/issues\?per_page\=100\&page\=0/)
+            .reply(200, getIssuesForRepoEndpoint)
+            .persist()
+
+          nock('https://api.github.com')
+            .post(/\/repos\/maticzav\/\w+\/labels/)
             .reply(200, createLabelsEndpoint)
             .persist()
 
           nock('https://api.github.com')
-            .patch(/\/repos\/maticzav\/.*\/labels/)
+            .patch(/\/repos\/maticzav\/\w+\/labels/)
             .reply(200, updateLabelsEndpoint)
             .persist()
 
           nock('https://api.github.com')
-            .delete(/\/repos\/maticzav\/.*\/labels/)
+            .delete(/\/repos\/maticzav\/\w+\/labels/)
             .reply(200, removeLabelsEndpoint)
+            .persist()
+
+          nock('https://api.github.com')
+            .post(/\/repos\/maticzav\/\w+\/issues\/\d+\/labels/)
+            .reply(200, issueLabelsEndpoint)
             .persist()
 
           nock('https://api.github.com')
@@ -739,10 +754,14 @@ describe('bot:', () => {
           expect(configEndpoint).toBeCalledTimes(1)
           expect(installationsEndpoint).toBeCalledTimes(1)
           expect(labelsEndpoint).toBeCalledTimes(2)
+          expect(getIssuesForRepoEndpoint).toBeCalledTimes(1)
           expect(createLabelsEndpoint).toBeCalledTimes(1)
-          expect(updateLabelsEndpoint).toBeCalledTimes(1)
-          expect(removeLabelsEndpoint).toBeCalledTimes(1)
+          expect(updateLabelsEndpoint).toBeCalledTimes(2)
+          expect(removeLabelsEndpoint).toBeCalledTimes(2)
           expect(commitCommentEndpoint).toBeCalledTimes(1)
+          expect(updatedLabels).toMatchSnapshot()
+          expect(removedLabels).toMatchSnapshot()
+          expect(aliasedLabels).toMatchSnapshot()
         },
         5 * 60 * 1000,
       )
@@ -806,7 +825,7 @@ describe('bot:', () => {
           })
 
           const installationsEndpoint = jest.fn().mockReturnValue({
-            repositories: [{ name: 'graphql-shield' }],
+            repositories: [{ name: 'changed' }],
           })
 
           /* Mocks */
@@ -852,7 +871,7 @@ describe('bot:', () => {
       test(
         'pull_request',
         async () => {
-          expect.assertions(4)
+          expect.assertions(5)
 
           const compareEndpoint = jest.fn().mockReturnValue({
             files: [{ filename: 'labelsync.yml' }, { filename: 'README.md' }],
@@ -864,55 +883,47 @@ describe('bot:', () => {
 
           const installationsEndpoint = jest.fn().mockReturnValue({
             repositories: [
-              { name: 'graphql-shield' },
-              { name: 'emma-cli' },
-              { name: 'nookies' },
+              { name: 'changed' },
+              { name: 'unchanged' },
+              { name: 'other' },
             ],
           })
 
           const labelsEndpoint = jest.fn().mockImplementation((uri) => {
             switch (uri) {
-              case '/repos/maticzav/graphql-shield/labels': {
+              case '/repos/maticzav/changed/labels': {
                 return [
+                  // {
+                  //   name: 'create/new',
+                  //   color: '000000',
+                  // },
+                  // {
+                  //   name: 'alias/new',
+                  //   color: '000000',
+                  // },
                   {
-                    name: 'bug/0-needs-reproduction',
-                    color: 'ff0022',
+                    name: 'alias/old:1',
+                    color: '000000',
                   },
                   {
-                    name: 'bug/1-has-reproduction',
-                    color: 'ff0022',
-                    description: 'Indicates that an issue has reproduction',
+                    name: 'alias/old:2',
+                    color: '000000',
                   },
                   {
-                    name: 'bug/2-bug-confirmed',
-                    color: 'blue',
+                    name: 'update/color',
+                    color: '000000',
                   },
                   {
-                    name: 'bug/4-fixed',
-                    color: '222222',
+                    name: 'remove',
+                    color: '000000',
                   },
                 ]
               }
-              case '/repos/maticzav/emma-cli/labels': {
+              case '/repos/maticzav/unchanged/labels': {
                 return [
                   {
-                    name: 'bug/0-needs-reproduction',
-                    color: 'ff0022',
-                  },
-                  {
-                    name: 'bug/1-has-reproduction',
-                    color: 'ff0022',
-                    description: 'Indicates that an issue has reproduction',
-                  },
-                  {
-                    name: 'bug/2-bug-confirmed',
-                    color: 'ff0022',
-                  },
-                  {
-                    name: 'bug/3-fixing',
-                    color: '00ff22',
-                    description:
-                      'Indicates that we are working on fixing the issue.',
+                    name: 'label-a',
+                    color: '000000',
                   },
                 ]
               }
@@ -921,6 +932,17 @@ describe('bot:', () => {
               }
             }
           })
+
+          const getIssuesForRepoEndpoint = jest
+            .fn()
+            .mockImplementation((uri, body) => {
+              return [
+                {
+                  number: 1,
+                  labels: [{ name: 'alias/old:1' }, { name: 'alias/old:2' }],
+                },
+              ]
+            })
 
           /* Mocks */
 
@@ -943,8 +965,13 @@ describe('bot:', () => {
             .reply(200, installationsEndpoint)
 
           nock('https://api.github.com')
-            .get(/\/repos\/maticzav\/.*\/labels/)
+            .get(/\/repos\/maticzav\/\w+\/labels/)
             .reply(200, labelsEndpoint)
+            .persist()
+
+          nock('https://api.github.com')
+            .get(/\/repos\/maticzav\/\w+\/issues\?per_page\=100\&page\=0/)
+            .reply(200, getIssuesForRepoEndpoint)
             .persist()
 
           nock('https://api.github.com')
@@ -965,6 +992,7 @@ describe('bot:', () => {
           expect(compareEndpoint).toBeCalledTimes(1)
           expect(configEndpoint).toBeCalledTimes(1)
           expect(installationsEndpoint).toBeCalledTimes(1)
+          expect(getIssuesForRepoEndpoint).toBeCalledTimes(1)
         },
         5 * 60 * 1000,
       )
@@ -1015,7 +1043,7 @@ describe('bot:', () => {
           })
 
           const installationsEndpoint = jest.fn().mockReturnValue({
-            repositories: [{ name: 'graphql-shield' }],
+            repositories: [{ name: 'changed' }],
           })
 
           /* Mocks */
@@ -1081,11 +1109,9 @@ describe('bot:', () => {
             .reply(200, configEndpoint)
 
           nock('https://api.github.com')
-            .delete(/\/repos\/maticzav\/.*\/labels/)
+            .delete(/\/repos\/maticzav\/\w+\/labels/)
             .reply(200, (uri) => {
-              expect(uri).toBe(
-                '/repos/maticzav/graphql-shield/labels/:bug:%20Bugfix',
-              )
+              expect(uri).toBe('/repos/maticzav/changed/labels/:bug:%20Bugfix')
             })
             .persist()
 
@@ -1125,10 +1151,10 @@ describe('bot:', () => {
               .reply(200, configEndpoint)
 
             nock('https://api.github.com')
-              .delete(/\/repos\/maticzav\/.*\/labels/)
+              .delete(/\/repos\/maticzav\/\w+\/labels/)
               .reply(200, (uri) => {
                 expect(uri).toBe(
-                  '/repos/maticzav/graphql-shield/labels/:bug:%20Bugfix',
+                  '/repos/maticzav/changed/labels/:bug:%20Bugfix',
                 )
               })
               .persist()
@@ -1152,7 +1178,7 @@ describe('bot:', () => {
           expect.assertions(2)
 
           const configEndpoint = jest.fn().mockReturnValue({
-            content: Buffer.from(configFixture).toString('base64'),
+            content: Buffer.from(siblingsConfigFixture).toString('base64'),
           })
 
           /* Mocks */
@@ -1167,10 +1193,11 @@ describe('bot:', () => {
             )
             .reply(200, configEndpoint)
 
+          let addedLabels: string[] = []
           nock('https://api.github.com')
-            .post('/repos/maticzav/graphql-shield/issues/1/labels')
+            .post('/repos/maticzav/changed/issues/1/labels')
             .reply(200, (uri, body) => {
-              expect(body).toEqual(['kind/bug'])
+              addedLabels.push(...(body as any))
               return
             })
             .persist()
@@ -1184,6 +1211,7 @@ describe('bot:', () => {
           /* Tests */
 
           expect(configEndpoint).toBeCalledTimes(1)
+          expect(addedLabels).toMatchSnapshot()
         },
         5 * 60 * 1000,
       )
@@ -1225,12 +1253,12 @@ describe('bot:', () => {
             .reply(200, configEndpoint)
 
           nock('https://api.github.com')
-            .get(/\/repos\/maticzav\/.*\/labels/)
+            .get(/\/repos\/maticzav\/\w+\/labels/)
             .reply(200, labelsEndpoint)
             .persist()
 
           nock('https://api.github.com')
-            .post(/\/repos\/maticzav\/.*\/labels/)
+            .post(/\/repos\/maticzav\/\w+\/labels/)
             .reply(200, crudLabelEndpoint)
             .persist()
 
@@ -1283,12 +1311,12 @@ describe('bot:', () => {
               .reply(200, configEndpoint)
 
             nock('https://api.github.com')
-              .get(/\/repos\/maticzav\/.*\/labels/)
+              .get(/\/repos\/maticzav\/\w+\/labels/)
               .reply(200, labelsEndpoint)
               .persist()
 
             nock('https://api.github.com')
-              .post(/\/repos\/maticzav\/.*\/labels/)
+              .post(/\/repos\/maticzav\/\w+\/labels/)
               .reply(200, crudLabelEndpoint)
               .persist()
 
