@@ -134,9 +134,30 @@ export function calculateDiff(
 ) => {
   added: GithubLabel[]
   changed: GithubLabel[]
+  aliased: GithubLabel[]
   removed: GithubLabel[]
-  // unchanged: GithubLabel[]
 } {
+  /**
+   * Label may fall into four classes:
+   *  - it may be new: not on Github and no other label
+   *    in the configuration references it
+   *  - it may be updated: name remains the same but color
+   *    or description have changed
+   *  - it may be aliased: one of the labels references a
+   *    label that exists on Github but is not present in
+   *    the configuration anymore
+   *  - it may be removed: no labels alias it and it is
+   *    not in the configuration
+   *
+   * In light of that we diff labels so that:
+   *  - added: contains all the labels we should add
+   *  - changed: contains all the labels that we should rename,
+   *      change description or change color
+   *  - aliased: contains all the labels that we should cleverly
+   *      reference in the issues
+   *  - removed: contains all the labels that we should remove
+   */
+
   return (currentLabels) => {
     const currentLabelsNames = currentLabels.map((l) => l.name)
 
@@ -144,54 +165,102 @@ export function calculateDiff(
 
     let added: GithubLabel[] = []
     let changed: GithubLabel[] = []
-    // let unchanged: GithubLabel[] = []
+    let aliased: GithubLabel[] = []
+    // let aliased: { [target: string]: GithubLabel[] } = {}
     let removed: GithubLabel[] = []
 
-    /* Find changes */
+    /* Calculate differences */
 
-    for (const label of currentLabels) {
-      const labelRemoved = !config.hasOwnProperty(label.name)
-      const labelAlias = Object.keys(config).find((labelName) => {
-        const aliases = withDefault([], config[labelName].alias)
-        return aliases.some((a) => a === label.name)
-      })
+    // TODO: you may not split label alias
 
-      /* Aliases */
-      if (labelRemoved && labelAlias) {
-        changed.push({
-          old_name: label.name,
-          name: labelAlias,
-          color: config[labelAlias]!.color,
-          description: config[labelAlias]!.description,
-        })
+    for (const label of Object.keys(config)) {
+      /**
+       * We know that each label in here is only referenced once.
+       * You may not reference the same label in two different alias.
+       */
+      const hydratedLabel = hydrateLabel(label)
+      /* prettier-ignore */
+      const labelAlias: string[] = withDefault([], config[label].alias)
+        .filter((aliasName) => currentLabelsNames.includes(aliasName))
+      const existingLabel = currentLabelsNames.includes(label)
+      const labelIsAliased = labelAlias.length !== 0
+
+      /**
+       * New labels:
+       *  - doesn't exist yet
+       *  - isn't aliased
+       */
+      if (!existingLabel && !labelIsAliased) {
+        added.push(hydratedLabel)
         continue
       }
 
-      /* Removed */
-      if (labelRemoved && !labelAlias) {
+      /**
+       * Updated labels:
+       *  - either color or description has changed.
+       */
+
+      const labelHasChanged = currentLabels.some(
+        (cLabel) =>
+          // Must have the same name.
+          cLabel.name === hydratedLabel.name &&
+          // Description or color might have changed.
+          (cLabel.description !== hydratedLabel.description ||
+            cLabel.color !== hydratedLabel.color),
+      )
+
+      if (existingLabel && labelHasChanged && !labelIsAliased) {
+        changed.push(hydratedLabel)
+        continue
+      }
+
+      /**
+       * Aliased labels:
+       *  - add an existing label to changed labels
+       *  - this one shouldn't be removed afterwards since we
+       *    are renaming it.
+       */
+      const existingAliasedLabel = labelAlias.find((alias) =>
+        currentLabelsNames.includes(alias),
+      )
+
+      for (const alias of labelAlias) {
+        /**
+         * We should rename the label to an existing one if the new
+         * one doesn't exist yet.
+         */
+        if (alias === existingAliasedLabel && !existingLabel) {
+          changed.push({
+            ...hydratedLabel,
+            old_name: alias,
+          })
+        } else {
+          aliased.push({
+            ...hydratedLabel,
+            old_name: alias,
+          })
+        }
+      }
+
+      /* End of label investigation */
+    }
+
+    for (const label of currentLabels) {
+      /* Indicates that a label has been removed */
+      const labelRemoved = !config.hasOwnProperty(label.name)
+      const labelRenamed = changed.find(
+        ({ old_name }) => old_name === label.name,
+      )
+
+      /**
+       * Remove all the labels that weren't renamed (changed)
+       * as part of the aliasing.
+       */
+      if (labelRemoved && !labelRenamed) {
         removed.push({
           name: label.name,
           color: label.color,
-          description: label.description,
         })
-        continue
-      }
-    }
-
-    for (const label of Object.keys(config)) {
-      const labelAlias: string[] = withDefault([], config[label].alias)
-
-      /* New labels */
-      if (!currentLabelsNames.includes(label) && labelAlias.length === 0) {
-        added.push(hydrateLabel(label))
-        continue
-      }
-      /* Updated labels */
-      const labelPersisted = currentLabelsNames.includes(label)
-      const labelHasChanged = !currentLabels.some(isLabel(hydrateLabel(label)))
-
-      if (labelPersisted && labelHasChanged) {
-        changed.push(hydrateLabel(label))
         continue
       }
     }
@@ -200,7 +269,7 @@ export function calculateDiff(
       added,
       changed,
       removed,
-      // unchanged,
+      aliased,
     }
   }
 

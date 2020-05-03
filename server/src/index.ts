@@ -661,7 +661,8 @@ module.exports = (
         /* istanbul ignore if */
         if (configRepo !== repo) {
           await ctx.logger.info(
-            `Not configuration repository: ${configRepo} != ${repo}.`,
+            `Not configuration repository, skipping pull request overview.`,
+            { configurationRepo: configRepo, currentRepo: repo },
           )
           return
         }
