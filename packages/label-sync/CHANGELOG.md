@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/matizav/label-sync/compare/label-sync@3.2.1...label-sync@3.3.0) (2020-05-03)
+
+
+### Features
+
+* support multiple aliases for single label ([3fd987c](https://github.com/matizav/label-sync/commit/3fd987c2c05ce41bb8d567c79ab9fb3d0645a450))
+
+
+
+
+
 ## [3.2.1](https://github.com/matizav/label-sync/compare/label-sync@3.2.0...label-sync@3.2.1) (2020-05-02)
 
 **Note:** Version bump only for package label-sync
