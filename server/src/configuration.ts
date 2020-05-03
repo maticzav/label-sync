@@ -86,7 +86,6 @@ export interface LSCConfiguration extends t.TypeOf<typeof LSCConfiguration> {}
 
 /**
  * Parses a string into a configuration object.
- * @param input
  */
 export function parseConfig(
   purchase: Purchase | null | undefined,
@@ -116,7 +115,6 @@ export function parseConfig(
 
 /**
  * Makes sure that none of LabelSync limitations appears in the cofnig.
- * @param config
  */
 function checkPurchase(
   purchase: Purchase | null | undefined,
@@ -151,16 +149,27 @@ function checkPurchase(
         `
       throw new Error(report)
     }
-    return config
-  } else {
-    /* PAID */
+
+    /**
+     * Report wildcard configuration.
+     */
+    if (Object.keys(config.repos).includes('*')) {
+      const report = ml`
+        | You are trying to configure a wildcard configuration on a free plan.
+        | Update your current plan to access all the features LabelSync offers.
+        `
+      throw new Error(report)
+    }
+
     return config
   }
+
+  /* No limits on the account. */
+  return config
 }
 
 /**
  * Makes sure that none of LabelSync limitations appears in the cofnig.
- * @param config
  */
 function checkLimitations(config: LSCConfiguration): LSCConfiguration {
   /* Check that each label on alias one old label. */
@@ -211,7 +220,6 @@ function checkLimitations(config: LSCConfiguration): LSCConfiguration {
 
 /**
  * Makes sure that all siblings reference an configured labels.
- * @param config
  */
 function checkSiblings(config: LSCConfiguration): LSCConfiguration {
   let missingSiblings: { repo: string; sibling: string; label: string }[] = []
@@ -250,7 +258,6 @@ function checkSiblings(config: LSCConfiguration): LSCConfiguration {
 
 /**
  * Makes sure that all aliases in repository appear only once.
- * @param config
  */
 function checkAliaii(config: LSCConfiguration): LSCConfiguration {
   let duplicateAliaii: { repo: string; alias: string; labels: string[] }[] = []
@@ -306,8 +313,6 @@ function checkAliaii(config: LSCConfiguration): LSCConfiguration {
 
 /**
  * Catches configuration issues that io-ts couldn't catch.
- *
- * @param config
  */
 function fixConfig(config: LSCConfiguration): LSCConfiguration {
   const repos = mapEntries(config.repos, fixRepoConfig)
@@ -320,8 +325,6 @@ function fixConfig(config: LSCConfiguration): LSCConfiguration {
 
 /**
  * Fixes issues that io-ts couldn't catch.
- *
- * @param config
  */
 function fixRepoConfig(config: LSCRepository): LSCRepository {
   const labels = mapEntries<LSCLabel, LSCLabel>(config.labels, (label) => ({
@@ -337,10 +340,15 @@ function fixRepoConfig(config: LSCRepository): LSCRepository {
 
 /**
  * Removes hash from the color.
- *
- * @param color
  */
 function fixLabelColor(color: string): string {
   if (color.startsWith('#')) return color.slice(1)
   return color
+}
+
+/**
+ * Returns a list of repositories in configuration without wildcard config.
+ */
+export function configRepos(config: LSCConfiguration): string[] {
+  return Object.keys(config.repos).filter((repo) => repo !== '*')
 }

@@ -16,6 +16,7 @@ import {
   LSCConfiguration,
   LS_CONFIG_PATH,
   parseConfig,
+  configRepos,
 } from './configuration'
 import {
   addLabelsToIssue,
@@ -316,7 +317,7 @@ module.exports = (
 
           /* Wrong configuration, open the issue. */
           if (error !== null) {
-            await ctx.logger.debug(`Error in config, skipping sync.`, {
+            await ctx.logger.info(`Error in config, skipping sync.`, {
               config: JSON.stringify(config),
               error: error,
             })
@@ -356,7 +357,7 @@ module.exports = (
           /* Verify that we can access all configured files. */
           const access = await checkInstallationAccess(
             ctx.github,
-            Object.keys(config!.repos),
+            configRepos(config!),
           )
 
           switch (access.status) {
@@ -364,7 +365,7 @@ module.exports = (
               await ctx.logger.info(`Performing sync.`)
 
               /* Performs sync. */
-              for (const repo in config!.repos) {
+              for (const repo of configRepos(config!)) {
                 await Promise.all([
                   handleLabelSync(
                     ctx.github,
@@ -527,14 +528,14 @@ module.exports = (
 
         /* Open an issue about invalid configuration. */
         if (error !== null) {
-          await ctx.logger.info(`error in config ${error}`, {
+          await ctx.logger.info(`Error in config ${error}`, {
             config: JSON.stringify(config),
             error: error,
           })
 
           const commit_sha: string = ctx.payload.after
           const report = ml`
-            | It seems like your configuration uses a bit strange format unknown to us. 
+            | It seems like your configuration uses a format unknown to me. 
             | That might be a consequence of invalid yaml cofiguration file. 
             |
             | Here's what I am having problems with:
@@ -555,14 +556,14 @@ module.exports = (
           return
         }
 
-        await ctx.logger.debug(`Configuration loaded.`, {
+        await ctx.logger.info(`Configuration loaded.`, {
           config: JSON.stringify(config),
         })
 
         /* Verify that we can access all configured files. */
         const access = await checkInstallationAccess(
           ctx.github,
-          Object.keys(config!.repos),
+          configRepos(config!),
         )
 
         /* Skip configurations that we can't access. */
@@ -573,7 +574,7 @@ module.exports = (
             /* Performs sync. */
 
             const reports = await Promise.all(
-              Object.keys(config!.repos).map((repo) =>
+              configRepos(config!).map((repo) =>
                 handleLabelSync(
                   ctx.github,
                   owner,
@@ -584,7 +585,7 @@ module.exports = (
               ),
             )
 
-            await ctx.logger.debug(`Sync completed.`, {
+            await ctx.logger.info(`Sync completed.`, {
               config: JSON.stringify(config),
             })
 
@@ -677,7 +678,7 @@ module.exports = (
         if (
           compare.data.files.every((file) => file.filename !== LS_CONFIG_PATH)
         ) {
-          await ctx.logger.debug(
+          await ctx.logger.info(
             `Configuration didn't change, skipping comment.`,
             {
               files: compare.data.files.map((file) => file.filename).join(', '),
@@ -705,7 +706,7 @@ module.exports = (
         /* Skips invalid configuration. */
         /* istanbul ignore if */
         if (error !== null) {
-          await ctx.logger.debug(`Invalid configuration on ${ref}`, {
+          await ctx.logger.info(`Invalid configuration on ${ref}`, {
             config: JSON.stringify(config),
             error: error,
           })
@@ -731,7 +732,7 @@ module.exports = (
           return
         }
 
-        await ctx.logger.debug(`Configration loaded configuration on ${ref}`, {
+        await ctx.logger.info(`Configration loaded configuration on ${ref}`, {
           config: JSON.stringify(config),
         })
 
@@ -749,7 +750,7 @@ module.exports = (
             /* Verify that we can access all configured files. */
             const access = await checkInstallationAccess(
               ctx.github,
-              Object.keys(config!.repos),
+              configRepos(config!),
             )
 
             /* Skip configurations that we can't access. */
@@ -759,7 +760,7 @@ module.exports = (
 
                 /* Fetch changes to repositories. */
                 const reports = await Promise.all(
-                  Object.keys(config!.repos).map((repo) =>
+                  configRepos(config!).map((repo) =>
                     handleLabelSync(
                       ctx.github,
                       owner,
@@ -862,7 +863,8 @@ module.exports = (
         withSources(async (ctx) => {
           const owner = ctx.payload.sender.login
           const repo = ctx.payload.repository.name
-          const config = ctx.sources.config.repos[repo]
+          const config =
+            ctx.sources.config.repos[repo] || ctx.sources.config.repos['*']
           const label = ctx.payload.label as GithubLabel
 
           await ctx.logger.info(`New label create in ${repo}: "${label.name}".`)
@@ -959,6 +961,42 @@ module.exports = (
 
           /* prettier-ignore */
           await ctx.logger.info(`Added siblings of ${label.name} to issue ${issue.number}: ${siblings.join(', ')}`)
+        }),
+      ),
+    ),
+  )
+
+  /**
+   * New repository created
+   *
+   * Tasks:
+   *  - check if there's a wildcard configuration
+   *  - sync labels on that repository
+   */
+  app.on(
+    'repository.created',
+    withUserContextLogger(
+      timber,
+      withPurchase(
+        prisma,
+        withSources(async (ctx) => {
+          const owner = ctx.payload.sender.login
+          const repo = ctx.payload.repository.name
+          const config =
+            ctx.sources.config.repos[repo] || ctx.sources.config.repos['*']
+
+          await ctx.logger.info(`New repository ${repo} in ${owner}.`)
+
+          /* Ignore no configuration. */
+          /* istanbul ignore if */
+          if (!config) {
+            await ctx.logger.info(`No configuration, skipping sync.`)
+            return
+          }
+
+          await ctx.logger.info(`Performing sync on ${repo}.`)
+          await handleLabelSync(ctx.github, owner, repo, config, true)
+          await ctx.logger.info(`Repository synced ${repo}.`)
         }),
       ),
     ),
@@ -1123,6 +1161,7 @@ function withUserContextLogger<
     } catch (err) /* istanbul ignore next */ {
       /* Report the error and skip evaluation. */
       await timber.warn(`Event resulted in error.`, { error: err.message })
+      if (process.env.NODE_ENV !== 'production') throw err
     } finally {
       timber.remove(addCurrentUser)
     }
@@ -1181,6 +1220,8 @@ function withLogger<
     } catch (err) /* istanbul ignore next */ {
       /* Report the error and skip evaluation. */
       await timber.warn(`Event resulted in error.`, { error: err.message })
+
+      if (process.env.NODE_ENV !== 'production') console.error(err)
     } finally {
       timber.remove(addEvent)
     }

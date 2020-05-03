@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 
-import { parseConfig } from '../src/configuration'
+import { parseConfig, configRepos } from '../src/configuration'
 
 const configurationsPath = path.resolve(
   __dirname,
@@ -38,4 +38,25 @@ describe('configurations:', () => {
       expect(config).toMatchSnapshot()
     })
   }
+})
+
+test('repos', async () => {
+  const configPath = path.resolve(
+    __dirname,
+    './__fixtures__/configurations/wildcard.yml',
+  )
+  const [, config] = parseConfig(
+    {
+      id: '1',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      company: 'ACME',
+      ghAccount: 'test',
+      name: 'Foo Bar',
+      email: 'foo@acme.com',
+    },
+    fs.readFileSync(configPath, { encoding: 'utf-8' }),
+  )
+
+  expect(configRepos(config!)).toEqual(['prisma-test-utils'])
 })

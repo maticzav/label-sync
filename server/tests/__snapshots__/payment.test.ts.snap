@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`payments: active plans: 1`] = `
+Array [
+  Object {
+    "plan": "plan_HCkojOBbK8hFh6",
+  },
+  Object {
+    "plan": "plan_HCkpZId8BCi7cI",
+  },
+]
+`;

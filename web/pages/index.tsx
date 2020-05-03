@@ -490,11 +490,11 @@ function Pricing() {
       </div>
 
       {/* Launch discount */}
-      <div className="mt-8 text-center sm:mt-8 lg:mt-12">
+      {/* <div className="mt-8 text-center sm:mt-8 lg:mt-12">
         <p className="text-2xl leading-9 font-bold text-white sm:text-3xl sm:leading-none italic">
           20% Launch Dicount
         </p>
-      </div>
+      </div> */}
 
       {/* Period changer */}
 
@@ -570,19 +570,21 @@ function Pricing() {
                       {/* Yearly pricing */}
                       {period === 'yearly' && (
                         <>
-                          $12
+                          $16 USD
+                          {/* $12
                           <span className="ml-1 text-2xl leading-8 font-medium text-gray-500 line-through">
                             $16
-                          </span>
+                          </span> */}
                         </>
                       )}
                       {/* Monthly pricing */}
                       {period === 'monthly' && (
                         <>
-                          $16
+                          $20 USD
+                          {/* $16
                           <span className="ml-1 text-2xl leading-8 font-medium text-gray-500 line-through">
                             $20
-                          </span>
+                          </span> */}
                         </>
                       )}
                       <span className="ml-1 text-2xl leading-8 font-medium text-gray-500">

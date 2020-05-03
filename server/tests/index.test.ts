@@ -1,25 +1,41 @@
+import { PrismaClient } from '@prisma/client'
 import { Timber } from '@timberio/node'
 import fs from 'fs'
+import moment from 'moment'
 import nock from 'nock'
 import path from 'path'
 import { Probot } from 'probot'
-import moment from 'moment'
-
-const manager = require('../src')
 
 /* Fixtures */
-const configFixture = fs.readFileSync(
-  path.resolve(__dirname, './__fixtures__/labelsync.yml'),
-  { encoding: 'utf-8' },
-)
-import labelCreatedPayload from './__fixtures__/github/label.created'
+
 import installationPayload from './__fixtures__/github/installation.created'
 import issuesLabeledPayload from './__fixtures__/github/issues.labeled'
+
+import labelCreatedPayload from './__fixtures__/github/label.created'
 // import marketplacePurchasePayload from './__fixtures__/github/marketplace_purchase.purchased'
 // import marketplaceCancelPayload from './__fixtures__/github/marketplace_purchase.cancelled'
 import prPayload from './__fixtures__/github/pullrequest.opened'
 import pushPayload from './__fixtures__/github/push'
-import { PrismaClient } from '@prisma/client'
+import repositoryCreatedPayload from './__fixtures__/github/repository.created'
+
+const configFixture = fs.readFileSync(
+  path.resolve(__dirname, './__fixtures__/labelsync.yml'),
+  { encoding: 'utf-8' },
+)
+
+const wildcardConfigFixture = fs.readFileSync(
+  path.resolve(__dirname, './__fixtures__/configurations/wildcard.yml'),
+  { encoding: 'utf-8' },
+)
+
+const newRepoConfigFixture = fs.readFileSync(
+  path.resolve(__dirname, './__fixtures__/configurations/new.yml'),
+  { encoding: 'utf-8' },
+)
+
+/* Probot app */
+
+const manager = require('../src')
 
 describe('bot:', () => {
   let client: PrismaClient
@@ -274,6 +290,7 @@ describe('bot:', () => {
 
           const issuesEndpoint = jest.fn().mockImplementation((uri, body) => {
             expect(body).toMatchSnapshot()
+            return
           })
 
           /* Mocks */
@@ -532,6 +549,7 @@ describe('bot:', () => {
             .post('/repos/maticzav/maticzav-labelsync/issues')
             .reply(200, (uri, body) => {
               expect(body).toMatchSnapshot()
+              return
             })
 
           await probot.receive({
@@ -813,6 +831,7 @@ describe('bot:', () => {
             )
             .reply(200, (uri, body) => {
               expect(body).toMatchSnapshot()
+              return
             })
             .persist()
 
@@ -932,6 +951,7 @@ describe('bot:', () => {
             .post('/repos/maticzav/maticzav-labelsync/issues/2/comments')
             .reply(200, (uri, body) => {
               expect(body).toMatchSnapshot()
+              return
             })
 
           await probot.receive({
@@ -1022,6 +1042,7 @@ describe('bot:', () => {
             .post('/repos/maticzav/maticzav-labelsync/issues/2/comments')
             .reply(200, (uri, body) => {
               expect(body).toMatchSnapshot()
+              return
             })
 
           await probot.receive({
@@ -1081,6 +1102,50 @@ describe('bot:', () => {
         5 * 60 * 1000,
       )
 
+      if (tier === 'PAID')
+        test(
+          'label.created event removes unsupported labels for wildcard configuration',
+          async () => {
+            expect.assertions(2)
+
+            const configEndpoint = jest.fn().mockReturnValue({
+              content: Buffer.from(wildcardConfigFixture).toString('base64'),
+            })
+
+            /* Mocks */
+
+            nock('https://api.github.com')
+              .post('/app/installations/13055/access_tokens')
+              .reply(200, { token: 'test' })
+
+            nock('https://api.github.com')
+              .get(
+                '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
+              )
+              .reply(200, configEndpoint)
+
+            nock('https://api.github.com')
+              .delete(/\/repos\/maticzav\/.*\/labels/)
+              .reply(200, (uri) => {
+                expect(uri).toBe(
+                  '/repos/maticzav/graphql-shield/labels/:bug:%20Bugfix',
+                )
+              })
+              .persist()
+
+            await probot.receive({
+              id: 'labelcreated-wildcard',
+              name: 'label.created',
+              payload: labelCreatedPayload,
+            })
+
+            /* Tests */
+
+            expect(configEndpoint).toBeCalledTimes(1)
+          },
+          5 * 60 * 1000,
+        )
+
       test(
         'issues.labeled adds siblings',
         async () => {
@@ -1126,6 +1191,158 @@ describe('bot:', () => {
       // test('logs are reporting correctly', async () => {
       //   expect(logStream).toMatchSnapshot()
       // })
+
+      test(
+        'repository created event',
+        async () => {
+          expect.assertions(3)
+
+          const configEndpoint = jest.fn().mockReturnValue({
+            content: Buffer.from(newRepoConfigFixture).toString('base64'),
+          })
+
+          const labelsEndpoint = jest.fn().mockImplementation((uri) => {
+            /* Nevermind the actual sync - this only checks that sync occurs. */
+            return []
+          })
+
+          const crudLabelEndpoint = jest
+            .fn()
+            .mockImplementation((uri, body) => {
+              return
+            })
+
+          /* Mocks */
+
+          nock('https://api.github.com')
+            .post('/app/installations/13055/access_tokens')
+            .reply(200, { token: 'test' })
+
+          nock('https://api.github.com')
+            .get(
+              '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
+            )
+            .reply(200, configEndpoint)
+
+          nock('https://api.github.com')
+            .get(/\/repos\/maticzav\/.*\/labels/)
+            .reply(200, labelsEndpoint)
+            .persist()
+
+          nock('https://api.github.com')
+            .post(/\/repos\/maticzav\/.*\/labels/)
+            .reply(200, crudLabelEndpoint)
+            .persist()
+
+          await probot.receive({
+            id: 'repository.created',
+            name: 'repository',
+            payload: repositoryCreatedPayload,
+          })
+
+          /* Tests */
+
+          expect(configEndpoint).toBeCalledTimes(1)
+          expect(labelsEndpoint).toBeCalledTimes(1)
+          expect(crudLabelEndpoint).toBeCalledTimes(4)
+        },
+        5 * 60 * 1000,
+      )
+
+      if (tier === 'PAID')
+        test(
+          'repository created wildcard event',
+          async () => {
+            expect.assertions(3)
+
+            const configEndpoint = jest.fn().mockReturnValue({
+              content: Buffer.from(wildcardConfigFixture).toString('base64'),
+            })
+
+            const labelsEndpoint = jest.fn().mockImplementation((uri) => {
+              /* Nevermind the actual sync - this only checks that sync occurs. */
+              return []
+            })
+
+            const crudLabelEndpoint = jest
+              .fn()
+              .mockImplementation((uri, body) => {
+                return
+              })
+
+            /* Mocks */
+
+            nock('https://api.github.com')
+              .post('/app/installations/13055/access_tokens')
+              .reply(200, { token: 'test' })
+
+            nock('https://api.github.com')
+              .get(
+                '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
+              )
+              .reply(200, configEndpoint)
+
+            nock('https://api.github.com')
+              .get(/\/repos\/maticzav\/.*\/labels/)
+              .reply(200, labelsEndpoint)
+              .persist()
+
+            nock('https://api.github.com')
+              .post(/\/repos\/maticzav\/.*\/labels/)
+              .reply(200, crudLabelEndpoint)
+              .persist()
+
+            await probot.receive({
+              id: 'repository.created',
+              name: 'repository',
+              payload: repositoryCreatedPayload,
+            })
+
+            /* Tests */
+
+            expect(configEndpoint).toBeCalledTimes(1)
+            expect(labelsEndpoint).toBeCalledTimes(1)
+            expect(crudLabelEndpoint).toBeCalledTimes(4)
+          },
+          5 * 60 * 1000,
+        )
+
+      if (tier === 'FREE')
+        test(
+          'repository created event on free',
+          async () => {
+            expect.assertions(1)
+
+            const configEndpoint = jest.fn().mockReturnValue({
+              content: Buffer.from(wildcardConfigFixture).toString('base64'),
+            })
+
+            /* Mocks */
+
+            nock('https://api.github.com')
+              .post('/app/installations/13055/access_tokens')
+              .reply(200, { token: 'test' })
+
+            nock('https://api.github.com')
+              .get(
+                '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
+              )
+              .reply(200, configEndpoint)
+
+            await probot.receive({
+              id: 'repository.created',
+              name: 'repository',
+              payload: repositoryCreatedPayload,
+            })
+
+            /* Tests */
+
+            expect(configEndpoint).toBeCalledTimes(1)
+          },
+          5 * 60 * 1000,
+        )
+
+      /* End of tests */
     })
   }
 })

@@ -248,39 +248,8 @@ Array [
 
 exports[`configurations: free.yml on FREE 1`] = `
 Array [
-  null,
-  Object {
-    "repos": Object {
-      "emma-cli": Object {
-        "labels": Object {
-          "bug/0-needs-reproduction": Object {
-            "color": "ff0022",
-          },
-        },
-      },
-      "label-sync": Object {
-        "labels": Object {
-          "bug/0-needs-reproduction": Object {
-            "color": "ff0022",
-          },
-        },
-      },
-      "overthetop": Object {
-        "labels": Object {
-          "bug/0-needs-reproduction": Object {
-            "color": "ff0022",
-          },
-        },
-      },
-      "prisma-test-utils": Object {
-        "labels": Object {
-          "bug/0-needs-reproduction": Object {
-            "color": "ff0022",
-          },
-        },
-      },
-    },
-  },
+  "You are trying to configure more repositories than there are available in your plan.
+Update your current plan to access all the features LabelSync offers.",
 ]
 `;
 
@@ -297,6 +266,20 @@ Array [
         },
       },
       "label-sync": Object {
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "last-one": Object {
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "notquitethere": Object {
         "labels": Object {
           "bug/0-needs-reproduction": Object {
             "color": "ff0022",
@@ -367,5 +350,119 @@ Array [
 * \`repo-one\`:label/1 reference more than one alias
 
 This is the current limitation of LabelSync and will change shortly.",
+]
+`;
+
+exports[`configurations: new.yml on FREE 1`] = `
+Array [
+  null,
+  Object {
+    "repos": Object {
+      "newrepo": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+          "bug/1-has-reproduction": Object {
+            "color": "ff0022",
+            "description": "Indicates that an issue has reproduction",
+          },
+          "bug/2-bug-confirmed": Object {
+            "color": "red",
+          },
+          "bug/3-fixing": Object {
+            "color": "00ff22",
+            "description": "Indicates that we are working on fixing the issue.",
+          },
+        },
+      },
+    },
+  },
+]
+`;
+
+exports[`configurations: new.yml on PAID 1`] = `
+Array [
+  null,
+  Object {
+    "repos": Object {
+      "newrepo": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+          "bug/1-has-reproduction": Object {
+            "color": "ff0022",
+            "description": "Indicates that an issue has reproduction",
+          },
+          "bug/2-bug-confirmed": Object {
+            "color": "red",
+          },
+          "bug/3-fixing": Object {
+            "color": "00ff22",
+            "description": "Indicates that we are working on fixing the issue.",
+          },
+        },
+      },
+    },
+  },
+]
+`;
+
+exports[`configurations: wildcard.yml on FREE 1`] = `
+Array [
+  "You are trying to configure a wildcard configuration on a free plan.
+Update your current plan to access all the features LabelSync offers.",
+]
+`;
+
+exports[`configurations: wildcard.yml on PAID 1`] = `
+Array [
+  null,
+  Object {
+    "repos": Object {
+      "*": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+          "bug/1-has-reproduction": Object {
+            "color": "ff0022",
+            "description": "Indicates that an issue has reproduction",
+          },
+          "bug/2-bug-confirmed": Object {
+            "color": "red",
+          },
+          "bug/3-fixing": Object {
+            "color": "00ff22",
+            "description": "Indicates that we are working on fixing the issue.",
+          },
+        },
+      },
+      "prisma-test-utils": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+          "bug/1-has-reproduction": Object {
+            "color": "ff0022",
+            "description": "Indicates that an issue has reproduction",
+          },
+        },
+      },
+    },
+  },
 ]
 `;

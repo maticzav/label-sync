@@ -106,7 +106,7 @@ You have no unconfigured labels - you could make this repository \`strict\`.",
 
 exports[`bot: FREE push event invalid configuration 1`] = `
 Object {
-  "body": "It seems like your configuration uses a bit strange format unknown to us. 
+  "body": "It seems like your configuration uses a format unknown to me. 
 That might be a consequence of invalid yaml cofiguration file. 
 
 Here's what I am having problems with:
@@ -233,7 +233,7 @@ You have no unconfigured labels - you could make this repository \`strict\`.",
 
 exports[`bot: PAID push event invalid configuration 1`] = `
 Object {
-  "body": "It seems like your configuration uses a bit strange format unknown to us. 
+  "body": "It seems like your configuration uses a format unknown to me. 
 That might be a consequence of invalid yaml cofiguration file. 
 
 Here's what I am having problems with:

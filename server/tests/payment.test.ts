@@ -1,4 +1,6 @@
+import { Period } from '@prisma/client'
 import moment from 'moment'
+
 import { Payments } from '../src/payment'
 
 describe('payments:', () => {
@@ -23,5 +25,10 @@ describe('payments:', () => {
           'day',
         ),
     ).toBeLessThan(3)
+  })
+
+  test('active plans:', () => {
+    const plans: Period[] = ['MONTHLY', 'ANNUALLY']
+    expect(plans.map(payments.getPlanForPeriod)).toMatchSnapshot()
   })
 })
