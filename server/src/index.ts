@@ -68,6 +68,7 @@ module.exports = (
     cors({
       origin: [
         'https://label-sync.com',
+        'https://www.label-sync.com',
         'https://webhook.label-sync.com',
         'https://app.label-sync.com',
       ],
