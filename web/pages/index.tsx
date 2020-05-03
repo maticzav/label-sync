@@ -17,7 +17,14 @@ import { scrollToId } from '../lib/scroll'
 /* Pricing event */
 
 export default class Home extends React.Component {
-  scrolledToPricing = false
+  scrolledToPricing: boolean
+
+  constructor(props: {}) {
+    super(props)
+    this.scrolledToPricing = false
+
+    this.checkPricing = this.checkPricing.bind(this)
+  }
 
   componentDidMount() {
     window.onscroll = this.checkPricing
@@ -34,7 +41,7 @@ export default class Home extends React.Component {
     const pricingSection = document.getElementById('pricing')!
 
     /* reached pricing section */
-    if (Math.abs(pageYOffset - pricingSection.offsetTop) < 150) {
+    if (Math.abs(window.pageYOffset - pricingSection.offsetTop) < 150) {
       if (!this.scrolledToPricing) {
         // trigger event
         gtag.event({

@@ -45,7 +45,7 @@ export default function Footer() {
   return (
     <div className="bg-white">
       <div className="max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
-        <div className="xl:grid xl:grid-cols-3 xl:gap-8">
+        <div className="xl:grid xl:grid-cols-2 xl:gap-8">
           {/* <!-- Upper footer --> */}
 
           <div className="xl:col-span-1">
@@ -100,28 +100,26 @@ export default function Footer() {
 
           {/* <!-- Links --> */}
 
-          <div className="mt-12 grid grid-cols-2 gap-8 md:w-1/2 xl:mt-0">
+          <div className="mt-12 grid grid-cols-2 gap-8 lg:w-1/2 xl:mt-0 xl:col-span-1">
             {/* Groups grid */}
             {groups.map((group) => (
-              <div key={group.name} className="md:grid">
-                <div>
-                  <h4 className="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase">
-                    {group.name}
-                  </h4>
-                  <ul>
-                    {group.links.map((link) => (
-                      <li key={link.label} className="mt-4">
-                        <a
-                          href={link.href}
-                          onClick={link.onClick}
-                          className="text-base leading-6 text-gray-500 hover:text-gray-900"
-                        >
-                          {link.label}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+              <div key={group.name}>
+                <h4 className="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase">
+                  {group.name}
+                </h4>
+                <ul>
+                  {group.links.map((link) => (
+                    <li key={link.label} className="mt-4">
+                      <a
+                        href={link.href}
+                        onClick={link.onClick}
+                        className="text-base leading-6 text-gray-500 hover:text-gray-900"
+                      >
+                        {link.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
@@ -129,7 +127,7 @@ export default function Footer() {
 
         {/* Rights */}
         <div className="mt-12 border-t border-gray-200 pt-8">
-          <p className="text-base leading-6 text-gray-400 xl:text-center">
+          <p className="text-base leading-6 text-gray-400">
             &copy; 2020 ZAUM. All rights reserved.
           </p>
         </div>
