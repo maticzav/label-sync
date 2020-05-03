@@ -87,16 +87,19 @@ export const Subscribe = ({}) => {
         coupon,
       })
 
-      const res = (await fetch('https://app.label-sync.com/subscribe/session', {
-        method: 'POST',
-        mode: 'cors',
-        credentials: 'same-origin',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+      const res = (await fetch(
+        'https://webhook.label-sync.com/subscribe/session',
+        {
+          method: 'POST',
+          mode: 'cors',
+          credentials: 'same-origin',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: body,
         },
-        body: body,
-      }).then((res) => res.json())) as
+      ).then((res) => res.json())) as
         | { status: 'ok'; session: string }
         | { status: 'err'; message: string }
 
