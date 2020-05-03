@@ -38,6 +38,22 @@ export default function Hero() {
             </a>
           </div>
         </div>
+        {/* End of call to action */}
+
+        <div className="mt-10 md:mt-15 w-full flex justify-center">
+          <a
+            href="https://www.producthunt.com/posts/github-labelsync?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-github-labelsync"
+            target="_blank"
+          >
+            <img
+              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=197223&theme=dark"
+              className="block"
+              alt="GitHub LabelSync - The best way to sync GitHub labels. | Product Hunt Embed"
+              width="200px"
+              height="43px"
+            />
+          </a>
+        </div>
       </div>
     </div>
   )
