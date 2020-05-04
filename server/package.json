@@ -18,7 +18,7 @@
     "io-ts": "2.2.2",
     "js-yaml": "3.13.1",
     "jsonwebtoken": "8.5.1",
-    "moment": "2.25.1",
+    "moment": "2.25.3",
     "multilines": "1.0.3",
     "prettier": "2.0.5",
     "probot": "9.11.3",
