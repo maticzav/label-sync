@@ -2,7 +2,6 @@ import React, { ReactElement } from 'react'
 
 export interface Banner {
   message: ReactElement
-  shortMessage: ReactElement
   button: {
     text: string
     onClick: () => void
@@ -33,8 +32,8 @@ export default function Banner(props: Banner) {
                 />
               </svg>
             </span>
-            <p className="ml-3 font-medium text-white truncate">
-              <span className="md:hidden">{props.shortMessage}</span>
+            <p className="ml-3 font-medium text-white sm:whitespace-normal">
+              <span className="md:hidden">{props.message}</span>
               <span className="hidden md:inline">{props.message}</span>
             </p>
           </div>

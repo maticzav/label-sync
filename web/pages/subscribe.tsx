@@ -364,7 +364,7 @@ export const Subscribe = ({}) => {
               <div className="sm:col-span-2">
                 {fetching.status === 'ERR' && (
                   <div
-                    className="p-2 bg-pink-800 items-center text-pink-100 leading-none lg:rounded-full flex lg:inline-flex"
+                    className="p-2 bg-pink-800 items-center text-pink-100 leading-none rounded-full flex lg:inline-flex"
                     role="alert"
                   >
                     <span className="flex rounded-full bg-pink-500 uppercase px-2 py-1 text-xs font-bold mr-3">

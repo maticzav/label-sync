@@ -34,20 +34,11 @@ export default class MyApp extends App<{}, {}, State> {
         <Component {...pageProps} />
         {/* Cookie banner */}
         {!this.state.acceptedCookies && (
-          <div className="fixed bottom-0 inset-x-0 pb-2 sm:pb-5">
+          <div className="fixed bottom-0 inset-x-0 pb-2 sm:pb-5 z-20">
             <Banner
               message={
                 <>
                   By using LabelSync's services you agree to our
-                  <Link href="/privacy">
-                    <a className="ml-1 underline">Cookies Use</a>
-                  </Link>
-                  .
-                </>
-              }
-              shortMessage={
-                <>
-                  By using LabelSync you agree with our
                   <Link href="/privacy">
                     <a className="ml-1 underline">Cookies Use</a>
                   </Link>
