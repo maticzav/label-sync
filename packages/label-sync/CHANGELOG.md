@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0](https://github.com/matizav/label-sync/compare/label-sync@3.3.0...label-sync@3.4.0) (2020-05-05)
+
+
+### Features
+
+* billing ([027c6cf](https://github.com/matizav/label-sync/commit/027c6cf03b702aec749444ab324c65721ac771db))
+
+
+
+
+
 # [3.3.0](https://github.com/matizav/label-sync/compare/label-sync@3.2.1...label-sync@3.3.0) (2020-05-03)
 
 
