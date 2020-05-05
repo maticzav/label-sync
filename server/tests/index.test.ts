@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Plan } from '@prisma/client'
 import { Timber } from '@timberio/node'
 import fs from 'fs'
 import moment from 'moment'
@@ -51,11 +51,7 @@ describe('bot:', () => {
     nock.disableNetConnect()
     // local servers
     nock.enableNetConnect((host) => {
-      return (
-        host.includes('localhost') ||
-        host.includes('127.0.0.1') ||
-        host.includes('logs.timber.io')
-      )
+      return host.includes('localhost') || host.includes('127.0.0.1')
     })
 
     // DataStores
@@ -79,6 +75,7 @@ describe('bot:', () => {
   let probot: Probot
 
   beforeEach(() => {
+    /* Setup probot */
     probot = new Probot({ id: 123, githubToken: 'token' })
     const app = probot.load((app) => manager(app, client, timber))
 
@@ -96,32 +93,39 @@ describe('bot:', () => {
    * TESTS
    */
 
-  /* Tests on each tier. */
+  const plans: Plan[] = ['FREE', 'PAID']
 
-  const tiers = ['FREE', 'PAID']
+  for (const plan of plans) {
+    describe(`${plan}`, () => {
+      /* Tests on each plan. */
 
-  for (const tier of tiers) {
-    describe(tier, () => {
+      let timberLogs: { uri: string; log: string }[] = []
+
+      /* Plan specific setup */
       beforeEach(async () => {
-        await client.bill.deleteMany({ where: {} })
-        await client.purchase.deleteMany({ where: {} })
-        // Create a paid purchase.
-        if (tier === 'PAID') {
-          await client.purchase.create({
-            data: {
-              ghAccount: 'maticzav',
-              company: 'ACME',
-              name: 'Foo Bar',
-              email: 'email',
-              bills: {
-                create: {
-                  period: 'MONTHLY',
-                  expires: moment().add(1, 'h').toDate(),
-                },
-              },
-            },
+        await client.installation.deleteMany({ where: {} })
+        // Create an installation.
+        await client.installation.create({
+          data: {
+            account: 'maticzav',
+            email: 'email',
+            plan,
+            periodEndsAt: moment().add(1, 'h').toDate(),
+          },
+        })
+
+        /* Mock all timber logs */
+        nock('https://logs.timber.io')
+          .post(/.*/)
+          .reply(200, (uri, body) => {
+            /* remove timestamp from log */
+            const [log] = body as any
+            delete log['dt']
+            /* collect logs */
+            timberLogs.push({ uri, log: JSON.stringify(log) })
+            return
           })
-        }
+          .persist()
       })
 
       // test(
@@ -1128,7 +1132,7 @@ describe('bot:', () => {
         5 * 60 * 1000,
       )
 
-      if (tier === 'PAID')
+      if (plan === 'PAID')
         test(
           'label.created event removes unsupported labels for wildcard configuration',
           async () => {
@@ -1216,10 +1220,6 @@ describe('bot:', () => {
         5 * 60 * 1000,
       )
 
-      // test('logs are reporting correctly', async () => {
-      //   expect(logStream).toMatchSnapshot()
-      // })
-
       test(
         'repository created event',
         async () => {
@@ -1277,7 +1277,7 @@ describe('bot:', () => {
         5 * 60 * 1000,
       )
 
-      if (tier === 'PAID')
+      if (plan === 'PAID')
         test(
           'repository created wildcard event',
           async () => {
@@ -1335,7 +1335,7 @@ describe('bot:', () => {
           5 * 60 * 1000,
         )
 
-      if (tier === 'FREE')
+      if (plan === 'FREE')
         test(
           'repository created event on free',
           async () => {
@@ -1369,6 +1369,10 @@ describe('bot:', () => {
           },
           5 * 60 * 1000,
         )
+
+      test('logs are reporting correctly', async () => {
+        expect(timberLogs).toMatchSnapshot()
+      })
 
       /* End of tests */
     })

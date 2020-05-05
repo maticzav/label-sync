@@ -1,4 +1,4 @@
-import { Purchase } from '@prisma/client'
+import { Plan } from '@prisma/client'
 import * as t from 'io-ts'
 import { PathReporter } from 'io-ts/lib/PathReporter'
 import yaml from 'js-yaml'
@@ -88,7 +88,7 @@ export interface LSCConfiguration extends t.TypeOf<typeof LSCConfiguration> {}
  * Parses a string into a configuration object.
  */
 export function parseConfig(
-  purchase: Purchase | null | undefined,
+  plan: Plan,
   input: string,
   logger?: (err: any) => any,
 ): [string] | [null, LSCConfiguration] {
@@ -102,8 +102,8 @@ export function parseConfig(
 
     /* Perform checks on the content */
     const parsedConfig = checkPurchase(
-      purchase,
-      checkAliaii(checkSiblings(fixConfig(config.right))),
+      plan,
+      validateCongiuration(fixConfig(config.right)),
     )
 
     return [null, parsedConfig]
@@ -113,65 +113,56 @@ export function parseConfig(
   }
 }
 
+/* PLAN LIMITATIONS */
+
 /**
  * Makes sure that none of LabelSync limitations appears in the cofnig.
  */
-function checkPurchase(
-  purchase: Purchase | null | undefined,
-  config: LSCConfiguration,
-): LSCConfiguration {
+function checkPurchase(plan: Plan, config: LSCConfiguration): LSCConfiguration {
   /* Data */
   const numberOfConfiguredRepos = Object.keys(config.repos).length
-  let hasSiblings = false
 
-  /* Analyse configuraiton */
-  for (const repo in config.repos) {
-    const repoConfig = config.repos[repo]
-    for (const label in repoConfig.labels) {
-      const labelConfig = repoConfig.labels[label]
-      const siblings = withDefault([], labelConfig.siblings)
-      if (siblings.length > 0) {
-        hasSiblings = true
-      }
-    }
-  }
-
-  /* Tier limitations for free tiers. */
-  if (isNullOrUndefined(purchase)) {
-    /* FREE */
-    /**
-     * Report too many configurations.
-     */
-    if (numberOfConfiguredRepos >= NUMBER_OF_FREE_TIERS) {
-      const report = ml`
+  switch (plan) {
+    case 'FREE': {
+      /* FREE */
+      /**
+       * Report too many configurations.
+       */
+      if (numberOfConfiguredRepos >= NUMBER_OF_FREE_TIERS) {
+        const report = ml`
         | You are trying to configure more repositories than there are available in your plan.
         | Update your current plan to access all the features LabelSync offers.
         `
-      throw new Error(report)
-    }
+        throw new Error(report)
+      }
 
-    /**
-     * Report wildcard configuration.
-     */
-    if (Object.keys(config.repos).includes('*')) {
-      const report = ml`
+      /**
+       * Report wildcard configuration.
+       */
+      if (Object.keys(config.repos).includes('*')) {
+        const report = ml`
         | You are trying to configure a wildcard configuration on a free plan.
         | Update your current plan to access all the features LabelSync offers.
         `
-      throw new Error(report)
+        throw new Error(report)
+      }
+
+      return config
     }
-
-    return config
+    case 'PAID': {
+      /* No limits for purchased accounts. */
+      return config
+    }
   }
-
-  /* No limits on the account. */
-  return config
 }
 
+/* CONTENT CHECK */
+
 /**
- * Makes sure that all siblings reference an configured labels.
+ * Makes sure that content of the configuration is valid.
  */
-function checkSiblings(config: LSCConfiguration): LSCConfiguration {
+function validateCongiuration(config: LSCConfiguration): LSCConfiguration {
+  /* MISSING SIBLINGS */
   let missingSiblings: { repo: string; sibling: string; label: string }[] = []
   for (const repoName in config.repos) {
     const repoConfig = config.repos[repoName]
@@ -203,13 +194,8 @@ function checkSiblings(config: LSCConfiguration): LSCConfiguration {
     throw new Error(report)
   }
 
-  return config
-}
+  /* ALIAS SPLITING */
 
-/**
- * Makes sure that all aliases in repository appear only once.
- */
-function checkAliaii(config: LSCConfiguration): LSCConfiguration {
   let duplicateAliaii: { repo: string; alias: string; labels: string[] }[] = []
 
   /* Check each repository */
@@ -260,6 +246,10 @@ function checkAliaii(config: LSCConfiguration): LSCConfiguration {
 
   return config
 }
+
+/**
+ * TRANSFORMATIONS
+ */
 
 /**
  * Catches configuration issues that io-ts couldn't catch.

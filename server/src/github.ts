@@ -548,11 +548,14 @@ export async function checkInstallationAccess(
   github: Octokit,
   configRepos: string[],
 ): Promise<InstallationAccess> {
-  // TODO: improve performance
-  let accessRepos: string[] = []
+  /* istanbul ignore if */
+  if (configRepos.length === 0) return { status: 'Sufficient' }
 
-  /* Paginates accessible repositories */
-  await getInstallationRepos()
+  /* Paginate through repos. */
+  let accessRepos: string[] = []
+  let page = 0
+
+  await handler()
 
   const missing = configRepos.filter((repo) => !accessRepos.includes(repo))
 
@@ -566,14 +569,18 @@ export async function checkInstallationAccess(
     accessible: accessRepos,
   }
 
-  async function getInstallationRepos(page: number = 0) {
+  async function handler() {
     const res = await github.apps
       .listRepos({ per_page: 100, page })
       .then((res) => res.data)
 
+    /* Push to collection */
     accessRepos.push(...res.repositories.map((repo) => repo.name))
 
-    if (res.repositories.length === 100) await getInstallationRepos(page + 1)
-    return
+    /* istanbul ignore if */
+    if (res.repositories.length === 100) {
+      page += 1
+      await handler()
+    }
   }
 }

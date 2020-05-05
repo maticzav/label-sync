@@ -9,7 +9,7 @@ import { GHTree } from './github'
  * Populates the template with repositories.
  * @param tree
  */
-export function populateTempalte(
+export function populateTemplate(
   tree: GHTree,
   data: { repository: string; repositories: { name: string }[] },
 ): GHTree {

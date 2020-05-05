@@ -490,10 +490,10 @@ function Pricing() {
         <p className="mt-2 text-3xl leading-9 font-extrabold text-white sm:text-4xl sm:leading-10 lg:text-5xl lg:leading-none">
           Ready to get started?
         </p>
-        <p className="mt-4 md:mt-6 text-xl mx-auto md:max-w-2xl leading-7 text-gray-200">
+        {/* <p className="mt-4 md:mt-6 text-xl mx-auto md:max-w-2xl leading-7 text-gray-200">
           We are also giving you an option for 14-day free trial to find out how
           the tool works and a free tier to see how great it is.
-        </p>
+        </p> */}
       </div>
 
       {/* Launch discount */}

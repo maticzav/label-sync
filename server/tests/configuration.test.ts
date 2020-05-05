@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 
 import { parseConfig, configRepos } from '../src/configuration'
+import { Plan } from '@prisma/client'
 
 const configurationsPath = path.resolve(
   __dirname,
@@ -13,50 +14,32 @@ const configurations = fs.readdirSync(configurationsPath).map((config) => ({
 }))
 
 describe('configurations:', () => {
-  for (const { config, path } of configurations) {
-    test(`${config} on FREE`, () => {
-      const config = parseConfig(
-        undefined,
-        fs.readFileSync(path, { encoding: 'utf-8' }),
-      )
-      expect(config).toMatchSnapshot()
-    })
+  const plans: Plan[] = ['PAID', 'FREE']
 
-    test(`${config} on PAID`, () => {
-      const config = parseConfig(
-        {
-          id: '1',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          company: 'ACME',
-          ghAccount: 'test',
-          name: 'Foo Bar',
-          email: 'foo@acme.com',
-        },
-        fs.readFileSync(path, { encoding: 'utf-8' }),
-      )
-      expect(config).toMatchSnapshot()
-    })
+  for (const plan of plans) {
+    for (const { config, path } of configurations) {
+      test(`${config} on ${plan}`, () => {
+        const config = parseConfig(
+          plan,
+          fs.readFileSync(path, { encoding: 'utf-8' }),
+        )
+        expect(config).toMatchSnapshot()
+      })
+    }
   }
 })
 
-test('repos', async () => {
-  const configPath = path.resolve(
-    __dirname,
-    './__fixtures__/configurations/wildcard.yml',
-  )
-  const [, config] = parseConfig(
-    {
-      id: '1',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      company: 'ACME',
-      ghAccount: 'test',
-      name: 'Foo Bar',
-      email: 'foo@acme.com',
-    },
-    fs.readFileSync(configPath, { encoding: 'utf-8' }),
-  )
+describe('utility functions:', () => {
+  test('configRepos returns correct repositories from config', async () => {
+    const configPath = path.resolve(
+      __dirname,
+      './__fixtures__/configurations/wildcard.yml',
+    )
+    const [, config] = parseConfig(
+      'PAID',
+      fs.readFileSync(configPath, { encoding: 'utf-8' }),
+    )
 
-  expect(configRepos(config!)).toEqual(['prisma-test-utils'])
+    expect(configRepos(config!)).toEqual(['prisma-test-utils'])
+  })
 })

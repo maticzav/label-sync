@@ -1,5 +1,5 @@
 import Webhooks = require('@octokit/webhooks')
-import { PrismaClient, Purchase, Period } from '@prisma/client'
+import { PrismaClient, Installation } from '@prisma/client'
 import { Timber } from '@timberio/node'
 import { ITimberLog } from '@timberio/types'
 import bodyParser from 'body-parser'
@@ -9,8 +9,9 @@ import ml from 'multilines'
 import os from 'os'
 import path from 'path'
 import { Application, Context } from 'probot'
+import Stripe from 'stripe'
 
-import { populateTempalte } from './bootstrap'
+import { populateTemplate } from './bootstrap'
 import {
   getLSConfigRepoName,
   LSCConfiguration,
@@ -32,14 +33,28 @@ import {
 } from './github'
 import { handleLabelSync } from './handlers/labels'
 import { generateHumanReadableReport } from './language/labels'
-import { Payments } from './payment'
 import { loadTreeFromPath, withDefault } from './utils'
+import { isNullOrUndefined } from 'util'
 
 /* Templates */
 
 const TEMPLATES = {
   yaml: path.resolve(__dirname, '../../templates/yaml'),
   typescript: path.resolve(__dirname, '../../templates/typescript'),
+}
+
+/* Subscription Plans */
+
+interface Plans {
+  ANNUALLY: string
+  MONTHLY: string
+}
+
+export type Period = keyof Plans
+
+const plans: Plans = {
+  ANNUALLY: 'plan_HCkpZId8BCi7cI',
+  MONTHLY: 'plan_HCkojOBbK8hFh6',
 }
 
 /* Application */
@@ -53,12 +68,53 @@ module.exports = (
     process.env.TIMBER_SOURCE_ID!,
     { ignoreExceptions: true },
   ),
-  payments: Payments = new Payments(
-    process.env.STRIPE_API_KEY!,
-    process.env.STRIPE_ENDPOINT_SECRET!,
-  ),
+  stripe: Stripe = new Stripe(process.env.STRIPE_API_KEY!, {
+    apiVersion: '2020-03-02',
+  }),
 ) => {
+  /* Start the server */
+
   app.log(`LabelSync manager up and running! 🚀`)
+
+  /*  */
+
+  /**
+   * Runs the script once on the server.
+   */
+  async function migrate() {
+    const github = await app.auth()
+
+    const ghapp = await github.apps.getAuthenticated().then((res) => res.data)
+
+    console.log(`Existing installations: ${ghapp.installations_count}`)
+
+    const installations = await github.apps
+      .listInstallations({
+        page: 0,
+        per_page: 100,
+      })
+      .then((res) => res.data)
+
+    /* Process installations */
+    for (const installation of installations) {
+      const now = moment()
+      await prisma.installation.upsert({
+        where: { account: installation.account.login },
+        create: {
+          account: installation.account.login,
+          email: null,
+          plan: 'FREE',
+          periodEndsAt: now.clone().add(3, 'years').toDate(),
+        },
+        update: {},
+      })
+    }
+  }
+
+  /* istanbul ignore next */
+  if (process.env.NODE_END === 'production') {
+    migrate()
+  }
 
   /* API */
 
@@ -70,29 +126,20 @@ module.exports = (
         'https://label-sync.com',
         'https://www.label-sync.com',
         'https://webhook.label-sync.com',
-        'https://app.label-sync.com',
       ],
       preflightContinue: true,
     }),
   )
   api.use(bodyParser.json())
 
+  /**
+   * Handles request for subscription.
+   */
   api.post('/session', async (req, res) => {
     try {
-      const {
-        email,
-        firstName,
-        lastName,
-        account,
-        company,
-        agreed,
-        period,
-        coupon,
-      } = req.body
+      const { email, account, plan, agreed, period, coupon } = req.body
 
-      if (
-        [email, firstName, lastName, account].some((val) => val.trim() === '')
-      ) {
+      if ([email, account].some((val) => val.trim() === '')) {
         return res.send({
           status: 'err',
           message: 'Some fields are missing.',
@@ -113,38 +160,66 @@ module.exports = (
        * People shouldn't be able to change purchase information afterwards.
        */
       const now = moment()
-      const installtion = await prisma.purchase.upsert({
-        where: { ghAccount: account },
+      await prisma.installation.upsert({
+        where: { account },
         create: {
-          company,
+          account,
           email,
-          name: `${firstName} ${lastName}`,
-          ghAccount: account,
+          plan: 'FREE',
+          periodEndsAt: now.clone().add(3, 'years').toDate(),
         },
         update: {},
-        include: {
-          bills: {
-            where: {
-              expires: { gte: now.toDate() },
+      })
+
+      switch (plan) {
+        case 'FREE': {
+          /* Return a successful request to redirect to installation. */
+          return res.send({ status: 'ok', plan: 'FREE' })
+        }
+        case 'PAID': {
+          /* Figure out the plan */
+          let plan: string
+
+          switch (period) {
+            case 'ANNUALLY': {
+              plan = plans.ANNUALLY
+              break
+            }
+            case 'MONTHLY': {
+              plan = plans.MONTHLY
+              break
+            }
+            /* istanbul ignore next */
+            default: {
+              throw new Error(`Unknown period ${period}.`)
+            }
+          }
+
+          /* Create checkout session. */
+          const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            subscription_data: {
+              items: [{ plan }],
+              metadata: {
+                period,
+                account,
+              },
+              coupon: coupon,
             },
-          },
-        },
-      })
-
-      if (installtion.bills.length > 0) {
-        return res.send({
-          status: 'err',
-          message: 'Your subscription is already active.',
-        })
+            customer_email: email,
+            expand: ['subscription'],
+            success_url: 'https://github.com/apps/labelsync-manager',
+            cancel_url: 'https://label-sync.com',
+          })
+          return res.send({ status: 'ok', plan: 'PAID', session: session.id })
+        }
+        /* istanbul ignore next */
+        default: {
+          throw new Error(`Unknown plan ${plan}.`)
+        }
       }
-
-      const session = await payments.getSession({
-        ghAccount: account,
-        period,
-        coupon,
-      })
-      return res.send({ status: 'ok', session: session.id })
     } catch (err) {
+      await timber.warn(`Error in subscription flow: ${err.message}`)
       return res.send({ status: 'err', message: err.message })
     }
   })
@@ -157,45 +232,71 @@ module.exports = (
     '/',
     bodyParser.raw({ type: 'application/json' }),
     async (req, res) => {
+      /**
+       * Stripe Webhook handler.
+       */
       let event
 
       try {
-        event = await payments.constructEvent(
+        event = stripe.webhooks.constructEvent(
           req.body,
           req.headers['stripe-signature'] as string,
+          process.env.STRIPE_ENDPOINT_SECRET!,
         )
       } catch (err) {
         return res.status(400).send(`Webhook Error: ${err.message}`)
       }
 
       /* Event handlers */
+
       switch (event.type) {
-        case 'checkout.session.completed': {
-          const session = event.data.object as {
-            metadata: { ghAccount: string; period: Period }
-            customer: { email?: string }
+        /* Customer successfully subscribed to LabelSync */
+        case 'checkout.session.completed':
+        /* Customer paid an invoice */
+        case 'invoice.payment_succeeded': {
+          const payload = event.data.object as {
+            subscription: string
           }
 
-          await prisma.bill.create({
-            data: {
-              purchase: {
-                connect: { ghAccount: session.metadata.ghAccount },
-              },
-              expires: payments.getExpirationDateFromNow(
-                session.metadata.period,
-              ),
-              period: session.metadata.period,
-            },
+          const sub = await stripe.subscriptions.retrieve(payload.subscription)
+
+          /* Calculate expiration date. */
+          const now = moment()
+          let expiresAt
+          switch (sub.metadata.period) {
+            case 'ANNUALLY': {
+              expiresAt = now.clone().add(1, 'year').add(3, 'day')
+              break
+            }
+            case 'MONTHLY': {
+              expiresAt = now.clone().add(1, 'month').add(3, 'day')
+              break
+            }
+            /* istanbul ingore next */
+            default: {
+              throw new Error(`Unknown period ${sub.metadata.period}`)
+            }
+          }
+
+          await prisma.installation.update({
+            where: { account: sub.metadata.account },
+            data: { periodEndsAt: expiresAt.toDate() },
           })
 
-          break
+          return res.json({ received: true })
         }
+        /* Stripe created an invoice. */
+        case 'invoice.created': {
+          /* stripe has created an invoice */
+          return res.json({ received: true })
+        }
+        /* istanbul ignore next */
         default: {
+          await timber.warn(`unhandled stripe webhook event: ${event.type}`)
           return res.status(400).end()
         }
       }
-
-      return res.json({ received: true })
+      /* End of Stripe Webhook handler */
     },
   )
 
@@ -267,24 +368,25 @@ module.exports = (
   app.on(
     'installation.created',
     withLogger(timber, async (ctx) => {
-      const owner = ctx.payload.installation.account.login
-
+      const account = ctx.payload.installation.account
+      const owner = account.login
       const configRepo = getLSConfigRepoName(owner)
 
+      /* Find installation. */
       const now = moment()
-      const purchase = await prisma.purchase.findOne({
-        where: { ghAccount: owner },
-        include: {
-          bills: {
-            where: {
-              expires: { gte: now.toDate() },
-            },
-          },
+      const installation = await prisma.installation.upsert({
+        where: { account: owner },
+        create: {
+          account: owner,
+          plan: 'FREE',
+          periodEndsAt: now.clone().add(3, 'y').toDate(),
         },
+        update: {},
       })
 
       await ctx.logger.info(`Onboarding ${owner}.`, {
-        tier: withDefault([], purchase?.bills).length > 0 ? 'paid' : 'free',
+        plan: installation.plan,
+        periodEndsAt: installation.periodEndsAt,
       })
 
       /* See if config repository exists. */
@@ -314,7 +416,7 @@ module.exports = (
             return
           }
 
-          const [error, config] = parseConfig(purchase, configRaw)
+          const [error, config] = parseConfig(installation.plan, configRaw)
 
           /* Wrong configuration, open the issue. */
           if (error !== null) {
@@ -333,9 +435,7 @@ module.exports = (
             | It seems like there are some problems with your configuration.
             | Our parser reported that:
             |
-            | \`\`\`
             | ${error}
-            | \`\`\`
             |
             | Let us know if we can help you with the configuration by sending us an email to support@label-sync.com. We'll try to get back to you as quickly as possible.
             |
@@ -433,7 +533,7 @@ module.exports = (
             /* istanbul ignore next */
             case 'User': {
               // TODO: Update once Github changes the settings
-              await ctx.logger.info(`User account, skipping onboarding.`)
+              await ctx.logger.info(`User account ${owner}, skip onboarding.`)
               return
             }
             case 'Organization': {
@@ -441,7 +541,7 @@ module.exports = (
                * Tempalte using for onboarding new customers.
                */
 
-              await ctx.logger.info(`Bootstraping configuration repository.`)
+              await ctx.logger.info(`Bootstraping config repo for ${owner}.`)
 
               const template: GHTree = loadTreeFromPath(TEMPLATES.yaml, [
                 'dist',
@@ -452,7 +552,7 @@ module.exports = (
               ])
 
               /* Bootstrap a configuration repository in organisation. */
-              const personalisedTemplate = populateTempalte(template, {
+              const personalisedTemplate = populateTemplate(template, {
                 repository: configRepo,
                 repositories: ctx.payload.repositories,
               })
@@ -493,21 +593,24 @@ module.exports = (
     'push',
     withUserContextLogger(
       timber,
-      withPurchase(prisma, async (ctx) => {
+      withInstallation(prisma, async (ctx) => {
         const owner = ctx.payload.repository.owner.login
         const repo = ctx.payload.repository.name
         const ref = ctx.payload.ref
         const defaultRef = `refs/heads/${ctx.payload.repository.default_branch}`
+        const commit_sha: string = ctx.payload.after
 
         const configRepo = getLSConfigRepoName(owner)
 
         /* Skip non default branch and other repos pushes. */
         /* istanbul ignore if */
         if (defaultRef !== ref || configRepo !== repo) {
-          await ctx.logger.info(
-            `Ref and repo don't match configuration repo and ref. Skipping sync.`,
-            { ref, repo, defaultRef, configRepo },
-          )
+          await ctx.logger.info(`Not config repo or ref. Skipping sync.`, {
+            ref,
+            repo,
+            defaultRef,
+            configRepo,
+          })
           return
         }
 
@@ -525,7 +628,7 @@ module.exports = (
           return
         }
 
-        const [error, config] = parseConfig(ctx.purchase, configRaw)
+        const [error, config] = parseConfig(ctx.installation.plan, configRaw)
 
         /* Open an issue about invalid configuration. */
         if (error !== null) {
@@ -534,16 +637,13 @@ module.exports = (
             error: error,
           })
 
-          const commit_sha: string = ctx.payload.after
           const report = ml`
             | It seems like your configuration uses a format unknown to me. 
             | That might be a consequence of invalid yaml cofiguration file. 
             |
             | Here's what I am having problems with:
             |
-            | \`\`\`
             | ${error}
-            | \`\`\`
             `
 
           await ctx.github.repos.createCommitComment({
@@ -649,7 +749,7 @@ module.exports = (
     'pull_request',
     withUserContextLogger(
       timber,
-      withPurchase(prisma, async (ctx) => {
+      withInstallation(prisma, async (ctx) => {
         const owner = ctx.payload.repository.owner.login
         const repo = ctx.payload.repository.name
         const ref = ctx.payload.pull_request.head.ref
@@ -703,7 +803,7 @@ module.exports = (
           return
         }
 
-        const [error, config] = parseConfig(ctx.purchase, configRaw)
+        const [error, config] = parseConfig(ctx.installation.plan, configRaw)
 
         /* Skips invalid configuration. */
         /* istanbul ignore if */
@@ -716,9 +816,7 @@ module.exports = (
           const report = ml`
           | Your configuration seems a bit strange. Here's what I am having problems with:
           |
-          | \`\`\`
           | ${error}
-          | \`\`\` 
           `
 
           /* Comment on a PR in a human friendly way. */
@@ -860,7 +958,7 @@ module.exports = (
     'label.created',
     withUserContextLogger(
       timber,
-      withPurchase(
+      withInstallation(
         prisma,
         withSources(async (ctx) => {
           const owner = ctx.payload.sender.login
@@ -922,7 +1020,7 @@ module.exports = (
     'issues.labeled',
     withUserContextLogger(
       timber,
-      withPurchase(
+      withInstallation(
         prisma,
         withSources(async (ctx) => {
           const owner = ctx.payload.sender.login
@@ -979,7 +1077,7 @@ module.exports = (
     'repository.created',
     withUserContextLogger(
       timber,
-      withPurchase(
+      withInstallation(
         prisma,
         withSources(async (ctx) => {
           const owner = ctx.payload.sender.login
@@ -1020,7 +1118,7 @@ function withSources<
     | Webhooks.WebhookPayloadLabel
     | Webhooks.WebhookPayloadPullRequest,
   /* Additional context fields */
-  W extends { purchase?: Purchase | null },
+  W extends { installation: Installation },
   /* Return type */
   T
 >(
@@ -1042,7 +1140,7 @@ function withSources<
     /* istanbul ignore next */
     if (configRaw === null) return
 
-    const [error, config] = parseConfig(ctx.purchase, configRaw)
+    const [error, config] = parseConfig(ctx.installation.plan, configRaw)
 
     /* Skips invlaid config. */
     /* istanbul ignore if */
@@ -1058,7 +1156,7 @@ function withSources<
 /**
  * Wraps a function inside a sources loader.
  */
-function withPurchase<
+function withInstallation<
   /* Context */
   C extends
     | Webhooks.WebhookPayloadCheckRun
@@ -1077,27 +1175,33 @@ function withPurchase<
   T
 >(
   prisma: PrismaClient,
-  fn: (ctx: Context<C> & W & { purchase?: Purchase | null }) => Promise<T>,
+  fn: (ctx: Context<C> & W & { installation: Installation }) => Promise<T>,
 ): (ctx: Context<C> & W) => Promise<T | undefined> {
   return async (ctx) => {
     const owner = ctx.payload.repository.owner.login
     const now = moment()
 
     /* Try to find the purchase in the database. */
-    let purchase = await prisma.purchase.findOne({
-      where: { ghAccount: owner },
-      include: {
-        bills: { where: { expires: { gte: now.toDate() } } },
-      },
+    let installation = await prisma.installation.findOne({
+      where: { account: owner },
     })
 
-    /* Handle expired purchases */
-    if (purchase?.bills.length === 0) {
-      purchase = null
+    /* istanbul ignore if */
+    if (isNullOrUndefined(installation)) {
+      throw new Error(`Couldn't find installation for ${owner}.`)
     }
 
-    ;(ctx as Context<C> & { purchase?: Purchase | null }).purchase = purchase
-    return fn(ctx as Context<C> & W & { purchase?: Purchase | null })
+    /* Handle expired purchases */
+    /* istanbul ignore if */
+    if (moment(installation.periodEndsAt).isBefore(now)) {
+      return
+    }
+
+    ;(ctx as Context<C> &
+      W & {
+        installation: Installation
+      }).installation = installation
+    return fn(ctx as Context<C> & W & { installation: Installation })
   }
 }
 
@@ -1127,6 +1231,18 @@ function withUserContextLogger<
     const owner = ctx.payload.repository.owner
     const repo = ctx.payload.repository
 
+    const action =
+      (ctx.payload as
+        | Webhooks.WebhookPayloadCheckRun
+        | Webhooks.WebhookPayloadCheckSuite
+        | Webhooks.WebhookPayloadCommitComment
+        | Webhooks.WebhookPayloadLabel
+        | Webhooks.WebhookPayloadIssues
+        | Webhooks.WebhookPayloadIssueComment
+        | Webhooks.WebhookPayloadPullRequest
+        | Webhooks.WebhookPayloadPullRequestReview
+        | Webhooks.WebhookPayloadPullRequestReviewComment).action || 'push'
+
     /**
      * Current user context.
      *  - webhook event,
@@ -1136,7 +1252,10 @@ function withUserContextLogger<
     async function addCurrentUser(log: ITimberLog): Promise<ITimberLog> {
       return {
         ...log,
-        event: ctx.event,
+        event: {
+          name: ctx.event,
+          action: action,
+        },
         repo: {
           name: repo.name,
         },
@@ -1163,11 +1282,12 @@ function withUserContextLogger<
     } catch (err) /* istanbul ignore next */ {
       /* Report the error and skip evaluation. */
       await timber.warn(`Event resulted in error.`, { error: err.message })
-      if (process.env.NODE_ENV !== 'production') throw err
+      if (process.env.NODE_ENV !== 'production') console.error(err)
     } finally {
       timber.remove(addCurrentUser)
     }
 
+    /* istanbul ignore next */
     return undefined
   }
 }
@@ -1222,12 +1342,12 @@ function withLogger<
     } catch (err) /* istanbul ignore next */ {
       /* Report the error and skip evaluation. */
       await timber.warn(`Event resulted in error.`, { error: err.message })
-
       if (process.env.NODE_ENV !== 'production') console.error(err)
     } finally {
       timber.remove(addEvent)
     }
 
+    /* istanbul ignore next */
     return undefined
   }
 }

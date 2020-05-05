@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 
-import { populateTempalte } from '../src/bootstrap'
+import { populateTemplate } from '../src/bootstrap'
 import { loadTreeFromPath } from '../src/utils'
 
 const templatesPath = path.resolve(__dirname, '../../templates')
@@ -36,7 +36,7 @@ describe('templates:', () => {
         /.*\.lock.*/,
       ])
 
-      expect(populateTempalte(tree, data)).toMatchSnapshot()
+      expect(populateTemplate(tree, data)).toMatchSnapshot()
     })
   }
 })
