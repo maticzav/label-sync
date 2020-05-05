@@ -10,28 +10,19 @@ import { NOTION_DOCS_URL } from '../constants'
 
 const stripeLoader = loadStripe(process.env.STRIPE_KEY!)
 
-export const Subscribe = ({}) => {
-  // Path
-  const router = useRouter()
+type Period = 'ANNUALLY' | 'MONTHLY'
+type Plan = 'FREE' | 'PAID'
 
-  let defaultPeriod: 'yearly' | 'monthly' = 'yearly'
-  if (
-    typeof router.query.period === 'string' && [
-      'yearly',
-      'monthly'.includes(router.query.period),
-    ]
-  ) {
-    defaultPeriod = router.query.period as 'yearly' | 'monthly'
-  }
+export const Subscribe = () => {
+  // Path
+  const { query } = useRouter()
 
   // Form
 
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
-  const [company, setCompany] = useState('')
   const [account, setAccount] = useState('')
-  const [period, setPeriod] = useState<'yearly' | 'monthly'>(defaultPeriod)
+  const [period, setPeriod] = useState<Period>(query.period as Period)
+  const [plan, setPlan] = useState<Plan>(query.plan as Plan)
   const [coupon, setCoupon] = useState('')
   const [agreed, setAgree] = useState(false)
 
@@ -52,9 +43,7 @@ export const Subscribe = ({}) => {
    */
   async function subscribe() {
     /* Required values */
-    if (
-      [email, firstName, lastName, account].some((val) => val.trim() === '')
-    ) {
+    if ([email, account].some((val) => val.trim() === '')) {
       setFetching({
         status: 'ERR',
         message: 'You must fill all the required fields.',
@@ -78,12 +67,10 @@ export const Subscribe = ({}) => {
     try {
       const body = JSON.stringify({
         email,
-        firstName,
-        lastName,
         account,
-        company,
         agreed,
-        period,
+        plan: plan || query.plan,
+        period: period || query.period,
         coupon,
       })
 
@@ -100,19 +87,29 @@ export const Subscribe = ({}) => {
           body: body,
         },
       ).then((res) => res.json())) as
-        | { status: 'ok'; session: string }
+        | { status: 'ok'; plan: 'FREE' }
+        | { status: 'ok'; plan: 'PAID'; session: string }
         | { status: 'err'; message: string }
 
       if (res.status === 'ok') {
         setFetching({ status: 'SUCCESS' })
-        /* redirect to stripe */
-        await stripeLoader
-          .then((stripe) =>
-            stripe!.redirectToCheckout({
-              sessionId: res.session,
-            }),
-          )
-          .catch((err) => console.log(err))
+        switch (res.plan) {
+          case 'FREE': {
+            window.location.href = 'https://github.com/apps/labelsync-manager'
+            break
+          }
+          case 'PAID': {
+            /* redirect to stripe */
+            await stripeLoader
+              .then((stripe) =>
+                stripe!.redirectToCheckout({
+                  sessionId: res.session,
+                }),
+              )
+              .catch((err) => console.log(err))
+            break
+          }
+        }
       } else {
         setFetching({ status: 'ERR', message: res.message })
       }
@@ -158,9 +155,10 @@ export const Subscribe = ({}) => {
               Subscribe to LabelSync
             </h2>
             <p className="mt-4 text-lg leading-6 text-gray-500">
-              We'll redirect you to out payments provider after you complete the
-              form below. Your subscription starts once you complete the
-              purchase.
+              We'll sign you in the LabelSync database so you can start syncing
+              labels. If you are purchasing a paid plan we'll redirect you to
+              our payments provider after you complete the form below. Your
+              subscription starts once you complete the purchase.
             </p>
           </div>
 
@@ -172,60 +170,6 @@ export const Subscribe = ({}) => {
               onSubmit={subscribe}
               className="grid grid-cols-1 row-gap-6 sm:grid-cols-2 sm:col-gap-8"
             >
-              {/* Subscriber info */}
-              <div>
-                <label
-                  htmlFor="first_name"
-                  className="block text-sm font-medium leading-5 text-gray-700"
-                >
-                  First name
-                </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <input
-                    id="first_name"
-                    value={firstName}
-                    required
-                    onChange={(e) => setFirstName(e.target.value)}
-                    className="form-input py-3 px-4 block w-full transition ease-in-out duration-150"
-                  />
-                </div>
-              </div>
-              <div>
-                <label
-                  htmlFor="last_name"
-                  className="block text-sm font-medium leading-5 text-gray-700"
-                >
-                  Last name
-                </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <input
-                    id="last_name"
-                    value={lastName}
-                    required
-                    onChange={(e) => setLastName(e.target.value)}
-                    className="form-input py-3 px-4 block w-full transition ease-in-out duration-150"
-                  />
-                </div>
-              </div>
-
-              {/* Company */}
-              <div className="sm:col-span-2">
-                <label
-                  htmlFor="company"
-                  className="block text-sm font-medium leading-5 text-gray-700"
-                >
-                  Company (only for companies)
-                </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <input
-                    id="company"
-                    value={company}
-                    onChange={(e) => setCompany(e.target.value)}
-                    className="form-input py-3 px-4 block w-full transition ease-in-out duration-150"
-                  />
-                </div>
-              </div>
-
               {/* Email */}
               <div className="sm:col-span-2">
                 <label
@@ -277,19 +221,39 @@ export const Subscribe = ({}) => {
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <select
                     value={period}
-                    onChange={(e) =>
-                      setPeriod(e.target.value as 'yearly' | 'monthly')
-                    }
-                    aria-label="Country"
+                    onChange={(e) => setPeriod(e.target.value as Period)}
+                    aria-label="Period"
                     className="form-select relative py-3 px-4 block w-full rounded-md bg-transparent focus:z-10 transition ease-in-out duration-150 sm:text-sm sm:leading-5"
                   >
-                    <option value="yearly">Annualy</option>
-                    <option value="monthly">Monthly</option>
+                    <option value="ANNUALLY">Annualy</option>
+                    <option value="MONTHLY">Monthly</option>
                   </select>
                 </div>
               </div>
 
-              {/* Github account */}
+              {/* Plan */}
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="plan"
+                  className="block text-sm font-medium leading-5 text-gray-700"
+                >
+                  Subscription Plan
+                </label>
+
+                <div className="mt-1 relative rounded-md shadow-sm">
+                  <select
+                    value={plan}
+                    onChange={(e) => setPlan(e.target.value as Plan)}
+                    aria-label="Plan"
+                    className="form-select relative py-3 px-4 block w-full rounded-md bg-transparent focus:z-10 transition ease-in-out duration-150 sm:text-sm sm:leading-5"
+                  >
+                    <option value="PAID">Paid</option>
+                    <option value="FREE">Free</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Discount */}
               <div className="sm:col-span-2">
                 <label
                   htmlFor="coupon"

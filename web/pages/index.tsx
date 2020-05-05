@@ -105,6 +105,8 @@ function Title() {
             },
           ]}
         ></Navigation>
+
+        {/* Hero */}
         <Hero></Hero>
       </div>
     </div>
@@ -560,9 +562,16 @@ function Pricing() {
                     { name: 'Limited to 5 repositories' },
                   ]}
                   link={
-                    <a href="https://github.com/apps/labelsync-manager">
-                      <Button>Install LabelSync</Button>
-                    </a>
+                    <Link
+                      href={{
+                        pathname: '/subscribe',
+                        query: { plan: 'FREE', period: 'MONTHLY' },
+                      }}
+                    >
+                      <a>
+                        <Button>Install LabelSync</Button>
+                      </a>
+                    </Link>
                   }
                 ></Tier>
               </div>
@@ -610,7 +619,7 @@ function Pricing() {
                     <Link
                       href={{
                         pathname: '/subscribe',
-                        query: { tier: 'paid', period },
+                        query: { plan: 'PAID', period: 'ANNUALLY' },
                       }}
                     >
                       <a>

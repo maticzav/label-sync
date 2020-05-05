@@ -83,10 +83,9 @@ module.exports = (
    */
   async function migrate() {
     try {
+      console.log('Migrating...')
+
       const gh = await app.auth()
-
-      console.log('Authenticated.')
-
       const ghapp = await gh.apps.getAuthenticated().then((res) => res.data)
 
       console.log(`Existing installations: ${ghapp.installations_count}`)
@@ -215,7 +214,7 @@ module.exports = (
             },
             customer_email: email,
             expand: ['subscription'],
-            success_url: 'https://github.com/apps/labelsync-manager',
+            success_url: 'https://label-sync.com/success',
             cancel_url: 'https://label-sync.com',
           })
           return res.send({ status: 'ok', plan: 'PAID', session: session.id })
