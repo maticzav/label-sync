@@ -82,32 +82,39 @@ module.exports = (
    * Runs the script once on the server.
    */
   async function migrate() {
-    const github = await app.auth()
+    try {
+      const gh = await app.auth()
 
-    const ghapp = await github.apps.getAuthenticated().then((res) => res.data)
+      console.log('Authenticated.')
 
-    console.log(`Existing installations: ${ghapp.installations_count}`)
+      const ghapp = await gh.apps.getAuthenticated().then((res) => res.data)
 
-    const installations = await github.apps
-      .listInstallations({
-        page: 0,
-        per_page: 100,
-      })
-      .then((res) => res.data)
+      console.log(`Existing installations: ${ghapp.installations_count}`)
 
-    /* Process installations */
-    for (const installation of installations) {
-      const now = moment()
-      await prisma.installation.upsert({
-        where: { account: installation.account.login },
-        create: {
-          account: installation.account.login,
-          email: null,
-          plan: 'FREE',
-          periodEndsAt: now.clone().add(3, 'years').toDate(),
-        },
-        update: {},
-      })
+      const installations = await gh.apps
+        .listInstallations({
+          page: 0,
+          per_page: 100,
+        })
+        .then((res) => res.data)
+
+      /* Process installations */
+      for (const installation of installations) {
+        console.log(`Syncing ${installation.account.login}`)
+        const now = moment()
+        await prisma.installation.upsert({
+          where: { account: installation.account.login },
+          create: {
+            account: installation.account.login,
+            email: null,
+            plan: 'FREE',
+            periodEndsAt: now.clone().add(3, 'years').toDate(),
+          },
+          update: {},
+        })
+      }
+    } catch (err) {
+      console.error(err)
     }
   }
 
