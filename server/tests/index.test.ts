@@ -99,7 +99,7 @@ describe('bot:', () => {
     describe(`${plan}`, () => {
       /* Tests on each plan. */
 
-      let timberLogs: { uri: string; log: string }[] = []
+      let timberLogs: string[] = []
 
       /* Plan specific setup */
       beforeEach(async () => {
@@ -121,8 +121,9 @@ describe('bot:', () => {
             /* remove timestamp from log */
             const [log] = body as any
             delete log['dt']
+            delete log['periodEndsAt']
             /* collect logs */
-            timberLogs.push({ uri, log: JSON.stringify(log) })
+            timberLogs.push(log)
             return
           })
           .persist()
