@@ -4,11 +4,12 @@ jobs:
     working_directory: ~/app
     docker:
       - image: 'circleci/node:13.7.0'
-      - image: circleci/postgres:10.3-alpine
+      - image: 'circleci/postgres:10.3-alpine'
         environment:
           POSTGRES_USER: prisma
           POSTGRES_PASSWORD: prisma
           POSTGRES_DB: prisma
+      - image: 'stripe/stripe-cli:latest'
     steps:
       - checkout
       - run:
@@ -32,6 +33,10 @@ jobs:
             yarn db:generate
           environment:
             POSTGRESQL_URL: postgresql://prisma:prisma@localhost:5432/prisma
+      - run:
+          name: Setup Stripe
+          command: |
+            stripe login --api-key $STRIPE_CLI_KEY
       - run:
           name: Test packages
           command: yarn test

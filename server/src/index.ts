@@ -52,10 +52,25 @@ interface Plans {
 
 export type Period = keyof Plans
 
-const plans: Plans = {
-  ANNUALLY: 'plan_HCkpZId8BCi7cI',
-  MONTHLY: 'plan_HCkojOBbK8hFh6',
-}
+const plans: Plans =
+  process.env.NODE_ENV === 'test'
+    ? {
+        ANNUALLY: 'plan_HEG5LPquldqfJp',
+        MONTHLY: 'plan_HEG5wHlZp4io5Q',
+      }
+    : {
+        ANNUALLY: 'plan_HCkpZId8BCi7cI',
+        MONTHLY: 'plan_HCkojOBbK8hFh6',
+      }
+
+const corsOrigins =
+  process.env.NODE_ENV === 'test'
+    ? ['http://localhost', 'http://127.0.0.1']
+    : [
+        'https://label-sync.com',
+        'https://www.label-sync.com',
+        'https://webhook.label-sync.com',
+      ]
 
 /* Application */
 
@@ -137,11 +152,7 @@ module.exports = (
 
   api.use(
     cors({
-      origin: [
-        'https://label-sync.com',
-        'https://www.label-sync.com',
-        'https://webhook.label-sync.com',
-      ],
+      origin: corsOrigins,
       preflightContinue: true,
     }),
   )
@@ -154,6 +165,7 @@ module.exports = (
     try {
       const { email, account, plan, agreed, period, coupon } = req.body
 
+      /* istanbul ignore next */
       if ([email, account].some((val) => val.trim() === '')) {
         return res.send({
           status: 'err',
@@ -161,7 +173,24 @@ module.exports = (
         })
       }
 
+      /* istanbul ignore next */
+      if (!['PAID', 'FREE'].includes(plan)) {
+        return res.send({
+          status: 'err',
+          message: `Invalid plan ${plan}.`,
+        })
+      }
+
+      /* istanbul ignore next */
+      if (plan === 'PAID' && !['MONTHLY', 'ANNUALLY'].includes(period)) {
+        return res.send({
+          status: 'err',
+          message: `Invalid period for paid plan ${period}.`,
+        })
+      }
+
       /* Terms of Service */
+      /* istanbul ignore next */
       if (!agreed) {
         return res.send({
           status: 'err',
@@ -170,7 +199,11 @@ module.exports = (
       }
 
       /* Valid coupon */
-      if (typeof coupon !== 'string' || coupon.trim() === '') {
+      /* istanbul ignore next */
+      if (
+        coupon !== undefined &&
+        (typeof coupon !== 'string' || coupon.trim() === '')
+      ) {
         return res.send({
           status: 'err',
           message: 'Invalid coupon provided.',
@@ -205,12 +238,9 @@ module.exports = (
           let plan: string
 
           switch (period) {
+            case 'MONTHLY':
             case 'ANNUALLY': {
-              plan = plans.ANNUALLY
-              break
-            }
-            case 'MONTHLY': {
-              plan = plans.MONTHLY
+              plan = plans[period as Period]
               break
             }
             /* istanbul ignore next */
@@ -242,7 +272,7 @@ module.exports = (
           throw new Error(`Unknown plan ${plan}.`)
         }
       }
-    } catch (err) {
+    } catch (err) /* istanbul ignore next */ {
       await timber.warn(`Error in subscription flow: ${err.message}`)
       return res.send({ status: 'err', message: err.message })
     }
@@ -267,9 +297,18 @@ module.exports = (
           req.headers['stripe-signature'] as string,
           process.env.STRIPE_ENDPOINT_SECRET!,
         )
-      } catch (err) {
+      } catch (err) /* istanbul ingore next */ {
+        await timber.warn(`Error in stripe webhook deconstruction`, {
+          err: err.message,
+        })
         return res.status(400).send(`Webhook Error: ${err.message}`)
       }
+
+      /* Logger */
+
+      await timber.info(`Stripe event ${event.type}`, {
+        payload: JSON.stringify(event.data.object),
+      })
 
       /* Event handlers */
 
@@ -303,7 +342,7 @@ module.exports = (
           }
 
           /* Update the installation in the database. */
-          await prisma.installation.update({
+          const installation = await prisma.installation.update({
             where: { account: sub.metadata.account },
             data: {
               plan: 'PAID',
@@ -312,11 +351,11 @@ module.exports = (
             },
           })
 
-          return res.json({ received: true })
-        }
-        /* Stripe created an invoice. */
-        case 'invoice.created': {
-          /* stripe has created an invoice */
+          await timber.info(`New subscriber ${installation.account}`, {
+            plan: 'PAID',
+            expiresAt: installation.periodEndsAt,
+          })
+
           return res.json({ received: true })
         }
         /* istanbul ignore next */

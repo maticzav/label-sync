@@ -4,45 +4,45 @@ import fs from 'fs'
 import moment from 'moment'
 import nock from 'nock'
 import path from 'path'
-import { Probot } from 'probot'
+import { Probot, createProbot } from 'probot'
 
 /* Fixtures */
 
-import installationPayload from './__fixtures__/github/installation.created'
-import issuesLabeledPayload from './__fixtures__/github/issues.labeled'
+import installationPayload from './../__fixtures__/github/installation.created'
+import issuesLabeledPayload from './../__fixtures__/github/issues.labeled'
 
-import labelCreatedPayload from './__fixtures__/github/label.created'
-// import marketplacePurchasePayload from './__fixtures__/github/marketplace_purchase.purchased'
-// import marketplaceCancelPayload from './__fixtures__/github/marketplace_purchase.cancelled'
-import prPayload from './__fixtures__/github/pullrequest.opened'
-import pushPayload from './__fixtures__/github/push'
-import repositoryCreatedPayload from './__fixtures__/github/repository.created'
+import labelCreatedPayload from './../__fixtures__/github/label.created'
+// import marketplacePurchasePayload from './../__fixtures__/github/marketplace_purchase.purchased'
+// import marketplaceCancelPayload from './../__fixtures__/github/marketplace_purchase.cancelled'
+import prPayload from './../__fixtures__/github/pullrequest.opened'
+import pushPayload from './../__fixtures__/github/push'
+import repositoryCreatedPayload from './../__fixtures__/github/repository.created'
 
 const configFixture = fs.readFileSync(
-  path.resolve(__dirname, './__fixtures__/labelsync.yml'),
+  path.resolve(__dirname, './../__fixtures__/labelsync.yml'),
   { encoding: 'utf-8' },
 )
 
 const wildcardConfigFixture = fs.readFileSync(
-  path.resolve(__dirname, './__fixtures__/configurations/wildcard.yml'),
+  path.resolve(__dirname, './../__fixtures__/configurations/wildcard.yml'),
   { encoding: 'utf-8' },
 )
 
 const newRepoConfigFixture = fs.readFileSync(
-  path.resolve(__dirname, './__fixtures__/configurations/new.yml'),
+  path.resolve(__dirname, './../__fixtures__/configurations/new.yml'),
   { encoding: 'utf-8' },
 )
 
 const siblingsConfigFixture = fs.readFileSync(
-  path.resolve(__dirname, './__fixtures__/configurations/siblings.yml'),
+  path.resolve(__dirname, './../__fixtures__/configurations/siblings.yml'),
   { encoding: 'utf-8' },
 )
 
 /* Probot app */
 
-const manager = require('../src')
+const manager = require('../../src')
 
-describe('bot:', () => {
+describe('github:', () => {
   let client: PrismaClient
   let timber: Timber
 
@@ -56,13 +56,9 @@ describe('bot:', () => {
 
     // DataStores
     client = new PrismaClient()
-    timber = new Timber(
-      process.env.TIMBER_API_KEY!,
-      process.env.TIMBER_SOURCE_ID!,
-      {
-        ignoreExceptions: false,
-      },
-    )
+    timber = new Timber('apikey', 'source', {
+      ignoreExceptions: false,
+    })
   })
 
   afterAll(async () => {
@@ -76,13 +72,8 @@ describe('bot:', () => {
 
   beforeEach(() => {
     /* Setup probot */
-    probot = new Probot({ id: 123, githubToken: 'token' })
+    probot = createProbot({ id: 123, githubToken: 'token', cert: 'test' })
     const app = probot.load((app) => manager(app, client, timber))
-
-    app.app = {
-      getSignedJsonWebToken: () => 'jwt',
-      getInstallationAccessToken: () => Promise.resolve('token'),
-    }
   })
 
   afterEach(() => {
@@ -124,7 +115,7 @@ describe('bot:', () => {
             delete log['dt']
             delete log['periodEndsAt']
             /* collect logs */
-            timberLogs.push(log)
+            timberLogs.push(JSON.stringify(log))
             return
           })
           .persist()

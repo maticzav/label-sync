@@ -9,7 +9,7 @@ import Navigation from '../components/Navigation'
 import Tier from '../components/Tier'
 import Testimonial from '../components/Testimonial'
 
-import { NOTION_DOCS_URL } from '../constants'
+import { NOTION_DOCS_URL, NOTION_SUPPORT_URL } from '../constants'
 
 import * as gtag from '../lib/gtag'
 import { scrollToId } from '../lib/scroll'
@@ -101,7 +101,7 @@ function Title() {
             },
             {
               label: 'Support',
-              href: 'mailto:support@labelsync.com',
+              href: NOTION_SUPPORT_URL,
             },
           ]}
         ></Navigation>

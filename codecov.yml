@@ -1,5 +1,6 @@
 coverage:
   status:
-    patch: off
+    patch:
+       threshold: 10%
     target: 85%
     threshold: 10%

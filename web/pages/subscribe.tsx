@@ -4,7 +4,7 @@ import { loadStripe } from '@stripe/stripe-js'
 
 import Navigation from '../components/Navigation'
 import Footer from '../components/Footer'
-import { NOTION_DOCS_URL } from '../constants'
+import { NOTION_DOCS_URL, NOTION_SUPPORT_URL } from '../constants'
 
 /* Stripe */
 
@@ -141,7 +141,7 @@ export const Subscribe = () => {
 
               {
                 label: 'Support',
-                href: 'mailto:support@labelsync.com',
+                href: NOTION_SUPPORT_URL,
               },
             ]}
           ></Navigation>

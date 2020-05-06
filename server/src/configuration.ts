@@ -7,7 +7,6 @@ import * as os from 'os'
 
 import { mapEntries } from './data/dict'
 import { withDefault } from './utils'
-import { isNullOrUndefined } from 'util'
 
 /* Constants */
 

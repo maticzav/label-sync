@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`rest: FREE creates a resource 1`] = `
+Object {
+  "account": "maticzav",
+  "activated": false,
+  "email": "test@label-sync.com",
+  "id": "ck9vh0mex0000r4rxtouewfvp",
+  "plan": "FREE",
+}
+`;
+
+exports[`rest: PAID creates a checkout session 1`] = `
+Object {
+  "account": "maticzav",
+  "activated": false,
+  "email": "test@label-sync.com",
+  "id": "ck9vh0mhb0001r4rxebfq01kf",
+  "plan": "FREE",
+}
+`;
+
+exports[`rest: logs are reporting correctly 1`] = `Array []`;
