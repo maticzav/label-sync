@@ -5,7 +5,6 @@
 </div>
 
 <div align="center">
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://www.label-sync.com/">Website</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://www.label-sync.com/docs/">Docs</a>
