@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { loadStripe } from '@stripe/stripe-js'
 
@@ -21,10 +21,23 @@ export const Subscribe = () => {
 
   const [email, setEmail] = useState('')
   const [account, setAccount] = useState('')
-  const [period, setPeriod] = useState<Period>(query.period as Period)
-  const [plan, setPlan] = useState<Plan>(query.plan as Plan)
+  const [period, setPeriod] = useState<Period>('ANNUALLY')
+  const [plan, setPlan] = useState<Plan>('PAID')
   const [coupon, setCoupon] = useState<string | undefined>(undefined)
   const [agreed, setAgree] = useState(false)
+
+  useEffect(() => {
+    if (['FREE', 'PAID'].includes(query.plan as string)) {
+      console.log(query.plan)
+      setPlan(query.plan as Plan)
+    }
+    if (['ANNUALLY', 'MONTHLY'].includes(query.period as string)) {
+      console.log(query.period)
+      setPeriod(query.period as Period)
+    }
+
+    console.log({ query })
+  }, [query])
 
   type Fetching =
     | { status: 'NOT_REQUESTED' }
