@@ -82,38 +82,45 @@ module.exports = (
    * Runs the script once on the server.
    */
   async function migrate() {
-    try {
-      await timber.info('MIG: Migrating...')
+    await timber.info('Migrating...')
 
-      const gh = await app.auth()
-      const ghapp = await gh.apps.getAuthenticated().then((res) => res.data)
+    const gh = await app.auth()
 
-      await timber.info(`MIG: Existing instal: ${ghapp.installations_count}`)
+    /* Github Installations */
+    const ghapp = await gh.apps.getAuthenticated().then((res) => res.data)
 
-      const installations = await gh.apps
-        .listInstallations({
-          page: 0,
-          per_page: 100,
-        })
-        .then((res) => res.data)
+    /* Tracked installations */
+    const lsInstallations = await prisma.installation.count()
+    await timber.info(`Existing installations: ${ghapp.installations_count}`)
 
-      /* Process installations */
-      for (const installation of installations) {
-        await timber.info(`MIG: Syncing ${installation.account.login}`)
-        const now = moment()
-        await prisma.installation.upsert({
-          where: { account: installation.account.login },
-          create: {
-            account: installation.account.login,
-            email: null,
-            plan: 'FREE',
-            periodEndsAt: now.clone().add(3, 'years').toDate(),
-          },
-          update: {},
-        })
-      }
-    } catch (err) {
-      await timber.error(`MIG: error`, { err: err.message })
+    /* Skip sync if all are already tracked. */
+    if (lsInstallations === ghapp.installations_count) {
+      await timber.info(`All installations in sync.`)
+      return
+    }
+
+    const installations = await gh.apps
+      .listInstallations({
+        page: 0,
+        per_page: 100,
+      })
+      .then((res) => res.data)
+
+    /* Process installations */
+    for (const installation of installations) {
+      await timber.info(`Syncing with database ${installation.account.login}`)
+      const now = moment()
+      await prisma.installation.upsert({
+        where: { account: installation.account.login },
+        create: {
+          account: installation.account.login,
+          email: null,
+          plan: 'FREE',
+          periodEndsAt: now.clone().add(3, 'years').toDate(),
+          activated: true,
+        },
+        update: {},
+      })
     }
   }
 
@@ -174,6 +181,7 @@ module.exports = (
           email,
           plan: 'FREE',
           periodEndsAt: now.clone().add(3, 'years').toDate(),
+          activated: false,
         },
         update: {},
       })
@@ -287,7 +295,7 @@ module.exports = (
 
           await prisma.installation.update({
             where: { account: sub.metadata.account },
-            data: { periodEndsAt: expiresAt.toDate() },
+            data: { periodEndsAt: expiresAt.toDate(), activated: true },
           })
 
           return res.json({ received: true })
@@ -387,8 +395,11 @@ module.exports = (
           account: owner,
           plan: 'FREE',
           periodEndsAt: now.clone().add(3, 'y').toDate(),
+          activated: true,
         },
-        update: {},
+        update: {
+          activated: true,
+        },
       })
 
       await ctx.logger.info(`Onboarding ${owner}.`, {

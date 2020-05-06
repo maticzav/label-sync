@@ -111,6 +111,7 @@ describe('bot:', () => {
             email: 'email',
             plan,
             periodEndsAt: moment().add(1, 'h').toDate(),
+            activated: true,
           },
         })
 
