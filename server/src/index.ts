@@ -169,6 +169,14 @@ module.exports = (
         })
       }
 
+      /* Valid coupon */
+      if (typeof coupon !== 'string' || coupon.trim() === '') {
+        return res.send({
+          status: 'err',
+          message: 'Invalid coupon provided.',
+        })
+      }
+
       // Check for existing purchuses.
 
       /**
@@ -220,7 +228,7 @@ module.exports = (
                 period,
                 account,
               },
-              coupon: coupon,
+              coupon,
             },
             customer_email: email,
             expand: ['subscription'],

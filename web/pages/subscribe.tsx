@@ -23,7 +23,7 @@ export const Subscribe = () => {
   const [account, setAccount] = useState('')
   const [period, setPeriod] = useState<Period>(query.period as Period)
   const [plan, setPlan] = useState<Plan>(query.plan as Plan)
-  const [coupon, setCoupon] = useState('')
+  const [coupon, setCoupon] = useState<string | undefined>(undefined)
   const [agreed, setAgree] = useState(false)
 
   type Fetching =
@@ -61,6 +61,9 @@ export const Subscribe = () => {
       return
     }
 
+    /* Fix coupon */
+    const fixedCoupon = !coupon || coupon?.trim() === '' ? undefined : coupon
+
     // Contact server
     setFetching({ status: 'LOADING' })
 
@@ -71,7 +74,7 @@ export const Subscribe = () => {
         agreed,
         plan: plan || query.plan,
         period: period || query.period,
-        coupon,
+        coupon: fixedCoupon,
       })
 
       const res = (await fetch(
@@ -209,28 +212,6 @@ export const Subscribe = () => {
                 </div>
               </div>
 
-              {/* Period */}
-              <div className="sm:col-span-2">
-                <label
-                  htmlFor="period"
-                  className="block text-sm font-medium leading-5 text-gray-700"
-                >
-                  Subscription Period
-                </label>
-
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <select
-                    value={period}
-                    onChange={(e) => setPeriod(e.target.value as Period)}
-                    aria-label="Period"
-                    className="form-select relative py-3 px-4 block w-full rounded-md bg-transparent focus:z-10 transition ease-in-out duration-150 sm:text-sm sm:leading-5"
-                  >
-                    <option value="ANNUALLY">Annualy</option>
-                    <option value="MONTHLY">Monthly</option>
-                  </select>
-                </div>
-              </div>
-
               {/* Plan */}
               <div className="sm:col-span-2">
                 <label
@@ -253,24 +234,50 @@ export const Subscribe = () => {
                 </div>
               </div>
 
-              {/* Discount */}
-              <div className="sm:col-span-2">
-                <label
-                  htmlFor="coupon"
-                  className="block text-sm font-medium leading-5 text-gray-700"
-                >
-                  Discount Coupon
-                </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <input
-                    required
-                    value={coupon}
-                    onChange={(e) => setCoupon(e.target.value)}
-                    id="coupon"
-                    className="form-input py-3 px-4 block w-full transition ease-in-out duration-150"
-                  />
+              {/* Period */}
+              {plan === 'PAID' && (
+                <div className="sm:col-span-2">
+                  <label
+                    htmlFor="period"
+                    className="block text-sm font-medium leading-5 text-gray-700"
+                  >
+                    Subscription Period
+                  </label>
+
+                  <div className="mt-1 relative rounded-md shadow-sm">
+                    <select
+                      value={period}
+                      onChange={(e) => setPeriod(e.target.value as Period)}
+                      aria-label="Period"
+                      className="form-select relative py-3 px-4 block w-full rounded-md bg-transparent focus:z-10 transition ease-in-out duration-150 sm:text-sm sm:leading-5"
+                    >
+                      <option value="ANNUALLY">Annualy</option>
+                      <option value="MONTHLY">Monthly</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* Discount */}
+              {plan === 'PAID' && (
+                <div className="sm:col-span-2">
+                  <label
+                    htmlFor="coupon"
+                    className="block text-sm font-medium leading-5 text-gray-700"
+                  >
+                    Discount Coupon
+                  </label>
+                  <div className="mt-1 relative rounded-md shadow-sm">
+                    <input
+                      required
+                      value={coupon}
+                      onChange={(e) => setCoupon(e.target.value)}
+                      id="coupon"
+                      className="form-input py-3 px-4 block w-full transition ease-in-out duration-150"
+                    />
+                  </div>
+                </div>
+              )}
 
               {/* Terms of Use */}
 
