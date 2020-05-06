@@ -106,7 +106,9 @@ module.exports = (
     const ghapp = await gh.apps.getAuthenticated().then((res) => res.data)
 
     /* Tracked installations */
-    const lsInstallations = await prisma.installation.count()
+    const lsInstallations = await prisma.installation.count({
+      where: { activated: true },
+    })
     await timber.info(`Existing installations: ${ghapp.installations_count}`)
 
     /* Skip sync if all are already tracked. */
@@ -135,7 +137,9 @@ module.exports = (
           periodEndsAt: now.clone().add(3, 'years').toDate(),
           activated: true,
         },
-        update: {},
+        update: {
+          activated: true,
+        },
       })
     }
   }
@@ -347,7 +351,6 @@ module.exports = (
             data: {
               plan: 'PAID',
               periodEndsAt: expiresAt.toDate(),
-              activated: true,
             },
           })
 
