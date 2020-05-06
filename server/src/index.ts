@@ -118,7 +118,8 @@ module.exports = (
   }
 
   /* istanbul ignore next */
-  if (process.env.NODE_END === 'production') {
+  if (process.env.NODE_ENV === 'production') {
+    console.log('MIGRATING')
     migrate()
   }
 
