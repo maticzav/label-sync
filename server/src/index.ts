@@ -81,6 +81,7 @@ module.exports = (
   /**
    * Runs the script once on the server.
    */
+  /* istanbul ignore next */
   async function migrate() {
     await timber.info('Migrating...')
 
@@ -293,9 +294,14 @@ module.exports = (
             }
           }
 
+          /* Update the installation in the database. */
           await prisma.installation.update({
             where: { account: sub.metadata.account },
-            data: { periodEndsAt: expiresAt.toDate(), activated: true },
+            data: {
+              plan: 'PAID',
+              periodEndsAt: expiresAt.toDate(),
+              activated: true,
+            },
           })
 
           return res.json({ received: true })
