@@ -5,7 +5,6 @@ Object {
   "account": "maticzav",
   "activated": false,
   "email": "test@label-sync.com",
-  "id": "ck9vh0mex0000r4rxtouewfvp",
   "plan": "FREE",
 }
 `;
@@ -15,7 +14,6 @@ Object {
   "account": "maticzav",
   "activated": false,
   "email": "test@label-sync.com",
-  "id": "ck9vh0mhb0001r4rxebfq01kf",
   "plan": "FREE",
 }
 `;

@@ -81,14 +81,29 @@ export const Subscribe = () => {
     setFetching({ status: 'LOADING' })
 
     try {
-      const body = JSON.stringify({
-        email,
-        account,
-        agreed,
-        plan: plan || query.plan,
-        period: period || query.period,
-        coupon: fixedCoupon,
-      })
+      let body: string
+      switch (plan) {
+        case 'FREE': {
+          body = JSON.stringify({
+            email,
+            account,
+            agreed,
+            plan: 'FREE',
+          })
+          break
+        }
+        case 'PAID': {
+          body = JSON.stringify({
+            email,
+            account,
+            agreed,
+            plan: 'PAID',
+            period: period || query.period,
+            coupon: fixedCoupon,
+          })
+          break
+        }
+      }
 
       const res = (await fetch(
         'https://webhook.label-sync.com/subscribe/session',
