@@ -33,12 +33,12 @@
     "@types/nock": "11.1.0",
     "@types/node": "13.13.5",
     "@types/prettier": "2.0.0",
-    "@types/request-promise-native": "^1.0.17",
+    "@types/request-promise-native": "1.0.17",
     "@types/stripe": "7.13.23",
-    "execa": "^4.0.0",
+    "execa": "4.0.0",
     "js-yaml": "3.13.1",
     "nock": "12.0.3",
-    "request-promise-native": "^1.0.8"
+    "request-promise-native": "1.0.8"
   },
   "license": "MIT"
 }
