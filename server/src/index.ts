@@ -83,12 +83,12 @@ module.exports = (
    */
   async function migrate() {
     try {
-      console.log('Migrating...')
+      await timber.info('MIG: Migrating...')
 
       const gh = await app.auth()
       const ghapp = await gh.apps.getAuthenticated().then((res) => res.data)
 
-      console.log(`Existing installations: ${ghapp.installations_count}`)
+      await timber.info(`MIG: Existing instal: ${ghapp.installations_count}`)
 
       const installations = await gh.apps
         .listInstallations({
@@ -99,7 +99,7 @@ module.exports = (
 
       /* Process installations */
       for (const installation of installations) {
-        console.log(`Syncing ${installation.account.login}`)
+        await timber.info(`MIG: Syncing ${installation.account.login}`)
         const now = moment()
         await prisma.installation.upsert({
           where: { account: installation.account.login },
@@ -113,7 +113,7 @@ module.exports = (
         })
       }
     } catch (err) {
-      console.error(err)
+      await timber.error(`MIG: error`, { err: err.message })
     }
   }
 
