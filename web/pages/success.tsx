@@ -4,24 +4,20 @@ import Link from 'next/link'
 export const Success = () => (
   <div className="w-full h-full flex flex-col justify-center bg-gray-100">
     {/* Text */}
-    <div className="text-center my-10">
-      <h1 className="font-bold uppercase leading-1 text-5xl text-green-500 my-3">
-        Success!
+    <div className="text-center container">
+      <h1 className="font-semibold leading-1 text-4xl md:text-5xl text-green-500 my-3">
+        Success! 🎉
       </h1>
-      <p className="text-md text-grey-800 font-semibold">
-        You have successfully purchased a LabelSync subscription. <br />
-        Here are some links that you might find useful.
-      </p>
     </div>
 
     {/* Image */}
     <img
-      className="max-h-48 block mx-auto"
+      className="max-h-36 md:max-h-48 block mx-auto my-8"
       src="/img/success.svg"
       alt="Success"
     />
     {/* Links */}
-    <div className="mx-auto my-10">
+    <div className="mx-auto">
       <span className="relative z-0 inline-flex shadow-sm">
         {/* Installation Link */}
         <a

@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 
-import { parseConfig, configRepos } from '../src/configuration'
+import { parseConfig, configRepos, isConfigRepo } from '../src/configuration'
 import { Plan } from '@prisma/client'
 
 const configurationsPath = path.resolve(
@@ -41,5 +41,14 @@ describe('utility functions:', () => {
     )
 
     expect(configRepos(config!)).toEqual(['prisma-test-utils'])
+  })
+
+  test('isConfigRepo', async () => {
+    expect(isConfigRepo('acc', 'acc-labelsync')).toBeTruthy()
+    expect(isConfigRepo('ACC', 'acc-labelsync')).toBeTruthy()
+    expect(isConfigRepo('acc', 'ACC-labelsync')).toBeTruthy()
+    expect(isConfigRepo('ACC', 'ACC-labelsync')).toBeTruthy()
+
+    expect(isConfigRepo('not', 'acc-labelsync')).toBeFalsy()
   })
 })

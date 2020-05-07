@@ -15,10 +15,9 @@ const NUMBER_OF_FREE_TIERS = 5
 /**
  * Configuration repository is the repository which LabelSync
  * uses to determine the configuration of the service.
- *
- * @param organization
  */
-export const getLSConfigRepoName = (owner: string) => `${owner}-labelsync`
+export const getLSConfigRepoName = (account: string) =>
+  `${account.toLowerCase()}-labelsync`
 
 /**
  * Configuration file path determines the path of the file in the repositoy
@@ -290,4 +289,12 @@ function fixLabelColor(color: string): string {
  */
 export function configRepos(config: LSCConfiguration): string[] {
   return Object.keys(config.repos).filter((repo) => repo !== '*')
+}
+
+/**
+ * Tells whether the repository is the configuration
+ * repository for the account.
+ */
+export function isConfigRepo(account: string, repo: string): boolean {
+  return getLSConfigRepoName(account) === repo.toLowerCase()
 }

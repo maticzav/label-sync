@@ -18,6 +18,7 @@ import {
   LS_CONFIG_PATH,
   parseConfig,
   configRepos,
+  isConfigRepo,
 } from './configuration'
 import {
   addLabelsToIssue,
@@ -128,10 +129,11 @@ module.exports = (
     for (const installation of installations) {
       await timber.info(`Syncing with database ${installation.account.login}`)
       const now = moment()
+      const account = installation.account.login.toLowerCase()
       await prisma.installation.upsert({
-        where: { account: installation.account.login },
+        where: { account },
         create: {
-          account: installation.account.login,
+          account,
           email: null,
           plan: 'FREE',
           periodEndsAt: now.clone().add(3, 'years').toDate(),
@@ -167,7 +169,9 @@ module.exports = (
    */
   api.post('/session', async (req, res) => {
     try {
-      const { email, account, plan, agreed, period, coupon } = req.body
+      let { email, account, plan, agreed, period, coupon } = req.body as {
+        [key: string]: string
+      }
 
       /* istanbul ignore next */
       if ([email, account].some((val) => val.trim() === '')) {
@@ -214,7 +218,8 @@ module.exports = (
         })
       }
 
-      // Check for existing purchuses.
+      /* Unify account casing */
+      account = account.toLowerCase()
 
       /**
        * People shouldn't be able to change purchase information afterwards.
@@ -389,7 +394,7 @@ module.exports = (
 
   //   const dbpurchase = await prisma.purchase.create({
   //     data: {
-  //       owner: owner.login,
+  //       owner: owner.login.toLowerCase(),
   //       email: owner.organization_billing_email,
   //       plan: purchase.plan.name,
   //       planId: purchase.plan.id,
@@ -399,7 +404,7 @@ module.exports = (
   //   })
 
   // await ctx.logger.info(
-  //   `${owner.login}: ${owner.type} purchased LabelSync plan ${dbpurchase.planId}`,
+  //   `${owner.login.toLowerCase()}: ${owner.type} purchased LabelSync plan ${dbpurchase.planId}`,
   // )
   // })
 
@@ -416,13 +421,13 @@ module.exports = (
 
   //   const dbpurchase = await prisma.purchase.delete({
   //     where: {
-  //       owner: owner.login,
+  //       owner: owner.login.toLowerCase(),
   //     },
   //   })
 
   // await ctx.logger.info(
-  //   { owner: owner.login, event: 'marketplace_purchase.cancelled' },
-  //   `${owner.login} cancelled LabelSync plan ${dbpurchase.planId}`,
+  //   { owner: owner.login.toLowerCase(), event: 'marketplace_purchase.cancelled' },
+  //   `${owner.login.toLowerCase()} cancelled LabelSync plan ${dbpurchase.planId}`,
   // )
   // })
 
@@ -440,7 +445,7 @@ module.exports = (
     'installation.created',
     withLogger(timber, async (ctx) => {
       const account = ctx.payload.installation.account
-      const owner = account.login
+      const owner = account.login.toLowerCase()
       const configRepo = getLSConfigRepoName(owner)
 
       /* Find installation. */
@@ -668,7 +673,7 @@ module.exports = (
     withUserContextLogger(
       timber,
       withInstallation(prisma, async (ctx) => {
-        const owner = ctx.payload.repository.owner.login
+        const owner = ctx.payload.repository.owner.login.toLowerCase()
         const repo = ctx.payload.repository.name
         const ref = ctx.payload.ref
         const defaultRef = `refs/heads/${ctx.payload.repository.default_branch}`
@@ -678,7 +683,7 @@ module.exports = (
 
         /* Skip non default branch and other repos pushes. */
         /* istanbul ignore if */
-        if (defaultRef !== ref || configRepo !== repo) {
+        if (defaultRef !== ref || !isConfigRepo(owner, repo)) {
           await ctx.logger.info(`Not config repo or ref. Skipping sync.`, {
             ref,
             repo,
@@ -824,7 +829,7 @@ module.exports = (
     withUserContextLogger(
       timber,
       withInstallation(prisma, async (ctx) => {
-        const owner = ctx.payload.repository.owner.login
+        const owner = ctx.payload.repository.owner.login.toLowerCase()
         const repo = ctx.payload.repository.name
         const ref = ctx.payload.pull_request.head.ref
         const number = ctx.payload.pull_request.number
@@ -834,7 +839,7 @@ module.exports = (
         await ctx.logger.info(`PullRequest action: ${ctx.payload.action}`)
 
         /* istanbul ignore if */
-        if (configRepo !== repo) {
+        if (!isConfigRepo(owner, repo)) {
           await ctx.logger.info(
             `Not configuration repository, skipping pull request overview.`,
             { configurationRepo: configRepo, currentRepo: repo },
@@ -1035,8 +1040,8 @@ module.exports = (
       withInstallation(
         prisma,
         withSources(async (ctx) => {
-          const owner = ctx.payload.sender.login
-          const repo = ctx.payload.repository.name
+          const owner = ctx.payload.sender.login.toLowerCase()
+          const repo = ctx.payload.repository.name.toLowerCase()
           const config =
             ctx.sources.config.repos[repo] || ctx.sources.config.repos['*']
           const label = ctx.payload.label as GithubLabel
@@ -1064,9 +1069,7 @@ module.exports = (
           )
 
           if (removeUnconfiguredLabels) {
-            await ctx.logger.info(
-              `Removing label "${label.name}" from ${repo}.`,
-            )
+            await ctx.logger.info(`Removing "${label.name}" from ${repo}.`)
 
             /* Prune unsupported labels in strict repositories. */
             await removeLabelsFromRepository(
@@ -1097,8 +1100,8 @@ module.exports = (
       withInstallation(
         prisma,
         withSources(async (ctx) => {
-          const owner = ctx.payload.sender.login
-          const repo = ctx.payload.repository.name
+          const owner = ctx.payload.sender.login.toLowerCase()
+          const repo = ctx.payload.repository.name.toLowerCase()
           const config = ctx.sources.config.repos[repo]
           const label = ((ctx.payload as any) as { label: GithubLabel }).label
           const issue = ctx.payload.issue
@@ -1154,8 +1157,8 @@ module.exports = (
       withInstallation(
         prisma,
         withSources(async (ctx) => {
-          const owner = ctx.payload.sender.login
-          const repo = ctx.payload.repository.name
+          const owner = ctx.payload.sender.login.toLowerCase()
+          const repo = ctx.payload.repository.name.toLowerCase()
           const config =
             ctx.sources.config.repos[repo] || ctx.sources.config.repos['*']
 
@@ -1199,7 +1202,7 @@ function withSources<
   fn: (ctx: Context<C> & W & { sources: Sources }) => Promise<T>,
 ): (ctx: Context<C> & W) => Promise<T | undefined> {
   return async (ctx) => {
-    const owner = ctx.payload.sender.login
+    const owner = ctx.payload.sender.login.toLowerCase()
     const repo = getLSConfigRepoName(owner)
     const ref = `refs/heads/${ctx.payload.repository.default_branch}`
 
@@ -1252,7 +1255,7 @@ function withInstallation<
   fn: (ctx: Context<C> & W & { installation: Installation }) => Promise<T>,
 ): (ctx: Context<C> & W) => Promise<T | undefined> {
   return async (ctx) => {
-    const owner = ctx.payload.repository.owner.login
+    const owner = ctx.payload.repository.owner.login.toLowerCase()
     const now = moment()
 
     /* Try to find the purchase in the database. */
