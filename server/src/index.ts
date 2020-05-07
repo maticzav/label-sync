@@ -113,7 +113,7 @@ module.exports = (
     await timber.info(`Existing installations: ${ghapp.installations_count}`)
 
     /* Skip sync if all are already tracked. */
-    if (lsInstallations === ghapp.installations_count) {
+    if (lsInstallations >= ghapp.installations_count) {
       await timber.info(`All installations in sync.`)
       return
     }
