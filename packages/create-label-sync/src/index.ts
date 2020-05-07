@@ -77,7 +77,8 @@ async function main(
   }>([
     {
       name: 'repositoriesRaw',
-      message: 'Type in your repository names comma-split:',
+      message:
+        'Type in repositories that LabelSync should include in configuration (comma-split):',
       type: 'input',
     },
   ])
