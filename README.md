@@ -5,11 +5,13 @@
 </div>
 
 <div align="center">
-  <a href="https://www.label-sync.com/">Website</a>
+  <a href="https://label-sync.com/">Website</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://www.label-sync.com/docs/">Docs</a>
+  <a href="https://label-sync.com/docs/">Docs</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://www.label-sync.com">Pricing</a>
+  <a href="https://label-sync.com">Pricing</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://label-sync.com/subscribe">Subscribe</a>
 </div>
 
 > Managing multiple repositories is hard. LabelSync helps you manage labels across your repository fleet.

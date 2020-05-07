@@ -468,16 +468,16 @@ function Testimonials() {
 }
 
 function Pricing() {
-  const [period, setPeriod] = useState<'yearly' | 'monthly'>('yearly')
+  const [period, setPeriod] = useState<'ANNUALLY' | 'MONTHLY'>('ANNUALLY')
 
   function toggle() {
     switch (period) {
-      case 'monthly': {
-        setPeriod('yearly')
+      case 'MONTHLY': {
+        setPeriod('ANNUALLY')
         break
       }
-      case 'yearly': {
-        setPeriod('monthly')
+      case 'ANNUALLY': {
+        setPeriod('MONTHLY')
         break
       }
     }
@@ -521,14 +521,14 @@ function Pricing() {
           onClick={toggle}
           className={
             'relative inline-block flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline ' +
-            (period === 'yearly' ? 'bg-green-400' : 'bg-gray-200')
+            (period === 'ANNUALLY' ? 'bg-green-400' : 'bg-gray-200')
           }
         >
           {/* On: "translate-x-5", Off: "translate-x-0" */}
           <span
             className={
               'inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200 ' +
-              (period === 'yearly' ? 'translate-x-5' : 'translate-x-0')
+              (period === 'ANNUALLY' ? 'translate-x-5' : 'translate-x-0')
             }
           ></span>
         </span>
@@ -565,7 +565,7 @@ function Pricing() {
                     <Link
                       href={{
                         pathname: '/subscribe',
-                        query: { plan: 'FREE', period: 'MONTHLY' },
+                        query: { plan: 'FREE' },
                       }}
                     >
                       <a>
@@ -584,7 +584,7 @@ function Pricing() {
                   price={
                     <>
                       {/* Yearly pricing */}
-                      {period === 'yearly' && (
+                      {period === 'ANNUALLY' && (
                         <>
                           $16
                           {/* $12
@@ -594,7 +594,7 @@ function Pricing() {
                         </>
                       )}
                       {/* Monthly pricing */}
-                      {period === 'monthly' && (
+                      {period === 'MONTHLY' && (
                         <>
                           $20
                           {/* $16
@@ -619,7 +619,7 @@ function Pricing() {
                     <Link
                       href={{
                         pathname: '/subscribe',
-                        query: { plan: 'PAID', period: 'ANNUALLY' },
+                        query: { plan: 'PAID', period },
                       }}
                     >
                       <a>

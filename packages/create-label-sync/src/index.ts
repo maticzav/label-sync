@@ -62,8 +62,9 @@ async function main(
   const { owner } = await inquirer.prompt<{ owner: string }>([
     {
       name: 'owner',
-      message: "What's your organisation name on Github?",
+      message: "What's your personal or organisation GitHub name?",
       type: 'input',
+      validate: (account) => account.trim() !== '',
     },
   ])
 
