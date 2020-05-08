@@ -8,6 +8,7 @@ import meow from 'meow'
 import * as mkdirp from 'mkdirp'
 import { ml } from 'multilines'
 import ora from 'ora'
+import * as os from 'os'
 import * as path from 'path'
 import * as prettier from 'prettier'
 
@@ -172,9 +173,12 @@ async function main(
    * Scaffold the template.
    */
 
-  if (!fs.existsSync(dist)) {
-    mkdirp.sync(dist)
-  }
+  /* Setup tmpdir */
+  const tmpDist = path.resolve(os.tmpdir(), `./labelsync`)
+  if (fs.existsSync(tmpDist)) fs.rmdirSync(tmpDist)
+  fs.mkdirSync(tmpDist, { recursive: true })
+
+  if (!fs.existsSync(dist)) mkdirp.sync(dist)
 
   /* Load template */
 
@@ -182,7 +186,7 @@ async function main(
     text: `Downloading ${template.name} template.`,
   }).start()
 
-  const res = await creato.loadTemplate(template, dist)
+  const res = await creato.loadTemplate(template, tmpDist)
 
   if (res.status === 'ok') {
     templateSpinner.succeed()
@@ -198,9 +202,10 @@ async function main(
     text: `Personalising configuration for you`,
   }).start()
 
-  try {
-    const tree = loadTreeFromPath(dist, [])
-    const populatedTree = mapEntries(tree, (file, name) => {
+  const tree = loadTreeFromPath(tmpDist, [])
+
+  const populatedTree = mapEntries(tree, (file, name) => {
+    try {
       /* Personalise files */
       const populatedFile = handlebars.compile(file)({
         repository,
@@ -225,15 +230,15 @@ async function main(
           return populatedFile
         }
       }
-    })
-    writeTreeToPath(dist, populatedTree)
+    } catch (err) {
+      templateSpinner.fail()
+      console.error(`Error in ${name}`, err.message)
+      process.exit(1)
+    }
+  })
+  await writeTreeToPath(dist, populatedTree)
 
-    populateSpinner.succeed(`Template loaded inside ${dist}!`)
-  } catch (err) {
-    templateSpinner.fail()
-    console.warn(res.message)
-    process.exit(1)
-  }
+  populateSpinner.succeed(`Template loaded inside ${dist}!`)
 }
 
 /* CLI */

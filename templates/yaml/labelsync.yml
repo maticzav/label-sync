@@ -1,4 +1,5 @@
 {{! we use Handlebars to personalise initial configuration. }}
+{{! IF YOU SEE THIS LINE SOMETHING BROKE. PLEASE RETRY SCAFFOLDING }}
 
 # Colors
 colors:

@@ -9,4 +9,3 @@ Hey there! Welcome to LabelSync. We have scaffolded the configuration file for y
 1. Create a repository on Github and name it `{{repository}}`.
 1. Commit your configuration (this repository) to Github.
 1. Head over to [LabelSync Manager Github Application](https://github.com/apps/labelsync-manager) and make sure that you install it in all repositories that you have configured.
-1. Consider [sponsoring](https://github.com/sponsors/maticzav) the project. ❤️
