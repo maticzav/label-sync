@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/matizav/label-sync/compare/label-sync@3.4.1...label-sync@3.5.0) (2020-05-08)
+
+
+### Features
+
+* iterable repo ([5042603](https://github.com/matizav/label-sync/commit/50426036d3b03b47507323dd094283ec09172b52))
+
+
+
+
+
 ## [3.4.1](https://github.com/matizav/label-sync/compare/label-sync@3.4.0...label-sync@3.4.1) (2020-05-05)
 
 **Note:** Version bump only for package label-sync
