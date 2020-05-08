@@ -45,7 +45,6 @@ describe('make:', () => {
             },
             labels: [
               ls.label('kind/bug', '#02f5aa'),
-              ls.label('bug/0-needs-reproduction', '#ff0022'),
               ls.label({
                 name: 'bug/1-has-reproduction',
                 color: '#ff0022',
@@ -54,12 +53,6 @@ describe('make:', () => {
                 siblings: ['kind/bug'],
               }),
               ls.type('bug', '#ff0022'),
-              ls.note('sweet'),
-              ls.impact('big'),
-              ls.effort('low'),
-              ls.needs('reproduction'),
-              ls.scope('project'),
-              ls.community('help-wanted'),
             ],
           }),
           changed: ls.repo({
@@ -68,7 +61,6 @@ describe('make:', () => {
             },
             labels: [
               ls.label('kind/bug', '02f5aa'),
-              ls.label('bug/0-needs-reproduction', '#ff0022'),
               ls.label({
                 name: 'bug/1-has-reproduction',
                 color: '#ff0022',
@@ -76,9 +68,6 @@ describe('make:', () => {
                 alias: ['bug'],
                 siblings: ['kind/bug'],
               }),
-              ls.type('bug', '#ff0022'),
-              ls.scope('project'),
-              ls.community('help-wanted'),
             ],
           }),
         },

@@ -57,11 +57,26 @@ export type RepositoryConfiguration = {
  */
 export class Repository implements Configurable<LSCRepository> {
   private config: RepositoryConfiguration
-  private labels: Label[]
+  private labels: Label[] = []
 
   constructor(repo: RepositoryInput) {
     this.config = withDefault({}, repo.config)
-    this.labels = repo.labels
+
+    /* Copy over labels and skip duplicates. */
+    for (const label of repo.labels.reverse()) {
+      if (!this.labels.find((rl) => rl.getName() === label.getName())) {
+        this.labels.push(label)
+      }
+    }
+  }
+
+  /**
+   * Returns the collection of labels configured in repository.
+   */
+  *[Symbol.iterator]() {
+    for (const label of this.labels) {
+      yield label
+    }
   }
 
   getConfiguration() {
