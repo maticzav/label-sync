@@ -22,7 +22,7 @@
     "multilines": "1.0.3",
     "prettier": "2.0.5",
     "probot": "9.11.3",
-    "stripe": "8.49.0"
+    "stripe": "8.50.0"
   },
   "devDependencies": {
     "@prisma/cli": "2.0.0-beta.4",
