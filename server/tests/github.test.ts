@@ -8,17 +8,24 @@ import {
   isLabelDefinition,
   bootstrapConfigRepository,
 } from '../src/github'
+import { populateTemplate } from '../src/bootstrap'
 import { loadTreeFromPath } from '../src/utils'
 
 /* Fixtures */
 const TEMPLATE_PATH = path.resolve(__dirname, '../../templates/typescript/')
-const TEMPLATE = loadTreeFromPath(TEMPLATE_PATH, [
-  'dist',
-  'node_modules',
-  '.DS_Store',
-  /.*\.log.*/,
-  /.*\.lock.*/,
-])
+const TEMPLATE = populateTemplate(
+  loadTreeFromPath(TEMPLATE_PATH, [
+    'dist',
+    'node_modules',
+    '.DS_Store',
+    /.*\.log.*/,
+    /.*\.lock.*/,
+  ]),
+  {
+    repository: 'config-labelsync',
+    repositories: [{ name: 'labelsync' }],
+  },
+)
 
 describe('github integration:', () => {
   beforeAll(() => {

@@ -13,12 +13,9 @@ Hey there! Welcome to LabelSync. We have scaffolded the configuration file for y
 
 ### Setting up LabelSync
 
-{{! we use Handlebars to personalise tutorial. }}
-
-1. Create a repository on Github and name it \`{{repository}}\`.
+1. Create a repository on Github and name it \`config-labelsync\`.
 1. Commit your configuration (this repository) to Github.
 1. Head over to [LabelSync Manager Github Application](https://github.com/apps/labelsync-manager) and make sure that you install it in all repositories that you have configured.
-1. Consider [sponsoring](https://github.com/sponsors/maticzav) the project. ❤️
 
 ### LabelSync library cheat sheet
 
@@ -63,13 +60,11 @@ function label({
 })
 \`\`\`
 ",
-  "2": "{{! we use Handlebars to personalise initial configuration. }}
-
-import { labelsync, repo } from 'label-sync'
+  "2": "import { labelsync, repo } from \\"label-sync\\";
 
 /* Repository */
-import { prisma } from './repos/prisma'
-import { github } from './repos/github'
+import { prisma } from \\"./repos/prisma\\";
+import { github } from \\"./repos/github\\";
 
 /* Config */
 labelsync({
@@ -78,23 +73,19 @@ labelsync({
     // prisma,
     // github,
     /* Personalized repositories */
-    {{#each repositories}}
-    {{#with this}}
-    \\"{{name}}\\": repo({
+    labelsync: repo({
       config: {
-        removeUnconfiguredLabels: false
+        removeUnconfiguredLabels: false,
       },
-      labels: []
+      labels: [],
     }),
-    {{/with}}
-    {{/each}}
   },
-})
+});
 ",
   "3": "repos: {}
 ",
   "4": "{
-  \\"name\\": \\"{{repository}}\\",
+  \\"name\\": \\"config-labelsync\\",
   \\"private\\": true,
   \\"main\\": \\"index.js\\",
   \\"scripts\\": {
@@ -131,7 +122,7 @@ labelsync({
   }
 }
 ",
-  "6": "import { repo, label } from 'label-sync'
+  "6": "import { repo, label } from \\"label-sync\\";
 
 /**
  * Default collection of label in a Github repository.
@@ -142,54 +133,54 @@ export const github = repo({
   },
   labels: [
     label({
-      name: 'bug',
-      color: '#d73a4a',
+      name: \\"bug\\",
+      color: \\"#d73a4a\\",
       description: \\"Something isn't working\\",
     }),
     label({
-      name: 'documentation',
-      color: '#0075ca',
-      description: 'Improvements or additions to documentation',
+      name: \\"documentation\\",
+      color: \\"#0075ca\\",
+      description: \\"Improvements or additions to documentation\\",
     }),
     label({
-      name: 'duplicate',
-      color: '#cfd3d7',
-      description: 'This issue or pull request already exists',
+      name: \\"duplicate\\",
+      color: \\"#cfd3d7\\",
+      description: \\"This issue or pull request already exists\\",
     }),
     label({
-      name: 'enhancement',
-      color: '#a2eeef',
-      description: 'New feature or request',
+      name: \\"enhancement\\",
+      color: \\"#a2eeef\\",
+      description: \\"New feature or request\\",
     }),
     label({
-      name: 'good first issue',
-      color: '#7057ff',
-      description: 'Good for newcomers',
+      name: \\"good first issue\\",
+      color: \\"#7057ff\\",
+      description: \\"Good for newcomers\\",
     }),
     label({
-      name: 'help wanted',
-      color: '#008672',
-      description: 'Extra attention is needed',
+      name: \\"help wanted\\",
+      color: \\"#008672\\",
+      description: \\"Extra attention is needed\\",
     }),
     label({
-      name: 'invalid',
-      color: '#e4e669',
+      name: \\"invalid\\",
+      color: \\"#e4e669\\",
       description: \\"This doesn't seem right\\",
     }),
     label({
-      name: 'question',
-      color: '#d876e3',
-      description: 'Further information is requested',
+      name: \\"question\\",
+      color: \\"#d876e3\\",
+      description: \\"Further information is requested\\",
     }),
     label({
-      name: 'wontfix',
-      color: '#000000',
-      description: 'This will not be worked on',
+      name: \\"wontfix\\",
+      color: \\"#000000\\",
+      description: \\"This will not be worked on\\",
     }),
   ],
-})
+});
 ",
-  "7": "import { repo, label, colors } from 'label-sync'
+  "7": "import { repo, label, colors } from \\"label-sync\\";
 
 /**
  * Label configuration used internally by Prisma team. Labels are grouped
@@ -204,74 +195,75 @@ export const prisma = repo({
   labels: [
     /* Bugs */
     label({
-      name: 'bug/0-needs-info',
+      name: \\"bug/0-needs-info\\",
       color: colors.danger,
-      description: 'More information is needed for reproduction.',
+      description: \\"More information is needed for reproduction.\\",
     }),
     label({
-      name: 'bug/1-repro-available',
+      name: \\"bug/1-repro-available\\",
       color: colors.danger,
-      description: 'A reproduction exists and needs to be confirmed.',
+      description: \\"A reproduction exists and needs to be confirmed.\\",
     }),
     label({
-      name: 'bug/2-confirmed',
+      name: \\"bug/2-confirmed\\",
       color: colors.danger,
-      description: 'We have confirmed that this is a bug.',
+      description: \\"We have confirmed that this is a bug.\\",
     }),
     /* Kind */
     label({
-      name: 'kind/bug',
+      name: \\"kind/bug\\",
       color: colors.neutral,
-      description: 'A reported bug.',
+      description: \\"A reported bug.\\",
     }),
     label({
-      name: 'kind/regression',
+      name: \\"kind/regression\\",
       color: colors.neutral,
-      description: 'A reported bug in functionality that used to work before.',
+      description: \\"A reported bug in functionality that used to work before.\\",
     }),
     label({
-      name: 'kind/feature',
+      name: \\"kind/feature\\",
       color: colors.neutral,
-      description: 'A request for a new feature.',
+      description: \\"A request for a new feature.\\",
     }),
     label({
-      name: 'kind/improvement',
+      name: \\"kind/improvement\\",
       color: colors.neutral,
-      description: 'An improvement to existing feature and code.',
+      description: \\"An improvement to existing feature and code.\\",
     }),
     label({
-      name: 'kind/docs',
+      name: \\"kind/docs\\",
       color: colors.neutral,
-      description: 'A documentation change is required.',
+      description: \\"A documentation change is required.\\",
     }),
     label({
-      name: 'kind/discussion',
+      name: \\"kind/discussion\\",
       color: colors.neutral,
-      description: 'Discussion is required.',
+      description: \\"Discussion is required.\\",
     }),
     label({
-      name: 'kind/question',
+      name: \\"kind/question\\",
       color: colors.neutral,
-      description: 'Developer asked a question. No code changes required.',
+      description: \\"Developer asked a question. No code changes required.\\",
     }),
     /* Process triaging. */
     label({
-      name: 'process/candidate',
+      name: \\"process/candidate\\",
       color: colors.shiny,
-      description: 'Candidate for next Milestone.',
+      description: \\"Candidate for next Milestone.\\",
     }),
     label({
-      name: 'process/next-milestone',
+      name: \\"process/next-milestone\\",
       color: colors.shiny,
-      description: 'Issue earmarked for next Milestone.',
+      description: \\"Issue earmarked for next Milestone.\\",
     }),
     label({
-      name: 'process/product',
+      name: \\"process/product\\",
       color: colors.shiny,
-      description: 'Temporary label to export products issues from the Engineering process',
+      description:
+        \\"Temporary label to export products issues from the Engineering process\\",
     }),
   ],
-})
+});
 ",
 }
 `;
