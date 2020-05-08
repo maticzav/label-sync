@@ -123,11 +123,11 @@ function Introduction() {
         image="/img/testimonial/matic.jpg"
         content={
           <p>
-            ”While working at Prisma, I discovered that many companies struggle
-            with repository organisation. In particular, companies struggle with
-            managing labels across multiple repositories in their organisation.
-            That's why I created LabelSync - to help you get the best parts of
-            labels more quickly.”
+            &ldquo;While working at Prisma, I discovered that many companies
+            struggle with repository organisation. In particular, companies
+            struggle with managing labels across multiple repositories in their
+            GitHub accounts. That's why I created LabelSync - to help you get to
+            the best parts of labels more quickly. &rdquo;
           </p>
         }
       ></Testimonial>
@@ -234,8 +234,8 @@ function Features() {
                     Flexible configuration
                   </h5>
                   <p className="mt-2 text-base leading-6 text-gray-500">
-                    Restrict unconfigured labels or set the default bulk to be
-                    shared between repositories.
+                    Restrict unconfigured labels, or create a set of common ones
+                    to share between repositories.
                   </p>
                 </div>
               </div>
@@ -268,7 +268,7 @@ function Features() {
                     >
                       aliasing
                     </a>
-                    a group of old labels in a new single label.
+                    a group of old labels to a new, single label.
                   </p>
                 </div>
               </div>
@@ -348,7 +348,7 @@ function DetailedFeatures() {
           description={
             <>
               LabelSync manager comments on your pull request so you can predict
-              what changes are going to happen
+              what changes are going to happen.
             </>
           }
           alt="PullRequest message"
@@ -443,13 +443,7 @@ function Testimonials() {
               &ldquo;Label-Sync enables us to have much a more efficient project
               management process where everything relies on a consistent set of
               labels. Triage, Prioritization, Estimation, everything can be done
-              with labels now.
-            </p>
-            <p>
-              Furthermore, we use TypeScript in the configuration, which makes
-              it super easy to track and test changes. At the same time we have
-              the flexibility to keep managing additional labels manually, which
-              gives us all the flexibility and special cases we need. &rdquo;
+              with labels now. &rdquo;
             </p>
           </>
         }
