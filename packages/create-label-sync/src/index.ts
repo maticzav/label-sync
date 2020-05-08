@@ -175,7 +175,7 @@ async function main(
 
   /* Setup tmpdir */
   const tmpDist = path.resolve(os.tmpdir(), `./labelsync`)
-  if (fs.existsSync(tmpDist)) fs.rmdirSync(tmpDist)
+  fs.rmdirSync(tmpDist, { recursive: true })
   fs.mkdirSync(tmpDist, { recursive: true })
 
   if (!fs.existsSync(dist)) mkdirp.sync(dist)
