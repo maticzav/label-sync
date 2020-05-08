@@ -1,31 +1,19 @@
 {
   "name": "label-sync",
   "version": "3.5.0",
-  "description": "CLI tool for Label Sync",
+  "description": "LabelSync TypeScript configuration library.",
   "main": "dist/index.js",
   "repository": "https://github.com/matizav/label-sync",
   "author": "Matic Zavadlal <matic.zavadlal@gmail.com>",
   "files": [
     "dist"
   ],
-  "scripts": {
-    "build:bin": "ncc build src/bin.ts -o dist"
-  },
-  "bin": {
-    "labelsync": "dist/bin.js"
-  },
   "dependencies": {
-    "arg": "^4.1.3",
-    "debug": "^4.1.1",
-    "glob": "^7.1.6",
     "js-yaml": "^3.13.1"
   },
   "devDependencies": {
-    "@types/debug": "4.1.5",
-    "@types/glob": "7.1.1",
     "@types/js-yaml": "3.12.3",
-    "@types/node": "13.13.5",
-    "@zeit/ncc": "0.22.1"
+    "@types/node": "13.13.5"
   },
   "license": "MIT"
 }

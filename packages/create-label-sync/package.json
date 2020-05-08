@@ -1,6 +1,6 @@
 {
   "name": "create-label-sync",
-  "description": "LabelSync setup scaffolding tool.",
+  "description": "LabelSync scaffolding tool.",
   "version": "2.4.6",
   "main": "dist/index.js",
   "repository": "https://github.com/maticzav/label-sync.git",
