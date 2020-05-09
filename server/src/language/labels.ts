@@ -95,14 +95,26 @@ function parseRepoName(name: string): string {
  */
 function ulOfLabels(labels: GithubLabel[], empty: string): string {
   if (labels.length === 0) return empty
-  return labels
-    .map((label) => {
-      if (label.old_name) {
-        return ` * ${label.old_name} => ${label.name}`
-      }
-      return ` * ${label.name}`
-    })
-    .join(os.EOL)
+  return labels.map(label).join(os.EOL)
+}
+
+/**
+ * Creates a label out of abstract object.
+ */
+function label(label: GithubLabel): string {
+  if (label.old_name) {
+    /* prettier-ignore */
+    return ` * ${badge({ name: label.old_name, color: "inactive" })}  &#x2192 ${badge(label)}`
+  }
+  return ` * ${badge(label)}`
+}
+
+/**
+ * Creates a colorful badge for the label.
+ */
+function badge(props: { name: string; color: string }): string {
+  /* prettier-ignore */
+  return `![${props.name}](https://img.shields.io/static/v1?label=&message=${props.name}&color=${props.color} "${props.name}")`
 }
 
 /**

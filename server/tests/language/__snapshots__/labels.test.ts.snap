@@ -10,15 +10,15 @@ Couldn't make a diff of labels.
 ### \`changed\`
 
 __New labels:__
- * bug/2
+ * ![bug/2](https://img.shields.io/static/v1?label=&message=bug/2&color=33 \\"bug/2\\")
 
 __Changed labels:__
- * bug/1
- * label/old => label/new
+ * ![bug/1](https://img.shields.io/static/v1?label=&message=bug/1&color=00 \\"bug/1\\")
+ * ![label/old](https://img.shields.io/static/v1?label=&message=label/old&color=inactive \\"label/old\\")  &#x2192 ![label/new](https://img.shields.io/static/v1?label=&message=label/new&color=00 \\"label/new\\")
 
 __Aliased labels:__
- * label/alias => label/new-alias
+ * ![label/alias](https://img.shields.io/static/v1?label=&message=label/alias&color=inactive \\"label/alias\\")  &#x2192 ![label/new-alias](https://img.shields.io/static/v1?label=&message=label/new-alias&color=00 \\"label/new-alias\\")
 
 __Removed labels:__
- * bug/3"
+ * ![bug/3](https://img.shields.io/static/v1?label=&message=bug/3&color=ff \\"bug/3\\")"
 `;

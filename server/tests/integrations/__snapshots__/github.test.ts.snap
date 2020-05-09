@@ -122,18 +122,18 @@ Object {
 ### \`changed\`
 
 __New labels:__
- * create/new
+ * ![create/new](https://img.shields.io/static/v1?label=&message=create/new&color=000000 \\"create/new\\")
 
 __Changed labels:__
- * alias/old:1 => alias/new
- * update/color
+ * ![alias/old:1](https://img.shields.io/static/v1?label=&message=alias/old:1&color=inactive \\"alias/old:1\\")  &#x2192 ![alias/new](https://img.shields.io/static/v1?label=&message=alias/new&color=000000 \\"alias/new\\")
+ * ![update/color](https://img.shields.io/static/v1?label=&message=update/color&color=ffffff \\"update/color\\")
 
 __Aliased labels:__
- * alias/old:2 => alias/new
+ * ![alias/old:2](https://img.shields.io/static/v1?label=&message=alias/old:2&color=inactive \\"alias/old:2\\")  &#x2192 ![alias/new](https://img.shields.io/static/v1?label=&message=alias/new&color=000000 \\"alias/new\\")
 
 __Removed labels:__
- * alias/old:2
- * remove
+ * ![alias/old:2](https://img.shields.io/static/v1?label=&message=alias/old:2&color=000000 \\"alias/old:2\\")
+ * ![remove](https://img.shields.io/static/v1?label=&message=remove&color=000000 \\"remove\\")
 ---
 ### \`unchanged\`
 
@@ -167,18 +167,18 @@ Object {
 ### \`changed\`
 
 __New labels:__
- * create/new
+ * ![create/new](https://img.shields.io/static/v1?label=&message=create/new&color=000000 \\"create/new\\")
 
 __Changed labels:__
- * alias/old:1 => alias/new
- * update/color
+ * ![alias/old:1](https://img.shields.io/static/v1?label=&message=alias/old:1&color=inactive \\"alias/old:1\\")  &#x2192 ![alias/new](https://img.shields.io/static/v1?label=&message=alias/new&color=000000 \\"alias/new\\")
+ * ![update/color](https://img.shields.io/static/v1?label=&message=update/color&color=ffffff \\"update/color\\")
 
 __Aliased labels:__
- * alias/old:2 => alias/new
+ * ![alias/old:2](https://img.shields.io/static/v1?label=&message=alias/old:2&color=inactive \\"alias/old:2\\")  &#x2192 ![alias/new](https://img.shields.io/static/v1?label=&message=alias/new&color=000000 \\"alias/new\\")
 
 __Removed labels:__
- * alias/old:2
- * remove
+ * ![alias/old:2](https://img.shields.io/static/v1?label=&message=alias/old:2&color=000000 \\"alias/old:2\\")
+ * ![remove](https://img.shields.io/static/v1?label=&message=remove&color=000000 \\"remove\\")
 ---
 ### \`unchanged\`
 
@@ -388,18 +388,18 @@ Object {
 ### \`changed\`
 
 __New labels:__
- * create/new
+ * ![create/new](https://img.shields.io/static/v1?label=&message=create/new&color=000000 \\"create/new\\")
 
 __Changed labels:__
- * alias/old:1 => alias/new
- * update/color
+ * ![alias/old:1](https://img.shields.io/static/v1?label=&message=alias/old:1&color=inactive \\"alias/old:1\\")  &#x2192 ![alias/new](https://img.shields.io/static/v1?label=&message=alias/new&color=000000 \\"alias/new\\")
+ * ![update/color](https://img.shields.io/static/v1?label=&message=update/color&color=ffffff \\"update/color\\")
 
 __Aliased labels:__
- * alias/old:2 => alias/new
+ * ![alias/old:2](https://img.shields.io/static/v1?label=&message=alias/old:2&color=inactive \\"alias/old:2\\")  &#x2192 ![alias/new](https://img.shields.io/static/v1?label=&message=alias/new&color=000000 \\"alias/new\\")
 
 __Removed labels:__
- * alias/old:2
- * remove
+ * ![alias/old:2](https://img.shields.io/static/v1?label=&message=alias/old:2&color=000000 \\"alias/old:2\\")
+ * ![remove](https://img.shields.io/static/v1?label=&message=remove&color=000000 \\"remove\\")
 ---
 ### \`unchanged\`
 
@@ -433,18 +433,18 @@ Object {
 ### \`changed\`
 
 __New labels:__
- * create/new
+ * ![create/new](https://img.shields.io/static/v1?label=&message=create/new&color=000000 \\"create/new\\")
 
 __Changed labels:__
- * alias/old:1 => alias/new
- * update/color
+ * ![alias/old:1](https://img.shields.io/static/v1?label=&message=alias/old:1&color=inactive \\"alias/old:1\\")  &#x2192 ![alias/new](https://img.shields.io/static/v1?label=&message=alias/new&color=000000 \\"alias/new\\")
+ * ![update/color](https://img.shields.io/static/v1?label=&message=update/color&color=ffffff \\"update/color\\")
 
 __Aliased labels:__
- * alias/old:2 => alias/new
+ * ![alias/old:2](https://img.shields.io/static/v1?label=&message=alias/old:2&color=inactive \\"alias/old:2\\")  &#x2192 ![alias/new](https://img.shields.io/static/v1?label=&message=alias/new&color=000000 \\"alias/new\\")
 
 __Removed labels:__
- * alias/old:2
- * remove
+ * ![alias/old:2](https://img.shields.io/static/v1?label=&message=alias/old:2&color=000000 \\"alias/old:2\\")
+ * ![remove](https://img.shields.io/static/v1?label=&message=remove&color=000000 \\"remove\\")
 ---
 ### \`unchanged\`
 
