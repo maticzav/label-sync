@@ -355,7 +355,7 @@ describe('github:', () => {
 
           const labelsEndpoint = jest.fn().mockImplementation((uri) => {
             switch (uri) {
-              case '/repos/maticzav/changed/labels': {
+              case '/repos/maticzav/changed/labels?per_page=100&page=0': {
                 return [
                   // {
                   //   name: 'create/new',
@@ -383,7 +383,7 @@ describe('github:', () => {
                   },
                 ]
               }
-              case '/repos/maticzav/unchanged/labels': {
+              case '/repos/maticzav/unchanged/labels?per_page=100&page=0': {
                 return [
                   {
                     name: 'label-a',
@@ -392,7 +392,7 @@ describe('github:', () => {
                 ]
               }
               default: {
-                throw new Error(`Unknown uri: ${uri}`)
+                throw new Error(`TESTS: Unknown uri: ${uri}`)
               }
             }
           })
@@ -582,7 +582,7 @@ describe('github:', () => {
 
           const labelsEndpoint = jest.fn().mockImplementation((uri) => {
             switch (uri) {
-              case '/repos/maticzav/changed/labels': {
+              case '/repos/maticzav/changed/labels?per_page=100&page=0': {
                 return [
                   // {
                   //   name: 'create/new',
@@ -610,7 +610,7 @@ describe('github:', () => {
                   },
                 ]
               }
-              case '/repos/maticzav/unchanged/labels': {
+              case '/repos/maticzav/unchanged/labels?per_page=100&page=0': {
                 return [
                   {
                     name: 'label-a',
@@ -619,7 +619,7 @@ describe('github:', () => {
                 ]
               }
               default: {
-                throw new Error(`Unknown uri: ${uri}`)
+                throw new Error(`TESTS: Unknown uri: ${uri}`)
               }
             }
           })
@@ -888,7 +888,7 @@ describe('github:', () => {
 
           const labelsEndpoint = jest.fn().mockImplementation((uri) => {
             switch (uri) {
-              case '/repos/maticzav/changed/labels': {
+              case '/repos/maticzav/changed/labels?per_page=100&page=0': {
                 return [
                   // {
                   //   name: 'create/new',
@@ -916,7 +916,7 @@ describe('github:', () => {
                   },
                 ]
               }
-              case '/repos/maticzav/unchanged/labels': {
+              case '/repos/maticzav/unchanged/labels?per_page=100&page=0': {
                 return [
                   {
                     name: 'label-a',
@@ -925,7 +925,7 @@ describe('github:', () => {
                 ]
               }
               default: {
-                throw new Error(`Unknown uri: ${uri}`)
+                throw new Error(`TESTS: Unknown uri: ${uri}`)
               }
             }
           })

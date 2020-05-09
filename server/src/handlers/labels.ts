@@ -100,46 +100,60 @@ export async function handleLabelSync(
    * 3. Alias labels.
    * 4. Remove labels.
    */
+  try {
+    const additions = await addLabelsToRepository(
+      octokit,
+      { repo, owner },
+      added,
+      persist,
+    )
+    const updates = await updateLabelsInRepository(
+      octokit,
+      { repo, owner },
+      changed,
+      persist,
+    )
+    const aliases = await aliasLabelsInRepository(
+      octokit,
+      { repo, owner },
+      aliased,
+      persist,
+    )
+    const removals = await removeLabelsFromRepository(
+      octokit,
+      { repo, owner },
+      removed,
+      removeUnconfiguredLabels && persist,
+    )
 
-  const additions = await addLabelsToRepository(
-    octokit,
-    { repo, owner },
-    added,
-    persist,
-  )
-  const updates = await updateLabelsInRepository(
-    octokit,
-    { repo, owner },
-    changed,
-    persist,
-  )
-  const aliases = await aliasLabelsInRepository(
-    octokit,
-    { repo, owner },
-    aliased,
-    persist,
-  )
-  const removals = await removeLabelsFromRepository(
-    octokit,
-    { repo, owner },
-    removed,
-    removeUnconfiguredLabels && persist,
-  )
-
-  return {
-    status: 'Success',
-    repo,
-    owner,
-    additions,
-    updates,
-    removals,
-    aliases,
-    config: {
+    return {
+      status: 'Success',
+      repo,
+      owner,
+      additions,
+      updates,
+      removals,
+      aliases,
       config: {
-        removeUnconfiguredLabels,
+        config: {
+          removeUnconfiguredLabels,
+        },
+        labels,
       },
-      labels,
-    },
+    }
+  } catch (err) /* istanbul ignore next */ {
+    return {
+      status: 'Failure',
+      owner,
+      repo,
+      message: err.message,
+      config: {
+        labels,
+        config: {
+          removeUnconfiguredLabels,
+        },
+      },
+    }
   }
 }
 

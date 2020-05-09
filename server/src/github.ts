@@ -58,18 +58,35 @@ export interface GithubLabel {
  * Fetches labels in a repository.
  */
 export async function getRepositoryLabels(
-  octokit: Octokit,
+  github: Octokit,
   { repo, owner }: { repo: string; owner: string },
-): Promise<Maybe<Octokit.IssuesListLabelsForRepoResponseItem[]>> {
-  try {
-    const labels = octokit.issues.listLabelsForRepo.endpoint.merge({
-      repo,
-      owner,
-    })
+): Promise<Octokit.IssuesListLabelsForRepoResponseItem[]> {
+  let page = 0
+  let labels: Octokit.IssuesListLabelsForRepoResponseItem[] = []
 
-    return octokit.paginate(labels)
-  } catch (err) /* istanbul ignore next */ {
-    return null
+  await handler()
+
+  return labels
+
+  /* Paginates and performs changes. */
+  async function handler() {
+    const repoLabels = await github.issues
+      .listLabelsForRepo({
+        owner,
+        repo,
+        per_page: 100,
+        page,
+      })
+      .then((res) => res.data)
+
+    labels.push(...repoLabels)
+
+    /* Rerun handler if there are more labels available. */
+    /* istanbul ignore next */
+    if (repoLabels.length === 100) {
+      page += 1
+      await handler()
+    }
   }
 }
 
