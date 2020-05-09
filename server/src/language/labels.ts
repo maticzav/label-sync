@@ -1,8 +1,9 @@
 import ml from 'multilines'
 import os from 'os'
+import { stringifyUrl } from 'query-string'
 
-import { LabelSyncReport } from '../handlers/labels'
 import { GithubLabel } from '../github'
+import { LabelSyncReport } from '../handlers/labels'
 import { withDefault } from '../utils'
 
 /**
@@ -104,7 +105,7 @@ function ulOfLabels(labels: GithubLabel[], empty: string): string {
 function label(label: GithubLabel): string {
   if (label.old_name) {
     /* prettier-ignore */
-    return ` * ${badge({ name: label.old_name, color: "inactive" })}  &#x2192 ${badge(label)}`
+    return ` * ${badge({ name: label.old_name, color: "inactive" })} → ${badge(label)}`
   }
   return ` * ${badge(label)}`
 }
@@ -113,8 +114,16 @@ function label(label: GithubLabel): string {
  * Creates a colorful badge for the label.
  */
 function badge(props: { name: string; color: string }): string {
-  /* prettier-ignore */
-  return `![${props.name}](https://img.shields.io/static/v1?label=&message=${props.name}&color=${props.color} "${props.name}")`
+  const url = stringifyUrl({
+    url: 'https://img.shields.io/static/v1',
+    query: {
+      label: '',
+      message: props.name,
+      color: props.color,
+    },
+  })
+
+  return `![${props.name}](${url} "${props.name}")`
 }
 
 /**
