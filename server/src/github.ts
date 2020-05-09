@@ -114,15 +114,20 @@ export async function addLabelsToRepository(
   async function addLabelToRepository(
     label: GithubLabel,
   ): Promise<GithubLabel> {
-    return github.issues
-      .createLabel({
+    try {
+      const ghLabel = await github.issues.createLabel({
         owner: owner,
         repo: repo,
         name: label.name,
         description: label.description,
         color: label.color,
       })
-      .then((res) => res.data)
+      return ghLabel.data
+    } catch (err) /* istanbul ignore next */ {
+      throw new Error(
+        `Couldn't create ${label.name} in ${owner}/${repo}: ${err.message}`,
+      )
+    }
   }
 }
 
@@ -153,8 +158,8 @@ export async function updateLabelsInRepository(
   async function updateLabelInRepository(
     label: GithubLabel,
   ): Promise<GithubLabel> {
-    return github.issues
-      .updateLabel({
+    try {
+      const ghLabel = await github.issues.updateLabel({
         current_name: withDefault(label.name, label.old_name),
         owner: owner,
         repo: repo,
@@ -162,7 +167,12 @@ export async function updateLabelsInRepository(
         description: label.description,
         color: label.color,
       })
-      .then((res) => res.data)
+      return ghLabel.data
+    } catch (err) /* istanbul ignore next */ {
+      throw new Error(
+        `Couldn't update ${label.name} in ${owner}/${repo}: ${err.message}`,
+      )
+    }
   }
 }
 
@@ -189,13 +199,19 @@ export async function removeLabelsFromRepository(
   async function removeLabelFromRepository(
     label: GithubLabel,
   ): Promise<Octokit.IssuesDeleteLabelParams> {
-    return github.issues
-      .deleteLabel({
+    try {
+      const ghLabel = await github.issues.deleteLabel({
         owner: owner,
         repo: repo,
         name: label.name,
       })
-      .then((res) => res.data)
+
+      return ghLabel.data
+    } catch (err) /* istanbul ignore next */ {
+      throw new Error(
+        `Couldn't remove ${label.name} in ${owner}/${repo}: ${err.message}`,
+      )
+    }
   }
 }
 

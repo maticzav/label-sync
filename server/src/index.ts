@@ -767,6 +767,7 @@ module.exports = (
 
             await ctx.logger.info(`Sync completed.`, {
               config: JSON.stringify(config),
+              reports: JSON.stringify(reports),
             })
 
             /* Comment on commit */
