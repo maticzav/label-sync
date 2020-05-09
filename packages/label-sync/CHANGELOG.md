@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.5.2](https://github.com/matizav/label-sync/compare/label-sync@3.5.1...label-sync@3.5.2) (2020-05-09)
+
+
+### Bug Fixes
+
+* catch errors in labelsync handler instead of exposing them ([e0eb1e7](https://github.com/matizav/label-sync/commit/e0eb1e7e7ebc9a407c24cab6ba816c0d080953a0))
+
+
+
+
+
 ## [3.5.1](https://github.com/matizav/label-sync/compare/label-sync@3.5.0...label-sync@3.5.1) (2020-05-08)
 
 
