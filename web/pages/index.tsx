@@ -58,7 +58,7 @@ export default class Home extends React.Component {
   render() {
     return (
       <>
-        <title>Github LabelSync - The best way to sync labels</title>
+        <title>GitHub LabelSync - The best way to sync labels</title>
 
         <Title></Title>
         <Introduction></Introduction>

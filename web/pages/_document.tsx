@@ -15,7 +15,7 @@ export default class extends Document {
           <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
 
           {/* Twitter */}
-          <meta name="og:title" content="Github LabelSync" />
+          <meta name="og:title" content="GitHub LabelSync" />
           <meta name="og:type" content="website" />
           <meta name="og:url" content="https://label-sync.com" />
           <meta
@@ -24,7 +24,7 @@ export default class extends Document {
           />
           <meta
             name="description"
-            content="Managing Github labels is hard. LabelSync makes it easy."
+            content="Meet LabelSync. It's a GitHub application that helps you sync labels across repositories in your GitHub account. Its main features are centralised repoistory configuration, label chaining, and versatile label renaming. It also posts an overview of every configuration change."
           />
 
           {/* Robots */}
