@@ -7,7 +7,7 @@
     "postinstall": "yarn run db:generate"
   },
   "dependencies": {
-    "@octokit/rest": "17.8.0",
+    "@octokit/rest": "17.9.0",
     "@prisma/client": "2.0.0-beta.4",
     "@timberio/node": "0.35.0",
     "body-parser": "1.19.0",
