@@ -10,6 +10,7 @@ export default class Privacy extends React.Component {
   render() {
     return (
       <div className="w-full h-full flex flex-col justify-center">
+        <title>GitHub LabelSync - Privacy</title>
         <img
           className="h-7 block mx-auto"
           src="/img/logos/labelsync.svg"
