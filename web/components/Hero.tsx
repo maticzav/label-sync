@@ -1,16 +1,30 @@
-import React from 'react'
+import React, { useState } from 'react'
+import Typist from 'react-typist'
+import { shuffle } from 'lodash'
 
 import { scrollToId } from '../lib/scroll'
 
 export default function Hero() {
+  const [typingIndex, setTyping] = useState(0)
+
+  function nextTyping() {
+    const nextIndex = typingIndex + 1
+    if (nextIndex === typings.length) setTyping(0)
+    else setTyping(nextIndex)
+  }
+
   return (
     <div className="mt-10 mx-auto max-w-screen-xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 xl:mt-28">
       <div className="text-center">
         {/* Hero */}
         <h2 className="text-4xl tracking-tight leading-10 font-extrabold text-gray-900 sm:text-5xl sm:leading-none md:text-6xl">
-          Sync labels.
-          <br className="xl:hidden" />
-          <span className="text-green-600">across all repositories.</span>
+          {/* Typing animation */}
+          <Typing
+            index={typingIndex}
+            onTypingDone={nextTyping}
+            key={typingIndex}
+          ></Typing>
+          {/* End of typing animation */}
         </h2>
         <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
           Managing Github labels across multiple repositories is hard.
@@ -56,5 +70,49 @@ export default function Hero() {
         </div>
       </div>
     </div>
+  )
+}
+
+const typings = shuffle([
+  {
+    lead: 'Sync labels.',
+    sub: 'across all repositories',
+    color: 'text-green-600',
+  },
+  {
+    lead: 'Your Tasks and Code.',
+    sub: 'All in GitHub.',
+    color: 'text-pink-800',
+  },
+  {
+    lead: 'Trello in GitHub.',
+    sub: 'For Free.',
+    color: 'text-blue-800',
+  },
+])
+
+function Typing(props: { index: number; onTypingDone: () => void }) {
+  const typing = typings[props.index]
+  return (
+    <>
+      {typing.lead}
+      <br className="" />
+      <Typist
+        key={`typist-${props.index}`}
+        onTypingDone={props.onTypingDone}
+        className={typing.color}
+        startDelay={600}
+        stdTypingDelay={12}
+        avgTypingDelay={60}
+        cursor={{ show: true }}
+      >
+        <span>{typing.sub}</span>
+        <Typist.Backspace
+          key={`backspace-${props.index}`}
+          delay={1200}
+          count={typing.sub.length}
+        ></Typist.Backspace>
+      </Typist>
+    </>
   )
 }
