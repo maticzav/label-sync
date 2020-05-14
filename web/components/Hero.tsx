@@ -76,7 +76,7 @@ export default function Hero() {
 const typings = shuffle([
   {
     lead: 'Sync labels.',
-    sub: 'across all repositories',
+    sub: 'across all repositories.',
     color: 'text-green-400',
   },
   {
