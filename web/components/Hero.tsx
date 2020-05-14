@@ -77,17 +77,17 @@ const typings = shuffle([
   {
     lead: 'Sync labels.',
     sub: 'across all repositories',
-    color: 'text-green-600',
+    color: 'text-green-400',
   },
   {
     lead: 'Your Tasks and Code.',
     sub: 'All in GitHub.',
-    color: 'text-pink-800',
+    color: 'text-gray-400',
   },
   {
     lead: 'Trello in GitHub.',
     sub: 'For Free.',
-    color: 'text-blue-800',
+    color: 'text-blue-400',
   },
 ])
 
