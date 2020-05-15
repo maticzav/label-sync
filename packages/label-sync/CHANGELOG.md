@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.5.6](https://github.com/matizav/label-sync/compare/label-sync@3.5.5...label-sync@3.5.6) (2020-05-15)
+
+**Note:** Version bump only for package label-sync
+
+
+
+
+
 ## [3.5.5](https://github.com/matizav/label-sync/compare/label-sync@3.5.4...label-sync@3.5.5) (2020-05-13)
 
 **Note:** Version bump only for package label-sync
