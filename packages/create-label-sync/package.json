@@ -27,7 +27,7 @@
     "@types/meow": "5.0.0",
     "@types/mkdirp": "1.0.0",
     "@types/node": "13.13.9",
-    "@types/prettier": "2.0.0"
+    "@types/prettier": "2.0.1"
   },
   "license": "MIT"
 }
