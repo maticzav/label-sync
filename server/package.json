@@ -16,7 +16,7 @@
     "fp-ts": "2.6.1",
     "handlebars": "4.7.6",
     "io-ts": "2.2.3",
-    "js-yaml": "3.13.1",
+    "js-yaml": "3.14.0",
     "jsonwebtoken": "8.5.1",
     "moment": "2.26.0",
     "multilines": "1.0.3",
@@ -37,7 +37,7 @@
     "@types/request-promise-native": "1.0.17",
     "@types/stripe": "7.13.23",
     "execa": "4.0.0",
-    "js-yaml": "3.13.1",
+    "js-yaml": "3.14.0",
     "nock": "12.0.3",
     "request-promise-native": "1.0.8"
   },
