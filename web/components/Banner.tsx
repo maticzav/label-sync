@@ -40,13 +40,12 @@ export default function Banner(props: Banner) {
           {/* Cancel */}
           <div className="order-3 mt-2 flex-shrink-0 w-full sm:order-2 sm:mt-0 sm:w-auto">
             <div className="rounded-md shadow-sm">
-              <a
-                href="#"
+              <button
                 onClick={props.button.onClick}
-                className="flex items-center justify-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-green-600 bg-white hover:text-green-500 focus:outline-none focus:shadow-outline transition ease-in-out duration-150"
+                className="flex w-full items-center justify-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-green-600 bg-white hover:text-green-500 focus:outline-none focus:shadow-outline transition ease-in-out duration-150"
               >
                 {props.button.text}
-              </a>
+              </button>
             </div>
           </div>
           {/* Dismiss */}

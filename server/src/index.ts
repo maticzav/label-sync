@@ -60,9 +60,13 @@ const plans: Plans =
         MONTHLY: 'plan_HEG5wHlZp4io5Q',
       }
     : {
-        ANNUALLY: 'plan_HCkpZId8BCi7cI',
-        MONTHLY: 'plan_HCkojOBbK8hFh6',
+        ANNUALLY: 'price_HKxac3217AdNnw',
+        MONTHLY: 'price_HKxYK7gvZO3ieE',
       }
+// : {
+//     ANNUALLY: 'plan_HCkpZId8BCi7cI',
+//     MONTHLY: 'plan_HCkojOBbK8hFh6',
+//   }
 
 const corsOrigins =
   process.env.NODE_ENV === 'test'

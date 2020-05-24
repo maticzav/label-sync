@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, PropsWithChildren } from 'react'
 import Link from 'next/link'
 
 import Button from '../components/Button'
@@ -6,6 +6,7 @@ import Hero from '../components/Hero'
 import * as Feature from '../components/Feature'
 import Footer from '../components/Footer'
 import Navigation from '../components/Navigation'
+import Section from '../components/Section'
 import Tier from '../components/Tier'
 import Testimonial from '../components/Testimonial'
 
@@ -16,61 +17,21 @@ import { scrollToId } from '../lib/scroll'
 
 /* Pricing event */
 
-export default class Home extends React.Component {
-  scrolledToPricing: boolean
+export default function Home() {
+  return (
+    <>
+      <title>GitHub LabelSync - The best way to sync labels</title>
 
-  constructor(props: {}) {
-    super(props)
-    this.scrolledToPricing = false
-
-    this.checkPricing = this.checkPricing.bind(this)
-  }
-
-  componentDidMount() {
-    window.onscroll = this.checkPricing
-  }
-
-  componentWillUnmount() {
-    window.onscroll = null
-  }
-
-  /**
-   * Checks whether user has scrolled past pricing section.
-   */
-  checkPricing() {
-    const pricingSection = document.getElementById('pricing')!
-
-    /* reached pricing section */
-    if (Math.abs(window.pageYOffset - pricingSection.offsetTop) < 150) {
-      if (!this.scrolledToPricing) {
-        // trigger event
-        gtag.event({
-          action: 'reached pricing',
-          category: 'website',
-          label: 'web',
-          value: 1,
-        })
-      }
-      this.scrolledToPricing = true
-    }
-  }
-
-  render() {
-    return (
-      <>
-        <title>GitHub LabelSync - The best way to sync labels</title>
-
-        <Title></Title>
-        <Introduction></Introduction>
-        <Features></Features>
-        <DetailedFeatures></DetailedFeatures>
-        <Testimonials></Testimonials>
-        <Pricing></Pricing>
-        <FAQ></FAQ>
-        <Footer></Footer>
-      </>
-    )
-  }
+      <Title></Title>
+      <Introduction></Introduction>
+      <Features></Features>
+      <DetailedFeatures></DetailedFeatures>
+      <Testimonials></Testimonials>
+      <Pricing></Pricing>
+      <FAQ></FAQ>
+      <Footer></Footer>
+    </>
+  )
 }
 
 /* Sections */
@@ -137,7 +98,12 @@ function Introduction() {
 
 function Features() {
   return (
-    <div className="bg-white overflow-hidden">
+    <Section
+      id="features"
+      name="features"
+      className="bg-white overflow-hidden"
+      onReached={gtag.sectionreached}
+    >
       <div className="container">
         <div className="relative max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           {/* <!-- Side art --> */}
@@ -306,13 +272,18 @@ function Features() {
           </div>
         </div>
       </div>
-    </div>
+    </Section>
   )
 }
 
 function DetailedFeatures() {
   return (
-    <div id="features" className="relative bg-gray-50 overflow-hidden">
+    <Section
+      id="detailed-features"
+      name="detailed fetaures"
+      className="relative bg-gray-50 overflow-hidden"
+      onReached={gtag.sectionreached}
+    >
       {/* <!-- Leading text --> */}
 
       <div className="text-center">
@@ -428,13 +399,18 @@ function DetailedFeatures() {
 
         {/* <!--  --> */}
       </div>
-    </div>
+    </Section>
   )
 }
 
 function Testimonials() {
   return (
-    <div className="py-15 bg-gray-30 overflow-hidden md:py-20 lg:py-24">
+    <Section
+      id="prisma-testimonial"
+      name="prisma testimonial"
+      className="py-15 bg-gray-30 overflow-hidden md:py-20 lg:py-24"
+      onReached={gtag.sectionreached}
+    >
       <Testimonial
         heading="What our users say about us?"
         content={
@@ -457,8 +433,13 @@ function Testimonials() {
         }}
         pattern
       ></Testimonial>
-    </div>
+    </Section>
   )
+}
+
+const prices = {
+  ANNUALLY: 8,
+  MONTHLY: 10,
 }
 
 function Pricing() {
@@ -478,7 +459,12 @@ function Pricing() {
   }
 
   return (
-    <div id="pricing" className="bg-green-500">
+    <Section
+      id="pricing"
+      name="pricing"
+      className="bg-green-500"
+      onReached={gtag.sectionreached}
+    >
       <div className="pt-12 container text-center px-10 sm:px-6 sm:pt-16 lg:pt-24">
         <h2 className="text-lg leading-6 font-semibold text-gray-300 uppercase tracking-wider">
           Pricing
@@ -486,10 +472,10 @@ function Pricing() {
         <p className="mt-2 text-3xl leading-9 font-extrabold text-white sm:text-4xl sm:leading-10 lg:text-5xl lg:leading-none">
           Ready to get started?
         </p>
-        {/* <p className="mt-4 md:mt-6 text-xl mx-auto md:max-w-2xl leading-7 text-gray-200">
+        <p className="mt-4 md:mt-6 text-xl mx-auto md:max-w-2xl leading-7 text-gray-200">
           We are also giving you an option for 14-day free trial to find out how
           the tool works and a free tier to see how great it is.
-        </p> */}
+        </p>
       </div>
 
       {/* Launch discount */}
@@ -580,7 +566,7 @@ function Pricing() {
                       {/* Yearly pricing */}
                       {period === 'ANNUALLY' && (
                         <>
-                          $16
+                          ${prices.ANNUALLY}
                           {/* $12
                           <span className="ml-1 text-2xl leading-8 font-medium text-gray-500 line-through">
                             $16
@@ -590,7 +576,7 @@ function Pricing() {
                       {/* Monthly pricing */}
                       {period === 'MONTHLY' && (
                         <>
-                          $20
+                          ${prices.MONTHLY}
                           {/* $16
                           <span className="ml-1 text-2xl leading-8 font-medium text-gray-500 line-through">
                             $20
@@ -630,7 +616,7 @@ function Pricing() {
         </div>
       </div>
       {/* End of tier container */}
-    </div>
+    </Section>
   )
 }
 
