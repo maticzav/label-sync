@@ -131,6 +131,6 @@ function badge(props: { name: string; color: string }): string {
  * @param reports
  */
 function joinReports(reports: string[]): string {
-  const separator = ['', '---', ''].join(os.EOL)
+  const separator = ['\n', '---', '\n'].join(os.EOL)
   return reports.join(separator)
 }

@@ -6,7 +6,9 @@ exports[`language: correctly generates human readable report 1`] = `
 #### \\\\\`labelsync\\\\\`
 
 Couldn't make a diff of labels.
+
 ---
+
 ### \`changed\`
 
 __New labels:__
