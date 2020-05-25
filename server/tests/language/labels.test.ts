@@ -7,7 +7,7 @@ describe('language:', () => {
       {
         status: 'Failure',
         owner: 'maticzav',
-        repo: 'labelsync',
+        repo: 'failure',
         message: `Couldn't make a diff of labels.`,
         config: {
           labels: {
@@ -75,6 +75,50 @@ describe('language:', () => {
             },
             'bug/2': {
               color: '33',
+            },
+          },
+          config: {
+            removeUnconfiguredLabels: true,
+          },
+        },
+      },
+      {
+        status: 'Success',
+        owner: 'maticzav',
+        repo: 'unchanged',
+        additions: [],
+        updates: [],
+        removals: [],
+        aliases: [],
+        config: {
+          labels: {
+            'bug/0': {
+              color: 'ff',
+            },
+          },
+          config: {
+            removeUnconfiguredLabels: true,
+          },
+        },
+      },
+      {
+        status: 'Success',
+        owner: 'maticzav',
+        repo: 'removals',
+        additions: [],
+        updates: [],
+        removals: [
+          {
+            name: 'bug/3',
+            color: 'ff',
+            default: false,
+          },
+        ],
+        aliases: [],
+        config: {
+          labels: {
+            'bug/0': {
+              color: 'ff',
             },
           },
           config: {

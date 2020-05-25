@@ -3,7 +3,7 @@
 exports[`language: correctly generates human readable report 1`] = `
 "## LabelSync Overview 
 
-#### \\\\\`labelsync\\\\\`
+#### \\\\\`failure\\\\\`
 
 Couldn't make a diff of labels.
 
@@ -20,6 +20,28 @@ __Changed labels:__
 
 __Aliased labels:__
  * ![label/alias](https://img.shields.io/static/v1?color=inactive&label=&message=label%2Falias \\"label/alias\\") → ![label/new-alias](https://img.shields.io/static/v1?color=00&label=&message=label%2Fnew-alias \\"label/new-alias\\")
+
+__Removed labels:__
+ * ![bug/3](https://img.shields.io/static/v1?color=ff&label=&message=bug%2F3 \\"bug/3\\")
+
+---
+
+### \`unchanged\`
+
+Nothing changed! 🙈
+
+---
+
+### \`removals\`
+
+__New labels:__
+No new labels created.
+
+__Changed labels:__
+No changed labels.
+
+__Aliased labels:__
+No aliases.
 
 __Removed labels:__
  * ![bug/3](https://img.shields.io/static/v1?color=ff&label=&message=bug%2F3 \\"bug/3\\")"

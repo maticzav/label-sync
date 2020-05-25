@@ -26,10 +26,29 @@ export function generateHumanReadableReport(
 function parseLabelSyncReport(report: LabelSyncReport): string {
   switch (report.status) {
     case 'Success': {
+      /* States */
+
+      const changed =
+        report.additions.length +
+          report.aliases.length +
+          report.removals.length +
+          report.updates.length >
+        0
+
       const removeUnconfiguredLabels = withDefault(
         false,
         report.config?.config.removeUnconfiguredLabels,
       )
+
+      /* Templates */
+
+      /* prettier-ignore */
+      if (!changed) return ml`
+      | ### ${parseRepoName(report.repo)}
+      |
+      | Nothing changed! 🙈
+      `
+
       switch (removeUnconfiguredLabels) {
         case true: {
           return ml`
