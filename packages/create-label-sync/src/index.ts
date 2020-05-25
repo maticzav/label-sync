@@ -58,20 +58,31 @@ async function main(
     }
   }>,
 ) {
-  /* Owner, repository */
+  /* Owner information and repository. */
 
-  const { owner } = await inquirer.prompt<{ owner: string }>([
-    {
-      name: 'owner',
-      message: "What's your personal or organisation GitHub name?",
-      type: 'input',
-      validate: (account) => account.trim() !== '',
-    },
-  ])
+  let owner: string | undefined = undefined
+
+  /* Set a default if we are alrady in repo. */
+  if (process.cwd().endsWith('labelsync')) {
+    const repository = path.basename(process.cwd())
+    owner = repository.replace('-labelsync', '')
+  }
+
+  owner = await inquirer
+    .prompt<{ owner: string }>([
+      {
+        name: 'owner',
+        message: "What's your personal or organisation GitHub name?",
+        type: 'input',
+        default: owner,
+        validate: (account) => account.trim() !== '',
+      },
+    ])
+    .then((res) => res.owner)
 
   const repository = `${owner}-labelsync`
 
-  /* Repositories */
+  /* Personalised repositories */
 
   const { repositoriesRaw } = await inquirer.prompt<{
     repositoriesRaw: string
