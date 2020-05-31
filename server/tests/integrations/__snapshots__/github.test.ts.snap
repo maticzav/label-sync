@@ -71,47 +71,786 @@ Array [
 
 exports[`github: FREE logs are reporting correctly 1`] = `
 Array [
-  "{\\"level\\":\\"info\\",\\"plan\\":\\"FREE\\",\\"message\\":\\"Onboarding maticzav.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"No existing repository for maticzav, start onboarding.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Bootstraping config repo for maticzav.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Onboarding complete for maticzav.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"plan\\":\\"FREE\\",\\"message\\":\\"Onboarding maticzav.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"User has existing repository in maticzav-labelsync, performing sync.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"error\\":\\"Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }\\",\\"message\\":\\"Error in config, skipping sync.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Opened issue undefined.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"plan\\":\\"FREE\\",\\"message\\":\\"Onboarding maticzav.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"User has existing repository in maticzav-labelsync, performing sync.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Performing sync.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"plan\\":\\"FREE\\",\\"message\\":\\"Onboarding maticzav.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"User has existing repository in maticzav-labelsync, performing sync.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"access\\":\\"{\\\\\\"status\\\\\\":\\\\\\"Insufficient\\\\\\",\\\\\\"missing\\\\\\":[\\\\\\"unchanged\\\\\\"],\\\\\\"accessible\\\\\\":[\\\\\\"changed\\\\\\"]}\\",\\"message\\":\\"Insufficient permissions, skipping sync.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Opened issue undefined.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"config\\":\\"{\\\\\\"repos\\\\\\":{\\\\\\"changed\\\\\\":{\\\\\\"config\\\\\\":{\\\\\\"removeUnconfiguredLabels\\\\\\":true},\\\\\\"labels\\\\\\":{\\\\\\"create/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"},\\\\\\"alias/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\",\\\\\\"alias\\\\\\":[\\\\\\"alias/old:1\\\\\\",\\\\\\"alias/old:2\\\\\\"]},\\\\\\"update/color\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"ffffff\\\\\\"}}},\\\\\\"unchanged\\\\\\":{\\\\\\"labels\\\\\\":{\\\\\\"label-a\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"}}}}}\\",\\"message\\":\\"Configuration loaded.\\",\\"event\\":{\\"name\\":\\"push\\",\\"action\\":\\"push\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Performing label sync on maticzav.\\",\\"event\\":{\\"name\\":\\"push\\",\\"action\\":\\"push\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"config\\":\\"{\\\\\\"repos\\\\\\":{\\\\\\"changed\\\\\\":{\\\\\\"config\\\\\\":{\\\\\\"removeUnconfiguredLabels\\\\\\":true},\\\\\\"labels\\\\\\":{\\\\\\"create/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"},\\\\\\"alias/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\",\\\\\\"alias\\\\\\":[\\\\\\"alias/old:1\\\\\\",\\\\\\"alias/old:2\\\\\\"]},\\\\\\"update/color\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"ffffff\\\\\\"}}},\\\\\\"unchanged\\\\\\":{\\\\\\"labels\\\\\\":{\\\\\\"label-a\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"}}}}}\\",\\"reports\\":\\"[{\\\\\\"status\\\\\\":\\\\\\"Success\\\\\\",\\\\\\"repo\\\\\\":\\\\\\"changed\\\\\\",\\\\\\"owner\\\\\\":\\\\\\"maticzav\\\\\\",\\\\\\"additions\\\\\\":[{\\\\\\"name\\\\\\":\\\\\\"create/new\\\\\\",\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"}],\\\\\\"updates\\\\\\":[{\\\\\\"name\\\\\\":\\\\\\"alias/new\\\\\\",\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\",\\\\\\"old_name\\\\\\":\\\\\\"alias/old:1\\\\\\"},{\\\\\\"name\\\\\\":\\\\\\"update/color\\\\\\",\\\\\\"color\\\\\\":\\\\\\"ffffff\\\\\\"}],\\\\\\"removals\\\\\\":[{\\\\\\"name\\\\\\":\\\\\\"alias/old:2\\\\\\",\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"},{\\\\\\"name\\\\\\":\\\\\\"remove\\\\\\",\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"}],\\\\\\"aliases\\\\\\":[{\\\\\\"name\\\\\\":\\\\\\"alias/new\\\\\\",\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\",\\\\\\"old_name\\\\\\":\\\\\\"alias/old:2\\\\\\"}],\\\\\\"config\\\\\\":{\\\\\\"config\\\\\\":{\\\\\\"removeUnconfiguredLabels\\\\\\":true},\\\\\\"labels\\\\\\":{\\\\\\"create/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"},\\\\\\"alias/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\",\\\\\\"alias\\\\\\":[\\\\\\"alias/old:1\\\\\\",\\\\\\"alias/old:2\\\\\\"]},\\\\\\"update/color\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"ffffff\\\\\\"}}}},{\\\\\\"status\\\\\\":\\\\\\"Success\\\\\\",\\\\\\"repo\\\\\\":\\\\\\"unchanged\\\\\\",\\\\\\"owner\\\\\\":\\\\\\"maticzav\\\\\\",\\\\\\"additions\\\\\\":[],\\\\\\"updates\\\\\\":[],\\\\\\"removals\\\\\\":[],\\\\\\"aliases\\\\\\":[],\\\\\\"config\\\\\\":{\\\\\\"config\\\\\\":{\\\\\\"removeUnconfiguredLabels\\\\\\":false},\\\\\\"labels\\\\\\":{\\\\\\"label-a\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"}}}}]\\",\\"message\\":\\"Sync completed.\\",\\"event\\":{\\"name\\":\\"push\\",\\"action\\":\\"push\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"error\\":\\"Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }\\",\\"message\\":\\"Error in config Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }\\",\\"event\\":{\\"name\\":\\"push\\",\\"action\\":\\"push\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Commented on commit 0000000000000000000000000000000000000000.\\",\\"event\\":{\\"name\\":\\"push\\",\\"action\\":\\"push\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"config\\":\\"{\\\\\\"repos\\\\\\":{\\\\\\"changed\\\\\\":{\\\\\\"config\\\\\\":{\\\\\\"removeUnconfiguredLabels\\\\\\":true},\\\\\\"labels\\\\\\":{\\\\\\"create/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"},\\\\\\"alias/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\",\\\\\\"alias\\\\\\":[\\\\\\"alias/old:1\\\\\\",\\\\\\"alias/old:2\\\\\\"]},\\\\\\"update/color\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"ffffff\\\\\\"}}},\\\\\\"unchanged\\\\\\":{\\\\\\"labels\\\\\\":{\\\\\\"label-a\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"}}}}}\\",\\"message\\":\\"Configuration loaded.\\",\\"event\\":{\\"name\\":\\"push\\",\\"action\\":\\"push\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"config\\":\\"{\\\\\\"repos\\\\\\":{\\\\\\"changed\\\\\\":{\\\\\\"config\\\\\\":{\\\\\\"removeUnconfiguredLabels\\\\\\":true},\\\\\\"labels\\\\\\":{\\\\\\"create/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"},\\\\\\"alias/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\",\\\\\\"alias\\\\\\":[\\\\\\"alias/old:1\\\\\\",\\\\\\"alias/old:2\\\\\\"]},\\\\\\"update/color\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"ffffff\\\\\\"}}},\\\\\\"unchanged\\\\\\":{\\\\\\"labels\\\\\\":{\\\\\\"label-a\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"}}}}}\\",\\"access\\":\\"{\\\\\\"status\\\\\\":\\\\\\"Insufficient\\\\\\",\\\\\\"missing\\\\\\":[\\\\\\"unchanged\\\\\\"],\\\\\\"accessible\\\\\\":[\\\\\\"changed\\\\\\"]}\\",\\"message\\":\\"Insufficient permissions: unchanged\\",\\"event\\":{\\"name\\":\\"push\\",\\"action\\":\\"push\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Commented on commit 0000000000000000000000000000000000000000.\\",\\"event\\":{\\"name\\":\\"push\\",\\"action\\":\\"push\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"PullRequest action: opened\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"config\\":\\"{\\\\\\"repos\\\\\\":{\\\\\\"changed\\\\\\":{\\\\\\"config\\\\\\":{\\\\\\"removeUnconfiguredLabels\\\\\\":true},\\\\\\"labels\\\\\\":{\\\\\\"create/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"},\\\\\\"alias/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\",\\\\\\"alias\\\\\\":[\\\\\\"alias/old:1\\\\\\",\\\\\\"alias/old:2\\\\\\"]},\\\\\\"update/color\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"ffffff\\\\\\"}}},\\\\\\"unchanged\\\\\\":{\\\\\\"labels\\\\\\":{\\\\\\"label-a\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"}}}}}\\",\\"message\\":\\"Configration loaded configuration on labels\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Simulating sync.\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Commented on PullRequest (undefined)\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"PullRequest action: opened\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"files\\":\\"README.md\\",\\"message\\":\\"Configuration didn't change, skipping comment.\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"PullRequest action: opened\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"config\\":\\"{\\\\\\"repos\\\\\\":{\\\\\\"changed\\\\\\":{\\\\\\"config\\\\\\":{\\\\\\"removeUnconfiguredLabels\\\\\\":true},\\\\\\"labels\\\\\\":{\\\\\\"create/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"},\\\\\\"alias/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\",\\\\\\"alias\\\\\\":[\\\\\\"alias/old:1\\\\\\",\\\\\\"alias/old:2\\\\\\"]},\\\\\\"update/color\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"ffffff\\\\\\"}}},\\\\\\"unchanged\\\\\\":{\\\\\\"labels\\\\\\":{\\\\\\"label-a\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"}}}}}\\",\\"message\\":\\"Configration loaded configuration on labels\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Insufficient permissions\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Commented on PullRequest undefined\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"New label create in changed: \\\\\\":bug: Bugfix\\\\\\".\\",\\"event\\":{\\"name\\":\\"label.created\\",\\"action\\":\\"created\\"},\\"repo\\":{\\"name\\":\\"changed\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Removing \\\\\\":bug: Bugfix\\\\\\" from changed.\\",\\"event\\":{\\"name\\":\\"label.created\\",\\"action\\":\\"created\\"},\\"repo\\":{\\"name\\":\\"changed\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Removed label \\\\\\":bug: Bugfix\\\\\\" from changed.\\",\\"event\\":{\\"name\\":\\"label.created\\",\\"action\\":\\"created\\"},\\"repo\\":{\\"name\\":\\"changed\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Issue (1) has been labeled with \\\\\\"label/siblings\\\\\\".\\",\\"event\\":{\\"name\\":\\"issues.labeled\\",\\"action\\":\\"labeled\\"},\\"repo\\":{\\"name\\":\\"changed\\"},\\"user\\":{\\"id\\":43337079,\\"owner\\":\\"maticzav\\",\\"type\\":\\"Organization\\"},\\"context\\":{\\"user_id\\":43337079}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Added siblings of label/siblings to issue 1: label/regular\\",\\"event\\":{\\"name\\":\\"issues.labeled\\",\\"action\\":\\"labeled\\"},\\"repo\\":{\\"name\\":\\"changed\\"},\\"user\\":{\\"id\\":43337079,\\"owner\\":\\"maticzav\\",\\"type\\":\\"Organization\\"},\\"context\\":{\\"user_id\\":43337079}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"New repository newrepo in maticzav.\\",\\"event\\":{\\"name\\":\\"repository\\",\\"action\\":\\"created\\"},\\"repo\\":{\\"name\\":\\"newrepo\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Performing sync on newrepo.\\",\\"event\\":{\\"name\\":\\"repository\\",\\"action\\":\\"created\\"},\\"repo\\":{\\"name\\":\\"newrepo\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Repository synced newrepo.\\",\\"event\\":{\\"name\\":\\"repository\\",\\"action\\":\\"created\\"},\\"repo\\":{\\"name\\":\\"newrepo\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Onboarding maticzav.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+      "plan": "FREE",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "No existing repository for maticzav, start onboarding.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Bootstraping config repo for maticzav.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Onboarding complete for maticzav.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Onboarding maticzav.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+      "plan": "FREE",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "User has existing repository in maticzav-labelsync, performing sync.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Error in config, skipping sync.",
+    "meta": Object {
+      "error": "Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }",
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Opened issue undefined.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Onboarding maticzav.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+      "plan": "FREE",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "User has existing repository in maticzav-labelsync, performing sync.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Performing sync.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Onboarding maticzav.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+      "plan": "FREE",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "User has existing repository in maticzav-labelsync, performing sync.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Insufficient permissions, skipping sync.",
+    "meta": Object {
+      "access": "{\\"status\\":\\"Insufficient\\",\\"missing\\":[\\"unchanged\\"],\\"accessible\\":[\\"changed\\"]}",
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Opened issue undefined.",
+    "meta": Object {
+      "event": Object {
+        "action": "push",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "push",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Configuration loaded.",
+    "meta": Object {
+      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
+      "event": Object {
+        "action": "push",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "push",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Performing label sync on maticzav.",
+    "meta": Object {
+      "event": Object {
+        "action": "push",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "push",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Sync completed.",
+    "meta": Object {
+      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
+      "event": Object {
+        "action": "push",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "push",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+      "reports": "[{\\"status\\":\\"Success\\",\\"repo\\":\\"changed\\",\\"owner\\":\\"maticzav\\",\\"additions\\":[{\\"name\\":\\"create/new\\",\\"color\\":\\"000000\\"}],\\"updates\\":[{\\"name\\":\\"alias/new\\",\\"color\\":\\"000000\\",\\"old_name\\":\\"alias/old:1\\"},{\\"name\\":\\"update/color\\",\\"color\\":\\"ffffff\\"}],\\"removals\\":[{\\"name\\":\\"alias/old:2\\",\\"color\\":\\"000000\\"},{\\"name\\":\\"remove\\",\\"color\\":\\"000000\\"}],\\"aliases\\":[{\\"name\\":\\"alias/new\\",\\"color\\":\\"000000\\",\\"old_name\\":\\"alias/old:2\\"}],\\"config\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}}},{\\"status\\":\\"Success\\",\\"repo\\":\\"unchanged\\",\\"owner\\":\\"maticzav\\",\\"additions\\":[],\\"updates\\":[],\\"removals\\":[],\\"aliases\\":[],\\"config\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":false},\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}]",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Error in config Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }",
+    "meta": Object {
+      "error": "Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }",
+      "event": Object {
+        "action": "push",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "push",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Commented on commit 0000000000000000000000000000000000000000.",
+    "meta": Object {
+      "event": Object {
+        "action": "push",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "push",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Configuration loaded.",
+    "meta": Object {
+      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
+      "event": Object {
+        "action": "push",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "push",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Insufficient permissions: unchanged",
+    "meta": Object {
+      "access": "{\\"status\\":\\"Insufficient\\",\\"missing\\":[\\"unchanged\\"],\\"accessible\\":[\\"changed\\"]}",
+      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
+      "event": Object {
+        "action": "push",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "push",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Commented on commit 0000000000000000000000000000000000000000.",
+    "meta": Object {
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "PullRequest action: opened",
+    "meta": Object {
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Configration loaded configuration on labels",
+    "meta": Object {
+      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Simulating sync.",
+    "meta": Object {
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Commented on PullRequest (undefined)",
+    "meta": Object {
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "PullRequest action: opened",
+    "meta": Object {
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Configuration didn't change, skipping comment.",
+    "meta": Object {
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "files": "README.md",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "PullRequest action: opened",
+    "meta": Object {
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Configration loaded configuration on labels",
+    "meta": Object {
+      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Insufficient permissions",
+    "meta": Object {
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Commented on PullRequest undefined",
+    "meta": Object {
+      "event": Object {
+        "action": "labeled",
+        "context": Object {
+          "user_id": 43337079,
+        },
+        "name": "issues.labeled",
+        "repo": Object {
+          "name": "changed",
+        },
+        "user": Object {
+          "id": 43337079,
+          "owner": "maticzav",
+          "type": "Organization",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "New label create in changed: \\":bug: Bugfix\\".",
+    "meta": Object {
+      "event": Object {
+        "action": "labeled",
+        "context": Object {
+          "user_id": 43337079,
+        },
+        "name": "issues.labeled",
+        "repo": Object {
+          "name": "changed",
+        },
+        "user": Object {
+          "id": 43337079,
+          "owner": "maticzav",
+          "type": "Organization",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Removing \\":bug: Bugfix\\" from changed.",
+    "meta": Object {
+      "event": Object {
+        "action": "labeled",
+        "context": Object {
+          "user_id": 43337079,
+        },
+        "name": "issues.labeled",
+        "repo": Object {
+          "name": "changed",
+        },
+        "user": Object {
+          "id": 43337079,
+          "owner": "maticzav",
+          "type": "Organization",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Removed label \\":bug: Bugfix\\" from changed.",
+    "meta": Object {
+      "event": Object {
+        "action": "labeled",
+        "context": Object {
+          "user_id": 43337079,
+        },
+        "name": "issues.labeled",
+        "repo": Object {
+          "name": "changed",
+        },
+        "user": Object {
+          "id": 43337079,
+          "owner": "maticzav",
+          "type": "Organization",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Issue (1) has been labeled with \\"label/siblings\\".",
+    "meta": Object {
+      "event": Object {
+        "action": "labeled",
+        "context": Object {
+          "user_id": 43337079,
+        },
+        "name": "issues.labeled",
+        "repo": Object {
+          "name": "changed",
+        },
+        "user": Object {
+          "id": 43337079,
+          "owner": "maticzav",
+          "type": "Organization",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Added siblings of label/siblings to issue 1: label/regular",
+    "meta": Object {
+      "event": Object {
+        "action": "created",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "repository",
+        "repo": Object {
+          "name": "newrepo",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "New repository newrepo in maticzav.",
+    "meta": Object {
+      "event": Object {
+        "action": "created",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "repository",
+        "repo": Object {
+          "name": "newrepo",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Performing sync on newrepo.",
+    "meta": Object {
+      "event": Object {
+        "action": "created",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "repository",
+        "repo": Object {
+          "name": "newrepo",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
 ]
 `;
 
@@ -315,53 +1054,940 @@ Array [
 
 exports[`github: PAID logs are reporting correctly 1`] = `
 Array [
-  "{\\"level\\":\\"info\\",\\"plan\\":\\"PAID\\",\\"message\\":\\"Onboarding maticzav.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"No existing repository for maticzav, start onboarding.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Bootstraping config repo for maticzav.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Onboarding complete for maticzav.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"plan\\":\\"PAID\\",\\"message\\":\\"Onboarding maticzav.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"User has existing repository in maticzav-labelsync, performing sync.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"error\\":\\"Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }\\",\\"message\\":\\"Error in config, skipping sync.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Opened issue undefined.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"plan\\":\\"PAID\\",\\"message\\":\\"Onboarding maticzav.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"User has existing repository in maticzav-labelsync, performing sync.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Performing sync.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"plan\\":\\"PAID\\",\\"message\\":\\"Onboarding maticzav.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"User has existing repository in maticzav-labelsync, performing sync.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"access\\":\\"{\\\\\\"status\\\\\\":\\\\\\"Insufficient\\\\\\",\\\\\\"missing\\\\\\":[\\\\\\"unchanged\\\\\\"],\\\\\\"accessible\\\\\\":[\\\\\\"changed\\\\\\"]}\\",\\"message\\":\\"Insufficient permissions, skipping sync.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Opened issue undefined.\\",\\"event\\":\\"installation\\"}",
-  "{\\"level\\":\\"info\\",\\"config\\":\\"{\\\\\\"repos\\\\\\":{\\\\\\"changed\\\\\\":{\\\\\\"config\\\\\\":{\\\\\\"removeUnconfiguredLabels\\\\\\":true},\\\\\\"labels\\\\\\":{\\\\\\"create/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"},\\\\\\"alias/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\",\\\\\\"alias\\\\\\":[\\\\\\"alias/old:1\\\\\\",\\\\\\"alias/old:2\\\\\\"]},\\\\\\"update/color\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"ffffff\\\\\\"}}},\\\\\\"unchanged\\\\\\":{\\\\\\"labels\\\\\\":{\\\\\\"label-a\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"}}}}}\\",\\"message\\":\\"Configuration loaded.\\",\\"event\\":{\\"name\\":\\"push\\",\\"action\\":\\"push\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Performing label sync on maticzav.\\",\\"event\\":{\\"name\\":\\"push\\",\\"action\\":\\"push\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"config\\":\\"{\\\\\\"repos\\\\\\":{\\\\\\"changed\\\\\\":{\\\\\\"config\\\\\\":{\\\\\\"removeUnconfiguredLabels\\\\\\":true},\\\\\\"labels\\\\\\":{\\\\\\"create/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"},\\\\\\"alias/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\",\\\\\\"alias\\\\\\":[\\\\\\"alias/old:1\\\\\\",\\\\\\"alias/old:2\\\\\\"]},\\\\\\"update/color\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"ffffff\\\\\\"}}},\\\\\\"unchanged\\\\\\":{\\\\\\"labels\\\\\\":{\\\\\\"label-a\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"}}}}}\\",\\"reports\\":\\"[{\\\\\\"status\\\\\\":\\\\\\"Success\\\\\\",\\\\\\"repo\\\\\\":\\\\\\"changed\\\\\\",\\\\\\"owner\\\\\\":\\\\\\"maticzav\\\\\\",\\\\\\"additions\\\\\\":[{\\\\\\"name\\\\\\":\\\\\\"create/new\\\\\\",\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"}],\\\\\\"updates\\\\\\":[{\\\\\\"name\\\\\\":\\\\\\"alias/new\\\\\\",\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\",\\\\\\"old_name\\\\\\":\\\\\\"alias/old:1\\\\\\"},{\\\\\\"name\\\\\\":\\\\\\"update/color\\\\\\",\\\\\\"color\\\\\\":\\\\\\"ffffff\\\\\\"}],\\\\\\"removals\\\\\\":[{\\\\\\"name\\\\\\":\\\\\\"alias/old:2\\\\\\",\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"},{\\\\\\"name\\\\\\":\\\\\\"remove\\\\\\",\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"}],\\\\\\"aliases\\\\\\":[{\\\\\\"name\\\\\\":\\\\\\"alias/new\\\\\\",\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\",\\\\\\"old_name\\\\\\":\\\\\\"alias/old:2\\\\\\"}],\\\\\\"config\\\\\\":{\\\\\\"config\\\\\\":{\\\\\\"removeUnconfiguredLabels\\\\\\":true},\\\\\\"labels\\\\\\":{\\\\\\"create/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"},\\\\\\"alias/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\",\\\\\\"alias\\\\\\":[\\\\\\"alias/old:1\\\\\\",\\\\\\"alias/old:2\\\\\\"]},\\\\\\"update/color\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"ffffff\\\\\\"}}}},{\\\\\\"status\\\\\\":\\\\\\"Success\\\\\\",\\\\\\"repo\\\\\\":\\\\\\"unchanged\\\\\\",\\\\\\"owner\\\\\\":\\\\\\"maticzav\\\\\\",\\\\\\"additions\\\\\\":[],\\\\\\"updates\\\\\\":[],\\\\\\"removals\\\\\\":[],\\\\\\"aliases\\\\\\":[],\\\\\\"config\\\\\\":{\\\\\\"config\\\\\\":{\\\\\\"removeUnconfiguredLabels\\\\\\":false},\\\\\\"labels\\\\\\":{\\\\\\"label-a\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"}}}}]\\",\\"message\\":\\"Sync completed.\\",\\"event\\":{\\"name\\":\\"push\\",\\"action\\":\\"push\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"error\\":\\"Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }\\",\\"message\\":\\"Error in config Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }\\",\\"event\\":{\\"name\\":\\"push\\",\\"action\\":\\"push\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Commented on commit 0000000000000000000000000000000000000000.\\",\\"event\\":{\\"name\\":\\"push\\",\\"action\\":\\"push\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"config\\":\\"{\\\\\\"repos\\\\\\":{\\\\\\"changed\\\\\\":{\\\\\\"config\\\\\\":{\\\\\\"removeUnconfiguredLabels\\\\\\":true},\\\\\\"labels\\\\\\":{\\\\\\"create/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"},\\\\\\"alias/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\",\\\\\\"alias\\\\\\":[\\\\\\"alias/old:1\\\\\\",\\\\\\"alias/old:2\\\\\\"]},\\\\\\"update/color\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"ffffff\\\\\\"}}},\\\\\\"unchanged\\\\\\":{\\\\\\"labels\\\\\\":{\\\\\\"label-a\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"}}}}}\\",\\"message\\":\\"Configuration loaded.\\",\\"event\\":{\\"name\\":\\"push\\",\\"action\\":\\"push\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"config\\":\\"{\\\\\\"repos\\\\\\":{\\\\\\"changed\\\\\\":{\\\\\\"config\\\\\\":{\\\\\\"removeUnconfiguredLabels\\\\\\":true},\\\\\\"labels\\\\\\":{\\\\\\"create/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"},\\\\\\"alias/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\",\\\\\\"alias\\\\\\":[\\\\\\"alias/old:1\\\\\\",\\\\\\"alias/old:2\\\\\\"]},\\\\\\"update/color\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"ffffff\\\\\\"}}},\\\\\\"unchanged\\\\\\":{\\\\\\"labels\\\\\\":{\\\\\\"label-a\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"}}}}}\\",\\"access\\":\\"{\\\\\\"status\\\\\\":\\\\\\"Insufficient\\\\\\",\\\\\\"missing\\\\\\":[\\\\\\"unchanged\\\\\\"],\\\\\\"accessible\\\\\\":[\\\\\\"changed\\\\\\"]}\\",\\"message\\":\\"Insufficient permissions: unchanged\\",\\"event\\":{\\"name\\":\\"push\\",\\"action\\":\\"push\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Commented on commit 0000000000000000000000000000000000000000.\\",\\"event\\":{\\"name\\":\\"push\\",\\"action\\":\\"push\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"PullRequest action: opened\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"config\\":\\"{\\\\\\"repos\\\\\\":{\\\\\\"changed\\\\\\":{\\\\\\"config\\\\\\":{\\\\\\"removeUnconfiguredLabels\\\\\\":true},\\\\\\"labels\\\\\\":{\\\\\\"create/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"},\\\\\\"alias/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\",\\\\\\"alias\\\\\\":[\\\\\\"alias/old:1\\\\\\",\\\\\\"alias/old:2\\\\\\"]},\\\\\\"update/color\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"ffffff\\\\\\"}}},\\\\\\"unchanged\\\\\\":{\\\\\\"labels\\\\\\":{\\\\\\"label-a\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"}}}}}\\",\\"message\\":\\"Configration loaded configuration on labels\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Simulating sync.\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Commented on PullRequest (undefined)\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"PullRequest action: opened\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"files\\":\\"README.md\\",\\"message\\":\\"Configuration didn't change, skipping comment.\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"PullRequest action: opened\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"config\\":\\"{\\\\\\"repos\\\\\\":{\\\\\\"changed\\\\\\":{\\\\\\"config\\\\\\":{\\\\\\"removeUnconfiguredLabels\\\\\\":true},\\\\\\"labels\\\\\\":{\\\\\\"create/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"},\\\\\\"alias/new\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\",\\\\\\"alias\\\\\\":[\\\\\\"alias/old:1\\\\\\",\\\\\\"alias/old:2\\\\\\"]},\\\\\\"update/color\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"ffffff\\\\\\"}}},\\\\\\"unchanged\\\\\\":{\\\\\\"labels\\\\\\":{\\\\\\"label-a\\\\\\":{\\\\\\"color\\\\\\":\\\\\\"000000\\\\\\"}}}}}\\",\\"message\\":\\"Configration loaded configuration on labels\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Insufficient permissions\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Commented on PullRequest undefined\\",\\"event\\":{\\"name\\":\\"pull_request\\",\\"action\\":\\"opened\\"},\\"repo\\":{\\"name\\":\\"maticzav-labelsync\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"New label create in changed: \\\\\\":bug: Bugfix\\\\\\".\\",\\"event\\":{\\"name\\":\\"label.created\\",\\"action\\":\\"created\\"},\\"repo\\":{\\"name\\":\\"changed\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Removing \\\\\\":bug: Bugfix\\\\\\" from changed.\\",\\"event\\":{\\"name\\":\\"label.created\\",\\"action\\":\\"created\\"},\\"repo\\":{\\"name\\":\\"changed\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Removed label \\\\\\":bug: Bugfix\\\\\\" from changed.\\",\\"event\\":{\\"name\\":\\"label.created\\",\\"action\\":\\"created\\"},\\"repo\\":{\\"name\\":\\"changed\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"New label create in changed: \\\\\\":bug: Bugfix\\\\\\".\\",\\"event\\":{\\"name\\":\\"label.created\\",\\"action\\":\\"created\\"},\\"repo\\":{\\"name\\":\\"changed\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Removing \\\\\\":bug: Bugfix\\\\\\" from changed.\\",\\"event\\":{\\"name\\":\\"label.created\\",\\"action\\":\\"created\\"},\\"repo\\":{\\"name\\":\\"changed\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Removed label \\\\\\":bug: Bugfix\\\\\\" from changed.\\",\\"event\\":{\\"name\\":\\"label.created\\",\\"action\\":\\"created\\"},\\"repo\\":{\\"name\\":\\"changed\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Issue (1) has been labeled with \\\\\\"label/siblings\\\\\\".\\",\\"event\\":{\\"name\\":\\"issues.labeled\\",\\"action\\":\\"labeled\\"},\\"repo\\":{\\"name\\":\\"changed\\"},\\"user\\":{\\"id\\":43337079,\\"owner\\":\\"maticzav\\",\\"type\\":\\"Organization\\"},\\"context\\":{\\"user_id\\":43337079}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Added siblings of label/siblings to issue 1: label/regular\\",\\"event\\":{\\"name\\":\\"issues.labeled\\",\\"action\\":\\"labeled\\"},\\"repo\\":{\\"name\\":\\"changed\\"},\\"user\\":{\\"id\\":43337079,\\"owner\\":\\"maticzav\\",\\"type\\":\\"Organization\\"},\\"context\\":{\\"user_id\\":43337079}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"New repository newrepo in maticzav.\\",\\"event\\":{\\"name\\":\\"repository\\",\\"action\\":\\"created\\"},\\"repo\\":{\\"name\\":\\"newrepo\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Performing sync on newrepo.\\",\\"event\\":{\\"name\\":\\"repository\\",\\"action\\":\\"created\\"},\\"repo\\":{\\"name\\":\\"newrepo\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Repository synced newrepo.\\",\\"event\\":{\\"name\\":\\"repository\\",\\"action\\":\\"created\\"},\\"repo\\":{\\"name\\":\\"newrepo\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"New repository newrepo in maticzav.\\",\\"event\\":{\\"name\\":\\"repository\\",\\"action\\":\\"created\\"},\\"repo\\":{\\"name\\":\\"newrepo\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Performing sync on newrepo.\\",\\"event\\":{\\"name\\":\\"repository\\",\\"action\\":\\"created\\"},\\"repo\\":{\\"name\\":\\"newrepo\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
-  "{\\"level\\":\\"info\\",\\"message\\":\\"Repository synced newrepo.\\",\\"event\\":{\\"name\\":\\"repository\\",\\"action\\":\\"created\\"},\\"repo\\":{\\"name\\":\\"newrepo\\"},\\"user\\":{\\"id\\":21031067,\\"owner\\":\\"maticzav\\",\\"type\\":\\"User\\"},\\"context\\":{\\"user_id\\":21031067}}",
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Repository synced newrepo.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Onboarding maticzav.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+      "plan": "PAID",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "No existing repository for maticzav, start onboarding.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Bootstraping config repo for maticzav.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Onboarding complete for maticzav.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Onboarding maticzav.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+      "plan": "PAID",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "User has existing repository in maticzav-labelsync, performing sync.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Error in config, skipping sync.",
+    "meta": Object {
+      "error": "Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }",
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Opened issue undefined.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Onboarding maticzav.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+      "plan": "PAID",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "User has existing repository in maticzav-labelsync, performing sync.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Performing sync.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Onboarding maticzav.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+      "plan": "PAID",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "User has existing repository in maticzav-labelsync, performing sync.",
+    "meta": Object {
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Insufficient permissions, skipping sync.",
+    "meta": Object {
+      "access": "{\\"status\\":\\"Insufficient\\",\\"missing\\":[\\"unchanged\\"],\\"accessible\\":[\\"changed\\"]}",
+      "event": "installation",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Opened issue undefined.",
+    "meta": Object {
+      "event": Object {
+        "action": "push",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "push",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Configuration loaded.",
+    "meta": Object {
+      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
+      "event": Object {
+        "action": "push",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "push",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Performing label sync on maticzav.",
+    "meta": Object {
+      "event": Object {
+        "action": "push",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "push",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Sync completed.",
+    "meta": Object {
+      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
+      "event": Object {
+        "action": "push",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "push",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+      "reports": "[{\\"status\\":\\"Success\\",\\"repo\\":\\"changed\\",\\"owner\\":\\"maticzav\\",\\"additions\\":[{\\"name\\":\\"create/new\\",\\"color\\":\\"000000\\"}],\\"updates\\":[{\\"name\\":\\"alias/new\\",\\"color\\":\\"000000\\",\\"old_name\\":\\"alias/old:1\\"},{\\"name\\":\\"update/color\\",\\"color\\":\\"ffffff\\"}],\\"removals\\":[{\\"name\\":\\"alias/old:2\\",\\"color\\":\\"000000\\"},{\\"name\\":\\"remove\\",\\"color\\":\\"000000\\"}],\\"aliases\\":[{\\"name\\":\\"alias/new\\",\\"color\\":\\"000000\\",\\"old_name\\":\\"alias/old:2\\"}],\\"config\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}}},{\\"status\\":\\"Success\\",\\"repo\\":\\"unchanged\\",\\"owner\\":\\"maticzav\\",\\"additions\\":[],\\"updates\\":[],\\"removals\\":[],\\"aliases\\":[],\\"config\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":false},\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}]",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Error in config Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }",
+    "meta": Object {
+      "error": "Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }",
+      "event": Object {
+        "action": "push",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "push",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Commented on commit 0000000000000000000000000000000000000000.",
+    "meta": Object {
+      "event": Object {
+        "action": "push",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "push",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Configuration loaded.",
+    "meta": Object {
+      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
+      "event": Object {
+        "action": "push",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "push",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Insufficient permissions: unchanged",
+    "meta": Object {
+      "access": "{\\"status\\":\\"Insufficient\\",\\"missing\\":[\\"unchanged\\"],\\"accessible\\":[\\"changed\\"]}",
+      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
+      "event": Object {
+        "action": "push",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "push",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Commented on commit 0000000000000000000000000000000000000000.",
+    "meta": Object {
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "PullRequest action: opened",
+    "meta": Object {
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Configration loaded configuration on labels",
+    "meta": Object {
+      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Simulating sync.",
+    "meta": Object {
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Commented on PullRequest (undefined)",
+    "meta": Object {
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "PullRequest action: opened",
+    "meta": Object {
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Configuration didn't change, skipping comment.",
+    "meta": Object {
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "files": "README.md",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "PullRequest action: opened",
+    "meta": Object {
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Configration loaded configuration on labels",
+    "meta": Object {
+      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Insufficient permissions",
+    "meta": Object {
+      "event": Object {
+        "action": "opened",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "pull_request",
+        "repo": Object {
+          "name": "maticzav-labelsync",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Commented on PullRequest undefined",
+    "meta": Object {
+      "event": Object {
+        "action": "created",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "label.created",
+        "repo": Object {
+          "name": "changed",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "New label create in changed: \\":bug: Bugfix\\".",
+    "meta": Object {
+      "event": Object {
+        "action": "created",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "label.created",
+        "repo": Object {
+          "name": "changed",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Removing \\":bug: Bugfix\\" from changed.",
+    "meta": Object {
+      "event": Object {
+        "action": "created",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "label.created",
+        "repo": Object {
+          "name": "changed",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Removed label \\":bug: Bugfix\\" from changed.",
+    "meta": Object {
+      "event": Object {
+        "action": "created",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "label.created",
+        "repo": Object {
+          "name": "changed",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "New label create in changed: \\":bug: Bugfix\\".",
+    "meta": Object {
+      "event": Object {
+        "action": "created",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "label.created",
+        "repo": Object {
+          "name": "changed",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Removing \\":bug: Bugfix\\" from changed.",
+    "meta": Object {
+      "event": Object {
+        "action": "created",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "label.created",
+        "repo": Object {
+          "name": "changed",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Removed label \\":bug: Bugfix\\" from changed.",
+    "meta": Object {
+      "event": Object {
+        "action": "labeled",
+        "context": Object {
+          "user_id": 43337079,
+        },
+        "name": "issues.labeled",
+        "repo": Object {
+          "name": "changed",
+        },
+        "user": Object {
+          "id": 43337079,
+          "owner": "maticzav",
+          "type": "Organization",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Issue (1) has been labeled with \\"label/siblings\\".",
+    "meta": Object {
+      "event": Object {
+        "action": "labeled",
+        "context": Object {
+          "user_id": 43337079,
+        },
+        "name": "issues.labeled",
+        "repo": Object {
+          "name": "changed",
+        },
+        "user": Object {
+          "id": 43337079,
+          "owner": "maticzav",
+          "type": "Organization",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Added siblings of label/siblings to issue 1: label/regular",
+    "meta": Object {
+      "event": Object {
+        "action": "created",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "repository",
+        "repo": Object {
+          "name": "newrepo",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "New repository newrepo in maticzav.",
+    "meta": Object {
+      "event": Object {
+        "action": "created",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "repository",
+        "repo": Object {
+          "name": "newrepo",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Performing sync on newrepo.",
+    "meta": Object {
+      "event": Object {
+        "action": "created",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "repository",
+        "repo": Object {
+          "name": "newrepo",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Repository synced newrepo.",
+    "meta": Object {
+      "event": Object {
+        "action": "created",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "repository",
+        "repo": Object {
+          "name": "newrepo",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "New repository newrepo in maticzav.",
+    "meta": Object {
+      "event": Object {
+        "action": "created",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "repository",
+        "repo": Object {
+          "name": "newrepo",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "app": "default",
+    "env": "TEST",
+    "level": "INFO",
+    "line": "Performing sync on newrepo.",
+    "meta": Object {
+      "event": Object {
+        "action": "created",
+        "context": Object {
+          "user_id": 21031067,
+        },
+        "name": "repository",
+        "repo": Object {
+          "name": "newrepo",
+        },
+        "user": Object {
+          "id": 21031067,
+          "owner": "maticzav",
+          "type": "User",
+        },
+      },
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
 ]
 `;
 

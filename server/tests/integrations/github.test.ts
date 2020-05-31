@@ -1,5 +1,5 @@
 import { PrismaClient, Plan } from '@prisma/client'
-import { Timber } from '@timberio/node'
+import { createLogger, Logger } from 'logdna'
 import fs from 'fs'
 import moment from 'moment'
 import nock from 'nock'
@@ -44,20 +44,24 @@ const manager = require('../../src')
 
 describe('github:', () => {
   let client: PrismaClient
-  let timber: Timber
+  let logdna: Logger
 
   beforeAll(async () => {
     // Network settings
     nock.disableNetConnect()
     // local servers
     nock.enableNetConnect((host) => {
-      return host.includes('localhost') || host.includes('127.0.0.1')
+      return (
+        host.includes('localhost') || host.includes('127.0.0.1')
+        // || host.includes('logdna')
+      )
     })
 
     // DataStores
     client = new PrismaClient()
-    timber = new Timber('apikey', 'source', {
-      ignoreExceptions: false,
+    logdna = createLogger('apikey', {
+      timeout: 1000,
+      env: 'TEST',
     })
   })
 
@@ -73,7 +77,7 @@ describe('github:', () => {
   beforeEach(() => {
     /* Setup probot */
     probot = createProbot({ id: 123, githubToken: 'token', cert: 'test' })
-    const app = probot.load((app) => manager(app, client, timber))
+    const app = probot.load((app) => manager(app, client, logdna))
   })
 
   afterEach(() => {
@@ -90,7 +94,7 @@ describe('github:', () => {
     describe(`${plan}`, () => {
       /* Tests on each plan. */
 
-      let timberLogs: string[] = []
+      let logs: string[] = []
 
       /* Plan specific setup */
       beforeEach(async () => {
@@ -106,16 +110,26 @@ describe('github:', () => {
           },
         })
 
-        /* Mock all timber logs */
-        nock('https://logs.timber.io')
+        /* Mock all logs */
+        nock('https://logs.logdna.com/')
           .post(/.*/)
-          .reply(200, (uri, body) => {
+          .reply(200, (uri: string, body: any) => {
             /* remove timestamp from log */
-            const [log] = body as any
-            delete log['dt']
-            delete log['periodEndsAt']
+            const newLogs: string[] = body[body['e'] as string].map(
+              (log: any) => {
+                delete log['timestamp']
+                if (typeof log['meta'] === 'string') {
+                  log.meta = JSON.parse(log.meta)
+                }
+                if (log['meta']) {
+                  log.meta['periodEndsAt'] = 'periodEndsAt'
+                }
+                return log
+              },
+            )
+
             /* collect logs */
-            timberLogs.push(JSON.stringify(log))
+            logs.push(...newLogs)
             return
           })
           .persist()
@@ -1364,7 +1378,7 @@ describe('github:', () => {
         )
 
       test('logs are reporting correctly', async () => {
-        expect(timberLogs).toMatchSnapshot()
+        expect(logs.sort()).toMatchSnapshot()
       })
 
       /* End of tests */

@@ -1,10 +1,9 @@
 import Webhooks = require('@octokit/webhooks')
 import { PrismaClient, Installation } from '@prisma/client'
-import { Timber } from '@timberio/node'
-import { ITimberLog } from '@timberio/types'
 import bodyParser from 'body-parser'
 import cors from 'cors'
-import moment, { now } from 'moment'
+import { Logger, createLogger } from 'logdna'
+import moment from 'moment'
 import ml from 'multilines'
 import os from 'os'
 import path from 'path'
@@ -83,11 +82,9 @@ module.exports = (
   app: Application,
   /* Stored here for testing */
   prisma: PrismaClient = new PrismaClient(),
-  timber: Timber = new Timber(
-    process.env.TIMBER_API_KEY!,
-    process.env.TIMBER_SOURCE_ID!,
-    { ignoreExceptions: true },
-  ),
+  logdna: Logger = createLogger(process.env.LOGDNA_INGESTION_KEY!, {
+    env: 'PRODUCTION',
+  }),
   stripe: Stripe = new Stripe(process.env.STRIPE_API_KEY!, {
     apiVersion: '2020-03-02',
   }),
@@ -103,7 +100,7 @@ module.exports = (
    */
   /* istanbul ignore next */
   async function migrate() {
-    await timber.info('Migrating...')
+    logdna.info('Migrating...')
 
     const gh = await app.auth()
 
@@ -114,11 +111,11 @@ module.exports = (
     const lsInstallations = await prisma.installation.count({
       where: { activated: true },
     })
-    await timber.info(`Existing installations: ${ghapp.installations_count}`)
+    logdna.info(`Existing installations: ${ghapp.installations_count}`)
 
     /* Skip sync if all are already tracked. */
     if (lsInstallations >= ghapp.installations_count) {
-      await timber.info(`All installations in sync.`)
+      logdna.info(`All installations in sync.`)
       return
     }
 
@@ -131,7 +128,7 @@ module.exports = (
 
     /* Process installations */
     for (const installation of installations) {
-      await timber.info(`Syncing with database ${installation.account.login}`)
+      logdna.info(`Syncing with database ${installation.account.login}`)
       const now = moment()
       const account = installation.account.login.toLowerCase()
       await prisma.installation.upsert({
@@ -286,7 +283,7 @@ module.exports = (
         }
       }
     } catch (err) /* istanbul ignore next */ {
-      await timber.warn(`Error in subscription flow: ${err.message}`)
+      logdna.warn(`Error in subscription flow: ${err.message}`)
       return res.send({ status: 'err', message: err.message })
     }
   })
@@ -311,16 +308,20 @@ module.exports = (
           process.env.STRIPE_ENDPOINT_SECRET!,
         )
       } catch (err) /* istanbul ingore next */ {
-        await timber.warn(`Error in stripe webhook deconstruction`, {
-          err: err.message,
+        logdna.warn(`Error in stripe webhook deconstruction.`, {
+          meta: {
+            error: err.message,
+          },
         })
         return res.status(400).send(`Webhook Error: ${err.message}`)
       }
 
       /* Logger */
 
-      await timber.info(`Stripe event ${event.type}`, {
-        payload: JSON.stringify(event.data.object),
+      logdna.info(`Stripe event ${event.type}`, {
+        meta: {
+          payload: JSON.stringify(event.data.object),
+        },
       })
 
       /* Event handlers */
@@ -363,16 +364,18 @@ module.exports = (
             },
           })
 
-          await timber.info(`New subscriber ${installation.account}`, {
-            plan: 'PAID',
-            expiresAt: installation.periodEndsAt,
+          logdna.info(`New subscriber ${installation.account}`, {
+            meta: {
+              plan: 'PAID',
+              periodEndsAt: installation.periodEndsAt,
+            },
           })
 
           return res.json({ received: true })
         }
         /* istanbul ignore next */
         default: {
-          await timber.warn(`unhandled stripe webhook event: ${event.type}`)
+          logdna.warn(`unhandled stripe webhook event: ${event.type}`)
           return res.status(400).end()
         }
       }
@@ -407,7 +410,7 @@ module.exports = (
   //     },
   //   })
 
-  // await ctx.logger.info(
+  // ctx.logger.info(
   //   `${owner.login.toLowerCase()}: ${owner.type} purchased LabelSync plan ${dbpurchase.planId}`,
   // )
   // })
@@ -429,7 +432,7 @@ module.exports = (
   //     },
   //   })
 
-  // await ctx.logger.info(
+  // ctx.logger.info(
   //   { owner: owner.login.toLowerCase(), event: 'marketplace_purchase.cancelled' },
   //   `${owner.login.toLowerCase()} cancelled LabelSync plan ${dbpurchase.planId}`,
   // )
@@ -447,7 +450,7 @@ module.exports = (
    */
   app.on(
     'installation.created',
-    withLogger(timber, async (ctx) => {
+    withLogger(logdna, async (ctx) => {
       const account = ctx.payload.installation.account
       const owner = account.login.toLowerCase()
       const configRepo = getLSConfigRepoName(owner)
@@ -467,9 +470,11 @@ module.exports = (
         },
       })
 
-      await ctx.logger.info(`Onboarding ${owner}.`, {
-        plan: installation.plan,
-        periodEndsAt: installation.periodEndsAt,
+      ctx.logger.info(`Onboarding ${owner}.`, {
+        meta: {
+          plan: installation.plan,
+          periodEndsAt: installation.periodEndsAt,
+        },
       })
 
       /* See if config repository exists. */
@@ -479,7 +484,7 @@ module.exports = (
         case 'Exists': {
           /* Perform sync. */
 
-          await ctx.logger.info(
+          ctx.logger.info(
             `User has existing repository in ${configRepo}, performing sync.`,
           )
 
@@ -495,7 +500,7 @@ module.exports = (
           /* No configuration, skip the evaluation. */
           /* istanbul ignore next */
           if (configRaw === null) {
-            await ctx.logger.info(`No configuration, skipping sync.`)
+            ctx.logger.info(`No configuration, skipping sync.`)
             return
           }
 
@@ -503,9 +508,11 @@ module.exports = (
 
           /* Wrong configuration, open the issue. */
           if (error !== null) {
-            await ctx.logger.info(`Error in config, skipping sync.`, {
-              config: JSON.stringify(config),
-              error: error,
+            ctx.logger.info(`Error in config, skipping sync.`, {
+              meta: {
+                config: JSON.stringify(config),
+                error: error,
+              },
             })
 
             /* Open an issue about invalid configuration. */
@@ -534,7 +541,7 @@ module.exports = (
               body,
             )
 
-            await ctx.logger.info(`Opened issue ${issue.number}.`)
+            ctx.logger.info(`Opened issue ${issue.number}.`)
             return
           }
 
@@ -546,7 +553,7 @@ module.exports = (
 
           switch (access.status) {
             case 'Sufficient': {
-              await ctx.logger.info(`Performing sync.`)
+              ctx.logger.info(`Performing sync.`)
 
               /* Performs sync. */
               for (const repo of configRepos(config!)) {
@@ -564,12 +571,9 @@ module.exports = (
               return
             }
             case 'Insufficient': {
-              await ctx.logger.info(
-                `Insufficient permissions, skipping sync.`,
-                {
-                  access: JSON.stringify(access),
-                },
-              )
+              ctx.logger.info(`Insufficient permissions, skipping sync.`, {
+                meta: { access: JSON.stringify(access) },
+              })
 
               /* Opens up an issue about insufficient permissions. */
               const title = 'LabelSync - Insufficient permissions'
@@ -596,14 +600,14 @@ module.exports = (
                 body,
               )
 
-              await ctx.logger.info(`Opened issue ${issue.number}.`)
+              ctx.logger.info(`Opened issue ${issue.number}.`)
               return
             }
           }
         }
 
         case 'Unknown': {
-          await ctx.logger.info(
+          ctx.logger.info(
             `No existing repository for ${owner}, start onboarding.`,
           )
 
@@ -616,7 +620,7 @@ module.exports = (
             /* istanbul ignore next */
             case 'User': {
               // TODO: Update once Github changes the settings
-              await ctx.logger.info(`User account ${owner}, skip onboarding.`)
+              ctx.logger.info(`User account ${owner}, skip onboarding.`)
               return
             }
             case 'Organization': {
@@ -624,7 +628,7 @@ module.exports = (
                * Tempalte using for onboarding new customers.
                */
 
-              await ctx.logger.info(`Bootstraping config repo for ${owner}.`)
+              ctx.logger.info(`Bootstraping config repo for ${owner}.`)
 
               const template: GHTree = loadTreeFromPath(TEMPLATES.yaml, [
                 'dist',
@@ -646,13 +650,13 @@ module.exports = (
                 personalisedTemplate,
               )
 
-              await ctx.logger.info(`Onboarding complete for ${owner}.`)
+              ctx.logger.info(`Onboarding complete for ${owner}.`)
 
               return
             }
             /* istanbul ignore next */
             default: {
-              await ctx.logger.warn(`Unsupported account type: ${accountType}`)
+              ctx.logger.warn(`Unsupported account type: ${accountType}`)
               return
             }
           }
@@ -675,7 +679,7 @@ module.exports = (
   app.on(
     'push',
     withUserContextLogger(
-      timber,
+      logdna,
       withInstallation(prisma, async (ctx) => {
         const owner = ctx.payload.repository.owner.login.toLowerCase()
         const repo = ctx.payload.repository.name
@@ -688,11 +692,13 @@ module.exports = (
         /* Skip non default branch and other repos pushes. */
         /* istanbul ignore if */
         if (defaultRef !== ref || !isConfigRepo(owner, repo)) {
-          await ctx.logger.info(`Not config repo or ref. Skipping sync.`, {
-            ref,
-            repo,
-            defaultRef,
-            configRepo,
+          ctx.logger.info(`Not config repo or ref. Skipping sync.`, {
+            meta: {
+              ref,
+              repo,
+              defaultRef,
+              configRepo,
+            },
           })
           return
         }
@@ -707,7 +713,7 @@ module.exports = (
         /* Skip altogether if there's no configuration. */
         /* istanbul ignore next */
         if (configRaw === null) {
-          await ctx.logger.info(`No configuration, skipping sync.`)
+          ctx.logger.info(`No configuration, skipping sync.`)
           return
         }
 
@@ -715,9 +721,11 @@ module.exports = (
 
         /* Open an issue about invalid configuration. */
         if (error !== null) {
-          await ctx.logger.info(`Error in config ${error}`, {
-            config: JSON.stringify(config),
-            error: error,
+          ctx.logger.info(`Error in config ${error}`, {
+            meta: {
+              config: JSON.stringify(config),
+              error: error,
+            },
           })
 
           const report = ml`
@@ -736,12 +744,14 @@ module.exports = (
             body: report,
           })
 
-          await ctx.logger.info(`Commented on commit ${commit_sha}.`)
+          ctx.logger.info(`Commented on commit ${commit_sha}.`)
           return
         }
 
-        await ctx.logger.info(`Configuration loaded.`, {
-          config: JSON.stringify(config),
+        ctx.logger.info(`Configuration loaded.`, {
+          meta: {
+            config: JSON.stringify(config),
+          },
         })
 
         /* Verify that we can access all configured files. */
@@ -753,7 +763,7 @@ module.exports = (
         /* Skip configurations that we can't access. */
         switch (access.status) {
           case 'Sufficient': {
-            await ctx.logger.info(`Performing label sync on ${owner}.`)
+            ctx.logger.info(`Performing label sync on ${owner}.`)
 
             /* Performs sync. */
 
@@ -769,9 +779,11 @@ module.exports = (
               ),
             )
 
-            await ctx.logger.info(`Sync completed.`, {
-              config: JSON.stringify(config),
-              reports: JSON.stringify(reports),
+            ctx.logger.info(`Sync completed.`, {
+              meta: {
+                config: JSON.stringify(config),
+                reports: JSON.stringify(reports),
+              },
             })
 
             /* Comment on commit */
@@ -789,11 +801,13 @@ module.exports = (
             return
           }
           case 'Insufficient': {
-            await ctx.logger.info(
+            ctx.logger.info(
               `Insufficient permissions: ${access.missing.join(', ')}`,
               {
-                config: JSON.stringify(config),
-                access: JSON.stringify(access),
+                meta: {
+                  config: JSON.stringify(config),
+                  access: JSON.stringify(access),
+                },
               },
             )
 
@@ -813,7 +827,7 @@ module.exports = (
               body: report,
             })
 
-            await ctx.logger.info(`Commented on commit ${commit_sha}.`)
+            ctx.logger.info(`Commented on commit ${commit_sha}.`)
             return
           }
         }
@@ -832,7 +846,7 @@ module.exports = (
   app.on(
     'pull_request',
     withUserContextLogger(
-      timber,
+      logdna,
       withInstallation(prisma, async (ctx) => {
         const owner = ctx.payload.repository.owner.login.toLowerCase()
         const repo = ctx.payload.repository.name
@@ -841,13 +855,13 @@ module.exports = (
 
         const configRepo = getLSConfigRepoName(owner)
 
-        await ctx.logger.info(`PullRequest action: ${ctx.payload.action}`)
+        ctx.logger.info(`PullRequest action: ${ctx.payload.action}`)
 
         /* istanbul ignore if */
         if (!isConfigRepo(owner, repo)) {
-          await ctx.logger.info(
+          ctx.logger.info(
             `Not configuration repository, skipping pull request overview.`,
-            { configurationRepo: configRepo, currentRepo: repo },
+            { meta: { configurationRepo: configRepo, currentRepo: repo } },
           )
           return
         }
@@ -864,12 +878,11 @@ module.exports = (
         if (
           compare.data.files.every((file) => file.filename !== LS_CONFIG_PATH)
         ) {
-          await ctx.logger.info(
-            `Configuration didn't change, skipping comment.`,
-            {
+          ctx.logger.info(`Configuration didn't change, skipping comment.`, {
+            meta: {
               files: compare.data.files.map((file) => file.filename).join(', '),
             },
-          )
+          })
           return
         }
 
@@ -883,7 +896,7 @@ module.exports = (
         /* Skip the pull request if there's no configuraiton. */
         /* istanbul ignore next */
         if (configRaw === null) {
-          await ctx.logger.info(`No configuration, skipping comment.`)
+          ctx.logger.info(`No configuration, skipping comment.`)
           return
         }
 
@@ -892,9 +905,11 @@ module.exports = (
         /* Skips invalid configuration. */
         /* istanbul ignore if */
         if (error !== null) {
-          await ctx.logger.info(`Invalid configuration on ${ref}`, {
-            config: JSON.stringify(config),
-            error: error,
+          ctx.logger.info(`Invalid configuration on ${ref}`, {
+            meta: {
+              config: JSON.stringify(config),
+              error: error,
+            },
           })
 
           const report = ml`
@@ -912,12 +927,14 @@ module.exports = (
             report,
           )
 
-          await ctx.logger.info(`Commented on PullRequest (${comment.id})`)
+          ctx.logger.info(`Commented on PullRequest (${comment.id})`)
           return
         }
 
-        await ctx.logger.info(`Configration loaded configuration on ${ref}`, {
-          config: JSON.stringify(config),
+        ctx.logger.info(`Configration loaded configuration on ${ref}`, {
+          meta: {
+            config: JSON.stringify(config),
+          },
         })
 
         /* Tackle PR Action */
@@ -940,7 +957,7 @@ module.exports = (
             /* Skip configurations that we can't access. */
             switch (access.status) {
               case 'Sufficient': {
-                await ctx.logger.info(`Simulating sync.`)
+                ctx.logger.info(`Simulating sync.`)
 
                 /* Fetch changes to repositories. */
                 const reports = await Promise.all(
@@ -966,14 +983,12 @@ module.exports = (
                   report,
                 )
 
-                await ctx.logger.info(
-                  `Commented on PullRequest (${comment.id})`,
-                )
+                ctx.logger.info(`Commented on PullRequest (${comment.id})`)
 
                 return
               }
               case 'Insufficient': {
-                await ctx.logger.info(`Insufficient permissions`)
+                ctx.logger.info(`Insufficient permissions`)
 
                 /* Opens up an issue about insufficient permissions. */
                 const body = ml`
@@ -993,7 +1008,7 @@ module.exports = (
                   body,
                 )
 
-                await ctx.logger.info(`Commented on PullRequest ${comment.id}`)
+                ctx.logger.info(`Commented on PullRequest ${comment.id}`)
 
                 return
               }
@@ -1016,14 +1031,14 @@ module.exports = (
           /* istanbul ignore next */
           case 'unlocked': {
             /* Ignore other events. */
-            await ctx.logger.info(`Ignoring event ${ctx.payload.action}.`)
+            ctx.logger.info(`Ignoring event ${ctx.payload.action}.`)
             return
           }
           /* istanbul ignore next */
           default: {
             /* Log unsupported pull_request action. */
             /* prettier-ignore */
-            await ctx.logger.warn(`Unhandled PullRequest action: ${ctx.payload.action}`)
+            ctx.logger.warn(`Unhandled PullRequest action: ${ctx.payload.action}`)
             return
           }
         }
@@ -1041,7 +1056,7 @@ module.exports = (
   app.on(
     'label.created',
     withUserContextLogger(
-      timber,
+      logdna,
       withInstallation(
         prisma,
         withSources(async (ctx) => {
@@ -1051,19 +1066,19 @@ module.exports = (
             ctx.sources.config.repos[repo] || ctx.sources.config.repos['*']
           const label = ctx.payload.label as GithubLabel
 
-          await ctx.logger.info(`New label create in ${repo}: "${label.name}".`)
+          ctx.logger.info(`New label create in ${repo}: "${label.name}".`)
 
           /* Ignore no configuration. */
           /* istanbul ignore if */
           if (!config) {
-            await ctx.logger.info(`No configuration, skipping`)
+            ctx.logger.info(`No configuration, skipping`)
             return
           }
 
           /* Ignore complying changes. */
           /* istanbul ignore if */
           if (config.labels.hasOwnProperty(label.name)) {
-            await ctx.logger.info(`Label is configured, skipping removal.`)
+            ctx.logger.info(`Label is configured, skipping removal.`)
             return
           }
 
@@ -1074,7 +1089,7 @@ module.exports = (
           )
 
           if (removeUnconfiguredLabels) {
-            await ctx.logger.info(`Removing "${label.name}" from ${repo}.`)
+            ctx.logger.info(`Removing "${label.name}" from ${repo}.`)
 
             /* Prune unsupported labels in strict repositories. */
             await removeLabelsFromRepository(
@@ -1084,7 +1099,7 @@ module.exports = (
               removeUnconfiguredLabels,
             )
 
-            await ctx.logger.info(`Removed label "${label.name}" from ${repo}.`)
+            ctx.logger.info(`Removed label "${label.name}" from ${repo}.`)
           }
         }),
       ),
@@ -1101,7 +1116,7 @@ module.exports = (
   app.on(
     'issues.labeled',
     withUserContextLogger(
-      timber,
+      logdna,
       withInstallation(
         prisma,
         withSources(async (ctx) => {
@@ -1111,22 +1126,20 @@ module.exports = (
           const label = ((ctx.payload as any) as { label: GithubLabel }).label
           const issue = ctx.payload.issue
 
-          await ctx.logger.info(
+          ctx.logger.info(
             `Issue (${issue.number}) has been labeled with "${label.name}".`,
           )
 
           /* Ignore changes in non-strict config */
           /* istanbul ignore if */
           if (!config) {
-            await ctx.logger.info(`No configuration found, skipping.`)
+            ctx.logger.info(`No configuration found, skipping.`)
             return
           }
 
           /* istanbul ignore if */
           if (!config.labels.hasOwnProperty(label.name)) {
-            await ctx.logger.info(
-              `Unconfigured label "${label.name}", skipping.`,
-            )
+            ctx.logger.info(`Unconfigured label "${label.name}", skipping.`)
             return
           }
 
@@ -1142,7 +1155,7 @@ module.exports = (
           )
 
           /* prettier-ignore */
-          await ctx.logger.info(`Added siblings of ${label.name} to issue ${issue.number}: ${siblings.join(', ')}`)
+          ctx.logger.info(`Added siblings of ${label.name} to issue ${issue.number}: ${siblings.join(', ')}`)
         }),
       ),
     ),
@@ -1158,7 +1171,7 @@ module.exports = (
   app.on(
     'repository.created',
     withUserContextLogger(
-      timber,
+      logdna,
       withInstallation(
         prisma,
         withSources(async (ctx) => {
@@ -1167,18 +1180,18 @@ module.exports = (
           const config =
             ctx.sources.config.repos[repo] || ctx.sources.config.repos['*']
 
-          await ctx.logger.info(`New repository ${repo} in ${owner}.`)
+          ctx.logger.info(`New repository ${repo} in ${owner}.`)
 
           /* Ignore no configuration. */
           /* istanbul ignore if */
           if (!config) {
-            await ctx.logger.info(`No configuration, skipping sync.`)
+            ctx.logger.info(`No configuration, skipping sync.`)
             return
           }
 
-          await ctx.logger.info(`Performing sync on ${repo}.`)
+          ctx.logger.info(`Performing sync on ${repo}.`)
           await handleLabelSync(ctx.github, owner, repo, config, true)
-          await ctx.logger.info(`Repository synced ${repo}.`)
+          ctx.logger.info(`Repository synced ${repo}.`)
         }),
       ),
     ),
@@ -1306,8 +1319,8 @@ function withUserContextLogger<
   /* Return type */
   T
 >(
-  timber: Timber,
-  fn: (ctx: Context<C> & { logger: Timber }) => Promise<T>,
+  logdna: Logger,
+  fn: (ctx: Context<C> & { logger: Logger }) => Promise<T>,
 ): (ctx: Context<C>) => Promise<T | undefined> {
   return async (ctx) => {
     const owner = ctx.payload.repository.owner
@@ -1326,18 +1339,14 @@ function withUserContextLogger<
         | Webhooks.WebhookPayloadPullRequestReviewComment).action || 'push'
 
     /**
-     * Current user context.
-     *  - webhook event,
-     *  - repo: name
-     *  - user: id, login (name), and type (Org, User)
+     * Attach the current user context.
+     * Run the event handler.
+     * Remove the middleware.
      */
-    async function addCurrentUser(log: ITimberLog): Promise<ITimberLog> {
-      return {
-        ...log,
-        event: {
-          name: ctx.event,
-          action: action,
-        },
+    try {
+      logdna.addMetaProperty('event', {
+        name: ctx.event,
+        action: action,
         repo: {
           name: repo.name,
         },
@@ -1349,24 +1358,15 @@ function withUserContextLogger<
         context: {
           user_id: owner.id,
         },
-      }
-    }
-
-    /**
-     * Attach the current user context.
-     * Run the event handler.
-     * Remove the middleware.
-     */
-    try {
-      timber.use(addCurrentUser)
-      ;(ctx as Context<C> & { logger: Timber }).logger = timber
-      return await fn(ctx as Context<C> & { logger: Timber })
+      })
+      ;(ctx as Context<C> & { logger: Logger }).logger = logdna
+      return await fn(ctx as Context<C> & { logger: Logger })
     } catch (err) /* istanbul ignore next */ {
       /* Report the error and skip evaluation. */
-      await timber.warn(`Event resulted in error.`, { error: err.message })
+      logdna.warn(`Event resulted in error.`, { meta: { error: err.message } })
       if (process.env.NODE_ENV !== 'production') console.error(err)
     } finally {
-      timber.remove(addCurrentUser)
+      logdna.removeMetaProperty('event')
     }
 
     /* istanbul ignore next */
@@ -1395,38 +1395,24 @@ function withLogger<
   /* Return type */
   T
 >(
-  timber: Timber,
-  fn: (ctx: Context<C> & { logger: Timber }) => Promise<T>,
+  logdna: Logger,
+  fn: (ctx: Context<C> & { logger: Logger }) => Promise<T>,
 ): (ctx: Context<C>) => Promise<T | undefined> {
   return async (ctx) => {
     /**
-     * Current user context.
-     *  - webhook event,
-     *  - repo: name
-     *  - user: id, login (name), and type (Org, User)
-     */
-    async function addEvent(log: ITimberLog): Promise<ITimberLog> {
-      return {
-        ...log,
-        event: ctx.event,
-      }
-    }
-
-    /**
-     * Attach the current user context.
      * Run the event handler.
      * Remove the middleware.
      */
     try {
-      timber.use(addEvent)
-      ;(ctx as Context<C> & { logger: Timber }).logger = timber
-      return await fn(ctx as Context<C> & { logger: Timber })
+      logdna.addMetaProperty('event', ctx.event)
+      ;(ctx as Context<C> & { logger: Logger }).logger = logdna
+      return await fn(ctx as Context<C> & { logger: Logger })
     } catch (err) /* istanbul ignore next */ {
       /* Report the error and skip evaluation. */
-      await timber.warn(`Event resulted in error.`, { error: err.message })
+      logdna.warn(`Event resulted in error.`, { meta: { error: err.message } })
       if (process.env.NODE_ENV !== 'production') console.error(err)
     } finally {
-      timber.remove(addEvent)
+      logdna.removeMetaProperty('event')
     }
 
     /* istanbul ignore next */

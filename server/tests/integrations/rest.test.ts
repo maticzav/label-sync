@@ -1,5 +1,5 @@
 import { PrismaClient, Plan } from '@prisma/client'
-import { Timber } from '@timberio/node'
+import { createLogger, Logger } from 'logdna'
 import nock from 'nock'
 import { Probot, createProbot } from 'probot'
 import request from 'request-promise-native'
@@ -9,10 +9,10 @@ const manager = require('../../src')
 
 describe('rest:', () => {
   let prisma: PrismaClient
-  let timber: Timber
+  let logdna: Logger
   let stripe: Stripe
 
-  let timberLogs: string[] = []
+  let logs: string[] = []
 
   beforeAll(async () => {
     // Network settings
@@ -28,8 +28,9 @@ describe('rest:', () => {
 
     // DataStores
     prisma = new PrismaClient()
-    timber = new Timber('apikey', 'source', {
-      ignoreExceptions: false,
+    logdna = createLogger('apikey', {
+      timeout: 1000,
+      env: 'TEST',
     })
     stripe = new Stripe(process.env.STRIPE_API_KEY!, {
       apiVersion: '2020-03-02',
@@ -43,7 +44,7 @@ describe('rest:', () => {
       port: 4040,
     })
 
-    probot.load((app) => manager(app, prisma, timber, stripe))
+    probot.load((app) => manager(app, prisma, logdna, stripe))
     probot.start()
   })
 
@@ -61,16 +62,24 @@ describe('rest:', () => {
     /* Clean the database */
     await prisma.installation.deleteMany({ where: {} })
 
-    /* Mock all timber logs */
-    nock('https://logs.timber.io')
+    /* Mock all logs */
+    nock('https://logs.logdna.com/')
       .post(/.*/)
-      .reply(200, (uri, body) => {
+      .reply(200, (uri: string, body: any) => {
         /* remove timestamp from log */
-        const [log] = body as any
-        delete log['dt']
-        delete log['periodEndsAt']
+        const newLogs: string[] = body[body['e'] as string].map((log: any) => {
+          delete log['timestamp']
+          if (typeof log['meta'] === 'string') {
+            log.meta = JSON.parse(log.meta)
+          }
+          if (log['meta']) {
+            log.meta['periodEndsAt'] = 'periodEndsAt'
+          }
+          return JSON.stringify(log)
+        })
+
         /* collect logs */
-        timberLogs.push(JSON.stringify(log))
+        logs.push(...newLogs)
         return
       })
       .persist()
@@ -145,7 +154,7 @@ describe('rest:', () => {
   })
 
   test('logs are reporting correctly', async () => {
-    expect(timberLogs).toMatchSnapshot()
+    expect(logs.sort()).toMatchSnapshot()
   })
 
   /* End of tests */
