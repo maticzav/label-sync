@@ -17,7 +17,7 @@
     "io-ts": "2.2.4",
     "js-yaml": "3.14.0",
     "jsonwebtoken": "8.5.1",
-    "logdna": "^3.5.0",
+    "logdna": "3.5.0",
     "moment": "2.26.0",
     "multilines": "1.0.3",
     "prettier": "2.0.5",
@@ -42,7 +42,7 @@
     "js-yaml": "3.14.0",
     "lerna": "3.22.0",
     "nock": "12.0.3",
-    "request": "^2.88.2",
+    "request": "2.88.2",
     "request-promise-native": "1.0.8",
     "ts-node": "8.10.2",
     "typescript": "3.9.3"

@@ -8357,7 +8357,7 @@ log-symbols@^3.0.0:
   dependencies:
     chalk "^2.4.2"
 
-logdna@^3.5.0:
+logdna@3.5.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/logdna/-/logdna-3.5.0.tgz#f3229c77d58a2be49e06e97959272953623529ad"
   integrity sha512-NBYDe8cQUSOOUSiWzM2zyX35f3KfxoZbLLY5uM9aNIE0LLJeO1zx1L/r9O8ruIXZLufGgEas6YLhDH7W7CTG/A==
@@ -10504,7 +10504,7 @@ prop-types-exact@1.2.0:
     object.assign "^4.1.0"
     reflect.ownkeys "^0.2.0"
 
-prop-types@15.7.2, prop-types@^15.5.10, prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@15.7.2, prop-types@^15.5.10, prop-types@^15.6.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -11100,7 +11100,7 @@ request-promise-native@1.0.8, request-promise-native@^1.0.7:
     stealthy-require "^1.1.1"
     tough-cookie "^2.3.3"
 
-request@^2.88.0, request@^2.88.2:
+request@2.88.2, request@^2.88.0:
   version "2.88.2"
   resolved "https://registry.yarnpkg.com/request/-/request-2.88.2.tgz#d73c918731cb5a87da047e207234146f664d12b3"
   integrity sha512-MsvtOrfG9ZcrOwAW+Qi+F6HbD0CWXEh9ou77uOb7FM2WPhwT7smM833PzanhJLsgXjN89Ir6V2PczXNnMpwKhw==
