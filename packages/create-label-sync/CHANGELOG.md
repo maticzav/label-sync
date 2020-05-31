@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.14](https://github.com/maticzav/label-sync/compare/create-label-sync@2.4.13...create-label-sync@2.4.14) (2020-05-31)
+
+
+### Bug Fixes
+
+* switch to logdna ([b4d4046](https://github.com/maticzav/label-sync/commit/b4d40464c9e5c93943c28130a9ba67d853a037bc))
+
+
+
+
+
 ## [2.4.13](https://github.com/maticzav/label-sync/compare/create-label-sync@2.4.12...create-label-sync@2.4.13) (2020-05-25)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.5.10](https://github.com/matizav/label-sync/compare/label-sync@3.5.9...label-sync@3.5.10) (2020-05-31)
+
+
+### Bug Fixes
+
+* switch to logdna ([b4d4046](https://github.com/matizav/label-sync/commit/b4d40464c9e5c93943c28130a9ba67d853a037bc))
+
+
+
+
+
 ## [3.5.9](https://github.com/matizav/label-sync/compare/label-sync@3.5.8...label-sync@3.5.9) (2020-05-21)
 
 **Note:** Version bump only for package label-sync
