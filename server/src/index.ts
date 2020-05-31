@@ -84,6 +84,7 @@ module.exports = (
   prisma: PrismaClient = new PrismaClient(),
   logdna: Logger = createLogger(process.env.LOGDNA_INGESTION_KEY!, {
     env: 'PRODUCTION',
+    app: 'label-sync',
   }),
   stripe: Stripe = new Stripe(process.env.STRIPE_API_KEY!, {
     apiVersion: '2020-03-02',
