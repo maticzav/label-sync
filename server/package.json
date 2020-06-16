@@ -14,7 +14,7 @@
     "express": "4.17.1",
     "fp-ts": "2.6.5",
     "handlebars": "4.7.6",
-    "io-ts": "2.2.5",
+    "io-ts": "2.2.6",
     "js-yaml": "3.14.0",
     "jsonwebtoken": "8.5.1",
     "logdna": "3.5.0",
