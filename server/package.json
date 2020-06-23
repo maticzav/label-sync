@@ -23,7 +23,7 @@
     "prettier": "2.0.5",
     "probot": "9.11.5",
     "query-string": "6.13.1",
-    "stripe": "8.64.0"
+    "stripe": "8.65.0"
   },
   "devDependencies": {
     "@prisma/cli": "2.1.0",
