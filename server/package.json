@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@octokit/rest": "17.11.2",
-    "@prisma/client": "2.1.1",
+    "@prisma/client": "2.1.2",
     "body-parser": "1.19.0",
     "cors": "2.8.5",
     "express": "4.17.1",
