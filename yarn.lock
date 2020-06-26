@@ -2482,10 +2482,10 @@
   dependencies:
     debug "^4.0.0"
 
-"@prisma/cli@2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@prisma/cli/-/cli-2.1.0.tgz#b844f36210761fa71c5166d4dc79504d613502a1"
-  integrity sha512-2wzuP4QUbj20p+IL9Tmvz1AtiJOOkoQrUj9x02jf6Ds/bazIWNacL/qSBtqohKxDiTEnL1gQDgvLPx6itc/L7A==
+"@prisma/cli@2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@prisma/cli/-/cli-2.1.2.tgz#fc9c0755ae74f628227e49be812f443444537de0"
+  integrity sha512-IOTfCeqZbcZZU7ey9KYALlJBhT/90HbOAY4LqmNxUtKI4DwBD1eXqA/6WSQA+9U7uO/gwbISLHCdROdKyZLAmg==
 
 "@prisma/client@2.1.1":
   version "2.1.1"
