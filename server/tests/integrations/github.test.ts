@@ -104,7 +104,7 @@ describe('github:', () => {
 
       beforeAll(() => {
         /* Reset logs. */
-        fs.unlinkSync(LOGS_FILE)
+        if (fs.existsSync(LOGS_FILE)) fs.unlinkSync(LOGS_FILE)
         winston = createLogger({
           level: 'info',
           exitOnError: false,
