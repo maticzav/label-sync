@@ -1,16 +1,17 @@
-import { PrismaClient, Plan } from '@prisma/client'
-import { createLogger, Logger } from 'logdna'
+import { Plan, PrismaClient } from '@prisma/client'
 import fs from 'fs'
 import moment from 'moment'
 import nock from 'nock'
 import path from 'path'
-import { Probot, createProbot } from 'probot'
+import { createProbot, Probot } from 'probot'
+import { createLogger, format, Logger, transports } from 'winston'
+
+import { logToJSON, removeLogsDateFields } from '../__fixtures__/utils'
 
 /* Fixtures */
 
 import installationPayload from './../__fixtures__/github/installation.created'
 import issuesLabeledPayload from './../__fixtures__/github/issues.labeled'
-
 import labelCreatedPayload from './../__fixtures__/github/label.created'
 // import marketplacePurchasePayload from './../__fixtures__/github/marketplace_purchase.purchased'
 // import marketplaceCancelPayload from './../__fixtures__/github/marketplace_purchase.cancelled'
@@ -38,31 +39,25 @@ const siblingsConfigFixture = fs.readFileSync(
   { encoding: 'utf-8' },
 )
 
+const LOGS_FILE = path.resolve(__dirname, 'logs', 'github_integration.log')
+
 /* Probot app */
 
 const manager = require('../../src')
 
 describe('github:', () => {
   let client: PrismaClient
-  let logdna: Logger
 
   beforeAll(async () => {
     // Network settings
     nock.disableNetConnect()
     // local servers
     nock.enableNetConnect((host) => {
-      return (
-        host.includes('localhost') || host.includes('127.0.0.1')
-        // || host.includes('logdna')
-      )
+      return host.includes('localhost') || host.includes('127.0.0.1')
     })
 
     // DataStores
     client = new PrismaClient()
-    logdna = createLogger('apikey', {
-      timeout: 1000,
-      env: 'TEST',
-    })
   })
 
   afterAll(async () => {
@@ -70,18 +65,6 @@ describe('github:', () => {
     nock.enableNetConnect()
 
     await client.disconnect()
-  })
-
-  let probot: Probot
-
-  beforeEach(() => {
-    /* Setup probot */
-    probot = createProbot({ id: 123, githubToken: 'token', cert: 'test' })
-    const app = probot.load((app) => manager(app, client, logdna))
-  })
-
-  afterEach(() => {
-    nock.cleanAll()
   })
 
   /**
@@ -93,8 +76,8 @@ describe('github:', () => {
   for (const plan of plans) {
     describe(`${plan}`, () => {
       /* Tests on each plan. */
-
-      let logs: string[] = []
+      let winston: Logger
+      let probot: Probot
 
       /* Plan specific setup */
       beforeEach(async () => {
@@ -110,29 +93,24 @@ describe('github:', () => {
           },
         })
 
-        /* Mock all logs */
-        nock('https://logs.logdna.com/')
-          .post(/.*/)
-          .reply(200, (uri: string, body: any) => {
-            /* remove timestamp from log */
-            const newLogs: string[] = body[body['e'] as string].map(
-              (log: any) => {
-                delete log['timestamp']
-                if (typeof log['meta'] === 'string') {
-                  log.meta = JSON.parse(log.meta)
-                }
-                if (log['meta']) {
-                  log.meta['periodEndsAt'] = 'periodEndsAt'
-                }
-                return log
-              },
-            )
+        /* Setup probot */
+        probot = createProbot({ id: 123, githubToken: 'token', cert: 'test' })
+        const app = probot.load((app) => manager(app, client, winston))
+      })
 
-            /* collect logs */
-            logs.push(...newLogs)
-            return
-          })
-          .persist()
+      afterEach(() => {
+        nock.cleanAll()
+      })
+
+      beforeAll(() => {
+        /* Reset logs. */
+        fs.unlinkSync(LOGS_FILE)
+        winston = createLogger({
+          level: 'info',
+          exitOnError: false,
+          format: format.json(),
+          transports: [new transports.File({ filename: LOGS_FILE })],
+        })
       })
 
       // test(
@@ -1378,7 +1356,10 @@ describe('github:', () => {
         )
 
       test('logs are reporting correctly', async () => {
-        expect(logs.sort()).toMatchSnapshot()
+        const logs = fs.readFileSync(LOGS_FILE, { encoding: 'utf-8' })
+        const json = logToJSON(logs)
+
+        expect(json.map(removeLogsDateFields)).toMatchSnapshot()
       })
 
       /* End of tests */

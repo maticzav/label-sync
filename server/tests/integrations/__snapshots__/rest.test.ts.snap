@@ -17,5 +17,3 @@ Object {
   "plan": "FREE",
 }
 `;
-
-exports[`rest: logs are reporting correctly 1`] = `Array []`;

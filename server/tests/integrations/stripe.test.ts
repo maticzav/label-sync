@@ -1,18 +1,16 @@
 import { PrismaClient, Plan } from '@prisma/client'
-import { createLogger, Logger } from 'logdna'
 import execa from 'execa'
 import nock from 'nock'
 import { Probot, createProbot } from 'probot'
 import Stripe from 'stripe'
+import { createLogger, Logger, format, transports } from 'winston'
 
 const manager = require('../../src')
 
 describe('stripe:', () => {
   let prisma: PrismaClient
-  let logdna: Logger
+  let winston: Logger
   let stripe: Stripe
-
-  let logs: string[] = []
 
   beforeAll(async () => {
     // Network settings
@@ -28,9 +26,11 @@ describe('stripe:', () => {
 
     // DataStores
     prisma = new PrismaClient()
-    logdna = createLogger('apikey', {
-      timeout: 1000,
-      env: 'TEST',
+    winston = createLogger({
+      level: 'info',
+      exitOnError: false,
+      format: format.json(),
+      transports: [],
     })
     stripe = new Stripe(process.env.STRIPE_API_KEY!, {
       apiVersion: '2020-03-02',
@@ -44,7 +44,7 @@ describe('stripe:', () => {
       port: 5050,
     })
 
-    probot.load((app) => manager(app, prisma, logdna, stripe))
+    probot.load((app) => manager(app, prisma, winston, stripe))
     probot.start()
   })
 
@@ -61,28 +61,6 @@ describe('stripe:', () => {
   beforeEach(async () => {
     /* Clean the database */
     await prisma.installation.deleteMany({ where: {} })
-
-    /* Mock all logs */
-    nock('https://logs.logdna.com/')
-      .post(/.*/)
-      .reply(200, (uri: string, body: any) => {
-        /* remove timestamp from log */
-        const newLogs: string[] = body[body['e'] as string].map((log: any) => {
-          delete log['timestamp']
-          if (typeof log['meta'] === 'string') {
-            log.meta = JSON.parse(log.meta)
-          }
-          if (log['meta']) {
-            log.meta['periodEndsAt'] = 'periodEndsAt'
-          }
-          return JSON.stringify(log)
-        })
-
-        /* collect logs */
-        logs.push(...newLogs)
-        return
-      })
-      .persist()
   })
 
   afterEach(() => {
@@ -109,10 +87,6 @@ describe('stripe:', () => {
     delete installation!.updatedAt
     delete installation!.periodEndsAt
     expect(installation).toMatchSnapshot()
-  })
-
-  test.skip('logs are reporting correctly', async () => {
-    expect(logs.sort()).toMatchSnapshot()
   })
 
   /* End of tests */

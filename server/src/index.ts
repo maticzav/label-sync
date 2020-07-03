@@ -2,13 +2,13 @@ import Webhooks = require('@octokit/webhooks')
 import { PrismaClient, Installation } from '@prisma/client'
 import bodyParser from 'body-parser'
 import cors from 'cors'
-import { Logger, createLogger } from 'logdna'
 import moment from 'moment'
 import ml from 'multilines'
 import os from 'os'
 import path from 'path'
 import { Application, Context } from 'probot'
 import Stripe from 'stripe'
+import { createLogger, Logger, transports, format } from 'winston'
 
 import { populateTemplate } from './bootstrap'
 import {
@@ -35,6 +35,7 @@ import { handleLabelSync } from './handlers/labels'
 import { generateHumanReadableReport } from './language/labels'
 import { loadTreeFromPath, withDefault } from './utils'
 import { isNullOrUndefined } from 'util'
+import { create } from 'handlebars'
 
 /* Templates */
 
@@ -82,9 +83,17 @@ module.exports = (
   app: Application,
   /* Stored here for testing */
   prisma: PrismaClient = new PrismaClient(),
-  logdna: Logger = createLogger(process.env.LOGDNA_INGESTION_KEY!, {
-    env: 'PRODUCTION',
-    app: 'label-sync',
+  winston: Logger = createLogger({
+    level: 'info',
+    exitOnError: false,
+    format: format.json(),
+    transports: [
+      new transports.Http({
+        host: 'http-intake.logs.datadoghq.com',
+        path: `/v1/input/${process.env.DATADOG_APIKEY}?ddsource=nodejs`,
+        ssl: true,
+      }),
+    ],
   }),
   stripe: Stripe = new Stripe(process.env.STRIPE_API_KEY!, {
     apiVersion: '2020-03-02',
@@ -101,7 +110,7 @@ module.exports = (
    */
   /* istanbul ignore next */
   async function migrate() {
-    logdna.info('Migrating...')
+    winston.info('Migrating...')
 
     const gh = await app.auth()
 
@@ -112,11 +121,11 @@ module.exports = (
     const lsInstallations = await prisma.installation.count({
       where: { activated: true },
     })
-    logdna.info(`Existing installations: ${ghapp.installations_count}`)
+    winston.info(`Existing installations: ${ghapp.installations_count}`)
 
     /* Skip sync if all are already tracked. */
     if (lsInstallations >= ghapp.installations_count) {
-      logdna.info(`All installations in sync.`)
+      winston.info(`All installations in sync.`)
       return
     }
 
@@ -129,7 +138,7 @@ module.exports = (
 
     /* Process installations */
     for (const installation of installations) {
-      logdna.info(`Syncing with database ${installation.account.login}`)
+      winston.info(`Syncing with database ${installation.account.login}`)
       const now = moment()
       const account = installation.account.login.toLowerCase()
       await prisma.installation.upsert({
@@ -284,7 +293,7 @@ module.exports = (
         }
       }
     } catch (err) /* istanbul ignore next */ {
-      logdna.warn(`Error in subscription flow: ${err.message}`)
+      winston.warn(`Error in subscription flow: ${err.message}`)
       return res.send({ status: 'err', message: err.message })
     }
   })
@@ -309,7 +318,7 @@ module.exports = (
           process.env.STRIPE_ENDPOINT_SECRET!,
         )
       } catch (err) /* istanbul ingore next */ {
-        logdna.warn(`Error in stripe webhook deconstruction.`, {
+        winston.warn(`Error in stripe webhook deconstruction.`, {
           meta: {
             error: err.message,
           },
@@ -319,7 +328,7 @@ module.exports = (
 
       /* Logger */
 
-      logdna.info(`Stripe event ${event.type}`, {
+      winston.info(`Stripe event ${event.type}`, {
         meta: {
           payload: JSON.stringify(event.data.object),
         },
@@ -365,7 +374,7 @@ module.exports = (
             },
           })
 
-          logdna.info(`New subscriber ${installation.account}`, {
+          winston.info(`New subscriber ${installation.account}`, {
             meta: {
               plan: 'PAID',
               periodEndsAt: installation.periodEndsAt,
@@ -376,7 +385,7 @@ module.exports = (
         }
         /* istanbul ignore next */
         default: {
-          logdna.warn(`unhandled stripe webhook event: ${event.type}`)
+          winston.warn(`unhandled stripe webhook event: ${event.type}`)
           return res.status(400).end()
         }
       }
@@ -451,7 +460,7 @@ module.exports = (
    */
   app.on(
     'installation.created',
-    withLogger(logdna, async (ctx) => {
+    withLogger(winston, async (ctx) => {
       const account = ctx.payload.installation.account
       const owner = account.login.toLowerCase()
       const configRepo = getLSConfigRepoName(owner)
@@ -680,7 +689,7 @@ module.exports = (
   app.on(
     'push',
     withUserContextLogger(
-      logdna,
+      winston,
       withInstallation(prisma, async (ctx) => {
         const owner = ctx.payload.repository.owner.login.toLowerCase()
         const repo = ctx.payload.repository.name
@@ -847,7 +856,7 @@ module.exports = (
   app.on(
     'pull_request',
     withUserContextLogger(
-      logdna,
+      winston,
       withInstallation(prisma, async (ctx) => {
         const owner = ctx.payload.repository.owner.login.toLowerCase()
         const repo = ctx.payload.repository.name
@@ -1057,7 +1066,7 @@ module.exports = (
   app.on(
     'label.created',
     withUserContextLogger(
-      logdna,
+      winston,
       withInstallation(
         prisma,
         withSources(async (ctx) => {
@@ -1117,7 +1126,7 @@ module.exports = (
   app.on(
     'issues.labeled',
     withUserContextLogger(
-      logdna,
+      winston,
       withInstallation(
         prisma,
         withSources(async (ctx) => {
@@ -1172,7 +1181,7 @@ module.exports = (
   app.on(
     'repository.created',
     withUserContextLogger(
-      logdna,
+      winston,
       withInstallation(
         prisma,
         withSources(async (ctx) => {
@@ -1320,7 +1329,7 @@ function withUserContextLogger<
   /* Return type */
   T
 >(
-  logdna: Logger,
+  logger: Logger,
   fn: (ctx: Context<C> & { logger: Logger }) => Promise<T>,
 ): (ctx: Context<C>) => Promise<T | undefined> {
   return async (ctx) => {
@@ -1339,13 +1348,8 @@ function withUserContextLogger<
         | Webhooks.WebhookPayloadPullRequestReview
         | Webhooks.WebhookPayloadPullRequestReviewComment).action || 'push'
 
-    /**
-     * Attach the current user context.
-     * Run the event handler.
-     * Remove the middleware.
-     */
-    try {
-      logdna.addMetaProperty('event', {
+    const eventLogger = logger.child({
+      event: {
         name: ctx.event,
         action: action,
         repo: {
@@ -1359,15 +1363,23 @@ function withUserContextLogger<
         context: {
           user_id: owner.id,
         },
-      })
-      ;(ctx as Context<C> & { logger: Logger }).logger = logdna
+      },
+    })
+
+    /**
+     * Attach the current user context.
+     * Run the event handler.
+     * Remove the middleware.
+     */
+    try {
+      ;(ctx as Context<C> & { logger: Logger }).logger = eventLogger
       return await fn(ctx as Context<C> & { logger: Logger })
     } catch (err) /* istanbul ignore next */ {
       /* Report the error and skip evaluation. */
-      logdna.warn(`Event resulted in error.`, { meta: { error: err.message } })
+      eventLogger.warn(`Event resulted in error.`, {
+        meta: { error: err.message },
+      })
       if (process.env.NODE_ENV !== 'production') console.error(err)
-    } finally {
-      logdna.removeMetaProperty('event')
     }
 
     /* istanbul ignore next */
@@ -1396,24 +1408,28 @@ function withLogger<
   /* Return type */
   T
 >(
-  logdna: Logger,
+  logger: Logger,
   fn: (ctx: Context<C> & { logger: Logger }) => Promise<T>,
 ): (ctx: Context<C>) => Promise<T | undefined> {
   return async (ctx) => {
+    const eventLogger = logger.child({
+      event: {
+        name: ctx.event,
+      },
+    })
+
     /**
      * Run the event handler.
-     * Remove the middleware.
      */
     try {
-      logdna.addMetaProperty('event', ctx.event)
-      ;(ctx as Context<C> & { logger: Logger }).logger = logdna
+      ;(ctx as Context<C> & { logger: Logger }).logger = eventLogger
       return await fn(ctx as Context<C> & { logger: Logger })
     } catch (err) /* istanbul ignore next */ {
       /* Report the error and skip evaluation. */
-      logdna.warn(`Event resulted in error.`, { meta: { error: err.message } })
+      eventLogger.warn(`Event resulted in error.`, {
+        meta: { error: err.message },
+      })
       if (process.env.NODE_ENV !== 'production') console.error(err)
-    } finally {
-      logdna.removeMetaProperty('event')
     }
 
     /* istanbul ignore next */
