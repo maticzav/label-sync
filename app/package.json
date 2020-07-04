@@ -1,0 +1,26 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "type-check": "tsc"
+  },
+  "dependencies": {
+    "@graywolfai/react-heroicons": "^1.0.0",
+    "next": "9.4.4",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-transition-group": "^4.4.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/ui": "0.3.0",
+    "@types/react": "16.9.41",
+    "@types/react-dom": "16.9.8",
+    "@types/react-transition-group": "^4.4.0",
+    "autoprefixer": "9.8.4",
+    "tailwindcss": "1.4.6",
+    "typescript": "3.9.3"
+  }
+}
