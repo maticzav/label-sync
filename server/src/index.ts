@@ -1141,7 +1141,7 @@ module.exports = (
 
           ctx.logger.debug('IssueLabeled payload and config', {
             payload: ctx.payload,
-            config: config,
+            sources: ctx.sources.config,
           })
 
           ctx.logger.info(
