@@ -1073,6 +1073,11 @@
     postcss "7.0.28"
     purgecss "^2.2.0"
 
+"@graywolfai/react-heroicons@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@graywolfai/react-heroicons/-/react-heroicons-1.0.0.tgz#2428af3e6869c4b222c3a2f2b9be0ed3b0320c7f"
+  integrity sha512-pdLVBLf+g/y+Hg4Kfu/48PCtouiRf+HlzJz6zpgVc7mr1sjgta7QljTzMiCkEHy4o4G04KKTKBdKZeKQAtfRzA==
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.0.0.tgz#10602de5570baea82f8afbfa2630b24e7a8cfe5b"

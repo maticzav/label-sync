@@ -6,7 +6,7 @@ import {
 } from '@graywolfai/react-heroicons'
 import Link from 'next/link'
 import React, { useState } from 'react'
-import { CSSTransition } from 'react-transition-group'
+import { Transition } from './Transition'
 
 const pages = [
   {
@@ -36,32 +36,33 @@ export default function Navigation(
   }>,
 ) {
   /* Sidebar on mobile toggle. */
-  const [navigationOpen, setNavigationOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [overlayVisible, setOverlayVisible] = useState(false)
 
   return (
     <div className="h-screen flex overflow-hidden bg-white">
       {/* Off-canvas menu for mobile */}
-      <div className="md:hidden">
+      <div
+        className="md:hidden"
+        style={{ display: overlayVisible ? 'block' : 'none' }}
+      >
         <div className="fixed inset-0 flex z-40">
           {/* Off-canvas menu overlay, show/hide based on off-canvas menu state. */}
-          <CSSTransition
-            in={navigationOpen}
-            mountOnEnter={true}
-            unmountOnExit={true}
+          <Transition
+            in={sidebarOpen}
             timeout={300}
             classNames={{
-              enter: 'opacity-0',
-              enterActive: 'transition-opacity ease-linear duration-300',
-              enterDone: 'opacity-100',
-              exit: 'opacity-100',
-              exitActive: 'transition-opacity ease-linear duration-300',
-              exitDone: 'opacity-0',
+              inactive: 'opacity-0',
+              transitioning: 'transition-opacity ease-linear duration-300',
+              active: 'opacity-100',
             }}
+            onEntering={() => setOverlayVisible(true)}
+            onExited={() => setOverlayVisible(false)}
           >
             <div className="fixed inset-0">
               <div className="absolute inset-0 bg-gray-600 opacity-75"></div>
             </div>
-          </CSSTransition>
+          </Transition>
           {/*
           Off-canvas menu, show/hide based on off-canvas menu state.
 
@@ -72,18 +73,13 @@ export default function Navigation(
             From: "translate-x-0"
             To: "-translate-x-full"
           */}
-          <CSSTransition
-            in={navigationOpen}
+          <Transition
+            in={sidebarOpen}
             timeout={300}
-            mountOnEnter={true}
-            unmountOnExit={true}
             classNames={{
-              enter: 'translate-x-0',
-              enterActive: 'transition ease-in-out duration-300 transform',
-              enterDone: '-translate-x-full',
-              exit: '-translate-x-full',
-              exitActive: 'transition ease-in-out duration-300 transform',
-              exitDone: 'translate-x-0',
+              inactive: '-translate-x-full transform',
+              transitioning: 'transition ease-in-out duration-300 transform',
+              active: 'translate-x-0 transform',
             }}
           >
             <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white">
@@ -92,7 +88,7 @@ export default function Navigation(
                 <button
                   className="flex items-center justify-center h-12 w-12 rounded-full focus:outline-none focus:bg-gray-600"
                   aria-label="Close sidebar"
-                  onClick={() => setNavigationOpen(false)}
+                  onClick={() => setSidebarOpen(false)}
                 >
                   <XOutline className="h-6 w-6 text-white"></XOutline>
                 </button>
@@ -143,7 +139,7 @@ export default function Navigation(
                 </span>
               </div>
             </div>
-          </CSSTransition>
+          </Transition>
           <div className="flex-shrink-0 w-14">
             {/* <!-- Force sidebar to shrink to fit close icon --> */}
           </div>
@@ -198,37 +194,27 @@ export default function Navigation(
                 </div>
               </div>
             </span>
+            {/*  */}
           </div>
         </div>
       </div>
 
-      {/* Sidebar button */}
+      {/* Right side */}
       <div className="flex flex-col w-0 flex-1 overflow-hidden">
+        {/* Sidebar button */}
         <div className="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
           <button
             className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150"
             aria-label="Open sidebar"
-            onClick={() => setNavigationOpen(true)}
+            onClick={() => setSidebarOpen(true)}
           >
-            <MenuOutline
-              className="h-6 w-6"
-              onClick={() => setNavigationOpen(true)}
-            ></MenuOutline>
+            <MenuOutline className="h-6 w-6"></MenuOutline>
           </button>
         </div>
+
+        {/* Main view */}
         <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none">
-          <div className="pt-2 pb-6 md:py-6">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-              <h1 className="text-2xl font-semibold text-gray-900">
-                Dashboard
-              </h1>
-            </div>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-              {/* <!-- Replace with your content --> */}
-              {props.children}
-              {/* <!-- /End replace --> */}
-            </div>
-          </div>
+          {props.children}
         </main>
       </div>
     </div>
