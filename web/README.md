@@ -1,3 +1,5 @@
+# Landing page for LabelSync
+
 ```html
 <!-- SHOWCASE -->
 

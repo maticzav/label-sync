@@ -5,7 +5,7 @@ import yaml from 'js-yaml'
 import ml from 'multilines'
 import * as os from 'os'
 
-import { mapEntries } from './data/dict'
+import { mapEntries, mapKeys } from './data/dict'
 import { withDefault } from './utils'
 
 /* Constants */
@@ -254,10 +254,11 @@ function validateCongiuration(config: LSCConfiguration): LSCConfiguration {
  */
 function fixConfig(config: LSCConfiguration): LSCConfiguration {
   const repos = mapEntries(config.repos, fixRepoConfig)
+  const lowercaseRepos = mapKeys(repos, (repo) => repo.toLowerCase())
 
   return {
     ...config,
-    repos: repos,
+    repos: lowercaseRepos,
   }
 }
 

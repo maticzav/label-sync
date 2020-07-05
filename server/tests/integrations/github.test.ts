@@ -106,7 +106,7 @@ describe('github:', () => {
         /* Reset logs. */
         if (fs.existsSync(LOGS_FILE)) fs.unlinkSync(LOGS_FILE)
         winston = createLogger({
-          level: 'info',
+          level: 'debug',
           exitOnError: false,
           format: format.json(),
           transports: [new transports.File({ filename: LOGS_FILE })],

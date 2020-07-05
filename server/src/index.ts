@@ -2,6 +2,7 @@ import Webhooks = require('@octokit/webhooks')
 import { PrismaClient, Installation } from '@prisma/client'
 import bodyParser from 'body-parser'
 import cors from 'cors'
+import _ from 'lodash'
 import moment from 'moment'
 import ml from 'multilines'
 import os from 'os'
@@ -18,6 +19,7 @@ import {
   parseConfig,
   configRepos,
   isConfigRepo,
+  LSCRepository,
 } from './configuration'
 import {
   addLabelsToIssue,
@@ -84,7 +86,7 @@ module.exports = (
   /* Stored here for testing */
   prisma: PrismaClient = new PrismaClient(),
   winston: Logger = createLogger({
-    level: 'info',
+    level: 'debug',
     exitOnError: false,
     format: format.json(),
     transports: [
@@ -1124,7 +1126,7 @@ module.exports = (
    *  - add siblings
    */
   app.on(
-    'issues.labeled',
+    ['issues.labeled', 'pull_request.labeled'],
     withUserContextLogger(
       winston,
       withInstallation(
@@ -1132,12 +1134,18 @@ module.exports = (
         withSources(async (ctx) => {
           const owner = ctx.payload.sender.login.toLowerCase()
           const repo = ctx.payload.repository.name.toLowerCase()
-          const config = ctx.sources.config.repos[repo]
+          const config: LSCRepository | undefined =
+            ctx.sources.config.repos[repo]
           const label = ((ctx.payload as any) as { label: GithubLabel }).label
           const issue = ctx.payload.issue
 
+          ctx.logger.debug('IssueLabeled payload and config', {
+            payload: ctx.payload,
+            config: config,
+          })
+
           ctx.logger.info(
-            `Issue (${issue.number}) has been labeled with "${label.name}".`,
+            `Issue (${issue.number}) labeled with "${label.name}".`,
           )
 
           /* Ignore changes in non-strict config */
@@ -1154,8 +1162,18 @@ module.exports = (
           }
 
           /* Find siblings. */
-          const siblings = withDefault([], config.labels[label.name]?.siblings)
+          const siblings = _.get(
+            config,
+            ['labels', label.name, 'siblings'],
+            [] as string[],
+          )
           const ghSiblings = siblings.map((sibling) => ({ name: sibling }))
+
+          /* istanbul ignore if */
+          if (ghSiblings.length === 0) {
+            ctx.logger.info(`No siblings to add to "${label.name}", skipping.`)
+            return
+          }
 
           await addLabelsToIssue(
             ctx.github,
