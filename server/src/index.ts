@@ -1127,12 +1127,13 @@ module.exports = (
    */
   app.on(
     ['issues.labeled', 'pull_request.labeled'],
+    // 'issues.labeled',
     withUserContextLogger(
       winston,
       withInstallation(
         prisma,
         withSources(async (ctx) => {
-          const owner = ctx.payload.sender.login.toLowerCase()
+          const owner = ctx.payload.repository.owner.login.toLowerCase()
           const repo = ctx.payload.repository.name.toLowerCase()
           const config: LSCRepository | undefined =
             ctx.sources.config.repos[repo]
@@ -1248,7 +1249,7 @@ function withSources<
   fn: (ctx: Context<C> & W & { sources: Sources }) => Promise<T>,
 ): (ctx: Context<C> & W) => Promise<T | undefined> {
   return async (ctx) => {
-    const owner = ctx.payload.sender.login.toLowerCase()
+    const owner = ctx.payload.repository.owner.login.toLowerCase()
     const repo = getLSConfigRepoName(owner)
     const ref = `refs/heads/${ctx.payload.repository.default_branch}`
 
