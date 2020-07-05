@@ -1241,7 +1241,7 @@ function withSources<
     | Webhooks.WebhookPayloadLabel
     | Webhooks.WebhookPayloadPullRequest,
   /* Additional context fields */
-  W extends { installation: Installation },
+  W extends { installation: Installation; logger: Logger },
   /* Return type */
   T
 >(
@@ -1261,13 +1261,19 @@ function withSources<
 
     /* Skip if there's no configuration. */
     /* istanbul ignore next */
-    if (configRaw === null) return
+    if (configRaw === null) {
+      ctx.logger.debug(`No configuration found while loading sources.`)
+      return
+    }
 
     const [error, config] = parseConfig(ctx.installation.plan, configRaw)
 
     /* Skips invlaid config. */
     /* istanbul ignore if */
-    if (error !== null) return
+    if (error !== null) {
+      ctx.logger.debug(`Error while loading sources: ${error}`)
+      return
+    }
     ;(ctx as Context<C> & W & { sources: Sources }).sources = {
       config: config!,
     }
@@ -1317,7 +1323,7 @@ function withInstallation<
     /* Handle expired purchases */
     /* istanbul ignore if */
     if (moment(installation.periodEndsAt).isBefore(now)) {
-      return
+      throw new Error(`Expired subscription.`)
     }
 
     ;(ctx as Context<C> &

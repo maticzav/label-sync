@@ -634,22 +634,6 @@ Array [
     "message": "Removed label \\":bug: Bugfix\\" from changed.",
   },
   Object {
-    "config": Object {
-      "config": Object {
-        "removeUnconfiguredLabels": true,
-      },
-      "labels": Object {
-        "label/regular": Object {
-          "color": "000000",
-        },
-        "label/siblings": Object {
-          "color": "000000",
-          "siblings": Array [
-            "label/regular",
-          ],
-        },
-      },
-    },
     "event": Object {
       "action": "labeled",
       "context": Object {
@@ -784,6 +768,26 @@ Array [
         "url": "https://api.github.com/users/maticzav",
       },
     },
+    "sources": Object {
+      "repos": Object {
+        "changed": Object {
+          "config": Object {
+            "removeUnconfiguredLabels": true,
+          },
+          "labels": Object {
+            "label/regular": Object {
+              "color": "000000",
+            },
+            "label/siblings": Object {
+              "color": "000000",
+              "siblings": Array [
+                "label/regular",
+              ],
+            },
+          },
+        },
+      },
+    },
   },
   Object {
     "event": Object {
@@ -879,6 +883,26 @@ Array [
     },
     "level": "info",
     "message": "Repository synced newrepo.",
+  },
+  Object {
+    "event": Object {
+      "action": "created",
+      "context": Object {
+        "user_id": 21031067,
+      },
+      "name": "repository",
+      "repo": Object {
+        "name": "newrepo",
+      },
+      "user": Object {
+        "id": 21031067,
+        "owner": "maticzav",
+        "type": "User",
+      },
+    },
+    "level": "debug",
+    "message": "Error while loading sources: You are trying to configure a wildcard configuration on a free plan.
+Update your current plan to access all the features LabelSync offers.",
   },
 ]
 `;
@@ -1703,22 +1727,6 @@ Array [
     "message": "Removed label \\":bug: Bugfix\\" from changed.",
   },
   Object {
-    "config": Object {
-      "config": Object {
-        "removeUnconfiguredLabels": true,
-      },
-      "labels": Object {
-        "label/regular": Object {
-          "color": "000000",
-        },
-        "label/siblings": Object {
-          "color": "000000",
-          "siblings": Array [
-            "label/regular",
-          ],
-        },
-      },
-    },
     "event": Object {
       "action": "labeled",
       "context": Object {
@@ -1851,6 +1859,26 @@ Array [
         "site_admin": false,
         "type": "User",
         "url": "https://api.github.com/users/maticzav",
+      },
+    },
+    "sources": Object {
+      "repos": Object {
+        "changed": Object {
+          "config": Object {
+            "removeUnconfiguredLabels": true,
+          },
+          "labels": Object {
+            "label/regular": Object {
+              "color": "000000",
+            },
+            "label/siblings": Object {
+              "color": "000000",
+              "siblings": Array [
+                "label/regular",
+              ],
+            },
+          },
+        },
       },
     },
   },
