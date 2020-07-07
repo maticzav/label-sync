@@ -39,7 +39,7 @@
     "@types/request-promise-native": "1.0.17",
     "@types/stripe": "7.13.24",
     "codecov": "3.7.0",
-    "execa": "4.0.2",
+    "execa": "4.0.3",
     "js-yaml": "3.14.0",
     "lerna": "3.22.0",
     "nock": "13.0.2",
