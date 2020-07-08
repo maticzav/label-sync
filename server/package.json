@@ -17,7 +17,7 @@
     "io-ts": "2.2.6",
     "js-yaml": "3.14.0",
     "jsonwebtoken": "8.5.1",
-    "lodash": "4.17.15",
+    "lodash": "4.17.16",
     "moment": "2.27.0",
     "multilines": "1.0.3",
     "prettier": "2.0.5",
