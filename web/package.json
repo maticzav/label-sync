@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@stripe/stripe-js": "1.8.0",
-    "lodash": "4.17.16",
+    "lodash": "4.17.17",
     "multilines": "1.0.3",
     "next": "9.4.4",
     "prop-types": "15.7.2",
