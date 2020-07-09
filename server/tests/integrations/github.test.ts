@@ -567,7 +567,7 @@ describe('github:', () => {
           const installationsEndpoint = jest.fn().mockReturnValue({
             repositories: [
               { name: 'unchanged' },
-              { name: 'changed' },
+              { name: 'CHANGED' },
               { name: 'other' },
             ],
           })
@@ -814,7 +814,7 @@ describe('github:', () => {
           })
 
           const installationsEndpoint = jest.fn().mockReturnValue({
-            repositories: [{ name: 'changed' }],
+            repositories: [{ name: 'CHANGED' }],
           })
 
           /* Mocks */

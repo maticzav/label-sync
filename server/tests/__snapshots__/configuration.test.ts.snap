@@ -210,6 +210,86 @@ Array [
 ]
 `;
 
+exports[`configurations: capitalization.yml on FREE 1`] = `
+Array [
+  null,
+  Object {
+    "repos": Object {
+      "lowercase": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "label": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "mixed": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "label": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "uppercase": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "label": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+    },
+  },
+]
+`;
+
+exports[`configurations: capitalization.yml on PAID 1`] = `
+Array [
+  null,
+  Object {
+    "repos": Object {
+      "lowercase": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "label": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "mixed": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "label": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "uppercase": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "label": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+    },
+  },
+]
+`;
+
 exports[`configurations: duplicate_aliases.yml on FREE 1`] = `
 Array [
   "Configuration references same old label twice in alias:

@@ -1,0 +1,19 @@
+repos:
+  lowercase:
+    config:
+      removeUnconfiguredLabels: true
+    labels:
+      label:
+        color: '#ff0022'
+  UPPERCASE:
+    config:
+      removeUnconfiguredLabels: true
+    labels:
+      label:
+        color: '#ff0022'
+  mIxEd:
+    config:
+      removeUnconfiguredLabels: true
+    labels:
+      label:
+        color: '#ff0022'

@@ -608,7 +608,7 @@ export async function checkInstallationAccess(
       .then((res) => res.data)
 
     /* Push to collection */
-    accessRepos.push(...res.repositories.map((repo) => repo.name))
+    accessRepos.push(...res.repositories.map((repo) => repo.name.toLowerCase()))
 
     /* istanbul ignore if */
     if (res.repositories.length === 100) {

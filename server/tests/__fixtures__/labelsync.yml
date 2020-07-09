@@ -14,7 +14,7 @@ repos:
       # remove:
       #   color: "000000"
 
-  unchanged:
+  UNCHANGED:
     # configuration already matches
     labels:
       'label-a':
