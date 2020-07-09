@@ -30,6 +30,6 @@
     "@types/react-typist": "2.0.1",
     "autoprefixer": "9.8.4",
     "tailwindcss": "1.4.6",
-    "typescript": "3.9.3"
+    "typescript": "3.9.6"
   }
 }
