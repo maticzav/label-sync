@@ -213,7 +213,7 @@ export default function Navigation(
         </div>
 
         {/* Main view */}
-        <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none">
+        <main className="flex-1 relative z-0 overflow-y-auto bg-gray-50">
           {props.children}
         </main>
       </div>
