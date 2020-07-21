@@ -12,6 +12,7 @@ import { logToJSON, removeLogsDateFields } from '../__fixtures__/utils'
 
 import installationPayload from './../__fixtures__/github/installation.created'
 import issuesLabeledPayload from './../__fixtures__/github/issues.labeled'
+import pullRequestLabeledPayload from './../__fixtures__/github/pr.labeled'
 import labelCreatedPayload from './../__fixtures__/github/label.created'
 // import marketplacePurchasePayload from './../__fixtures__/github/marketplace_purchase.purchased'
 // import marketplaceCancelPayload from './../__fixtures__/github/marketplace_purchase.cancelled'
@@ -1195,6 +1196,50 @@ describe('github:', () => {
             id: 'issueslabeled',
             name: 'issues.labeled',
             payload: issuesLabeledPayload,
+          })
+
+          /* Tests */
+
+          expect(configEndpoint).toBeCalledTimes(1)
+          expect(addedLabels).toMatchSnapshot()
+        },
+        5 * 60 * 1000,
+      )
+
+      test(
+        'pull_request.labeled adds siblings',
+        async () => {
+          expect.assertions(2)
+
+          const configEndpoint = jest.fn().mockReturnValue({
+            content: Buffer.from(siblingsConfigFixture).toString('base64'),
+          })
+
+          /* Mocks */
+
+          nock('https://api.github.com')
+            .post('/app/installations/13055/access_tokens')
+            .reply(200, { token: 'test' })
+
+          nock('https://api.github.com')
+            .get(
+              '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
+            )
+            .reply(200, configEndpoint)
+
+          let addedLabels: string[] = []
+          nock('https://api.github.com')
+            .post('/repos/maticzav/changed/issues/1/labels')
+            .reply(200, (uri, body) => {
+              addedLabels.push(...(body as any))
+              return
+            })
+            .persist()
+
+          await probot.receive({
+            id: 'pullrequestlabled',
+            name: 'pull_request.labeled',
+            payload: pullRequestLabeledPayload,
           })
 
           /* Tests */

@@ -1126,8 +1126,7 @@ module.exports = (
    *  - add siblings
    */
   app.on(
-    ['issues.labeled', 'pull_request.labeled'],
-    // 'issues.labeled',
+    'issues.labeled',
     withUserContextLogger(
       winston,
       withInstallation(
@@ -1185,6 +1184,77 @@ module.exports = (
 
           /* prettier-ignore */
           ctx.logger.info(`Added siblings of ${label.name} to issue ${issue.number}: ${siblings.join(', ')}`)
+        }),
+      ),
+    ),
+  )
+
+  /**
+   * Label assigned to pull_request
+   *
+   * Tasks:
+   *  - check if there are any siblings that we should add
+   *  - add siblings
+   */
+  app.on(
+    'pull_request.labeled',
+    withUserContextLogger(
+      winston,
+      withInstallation(
+        prisma,
+        withSources(async (ctx) => {
+          const owner = ctx.payload.repository.owner.login.toLowerCase()
+          const repo = ctx.payload.repository.name.toLowerCase()
+          const config: LSCRepository | undefined =
+            ctx.sources.config.repos[repo]
+          const label = ((ctx.payload as any) as { label: GithubLabel }).label
+          const issue = ctx.payload.pull_request
+
+          ctx.logger.debug('PullRequestLabeled payload and config', {
+            payload: ctx.payload,
+            sources: ctx.sources.config,
+          })
+
+          ctx.logger.info(
+            `PullRequest (${issue.number}) labeled with "${label.name}".`,
+          )
+
+          /* Ignore changes in non-strict config */
+          /* istanbul ignore if */
+          if (!config) {
+            ctx.logger.info(`No configuration found, skipping.`)
+            return
+          }
+
+          /* istanbul ignore if */
+          if (!config.labels.hasOwnProperty(label.name)) {
+            ctx.logger.info(`Unconfigured label "${label.name}", skipping.`)
+            return
+          }
+
+          /* Find siblings. */
+          const siblings = _.get(
+            config,
+            ['labels', label.name, 'siblings'],
+            [] as string[],
+          )
+          const ghSiblings = siblings.map((sibling) => ({ name: sibling }))
+
+          /* istanbul ignore if */
+          if (ghSiblings.length === 0) {
+            ctx.logger.info(`No siblings to add to "${label.name}", skipping.`)
+            return
+          }
+
+          await addLabelsToIssue(
+            ctx.github,
+            { repo, owner, issue: issue.number },
+            ghSiblings,
+            true,
+          )
+
+          /* prettier-ignore */
+          ctx.logger.info(`Added siblings of ${label.name} to pr ${issue.number}: ${siblings.join(', ')}`)
         }),
       ),
     ),

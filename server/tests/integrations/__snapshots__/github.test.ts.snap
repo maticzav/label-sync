@@ -829,6 +829,200 @@ Array [
   },
   Object {
     "event": Object {
+      "action": "labeled",
+      "context": Object {
+        "user_id": 43337079,
+      },
+      "name": "pull_request.labeled",
+      "repo": Object {
+        "name": "changed",
+      },
+      "user": Object {
+        "id": 43337079,
+        "owner": "maticzav",
+        "type": "Organization",
+      },
+    },
+    "level": "debug",
+    "message": "PullRequestLabeled payload and config",
+    "payload": Object {
+      "action": "labeled",
+      "installation": Object {
+        "id": 7501122,
+        "node_id": "asd==",
+      },
+      "label": Object {
+        "color": "0075ca",
+        "default": true,
+        "description": "Improvements or additions to documentation",
+        "id": 1929933064,
+        "name": "label/siblings",
+        "node_id": "MDU6TGFiZWwxOTI5OTMzMDY0",
+        "url": "https://api.github.com/repos/3-SemicolonClub/3-SemicolonClub-labelsync/labels/documentation",
+      },
+      "organization": Object {
+        "avatar_url": "https://avatars0.githubusercontent.com/u/43337079?v=4",
+        "description": "{ semi: true }",
+        "id": 43337079,
+        "login": "maticzav",
+        "node_id": "MDEyOk9yZ2FuaXphdGlvbjQzMzM3MDc5",
+        "public_members_url": "https://api.github.com/orgs/3-SemicolonClub/public_members{/member}",
+        "url": "https://api.github.com/orgs/3-SemicolonClub",
+      },
+      "pull_request": Object {
+        "assignee": null,
+        "assignees": Array [],
+        "author_association": "CONTRIBUTOR",
+        "body": "",
+        "closed_at": null,
+        "comments": 0,
+        "created_at": "2020-03-23T22:17:15Z",
+        "id": 586553190,
+        "labels": Array [],
+        "locked": false,
+        "milestone": null,
+        "node_id": "MDU6SXNzdWU1ODY1NTMxOTA=",
+        "number": 1,
+        "state": "open",
+        "title": "LabelSync - Invalid configuration",
+        "updated_at": "2020-03-24T07:24:21Z",
+        "user": Object {
+          "avatar_url": "https://avatars0.githubusercontent.com/in/42297?v=4",
+          "gravatar_id": "",
+          "html_url": "https://github.com/apps/labelsync-manager",
+          "id": 55896118,
+          "login": "labelsync-manager",
+          "node_id": "MDM6Qm90NTU4OTYxMTg=",
+          "received_events_url": "https://api.github.com/users/labelsync-manager%5Bbot%5D/received_events",
+          "site_admin": false,
+          "type": "Bot",
+          "url": "https://api.github.com/users/labelsync-manager%5Bbot%5D",
+        },
+      },
+      "repository": Object {
+        "archived": false,
+        "clone_url": "https://github.com/3-SemicolonClub/3-SemicolonClub-labelsync.git",
+        "created_at": "2020-03-23T22:17:05Z",
+        "default_branch": "master",
+        "deployments_url": "https://api.github.com/repos/3-SemicolonClub/3-SemicolonClub-labelsync/deployments",
+        "description": "LabelSync configuration repository.",
+        "disabled": false,
+        "fork": false,
+        "forks": 0,
+        "forks_count": 0,
+        "full_name": "maticzav/changed",
+        "git_url": "git://github.com/3-SemicolonClub/3-SemicolonClub-labelsync.git",
+        "has_downloads": true,
+        "has_issues": true,
+        "has_pages": false,
+        "has_projects": true,
+        "has_wiki": true,
+        "homepage": null,
+        "html_url": "https://github.com/3-SemicolonClub/3-SemicolonClub-labelsync",
+        "id": 249556373,
+        "language": null,
+        "license": null,
+        "mirror_url": null,
+        "name": "changed",
+        "node_id": "MDEwOlJlcG9zaXRvcnkyNDk1NTYzNzM=",
+        "open_issues": 1,
+        "open_issues_count": 1,
+        "owner": Object {
+          "avatar_url": "https://avatars0.githubusercontent.com/u/43337079?v=4",
+          "gravatar_id": "",
+          "html_url": "https://github.com/3-SemicolonClub",
+          "id": 43337079,
+          "login": "maticzav",
+          "node_id": "MDEyOk9yZ2FuaXphdGlvbjQzMzM3MDc5",
+          "received_events_url": "https://api.github.com/users/3-SemicolonClub/received_events",
+          "site_admin": false,
+          "type": "Organization",
+          "url": "https://api.github.com/users/3-SemicolonClub",
+        },
+        "private": false,
+        "pushed_at": "2020-03-23T22:17:13Z",
+        "size": 2,
+        "ssh_url": "git@github.com:3-SemicolonClub/3-SemicolonClub-labelsync.git",
+        "stargazers_count": 0,
+        "svn_url": "https://github.com/3-SemicolonClub/3-SemicolonClub-labelsync",
+        "updated_at": "2020-03-23T22:17:15Z",
+        "watchers": 0,
+        "watchers_count": 0,
+      },
+      "sender": Object {
+        "avatar_url": "https://avatars2.githubusercontent.com/u/3924224?v=4",
+        "followers_url": "https://api.github.com/users/maticzav/followers",
+        "gravatar_id": "",
+        "html_url": "https://github.com/maticzav",
+        "id": 3924224,
+        "login": "maticzav",
+        "node_id": "MDQ6VXNlcjM5MjQyMjQ=",
+        "site_admin": false,
+        "type": "User",
+        "url": "https://api.github.com/users/maticzav",
+      },
+    },
+    "sources": Object {
+      "repos": Object {
+        "changed": Object {
+          "config": Object {
+            "removeUnconfiguredLabels": true,
+          },
+          "labels": Object {
+            "label/regular": Object {
+              "color": "000000",
+            },
+            "label/siblings": Object {
+              "color": "000000",
+              "siblings": Array [
+                "label/regular",
+              ],
+            },
+          },
+        },
+      },
+    },
+  },
+  Object {
+    "event": Object {
+      "action": "labeled",
+      "context": Object {
+        "user_id": 43337079,
+      },
+      "name": "pull_request.labeled",
+      "repo": Object {
+        "name": "changed",
+      },
+      "user": Object {
+        "id": 43337079,
+        "owner": "maticzav",
+        "type": "Organization",
+      },
+    },
+    "level": "info",
+    "message": "PullRequest (1) labeled with \\"label/siblings\\".",
+  },
+  Object {
+    "event": Object {
+      "action": "labeled",
+      "context": Object {
+        "user_id": 43337079,
+      },
+      "name": "pull_request.labeled",
+      "repo": Object {
+        "name": "changed",
+      },
+      "user": Object {
+        "id": 43337079,
+        "owner": "maticzav",
+        "type": "Organization",
+      },
+    },
+    "level": "info",
+    "message": "Added siblings of label/siblings to pr 1: label/regular",
+  },
+  Object {
+    "event": Object {
       "action": "created",
       "context": Object {
         "user_id": 21031067,
@@ -942,6 +1136,12 @@ Object {
 _Missing repositories:_
  * unchanged",
 }
+`;
+
+exports[`github: FREE pull_request.labeled adds siblings 1`] = `
+Array [
+  "label/regular",
+]
 `;
 
 exports[`github: FREE push event 1`] = `
@@ -1922,6 +2122,200 @@ Array [
   },
   Object {
     "event": Object {
+      "action": "labeled",
+      "context": Object {
+        "user_id": 43337079,
+      },
+      "name": "pull_request.labeled",
+      "repo": Object {
+        "name": "changed",
+      },
+      "user": Object {
+        "id": 43337079,
+        "owner": "maticzav",
+        "type": "Organization",
+      },
+    },
+    "level": "debug",
+    "message": "PullRequestLabeled payload and config",
+    "payload": Object {
+      "action": "labeled",
+      "installation": Object {
+        "id": 7501122,
+        "node_id": "asd==",
+      },
+      "label": Object {
+        "color": "0075ca",
+        "default": true,
+        "description": "Improvements or additions to documentation",
+        "id": 1929933064,
+        "name": "label/siblings",
+        "node_id": "MDU6TGFiZWwxOTI5OTMzMDY0",
+        "url": "https://api.github.com/repos/3-SemicolonClub/3-SemicolonClub-labelsync/labels/documentation",
+      },
+      "organization": Object {
+        "avatar_url": "https://avatars0.githubusercontent.com/u/43337079?v=4",
+        "description": "{ semi: true }",
+        "id": 43337079,
+        "login": "maticzav",
+        "node_id": "MDEyOk9yZ2FuaXphdGlvbjQzMzM3MDc5",
+        "public_members_url": "https://api.github.com/orgs/3-SemicolonClub/public_members{/member}",
+        "url": "https://api.github.com/orgs/3-SemicolonClub",
+      },
+      "pull_request": Object {
+        "assignee": null,
+        "assignees": Array [],
+        "author_association": "CONTRIBUTOR",
+        "body": "",
+        "closed_at": null,
+        "comments": 0,
+        "created_at": "2020-03-23T22:17:15Z",
+        "id": 586553190,
+        "labels": Array [],
+        "locked": false,
+        "milestone": null,
+        "node_id": "MDU6SXNzdWU1ODY1NTMxOTA=",
+        "number": 1,
+        "state": "open",
+        "title": "LabelSync - Invalid configuration",
+        "updated_at": "2020-03-24T07:24:21Z",
+        "user": Object {
+          "avatar_url": "https://avatars0.githubusercontent.com/in/42297?v=4",
+          "gravatar_id": "",
+          "html_url": "https://github.com/apps/labelsync-manager",
+          "id": 55896118,
+          "login": "labelsync-manager",
+          "node_id": "MDM6Qm90NTU4OTYxMTg=",
+          "received_events_url": "https://api.github.com/users/labelsync-manager%5Bbot%5D/received_events",
+          "site_admin": false,
+          "type": "Bot",
+          "url": "https://api.github.com/users/labelsync-manager%5Bbot%5D",
+        },
+      },
+      "repository": Object {
+        "archived": false,
+        "clone_url": "https://github.com/3-SemicolonClub/3-SemicolonClub-labelsync.git",
+        "created_at": "2020-03-23T22:17:05Z",
+        "default_branch": "master",
+        "deployments_url": "https://api.github.com/repos/3-SemicolonClub/3-SemicolonClub-labelsync/deployments",
+        "description": "LabelSync configuration repository.",
+        "disabled": false,
+        "fork": false,
+        "forks": 0,
+        "forks_count": 0,
+        "full_name": "maticzav/changed",
+        "git_url": "git://github.com/3-SemicolonClub/3-SemicolonClub-labelsync.git",
+        "has_downloads": true,
+        "has_issues": true,
+        "has_pages": false,
+        "has_projects": true,
+        "has_wiki": true,
+        "homepage": null,
+        "html_url": "https://github.com/3-SemicolonClub/3-SemicolonClub-labelsync",
+        "id": 249556373,
+        "language": null,
+        "license": null,
+        "mirror_url": null,
+        "name": "changed",
+        "node_id": "MDEwOlJlcG9zaXRvcnkyNDk1NTYzNzM=",
+        "open_issues": 1,
+        "open_issues_count": 1,
+        "owner": Object {
+          "avatar_url": "https://avatars0.githubusercontent.com/u/43337079?v=4",
+          "gravatar_id": "",
+          "html_url": "https://github.com/3-SemicolonClub",
+          "id": 43337079,
+          "login": "maticzav",
+          "node_id": "MDEyOk9yZ2FuaXphdGlvbjQzMzM3MDc5",
+          "received_events_url": "https://api.github.com/users/3-SemicolonClub/received_events",
+          "site_admin": false,
+          "type": "Organization",
+          "url": "https://api.github.com/users/3-SemicolonClub",
+        },
+        "private": false,
+        "pushed_at": "2020-03-23T22:17:13Z",
+        "size": 2,
+        "ssh_url": "git@github.com:3-SemicolonClub/3-SemicolonClub-labelsync.git",
+        "stargazers_count": 0,
+        "svn_url": "https://github.com/3-SemicolonClub/3-SemicolonClub-labelsync",
+        "updated_at": "2020-03-23T22:17:15Z",
+        "watchers": 0,
+        "watchers_count": 0,
+      },
+      "sender": Object {
+        "avatar_url": "https://avatars2.githubusercontent.com/u/3924224?v=4",
+        "followers_url": "https://api.github.com/users/maticzav/followers",
+        "gravatar_id": "",
+        "html_url": "https://github.com/maticzav",
+        "id": 3924224,
+        "login": "maticzav",
+        "node_id": "MDQ6VXNlcjM5MjQyMjQ=",
+        "site_admin": false,
+        "type": "User",
+        "url": "https://api.github.com/users/maticzav",
+      },
+    },
+    "sources": Object {
+      "repos": Object {
+        "changed": Object {
+          "config": Object {
+            "removeUnconfiguredLabels": true,
+          },
+          "labels": Object {
+            "label/regular": Object {
+              "color": "000000",
+            },
+            "label/siblings": Object {
+              "color": "000000",
+              "siblings": Array [
+                "label/regular",
+              ],
+            },
+          },
+        },
+      },
+    },
+  },
+  Object {
+    "event": Object {
+      "action": "labeled",
+      "context": Object {
+        "user_id": 43337079,
+      },
+      "name": "pull_request.labeled",
+      "repo": Object {
+        "name": "changed",
+      },
+      "user": Object {
+        "id": 43337079,
+        "owner": "maticzav",
+        "type": "Organization",
+      },
+    },
+    "level": "info",
+    "message": "PullRequest (1) labeled with \\"label/siblings\\".",
+  },
+  Object {
+    "event": Object {
+      "action": "labeled",
+      "context": Object {
+        "user_id": 43337079,
+      },
+      "name": "pull_request.labeled",
+      "repo": Object {
+        "name": "changed",
+      },
+      "user": Object {
+        "id": 43337079,
+        "owner": "maticzav",
+        "type": "Organization",
+      },
+    },
+    "level": "info",
+    "message": "Added siblings of label/siblings to pr 1: label/regular",
+  },
+  Object {
+    "event": Object {
       "action": "created",
       "context": Object {
         "user_id": 21031067,
@@ -2072,6 +2466,12 @@ Object {
 _Missing repositories:_
  * unchanged",
 }
+`;
+
+exports[`github: PAID pull_request.labeled adds siblings 1`] = `
+Array [
+  "label/regular",
+]
 `;
 
 exports[`github: PAID push event 1`] = `
