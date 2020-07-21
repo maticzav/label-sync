@@ -3,6 +3,7 @@ import Select from 'react-select'
 
 import { Label, Repository, LabelGroup } from '../lib/models'
 import { nameableToOptions } from '../lib/react-select'
+import LabelPicker from './LabelPicker'
 
 export type LabelGroupProps = {
   group: LabelGroup
@@ -32,17 +33,17 @@ export default function LabelView(props: LabelGroupProps) {
       {/* Labels */}
       <div className="p-2">
         <label
-          htmlFor="label-repositories"
+          htmlFor="group-labels"
           className="block text-sm font-medium leading-5 text-gray-700"
         >
           Labels
         </label>
         <div className="mt-1 relative rounded-md shadow-sm">
-          <Select
-            id="label-repositories"
-            options={props.options.labels.map(nameableToOptions)}
-            isMulti
-          ></Select>
+          <LabelPicker
+            id="group-labels"
+            options={props.options.labels}
+            selected={[]}
+          ></LabelPicker>
         </div>
       </div>
       {/* Repositories */}
