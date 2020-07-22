@@ -24,7 +24,7 @@ export default class extends Document {
           />
           <meta
             name="description"
-            content="Meet LabelSync. It's a GitHub application that helps you sync labels across repositories in your GitHub account. Its main features are centralised repoistory configuration, label chaining, and versatile label renaming. It also posts an overview of every configuration change."
+            content="Sync your GitHub labels as effortlessly as possible."
           />
 
           {/* Robots */}
