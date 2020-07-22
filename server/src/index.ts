@@ -1072,7 +1072,7 @@ module.exports = (
       withInstallation(
         prisma,
         withSources(async (ctx) => {
-          const owner = ctx.payload.sender.login.toLowerCase()
+          const owner = ctx.payload.repository.owner.login.toLowerCase()
           const repo = ctx.payload.repository.name.toLowerCase()
           const config =
             ctx.sources.config.repos[repo] || ctx.sources.config.repos['*']
@@ -1274,7 +1274,7 @@ module.exports = (
       withInstallation(
         prisma,
         withSources(async (ctx) => {
-          const owner = ctx.payload.sender.login.toLowerCase()
+          const owner = ctx.payload.repository.owner.login.toLowerCase()
           const repo = ctx.payload.repository.name.toLowerCase()
           const config =
             ctx.sources.config.repos[repo] || ctx.sources.config.repos['*']
