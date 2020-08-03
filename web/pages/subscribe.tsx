@@ -27,13 +27,24 @@ export const Subscribe = () => {
   const [agreed, setAgree] = useState(false)
 
   useEffect(() => {
+    /* Populate the form from the URL. */
     if (['FREE', 'PAID'].includes(query.plan as string)) {
-      console.log(query.plan)
       setPlan(query.plan as Plan)
     }
     if (['ANNUALLY', 'MONTHLY'].includes(query.period as string)) {
-      console.log(query.period)
       setPeriod(query.period as Period)
+    }
+
+    if (typeof query.email === 'string') {
+      setEmail(query.email)
+    }
+
+    if (typeof query.account === 'string') {
+      setAccount(query.account)
+    }
+
+    if (typeof query.coupon === 'string') {
+      setCoupon(query.coupon)
     }
 
     console.log({ query })
