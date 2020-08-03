@@ -3,6 +3,7 @@ import {
   MenuOutline,
   TagOutline,
   XOutline,
+  TemplateOutline,
 } from '@graywolfai/react-heroicons'
 import Link from 'next/link'
 import React, { useState } from 'react'
@@ -13,13 +14,19 @@ const pages = [
     slug: 'labels',
     label: 'Labels',
     icon: TagOutline,
-    href: '/labels',
+    href: '/index',
+  },
+  {
+    slug: 'kanban',
+    label: 'Kanban',
+    icon: TemplateOutline,
+    href: '/kanban',
   },
   {
     slug: 'docs',
     label: 'Documentation',
     icon: ArchiveOutline,
-    href: '/labels',
+    href: '/docs',
   },
 ]
 

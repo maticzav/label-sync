@@ -4,7 +4,7 @@ import Navigation from '../components/Navigation'
 import Label from '../components/Label'
 import Repository from '../components/Repository'
 import Group from '../components/Group'
-import { label, repository, group } from '../lib/mock'
+import { labels, repository, group } from '../lib/mock'
 import { Heading } from '../components/Heading'
 import Scroll from '../components/Scroll'
 
@@ -33,7 +33,7 @@ export default () => {
               ></Group>
               <Heading>Labels</Heading>
               <Label
-                label={label}
+                label={labels[0]}
                 options={{ repositories: [repository], groups: [] }}
               ></Label>
             </Scroll>
