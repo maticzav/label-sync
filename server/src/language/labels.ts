@@ -4,7 +4,8 @@ import { stringifyUrl } from 'query-string'
 
 import { GithubLabel } from '../github'
 import { LabelSyncReport } from '../handlers/labels'
-import { withDefault } from '../utils'
+import { withDefault, not } from '../utils'
+import { isNull } from 'util'
 
 /**
  * Concatenates multiple reports into a human readable string.
@@ -14,88 +15,139 @@ import { withDefault } from '../utils'
 export function generateHumanReadableReport(
   reports: LabelSyncReport[],
 ): string {
-  const body = joinReports(reports.map(parseLabelSyncReport))
+  const humanReadableReports = reports
+    .filter(reportHasChanges)
+    .sort(orderReports)
+    .map(parseLabelSyncReport)
+  const report = joinReports(humanReadableReports)
+
+  const unchangedReports = reports.filter(not(reportHasChanges))
+  const unchangedReposReport = ulOfUnchangedReports(unchangedReports)
 
   return ml`
   | ## LabelSync Overview 
   |
-  | ${body}
+  | ### Changes
+  | 
+  | ${report}
+  |
+  | ---
+  |
+  | ### Unchanged repositories
+  |
+  | ${unchangedReposReport}
   `
 }
 
-function parseLabelSyncReport(report: LabelSyncReport): string {
+/**
+ * Label report ordering function.
+ */
+function orderReports(a: LabelSyncReport, b: LabelSyncReport): number {
+  if (a.status === 'Success') return -1
+  return 0
+}
+
+/**
+ * Tells whether report has changed.
+ */
+function reportHasChanges(report: LabelSyncReport): boolean {
   switch (report.status) {
     case 'Success': {
-      /* States */
-
-      const changed =
+      return (
         report.additions.length +
           report.aliases.length +
           report.removals.length +
           report.updates.length >
         0
+      )
+    }
+    case 'Failure': {
+      return true
+    }
+  }
+}
 
+function parseLabelSyncReport(report: LabelSyncReport): string {
+  switch (report.status) {
+    case 'Success': {
       const removeUnconfiguredLabels = withDefault(
         false,
         report.config?.config.removeUnconfiguredLabels,
       )
 
-      /* Templates */
+      /* Sections */
 
-      /* prettier-ignore */
-      if (!changed) return ml`
-      | ### ${parseRepoName(report.repo)}
-      |
-      | Nothing changed! 🙈
-      `
-
-      switch (removeUnconfiguredLabels) {
-        case true: {
-          return ml`
-          | ### ${parseRepoName(report.repo)}
-          |
-          | __New labels:__
-          | ${ulOfLabels(report.additions, `No new labels created.`)}
-          |
-          | __Changed labels:__
-          | ${ulOfLabels(report.updates, `No changed labels.`)}
-          |
-          | __Aliased labels:__
-          | ${ulOfLabels(report.aliases, `No aliases.`)}
-          |
-          | __Removed labels:__
-          | ${ulOfLabels(report.removals, `You haven't removed any label.`)}
-        `
-        }
-        case false: {
-          return ml`
-          | ### ${parseRepoName(report.repo)}
-          |
-          | __New labels:__
-          | ${ulOfLabels(report.additions, `No new labels created.`)}
-          |
-          | __Changed labels:__
-          | ${ulOfLabels(report.updates, `No changed labels.`)}
-          |
-          | __Aliased labels:__
-          | ${ulOfLabels(report.aliases, `No aliases.`)}
-          |
-          | __Unconfigured labels.__
-          | ${ulOfLabels(
+      const sections: (string | null)[] = [
+        `#### ${parseRepoName(report.repo)}`,
+        ulOfLabels(
+          report.additions,
+          singular(
+            ':sparkles: 1 new label.',
+            (n) => `:sparkles: ${n} new labels.`,
+          ),
+        ),
+        ulOfLabels(
+          report.updates,
+          singular(
+            ':lipstick: 1 label changed.',
+            (n) => `:lipstick: ${n} changed labels.`,
+          ),
+        ),
+        ulOfLabels(
+          report.aliases,
+          singular(
+            ':performing_arts: 1 new label alias.',
+            (n) => `:performing_arts: ${n} aliases.`,
+          ),
+        ),
+        (() => {
+          if (removeUnconfiguredLabels) {
+            return ulOfLabels(
+              report.removals,
+              singular(
+                ':coffin: 1 removed label.',
+                (n) => `:coffin: ${n} removed labels.`,
+              ),
+            )
+          }
+          return ulOfLabels(
             report.removals,
-            'You have no unconfigured labels - you could make this repository `strict`.',
-          )}
-          `
-        }
-      }
+            singular(
+              ':mailbox_with_mail: 1 label unconfigured.',
+              (n) => `:mailbox_with_mail: ${n} unconfigured labels.`,
+            ),
+          )
+        })(),
+        (() => {
+          if (!removeUnconfiguredLabels || report.removals.length === 0) {
+            return '> You have no unconfigured labels - you could make this repository `strict`.'
+          }
+          return null
+        })(),
+      ]
+
+      return sections.filter(not(isNull)).join(os.EOL)
     }
     case 'Failure': {
       return ml`
-      | #### \`${report.repo}\`
+      | #### ${parseRepoName(report.repo)}
       |
       | ${report.message}
       `
     }
+  }
+}
+
+/**
+ * Let's you create singular and plural versions of a string.
+ */
+function singular(
+  singular: string,
+  plural: (val: number) => string,
+): (val: number) => string {
+  return (n: number) => {
+    if (n == 1) return singular
+    return plural(n)
   }
 }
 
@@ -110,12 +162,21 @@ function parseRepoName(name: string): string {
 
 /**
  * Creates a human readable list of labels.
- *
- * @param labels
  */
-function ulOfLabels(labels: GithubLabel[], empty: string): string {
-  if (labels.length === 0) return empty
-  return labels.map(label).join(os.EOL)
+function ulOfLabels(
+  labels: GithubLabel[],
+  summary: (n: number) => string,
+): string | null {
+  if (labels.length == 0) return null
+  return ml`
+  | <details>
+  |   <summary>${summary(labels.length)}</summary>
+  |
+  | ${labels.map(label).join(os.EOL)}
+  |
+  | </details>
+  |
+  `
 }
 
 /**
@@ -127,6 +188,26 @@ function label(label: GithubLabel): string {
     return ` * ${badge({ name: label.old_name, color: "inactive" })} → ${badge(label)}`
   }
   return ` * ${badge(label)}`
+}
+
+/**
+ * Creates a list of unchanged reports.
+ */
+function ulOfUnchangedReports(reports: LabelSyncReport[]): string {
+  if (reports.length === 0) return `No unchanged repositories.`
+
+  const repos = reports
+    .map((report) => ` * ${parseRepoName(report.repo)}`)
+    .join(os.EOL)
+
+  return ml`
+  | <details>
+  |   <summary>${reports.length} repositories.</summary>
+  |
+  | ${repos}
+  |
+  | </details>
+  `
 }
 
 /**

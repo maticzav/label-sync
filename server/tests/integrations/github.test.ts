@@ -65,7 +65,7 @@ describe('github:', () => {
     nock.cleanAll()
     nock.enableNetConnect()
 
-    await client.disconnect()
+    await client.$disconnect()
   })
 
   /**

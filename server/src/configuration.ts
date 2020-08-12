@@ -280,9 +280,9 @@ function fixRepoConfig(config: LSCRepository): LSCRepository {
 /**
  * Removes hash from the color.
  */
-function fixLabelColor(color: string): string {
-  if (color.startsWith('#')) return color.slice(1)
-  return color
+export function fixLabelColor(color: string): string {
+  if (color.startsWith('#')) return color.slice(1).toLowerCase()
+  return color.toLowerCase()
 }
 
 /**

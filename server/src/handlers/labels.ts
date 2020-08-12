@@ -4,6 +4,7 @@ import {
   LSCRepository,
   LSCLabel,
   LSCRepositoryConfiguration,
+  fixLabelColor,
 } from '../configuration'
 import * as maybe from '../data/maybe'
 import { Dict } from '../data/dict'
@@ -237,14 +238,18 @@ export function calculateDiff(
        *  - either color or description has changed.
        */
 
-      const labelHasChanged = currentLabels.some(
-        (cLabel) =>
-          // Must have the same name.
-          cLabel.name === hydratedLabel.name &&
-          // Description or color might have changed.
-          (cLabel.description !== hydratedLabel.description ||
-            cLabel.color !== hydratedLabel.color),
-      )
+      const labelHasChanged = currentLabels.some((cLabel) => {
+        // Must have the same name.
+        const sameName = cLabel.name === hydratedLabel.name
+
+        // Description or color might have changed.
+        const descriptionChanged =
+          cLabel.description !== hydratedLabel.description
+        const colorChanged =
+          fixLabelColor(cLabel.color) !== fixLabelColor(hydratedLabel.color)
+
+        return sameName && (descriptionChanged || colorChanged)
+      })
 
       if (existingLabel && labelHasChanged && !labelIsAliased) {
         changed.push(hydratedLabel)

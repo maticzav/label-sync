@@ -53,7 +53,7 @@ describe('stripe:', () => {
     nock.enableNetConnect()
 
     probot.httpServer!.close()
-    await prisma.disconnect()
+    await prisma.$disconnect()
   })
 
   let probot: Probot

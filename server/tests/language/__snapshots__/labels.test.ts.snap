@@ -3,46 +3,149 @@
 exports[`language: correctly generates human readable report 1`] = `
 "## LabelSync Overview 
 
-#### \\\\\`failure\\\\\`
+### Changes
+
+#### \`removals\`
+<details>
+  <summary>:coffin: 1 removed label.</summary>
+
+ * ![bug/3](https://img.shields.io/static/v1?color=%23ee263c&label=&message=bug%2F3 \\"bug/3\\")
+
+</details>
+
+
+---
+
+#### \`changed\`
+<details>
+  <summary>:sparkles: 1 new label.</summary>
+
+ * ![addition/uno](https://img.shields.io/static/v1?color=%23ee263c&label=&message=addition%2Funo \\"addition/uno\\")
+
+</details>
+
+<details>
+  <summary>:lipstick: 1 label changed.</summary>
+
+ * ![update/ena](https://img.shields.io/static/v1?color=%23aa123c&label=&message=update%2Fena \\"update/ena\\")
+
+</details>
+
+<details>
+  <summary>:performing_arts: 1 new label alias.</summary>
+
+ * ![label/alias](https://img.shields.io/static/v1?color=inactive&label=&message=label%2Falias \\"label/alias\\") → ![label/new-alias](https://img.shields.io/static/v1?color=%23ee263c&label=&message=label%2Fnew-alias \\"label/new-alias\\")
+
+</details>
+
+<details>
+  <summary>:coffin: 1 removed label.</summary>
+
+ * ![removal/one](https://img.shields.io/static/v1?color=%23aa123c&label=&message=removal%2Fone \\"removal/one\\")
+
+</details>
+
+
+---
+
+#### \`changed\`
+<details>
+  <summary>:sparkles: 2 new labels.</summary>
+
+ * ![addition/uno](https://img.shields.io/static/v1?color=%23ee263c&label=&message=addition%2Funo \\"addition/uno\\")
+ * ![addition/due](https://img.shields.io/static/v1?color=%23ee263c&label=&message=addition%2Fdue \\"addition/due\\")
+
+</details>
+
+<details>
+  <summary>:mailbox_with_mail: 2 unconfigured labels.</summary>
+
+ * ![removal/one](https://img.shields.io/static/v1?color=%23aa123c&label=&message=removal%2Fone \\"removal/one\\")
+ * ![removal/two](https://img.shields.io/static/v1?color=%23aa123c&label=&message=removal%2Ftwo \\"removal/two\\")
+
+</details>
+
+> You have no unconfigured labels - you could make this repository \`strict\`.
+
+---
+
+#### \`changed\`
+<details>
+  <summary>:sparkles: 2 new labels.</summary>
+
+ * ![addition/uno](https://img.shields.io/static/v1?color=%23ee263c&label=&message=addition%2Funo \\"addition/uno\\")
+ * ![addition/due](https://img.shields.io/static/v1?color=%23ee263c&label=&message=addition%2Fdue \\"addition/due\\")
+
+</details>
+
+<details>
+  <summary>:lipstick: 2 changed labels.</summary>
+
+ * ![update/ena](https://img.shields.io/static/v1?color=%23aa123c&label=&message=update%2Fena \\"update/ena\\")
+ * ![update/two](https://img.shields.io/static/v1?color=inactive&label=&message=update%2Ftwo \\"update/two\\") → ![update/dva](https://img.shields.io/static/v1?color=%23aa123c&label=&message=update%2Fdva \\"update/dva\\")
+
+</details>
+
+<details>
+  <summary>:mailbox_with_mail: 2 unconfigured labels.</summary>
+
+ * ![removal/one](https://img.shields.io/static/v1?color=%23aa123c&label=&message=removal%2Fone \\"removal/one\\")
+ * ![removal/two](https://img.shields.io/static/v1?color=%23aa123c&label=&message=removal%2Ftwo \\"removal/two\\")
+
+</details>
+
+> You have no unconfigured labels - you could make this repository \`strict\`.
+
+---
+
+#### \`changed\`
+<details>
+  <summary>:sparkles: 2 new labels.</summary>
+
+ * ![addition/uno](https://img.shields.io/static/v1?color=%23ee263c&label=&message=addition%2Funo \\"addition/uno\\")
+ * ![addition/due](https://img.shields.io/static/v1?color=%23ee263c&label=&message=addition%2Fdue \\"addition/due\\")
+
+</details>
+
+<details>
+  <summary>:lipstick: 2 changed labels.</summary>
+
+ * ![update/ena](https://img.shields.io/static/v1?color=%23aa123c&label=&message=update%2Fena \\"update/ena\\")
+ * ![update/two](https://img.shields.io/static/v1?color=inactive&label=&message=update%2Ftwo \\"update/two\\") → ![update/dva](https://img.shields.io/static/v1?color=%23aa123c&label=&message=update%2Fdva \\"update/dva\\")
+
+</details>
+
+<details>
+  <summary>:performing_arts: 2 aliases.</summary>
+
+ * ![label/alias](https://img.shields.io/static/v1?color=inactive&label=&message=label%2Falias \\"label/alias\\") → ![label/new-alias](https://img.shields.io/static/v1?color=%23ee263c&label=&message=label%2Fnew-alias \\"label/new-alias\\")
+ * ![label/aliases](https://img.shields.io/static/v1?color=inactive&label=&message=label%2Faliases \\"label/aliases\\") → ![label/new-second](https://img.shields.io/static/v1?color=%23ee263c&label=&message=label%2Fnew-second \\"label/new-second\\")
+
+</details>
+
+<details>
+  <summary>:coffin: 2 removed labels.</summary>
+
+ * ![removal/one](https://img.shields.io/static/v1?color=%23aa123c&label=&message=removal%2Fone \\"removal/one\\")
+ * ![removal/two](https://img.shields.io/static/v1?color=%23aa123c&label=&message=removal%2Ftwo \\"removal/two\\")
+
+</details>
+
+
+---
+
+#### \`failure\`
 
 Couldn't make a diff of labels.
 
 ---
 
-### \`changed\`
+### Unchanged repositories
 
-__New labels:__
- * ![bug/2](https://img.shields.io/static/v1?color=33&label=&message=bug%2F2 \\"bug/2\\")
+<details>
+  <summary>1 repositories.</summary>
 
-__Changed labels:__
- * ![bug/1](https://img.shields.io/static/v1?color=00&label=&message=bug%2F1 \\"bug/1\\")
- * ![label/old](https://img.shields.io/static/v1?color=inactive&label=&message=label%2Fold \\"label/old\\") → ![label/new](https://img.shields.io/static/v1?color=00&label=&message=label%2Fnew \\"label/new\\")
+ * \`unchanged\`
 
-__Aliased labels:__
- * ![label/alias](https://img.shields.io/static/v1?color=inactive&label=&message=label%2Falias \\"label/alias\\") → ![label/new-alias](https://img.shields.io/static/v1?color=00&label=&message=label%2Fnew-alias \\"label/new-alias\\")
-
-__Removed labels:__
- * ![bug/3](https://img.shields.io/static/v1?color=ff&label=&message=bug%2F3 \\"bug/3\\")
-
----
-
-### \`unchanged\`
-
-Nothing changed! 🙈
-
----
-
-### \`removals\`
-
-__New labels:__
-No new labels created.
-
-__Changed labels:__
-No changed labels.
-
-__Aliased labels:__
-No aliases.
-
-__Removed labels:__
- * ![bug/3](https://img.shields.io/static/v1?color=ff&label=&message=bug%2F3 \\"bug/3\\")"
+</details>"
 `;

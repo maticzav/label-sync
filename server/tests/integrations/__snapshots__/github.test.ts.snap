@@ -1105,27 +1105,50 @@ exports[`github: FREE pull_request 1`] = `
 Object {
   "body": "## LabelSync Overview 
 
-### \`changed\`
+### Changes
 
-__New labels:__
+#### \`changed\`
+<details>
+  <summary>:sparkles: 1 new label.</summary>
+
  * ![create/new](https://img.shields.io/static/v1?color=000000&label=&message=create%2Fnew \\"create/new\\")
 
-__Changed labels:__
+</details>
+
+<details>
+  <summary>:lipstick: 2 changed labels.</summary>
+
  * ![alias/old:1](https://img.shields.io/static/v1?color=inactive&label=&message=alias%2Fold%3A1 \\"alias/old:1\\") → ![alias/new](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew \\"alias/new\\")
  * ![update/color](https://img.shields.io/static/v1?color=ffffff&label=&message=update%2Fcolor \\"update/color\\")
 
-__Aliased labels:__
+</details>
+
+<details>
+  <summary>:performing_arts: 1 new label alias.</summary>
+
  * ![alias/old:2](https://img.shields.io/static/v1?color=inactive&label=&message=alias%2Fold%3A2 \\"alias/old:2\\") → ![alias/new](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew \\"alias/new\\")
 
-__Removed labels:__
+</details>
+
+<details>
+  <summary>:coffin: 2 removed labels.</summary>
+
  * ![alias/old:2](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fold%3A2 \\"alias/old:2\\")
  * ![remove](https://img.shields.io/static/v1?color=000000&label=&message=remove \\"remove\\")
 
+</details>
+
+
 ---
 
-### \`unchanged\`
+### Unchanged repositories
 
-Nothing changed! 🙈",
+<details>
+  <summary>1 repositories.</summary>
+
+ * \`unchanged\`
+
+</details>",
 }
 `;
 
@@ -1148,27 +1171,50 @@ exports[`github: FREE push event 1`] = `
 Object {
   "body": "## LabelSync Overview 
 
-### \`changed\`
+### Changes
 
-__New labels:__
+#### \`changed\`
+<details>
+  <summary>:sparkles: 1 new label.</summary>
+
  * ![create/new](https://img.shields.io/static/v1?color=000000&label=&message=create%2Fnew \\"create/new\\")
 
-__Changed labels:__
+</details>
+
+<details>
+  <summary>:lipstick: 2 changed labels.</summary>
+
  * ![alias/old:1](https://img.shields.io/static/v1?color=inactive&label=&message=alias%2Fold%3A1 \\"alias/old:1\\") → ![alias/new](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew \\"alias/new\\")
  * ![update/color](https://img.shields.io/static/v1?color=ffffff&label=&message=update%2Fcolor \\"update/color\\")
 
-__Aliased labels:__
+</details>
+
+<details>
+  <summary>:performing_arts: 1 new label alias.</summary>
+
  * ![alias/old:2](https://img.shields.io/static/v1?color=inactive&label=&message=alias%2Fold%3A2 \\"alias/old:2\\") → ![alias/new](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew \\"alias/new\\")
 
-__Removed labels:__
+</details>
+
+<details>
+  <summary>:coffin: 2 removed labels.</summary>
+
  * ![alias/old:2](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fold%3A2 \\"alias/old:2\\")
  * ![remove](https://img.shields.io/static/v1?color=000000&label=&message=remove \\"remove\\")
 
+</details>
+
+
 ---
 
-### \`unchanged\`
+### Unchanged repositories
 
-Nothing changed! 🙈",
+<details>
+  <summary>1 repositories.</summary>
+
+ * \`unchanged\`
+
+</details>",
 }
 `;
 
@@ -2435,27 +2481,50 @@ exports[`github: PAID pull_request 1`] = `
 Object {
   "body": "## LabelSync Overview 
 
-### \`changed\`
+### Changes
 
-__New labels:__
+#### \`changed\`
+<details>
+  <summary>:sparkles: 1 new label.</summary>
+
  * ![create/new](https://img.shields.io/static/v1?color=000000&label=&message=create%2Fnew \\"create/new\\")
 
-__Changed labels:__
+</details>
+
+<details>
+  <summary>:lipstick: 2 changed labels.</summary>
+
  * ![alias/old:1](https://img.shields.io/static/v1?color=inactive&label=&message=alias%2Fold%3A1 \\"alias/old:1\\") → ![alias/new](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew \\"alias/new\\")
  * ![update/color](https://img.shields.io/static/v1?color=ffffff&label=&message=update%2Fcolor \\"update/color\\")
 
-__Aliased labels:__
+</details>
+
+<details>
+  <summary>:performing_arts: 1 new label alias.</summary>
+
  * ![alias/old:2](https://img.shields.io/static/v1?color=inactive&label=&message=alias%2Fold%3A2 \\"alias/old:2\\") → ![alias/new](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew \\"alias/new\\")
 
-__Removed labels:__
+</details>
+
+<details>
+  <summary>:coffin: 2 removed labels.</summary>
+
  * ![alias/old:2](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fold%3A2 \\"alias/old:2\\")
  * ![remove](https://img.shields.io/static/v1?color=000000&label=&message=remove \\"remove\\")
 
+</details>
+
+
 ---
 
-### \`unchanged\`
+### Unchanged repositories
 
-Nothing changed! 🙈",
+<details>
+  <summary>1 repositories.</summary>
+
+ * \`unchanged\`
+
+</details>",
 }
 `;
 
@@ -2478,27 +2547,50 @@ exports[`github: PAID push event 1`] = `
 Object {
   "body": "## LabelSync Overview 
 
-### \`changed\`
+### Changes
 
-__New labels:__
+#### \`changed\`
+<details>
+  <summary>:sparkles: 1 new label.</summary>
+
  * ![create/new](https://img.shields.io/static/v1?color=000000&label=&message=create%2Fnew \\"create/new\\")
 
-__Changed labels:__
+</details>
+
+<details>
+  <summary>:lipstick: 2 changed labels.</summary>
+
  * ![alias/old:1](https://img.shields.io/static/v1?color=inactive&label=&message=alias%2Fold%3A1 \\"alias/old:1\\") → ![alias/new](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew \\"alias/new\\")
  * ![update/color](https://img.shields.io/static/v1?color=ffffff&label=&message=update%2Fcolor \\"update/color\\")
 
-__Aliased labels:__
+</details>
+
+<details>
+  <summary>:performing_arts: 1 new label alias.</summary>
+
  * ![alias/old:2](https://img.shields.io/static/v1?color=inactive&label=&message=alias%2Fold%3A2 \\"alias/old:2\\") → ![alias/new](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew \\"alias/new\\")
 
-__Removed labels:__
+</details>
+
+<details>
+  <summary>:coffin: 2 removed labels.</summary>
+
  * ![alias/old:2](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fold%3A2 \\"alias/old:2\\")
  * ![remove](https://img.shields.io/static/v1?color=000000&label=&message=remove \\"remove\\")
 
+</details>
+
+
 ---
 
-### \`unchanged\`
+### Unchanged repositories
 
-Nothing changed! 🙈",
+<details>
+  <summary>1 repositories.</summary>
+
+ * \`unchanged\`
+
+</details>",
 }
 `;
 
