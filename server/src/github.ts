@@ -63,7 +63,8 @@ export async function getRepositoryLabels(
 ): Promise<Octokit.IssuesListLabelsForRepoResponseItem[]> {
   let labels: Octokit.IssuesListLabelsForRepoResponseItem[] = []
 
-  await handler(0)
+  /* Github paginates from page 1 */
+  await handler(1)
 
   return labels
 
@@ -222,7 +223,7 @@ export async function aliasLabelsInRepository(
   labels: GithubLabel[],
   persist: boolean,
 ): Promise<GithubLabel[]> {
-  let page = 0
+  let page = 1
 
   /* Skip on no labels */
   if (labels.length === 0) return labels
@@ -584,7 +585,7 @@ export async function checkInstallationAccess(
 
   /* Paginate through repos. */
   let accessRepos: string[] = []
-  let page = 0
+  let page = 1
 
   await handler()
 

@@ -348,7 +348,7 @@ describe('github:', () => {
 
           const labelsEndpoint = jest.fn().mockImplementation((uri) => {
             switch (uri) {
-              case '/repos/maticzav/changed/labels?per_page=100&page=0': {
+              case '/repos/maticzav/changed/labels?per_page=100&page=1': {
                 return [
                   // {
                   //   name: 'create/new',
@@ -376,7 +376,7 @@ describe('github:', () => {
                   },
                 ]
               }
-              case '/repos/maticzav/unchanged/labels?per_page=100&page=0': {
+              case '/repos/maticzav/unchanged/labels?per_page=100&page=1': {
                 return [
                   {
                     name: 'label-a',
@@ -445,7 +445,7 @@ describe('github:', () => {
             .reply(200, configEndpoint)
 
           nock('https://api.github.com')
-            .get('/installation/repositories?per_page=100&page=0')
+            .get('/installation/repositories?per_page=100&page=1')
             .reply(200, installationsEndpoint)
 
           nock('https://api.github.com')
@@ -454,7 +454,7 @@ describe('github:', () => {
             .persist()
 
           nock('https://api.github.com')
-            .get(/\/repos\/maticzav\/\w+\/issues\?per_page\=100\&page\=0/)
+            .get(/\/repos\/maticzav\/\w+\/issues\?per_page\=100\&page\=1/)
             .reply(200, getIssuesForRepoEndpoint)
             .persist()
 
@@ -531,7 +531,7 @@ describe('github:', () => {
             .reply(200, configEndpoint)
 
           nock('https://api.github.com')
-            .get('/installation/repositories?per_page=100&page=0')
+            .get('/installation/repositories?per_page=100&page=1')
             .reply(200, installationsEndpoint)
 
           nock('https://api.github.com')
@@ -575,7 +575,7 @@ describe('github:', () => {
 
           const labelsEndpoint = jest.fn().mockImplementation((uri) => {
             switch (uri) {
-              case '/repos/maticzav/changed/labels?per_page=100&page=0': {
+              case '/repos/maticzav/changed/labels?per_page=100&page=1': {
                 return [
                   // {
                   //   name: 'create/new',
@@ -603,7 +603,7 @@ describe('github:', () => {
                   },
                 ]
               }
-              case '/repos/maticzav/unchanged/labels?per_page=100&page=0': {
+              case '/repos/maticzav/unchanged/labels?per_page=100&page=1': {
                 return [
                   {
                     name: 'label-a',
@@ -693,7 +693,7 @@ describe('github:', () => {
             .reply(200, configEndpoint)
 
           nock('https://api.github.com')
-            .get('/installation/repositories?per_page=100&page=0')
+            .get('/installation/repositories?per_page=100&page=1')
             .reply(200, installationsEndpoint)
 
           nock('https://api.github.com')
@@ -702,7 +702,7 @@ describe('github:', () => {
             .persist()
 
           nock('https://api.github.com')
-            .get(/\/repos\/maticzav\/\w+\/issues\?per_page\=100\&page\=0/)
+            .get(/\/repos\/maticzav\/\w+\/issues\?per_page\=100\&page\=1/)
             .reply(200, getIssuesForRepoEndpoint)
             .persist()
 
@@ -831,7 +831,7 @@ describe('github:', () => {
             .reply(200, configEndpoint)
 
           nock('https://api.github.com')
-            .get('/installation/repositories?per_page=100&page=0')
+            .get('/installation/repositories?per_page=100&page=1')
             .reply(200, installationsEndpoint)
 
           nock('https://api.github.com')
@@ -881,7 +881,7 @@ describe('github:', () => {
 
           const labelsEndpoint = jest.fn().mockImplementation((uri) => {
             switch (uri) {
-              case '/repos/maticzav/changed/labels?per_page=100&page=0': {
+              case '/repos/maticzav/changed/labels?per_page=100&page=1': {
                 return [
                   // {
                   //   name: 'create/new',
@@ -909,7 +909,7 @@ describe('github:', () => {
                   },
                 ]
               }
-              case '/repos/maticzav/unchanged/labels?per_page=100&page=0': {
+              case '/repos/maticzav/unchanged/labels?per_page=100&page=1': {
                 return [
                   {
                     name: 'label-a',
@@ -960,7 +960,7 @@ describe('github:', () => {
             .reply(200, configEndpoint)
 
           nock('https://api.github.com')
-            .get('/installation/repositories?per_page=100&page=0')
+            .get('/installation/repositories?per_page=100&page=1')
             .reply(200, installationsEndpoint)
 
           nock('https://api.github.com')
@@ -969,7 +969,7 @@ describe('github:', () => {
             .persist()
 
           nock('https://api.github.com')
-            .get(/\/repos\/maticzav\/\w+\/issues\?per_page\=100\&page\=0/)
+            .get(/\/repos\/maticzav\/\w+\/issues\?per_page\=100\&page\=1/)
             .reply(200, getIssuesForRepoEndpoint)
             .persist()
 
@@ -1080,7 +1080,7 @@ describe('github:', () => {
             .reply(200, configEndpoint)
 
           nock('https://api.github.com')
-            .get('/installation/repositories?per_page=100&page=0')
+            .get('/installation/repositories?per_page=100&page=1')
             .reply(200, installationsEndpoint)
 
           nock('https://api.github.com')
