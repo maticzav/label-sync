@@ -898,6 +898,22 @@ module.exports = (
           return
         }
 
+        /* Start the process of PR review. */
+
+        const startedAt = new Date()
+
+        /* Start a Github check. */
+        const check = await ctx.github.checks
+          .create({
+            name: 'label-sync/dryrun',
+            owner: owner,
+            repo: repo,
+            head_sha: ctx.payload.pull_request.head.sha,
+            started_at: startedAt.toISOString(),
+            status: 'in_progress',
+          })
+          .then((res) => res.data)
+
         /* Load configuration */
         const configRaw = await getFile(
           ctx.github,
@@ -930,16 +946,25 @@ module.exports = (
           | ${error}
           `
 
-          /* Comment on a PR in a human friendly way. */
-          const comment = await createPRComment(
-            ctx.github,
-            owner,
-            configRepo,
-            number,
-            report,
-          )
+          const completedAt = new Date()
 
-          ctx.logger.info(`Commented on PullRequest (${comment.id})`)
+          /* Complete a Github check. */
+          const completedCheck = await ctx.github.checks
+            .update({
+              check_run_id: check.id,
+              owner: owner,
+              repo: repo,
+              status: 'completed',
+              completed_at: completedAt.toISOString(),
+              conclusion: 'failure',
+              output: {
+                title: 'Invalid configuration',
+                summary: report,
+              },
+            })
+            .then((res) => res.data)
+
+          ctx.logger.info(`Submited a check failure (${completedCheck.id})`)
           return
         }
 
@@ -985,6 +1010,9 @@ module.exports = (
                 )
 
                 const report = generateHumanReadableReport(reports)
+                const successful = reports.every(
+                  (report) => report.status === 'Success',
+                )
 
                 /* Comment on a PR in a human friendly way. */
                 const comment = await createPRComment(
@@ -996,6 +1024,22 @@ module.exports = (
                 )
 
                 ctx.logger.info(`Commented on PullRequest (${comment.id})`)
+
+                const completedAt = new Date()
+
+                /* Complete a Github check. */
+                const completedCheck = await ctx.github.checks
+                  .update({
+                    check_run_id: check.id,
+                    owner: owner,
+                    repo: repo,
+                    status: 'completed',
+                    completed_at: completedAt.toISOString(),
+                    conclusion: successful ? 'success' : 'failure',
+                  })
+                  .then((res) => res.data)
+
+                ctx.logger.info(`Completed a check (${completedCheck.id})`)
 
                 return
               }
@@ -1012,15 +1056,26 @@ module.exports = (
                   .join(os.EOL)}
                 `
 
-                const comment = await createPRComment(
-                  ctx.github,
-                  owner,
-                  configRepo,
-                  number,
-                  body,
-                )
+                /* Complete a check run */
 
-                ctx.logger.info(`Commented on PullRequest ${comment.id}`)
+                const completedAt = new Date()
+
+                const completedCheck = await ctx.github.checks
+                  .update({
+                    check_run_id: check.id,
+                    owner: owner,
+                    repo: repo,
+                    status: 'completed',
+                    completed_at: completedAt.toISOString(),
+                    conclusion: 'failure',
+                    output: {
+                      title: 'Missing repository access.',
+                      summary: body,
+                    },
+                  })
+                  .then((res) => res.data)
+
+                ctx.logger.info(`Completed check ${completedCheck.id}`)
 
                 return
               }

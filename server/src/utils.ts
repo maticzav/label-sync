@@ -1,5 +1,7 @@
 import fs from 'fs'
 import path from 'path'
+import { isNullOrUndefined } from 'util'
+
 import { mapKeys } from './data/dict'
 
 /**
@@ -23,12 +25,12 @@ export function loadTreeFromPath(
 ): { [path: string]: string } {
   const files = fs.readdirSync(root, { encoding: 'utf-8' })
   const tree = files
-    .filter(file => !ignore.some(glob => RegExp(glob).test(file)))
-    .flatMap(file => {
+    .filter((file) => !ignore.some((glob) => RegExp(glob).test(file)))
+    .flatMap((file) => {
       const rootFilePath = path.resolve(root, file)
       if (fs.lstatSync(rootFilePath).isDirectory()) {
         return Object.entries(
-          mapKeys(loadTreeFromPath(rootFilePath, ignore), key =>
+          mapKeys(loadTreeFromPath(rootFilePath, ignore), (key) =>
             unshift(file, key),
           ),
         )
@@ -54,7 +56,7 @@ function unshift(pre: string, path: string): string {
  * @param fallback
  * @param value
  */
-export function withDefault<T>(fallback: T, value: T | undefined): T {
-  if (value) return value
-  else return fallback
+export function withDefault<T>(fallback: T, value: T | undefined | null): T {
+  if (isNullOrUndefined(value)) return fallback
+  return value
 }

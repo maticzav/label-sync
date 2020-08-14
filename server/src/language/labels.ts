@@ -43,6 +43,7 @@ export function generateHumanReadableReport(
  * Label report ordering function.
  */
 function orderReports(a: LabelSyncReport, b: LabelSyncReport): number {
+  /* Show Successes first. */
   if (a.status === 'Success') return -1
   return 0
 }
@@ -62,6 +63,7 @@ function reportHasChanges(report: LabelSyncReport): boolean {
       )
     }
     case 'Failure': {
+      /* Failure should always be treated as report with changes. */
       return true
     }
   }
@@ -70,15 +72,14 @@ function reportHasChanges(report: LabelSyncReport): boolean {
 function parseLabelSyncReport(report: LabelSyncReport): string {
   switch (report.status) {
     case 'Success': {
-      const removeUnconfiguredLabels = withDefault(
-        false,
-        report.config?.config.removeUnconfiguredLabels,
-      )
+      const { removeUnconfiguredLabels } = report.config.config
 
       /* Sections */
 
       const sections: (string | null)[] = [
+        /* Repository name */
         `#### ${parseRepoName(report.repo)}`,
+        /* New labels */
         ulOfLabels(
           report.additions,
           singular(
@@ -86,6 +87,7 @@ function parseLabelSyncReport(report: LabelSyncReport): string {
             (n) => `:sparkles: ${n} new labels.`,
           ),
         ),
+        /* Updated labels */
         ulOfLabels(
           report.updates,
           singular(
@@ -93,6 +95,7 @@ function parseLabelSyncReport(report: LabelSyncReport): string {
             (n) => `:lipstick: ${n} changed labels.`,
           ),
         ),
+        /* Aliased labels */
         ulOfLabels(
           report.aliases,
           singular(
@@ -100,6 +103,7 @@ function parseLabelSyncReport(report: LabelSyncReport): string {
             (n) => `:performing_arts: ${n} aliases.`,
           ),
         ),
+        /* Unconfigured labels and removals */
         (() => {
           if (removeUnconfiguredLabels) {
             return ulOfLabels(
@@ -118,8 +122,9 @@ function parseLabelSyncReport(report: LabelSyncReport): string {
             ),
           )
         })(),
+        /* Message about strictness */
         (() => {
-          if (!removeUnconfiguredLabels || report.removals.length === 0) {
+          if (!removeUnconfiguredLabels && report.removals.length === 0) {
             return '> You have no unconfigured labels - you could make this repository `strict`.'
           }
           return null

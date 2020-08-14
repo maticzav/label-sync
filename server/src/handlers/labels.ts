@@ -213,7 +213,7 @@ export function calculateDiff(
 
     for (const label of Object.keys(config)) {
       /**
-       * We know that each label in here is only referenced once.
+       * We know that each label inhere is only referenced once.
        * You may not reference the same label in two different alias.
        */
       const hydratedLabel = hydrateLabel(label)
@@ -242,9 +242,17 @@ export function calculateDiff(
         // Must have the same name.
         const sameName = cLabel.name === hydratedLabel.name
 
-        // Description or color might have changed.
+        /**
+         * Description is optional. It has changed if:
+         *  - it wasn't defined and now is
+         *  - it was defined and has changed
+         */
         const descriptionChanged =
-          cLabel.description !== hydratedLabel.description
+          withDefault('', cLabel.description) !==
+          withDefault('', hydratedLabel.description)
+        /**
+         * Color of a label is always defined. We check whether it has changed.
+         */
         const colorChanged =
           fixLabelColor(cLabel.color) !== fixLabelColor(hydratedLabel.color)
 

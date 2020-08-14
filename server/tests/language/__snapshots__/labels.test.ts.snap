@@ -7,6 +7,18 @@ exports[`language: correctly generates human readable report 1`] = `
 
 #### \`removals\`
 <details>
+  <summary>:lipstick: 1 label changed.</summary>
+
+ * ![bug/3](https://img.shields.io/static/v1?color=%23ee263c&label=&message=bug%2F3 \\"bug/3\\")
+
+</details>
+
+> You have no unconfigured labels - you could make this repository \`strict\`.
+
+---
+
+#### \`removals\`
+<details>
   <summary>:coffin: 1 removed label.</summary>
 
  * ![bug/3](https://img.shields.io/static/v1?color=%23ee263c&label=&message=bug%2F3 \\"bug/3\\")
@@ -65,7 +77,6 @@ exports[`language: correctly generates human readable report 1`] = `
 
 </details>
 
-> You have no unconfigured labels - you could make this repository \`strict\`.
 
 ---
 
@@ -94,7 +105,6 @@ exports[`language: correctly generates human readable report 1`] = `
 
 </details>
 
-> You have no unconfigured labels - you could make this repository \`strict\`.
 
 ---
 

@@ -861,7 +861,7 @@ describe('github:', () => {
       test(
         'pull_request',
         async () => {
-          expect.assertions(5)
+          expect.assertions(7)
 
           const compareEndpoint = jest.fn().mockReturnValue({
             files: [{ filename: 'labelsync.yml' }, { filename: 'README.md' }],
@@ -945,6 +945,15 @@ describe('github:', () => {
             .reply(200, { token: 'test' })
 
           nock('https://api.github.com')
+            .post('/repos/maticzav/maticzav-labelsync/check-runs')
+            .reply(200, (uri, body: any) => {
+              // body = JSON.parse(body)
+              delete body['started_at']
+              expect(body).toMatchSnapshot()
+              return { id: 123 }
+            })
+
+          nock('https://api.github.com')
             .get(
               '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=labels',
             )
@@ -969,6 +978,15 @@ describe('github:', () => {
             .reply(200, (uri, body) => {
               expect(body).toMatchSnapshot()
               return
+            })
+
+          nock('https://api.github.com')
+            .patch('/repos/maticzav/maticzav-labelsync/check-runs/123')
+            .reply(200, (uri, body: any) => {
+              // body = JSON.parse(body)
+              delete body['completed_at']
+              expect(body).toMatchSnapshot()
+              return { id: 123 }
             })
 
           await probot.receive({
@@ -1022,7 +1040,7 @@ describe('github:', () => {
       test(
         'pull_request with insufficient permissions',
         async () => {
-          expect.assertions(3)
+          expect.assertions(4)
 
           const compareEndpoint = jest.fn().mockReturnValue({
             files: [{ filename: 'README.md' }, { filename: 'labelsync.yml' }],
@@ -1047,6 +1065,15 @@ describe('github:', () => {
             .reply(200, { token: 'test' })
 
           nock('https://api.github.com')
+            .post('/repos/maticzav/maticzav-labelsync/check-runs')
+            .reply(200, (uri, body: any) => {
+              // body = JSON.parse(body)
+              delete body['started_at']
+              expect(body).toMatchSnapshot()
+              return { id: 123 }
+            })
+
+          nock('https://api.github.com')
             .get(
               '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=labels',
             )
@@ -1057,10 +1084,12 @@ describe('github:', () => {
             .reply(200, installationsEndpoint)
 
           nock('https://api.github.com')
-            .post('/repos/maticzav/maticzav-labelsync/issues/2/comments')
-            .reply(200, (uri, body) => {
+            .patch('/repos/maticzav/maticzav-labelsync/check-runs/123')
+            .reply(200, (uri, body: any) => {
+              // body = JSON.parse(body)
+              delete body['completed_at']
               expect(body).toMatchSnapshot()
-              return
+              return { id: 123 }
             })
 
           await probot.receive({

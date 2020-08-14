@@ -471,6 +471,25 @@ Array [
       },
     },
     "level": "info",
+    "message": "Completed a check (123)",
+  },
+  Object {
+    "event": Object {
+      "action": "opened",
+      "context": Object {
+        "user_id": 21031067,
+      },
+      "name": "pull_request",
+      "repo": Object {
+        "name": "maticzav-labelsync",
+      },
+      "user": Object {
+        "id": 21031067,
+        "owner": "maticzav",
+        "type": "User",
+      },
+    },
+    "level": "info",
     "message": "PullRequest action: opened",
   },
   Object {
@@ -574,7 +593,7 @@ Array [
       },
     },
     "level": "info",
-    "message": "Commented on PullRequest undefined",
+    "message": "Completed check 123",
   },
   Object {
     "event": Object {
@@ -1103,6 +1122,14 @@ Update your current plan to access all the features LabelSync offers.",
 
 exports[`github: FREE pull_request 1`] = `
 Object {
+  "head_sha": "ec26c3e57ca3a959ca5aad62de7213c562f8c821",
+  "name": "label-sync/dryrun",
+  "status": "in_progress",
+}
+`;
+
+exports[`github: FREE pull_request 2`] = `
+Object {
   "body": "## LabelSync Overview 
 
 ### Changes
@@ -1152,12 +1179,32 @@ Object {
 }
 `;
 
+exports[`github: FREE pull_request 3`] = `
+Object {
+  "conclusion": "success",
+  "status": "completed",
+}
+`;
+
 exports[`github: FREE pull_request with insufficient permissions 1`] = `
 Object {
-  "body": "It seems like this configuration stretches beyond repositories we can access. Please update it so we can help you as best as we can.
+  "head_sha": "ec26c3e57ca3a959ca5aad62de7213c562f8c821",
+  "name": "label-sync/dryrun",
+  "status": "in_progress",
+}
+`;
+
+exports[`github: FREE pull_request with insufficient permissions 2`] = `
+Object {
+  "conclusion": "failure",
+  "output": Object {
+    "summary": "It seems like this configuration stretches beyond repositories we can access. Please update it so we can help you as best as we can.
 
 _Missing repositories:_
  * unchanged",
+    "title": "Missing repository access.",
+  },
+  "status": "completed",
 }
 `;
 
@@ -1753,6 +1800,25 @@ Array [
       },
     },
     "level": "info",
+    "message": "Completed a check (123)",
+  },
+  Object {
+    "event": Object {
+      "action": "opened",
+      "context": Object {
+        "user_id": 21031067,
+      },
+      "name": "pull_request",
+      "repo": Object {
+        "name": "maticzav-labelsync",
+      },
+      "user": Object {
+        "id": 21031067,
+        "owner": "maticzav",
+        "type": "User",
+      },
+    },
+    "level": "info",
     "message": "PullRequest action: opened",
   },
   Object {
@@ -1856,7 +1922,7 @@ Array [
       },
     },
     "level": "info",
-    "message": "Commented on PullRequest undefined",
+    "message": "Completed check 123",
   },
   Object {
     "event": Object {
@@ -2479,6 +2545,14 @@ Array [
 
 exports[`github: PAID pull_request 1`] = `
 Object {
+  "head_sha": "ec26c3e57ca3a959ca5aad62de7213c562f8c821",
+  "name": "label-sync/dryrun",
+  "status": "in_progress",
+}
+`;
+
+exports[`github: PAID pull_request 2`] = `
+Object {
   "body": "## LabelSync Overview 
 
 ### Changes
@@ -2528,12 +2602,32 @@ Object {
 }
 `;
 
+exports[`github: PAID pull_request 3`] = `
+Object {
+  "conclusion": "success",
+  "status": "completed",
+}
+`;
+
 exports[`github: PAID pull_request with insufficient permissions 1`] = `
 Object {
-  "body": "It seems like this configuration stretches beyond repositories we can access. Please update it so we can help you as best as we can.
+  "head_sha": "ec26c3e57ca3a959ca5aad62de7213c562f8c821",
+  "name": "label-sync/dryrun",
+  "status": "in_progress",
+}
+`;
+
+exports[`github: PAID pull_request with insufficient permissions 2`] = `
+Object {
+  "conclusion": "failure",
+  "output": Object {
+    "summary": "It seems like this configuration stretches beyond repositories we can access. Please update it so we can help you as best as we can.
 
 _Missing repositories:_
  * unchanged",
+    "title": "Missing repository access.",
+  },
+  "status": "completed",
 }
 `;
 

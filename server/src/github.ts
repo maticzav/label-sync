@@ -61,21 +61,20 @@ export async function getRepositoryLabels(
   github: Octokit,
   { repo, owner }: { repo: string; owner: string },
 ): Promise<Octokit.IssuesListLabelsForRepoResponseItem[]> {
-  let page = 0
   let labels: Octokit.IssuesListLabelsForRepoResponseItem[] = []
 
-  await handler()
+  await handler(0)
 
   return labels
 
   /* Paginates and performs changes. */
-  async function handler() {
+  async function handler(page: number) {
     const repoLabels = await github.issues
       .listLabelsForRepo({
         owner,
         repo,
         per_page: 100,
-        page,
+        page: page,
       })
       .then((res) => res.data)
 
@@ -84,8 +83,7 @@ export async function getRepositoryLabels(
     /* Rerun handler if there are more labels available. */
     /* istanbul ignore next */
     if (repoLabels.length === 100) {
-      page += 1
-      await handler()
+      await handler(page + 1)
     }
   }
 }

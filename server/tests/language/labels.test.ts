@@ -299,9 +299,33 @@ describe('language:', () => {
           },
         },
       },
+      {
+        status: 'Success',
+        owner: 'maticzav',
+        repo: 'removals',
+        additions: [],
+        updates: [
+          {
+            name: 'bug/3',
+            color: '#ee263c',
+            default: false,
+          },
+        ],
+        removals: [],
+        aliases: [],
+        config: {
+          labels: {
+            'bug/0': {
+              color: 'ff',
+            },
+          },
+          config: {
+            removeUnconfiguredLabels: false,
+          },
+        },
+      },
     ]
 
-    writeFileSync(`${__dirname}/test.md`, generateHumanReadableReport(reports))
     expect(generateHumanReadableReport(reports)).toMatchSnapshot()
   })
 })
