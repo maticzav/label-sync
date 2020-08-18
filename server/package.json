@@ -23,7 +23,7 @@
     "prettier": "2.0.5",
     "probot": "9.13.0",
     "query-string": "6.13.1",
-    "stripe": "8.86.0",
+    "stripe": "8.88.0",
     "winston": "3.3.3"
   },
   "devDependencies": {
