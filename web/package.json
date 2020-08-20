@@ -18,7 +18,7 @@
     "react-ga": "2.7.0",
     "react-transition-group": "4.4.1",
     "react-typist": "2.0.5",
-    "swr": "0.3.0"
+    "swr": "0.3.1"
   },
   "devDependencies": {
     "@tailwindcss/ui": "0.5.0",
