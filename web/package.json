@@ -29,7 +29,7 @@
     "@types/react-transition-group": "4.4.0",
     "@types/react-typist": "2.0.1",
     "autoprefixer": "9.8.6",
-    "tailwindcss": "1.7.5",
+    "tailwindcss": "1.7.6",
     "typescript": "3.9.6"
   }
 }
