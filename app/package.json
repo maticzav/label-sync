@@ -21,6 +21,6 @@
     "@types/react-transition-group": "4.4.0",
     "autoprefixer": "9.8.6",
     "tailwindcss": "1.7.6",
-    "typescript": "3.9.6"
+    "typescript": "3.9.7"
   }
 }
