@@ -21,7 +21,7 @@
     "moment": "2.27.0",
     "multilines": "1.0.3",
     "prettier": "2.1.1",
-    "probot": "9.14.1",
+    "probot": "9.15.1",
     "query-string": "6.13.1",
     "stripe": "8.89.0",
     "winston": "3.3.3"

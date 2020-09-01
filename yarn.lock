@@ -9815,10 +9815,10 @@ private@^0.1.8:
   resolved "https://registry.yarnpkg.com/private/-/private-0.1.8.tgz#2381edb3689f7a53d653190060fcf822d2f368ff"
   integrity sha512-VvivMrbvd2nKkiG38qjULzlc+4Vx4wm/whI9pQD35YrARNnhxeiRktSOhSukRLFNlzg6Br/cJPet5J/u19r/mg==
 
-probot@9.14.1:
-  version "9.14.1"
-  resolved "https://registry.yarnpkg.com/probot/-/probot-9.14.1.tgz#f082f6203dbd853978c78b633ffe78fe1cca02ef"
-  integrity sha512-gqMWE71zXPQqeo7QebBy0pGeoYhD6/dRFWTWDLns/q76w1tCCe1PhuXGWbWfeAoizQWQFJrt4+rnuckVCcfj8Q==
+probot@9.15.1:
+  version "9.15.1"
+  resolved "https://registry.yarnpkg.com/probot/-/probot-9.15.1.tgz#308213f29caaac19750e569e055d42994579aaa8"
+  integrity sha512-mGjVGxFoB2rO3kxgm7xW6khte/I2MhzwCXnqgDOj+TZ0n7Brj1FTUdx23OlsWdD5I8n5/YYL7ukqAg83+AAWBg==
   dependencies:
     "@octokit/app" "^4.0.0"
     "@octokit/graphql" "^4.2.0"
