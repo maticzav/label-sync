@@ -92,7 +92,7 @@ module.exports = (
     transports: [
       new transports.Http({
         host: 'http-intake.logs.datadoghq.com',
-        path: `/v1/input/${process.env.DATADOG_APIKEY}?ddsource=nodejs`,
+        path: `/v1/input/${process.env.DATADOG_APIKEY}?ddsource=nodejs&service=label-sync`,
         ssl: true,
       }),
     ],
