@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.40](https://github.com/maticzav/label-sync/compare/create-label-sync@2.4.39...create-label-sync@2.4.40) (2020-09-11)
+
+**Note:** Version bump only for package create-label-sync
+
+
+
+
+
 ## [2.4.39](https://github.com/maticzav/label-sync/compare/create-label-sync@2.4.38...create-label-sync@2.4.39) (2020-09-10)
 
 **Note:** Version bump only for package create-label-sync
