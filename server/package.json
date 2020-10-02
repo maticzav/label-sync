@@ -22,7 +22,7 @@
     "multilines": "1.0.3",
     "prettier": "2.1.1",
     "probot": "9.15.1",
-    "query-string": "6.13.4",
+    "query-string": "6.13.5",
     "stripe": "8.89.0",
     "winston": "3.3.3"
   },
