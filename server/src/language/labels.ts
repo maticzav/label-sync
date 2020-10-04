@@ -1,42 +1,109 @@
 import ml from 'multilines'
 import os from 'os'
+import prettier from 'prettier'
 import { stringifyUrl } from 'query-string'
 
 import { GithubLabel } from '../github'
 import { LabelSyncReport } from '../handlers/labels'
-import { withDefault, not } from '../utils'
+import { not } from '../utils'
 import { isNull } from 'util'
 
 /**
- * Concatenates multiple reports into a human readable string.
- *
- * @param reports
+ * Generates a human readable report out of PR changes.
  */
-export function generateHumanReadableReport(
+export function generateHumanReadablePRReport(
   reports: LabelSyncReport[],
 ): string {
-  const humanReadableReports = reports
+  const changedReports = reports
     .filter(reportHasChanges)
     .sort(orderReports)
     .map(parseLabelSyncReport)
-  const report = joinReports(humanReadableReports)
 
   const unchangedReports = reports.filter(not(reportHasChanges))
-  const unchangedReposReport = ulOfUnchangedReports(unchangedReports)
-
-  return ml`
-  | ## LabelSync Overview 
-  |
-  | ### Changes
+  const report = ml`
+  | ## :label: Here's what's going to change when you merge
   | 
-  | ${report}
+  | ${joinReports(changedReports)}
   |
   | ---
   |
-  | ### Unchanged repositories
+  | ### You haven't made any changes in these repositories
   |
-  | ${unchangedReposReport}
+  | ${ulOfUnchangedReports(unchangedReports)}
   `
+
+  return prettier.format(report, { parser: 'markdown' })
+
+  /* Helper functions */
+
+  /**
+   * Tells whether report has changed.
+   */
+  function reportHasChanges(report: LabelSyncReport): boolean {
+    switch (report.status) {
+      case 'Success': {
+        return (
+          report.additions.length +
+            report.aliases.length +
+            report.removals.length +
+            report.updates.length >
+          0
+        )
+      }
+      case 'Failure': {
+        /* Failure should always be treated as report with changes. */
+        return true
+      }
+    }
+  }
+}
+
+/**
+ * Generates a concise review of changes.
+ */
+export function generateHumanReadableCommitReport(
+  reports: LabelSyncReport[],
+): string {
+  const changedReports = reports
+    .filter(reportHasChanges)
+    .sort(orderReports)
+    .map(parseLabelSyncReport)
+
+  const report = ml`
+  | ## :label: Here's what has changed.
+  | 
+  | ${joinReports(changedReports)}
+  `
+
+  return prettier.format(report, { parser: 'markdown' })
+
+  /* Helper function */
+
+  /**
+   * Tells whether report has changed.
+   */
+  function reportHasChanges(report: LabelSyncReport): boolean {
+    switch (report.status) {
+      case 'Success': {
+        /* Create read or update actions */
+        const crus =
+          report.additions.length +
+            report.aliases.length +
+            report.updates.length >
+          0
+        /* Actual removals. */
+        const ds =
+          report.config.config.removeUnconfiguredLabels &&
+          report.removals.length > 0
+
+        return crus || ds
+      }
+      case 'Failure': {
+        /* Failure should always be treated as report with changes. */
+        return true
+      }
+    }
+  }
 }
 
 /**
@@ -46,27 +113,6 @@ function orderReports(a: LabelSyncReport, b: LabelSyncReport): number {
   /* Show Successes first. */
   if (a.status === 'Success') return -1
   return 0
-}
-
-/**
- * Tells whether report has changed.
- */
-function reportHasChanges(report: LabelSyncReport): boolean {
-  switch (report.status) {
-    case 'Success': {
-      return (
-        report.additions.length +
-          report.aliases.length +
-          report.removals.length +
-          report.updates.length >
-        0
-      )
-    }
-    case 'Failure': {
-      /* Failure should always be treated as report with changes. */
-      return true
-    }
-  }
 }
 
 function parseLabelSyncReport(report: LabelSyncReport): string {
@@ -185,14 +231,39 @@ function ulOfLabels(
 }
 
 /**
- * Creates a label out of abstract object.
+ * Returns a string representation of label.
  */
 function label(label: GithubLabel): string {
-  if (label.old_name) {
-    /* prettier-ignore */
-    return ` * ${badge({ name: label.old_name, color: "inactive" })} → ${badge(label)}`
+  const nameChanged = label.old_name && label.old_name !== label.name
+  const descChanged =
+    label.old_description && label.old_description !== label.description
+  const colorChanged = label.old_color && label.old_color !== label.color
+
+  const changes: string[] = [
+    (nameChanged && 'name') || null,
+    (descChanged && 'description') || null,
+    (colorChanged && 'color') || null,
+  ].filter(isString)
+
+  /* Label */
+  let text: string
+  if (changes.length > 0) text = `${label.name} (${multiple(changes)} changed)`
+  else text = label.name
+
+  return ` * ${badge({ name: text, color: label.color })}`
+
+  /* Helper functions */
+
+  function multiple(vals: string[]): string {
+    const [head, ...tail] = vals
+    if (tail.length === 0) return head
+    if (tail.length === 1) return `${head} and ${tail[0]}`
+    else return `${head}, ${multiple(tail)}`
   }
-  return ` * ${badge(label)}`
+
+  function isString(x: string | null): x is string {
+    return x !== null
+  }
 }
 
 /**

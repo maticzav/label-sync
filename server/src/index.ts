@@ -34,7 +34,10 @@ import {
   removeLabelsFromRepository,
 } from './github'
 import { handleLabelSync } from './handlers/labels'
-import { generateHumanReadableReport } from './language/labels'
+import {
+  generateHumanReadableCommitReport,
+  generateHumanReadablePRReport,
+} from './language/labels'
 import { loadTreeFromPath, withDefault } from './utils'
 import { isNullOrUndefined } from 'util'
 import { create } from 'handlebars'
@@ -800,7 +803,7 @@ module.exports = (
 
             /* Comment on commit */
 
-            const report = generateHumanReadableReport(reports)
+            const report = generateHumanReadableCommitReport(reports)
             const commit_sha: string = ctx.payload.after
 
             await ctx.github.repos.createCommitComment({
@@ -1009,7 +1012,9 @@ module.exports = (
                   ),
                 )
 
-                const report = generateHumanReadableReport(reports)
+                /* Comment on pull request. */
+
+                const report = generateHumanReadablePRReport(reports)
                 const successful = reports.every(
                   (report) => report.status === 'Success',
                 )

@@ -197,14 +197,13 @@ export function calculateDiff(
    */
 
   return (currentLabels) => {
-    const currentLabelsNames = currentLabels.map((l) => l.name)
+    const currentLabelsMap = new Map(currentLabels.map((l) => [l.name, l]))
 
     /* Labels */
 
     let added: GithubLabel[] = []
     let changed: GithubLabel[] = []
     let aliased: GithubLabel[] = []
-    // let aliased: { [target: string]: GithubLabel[] } = {}
     let removed: GithubLabel[] = []
 
     /* Calculate differences */
@@ -217,10 +216,11 @@ export function calculateDiff(
        * You may not reference the same label in two different alias.
        */
       const hydratedLabel = hydrateLabel(label)
+
+      const existingLabel = hydratedLabel.old_name !== undefined
       /* prettier-ignore */
       const labelAlias: string[] = withDefault([], config[label].alias)
-        .filter((aliasName) => currentLabelsNames.includes(aliasName))
-      const existingLabel = currentLabelsNames.includes(label)
+        .filter((aliasName) => currentLabelsMap.has(aliasName))
       const labelIsAliased = labelAlias.length !== 0
 
       /**
@@ -271,7 +271,7 @@ export function calculateDiff(
        *    are renaming it.
        */
       const existingAliasedLabel = labelAlias.find((alias) =>
-        currentLabelsNames.includes(alias),
+        currentLabelsMap.has(alias),
       )
 
       for (const alias of labelAlias) {
@@ -321,15 +321,25 @@ export function calculateDiff(
       removed,
       aliased,
     }
-  }
 
-  /* Helper functions */
+    /* Helper functions */
 
-  function hydrateLabel(name: string): GithubLabel {
-    return {
-      name,
-      color: config[name]!.color,
-      description: config[name]!.description,
+    function hydrateLabel(name: string): GithubLabel {
+      const oldLabel = currentLabelsMap.get(name)
+
+      return {
+        /* Naming */
+        old_name: oldLabel?.name,
+        name,
+        /* Description */
+        old_description: oldLabel?.description,
+        description: config[name]!.description,
+        /* Color */
+        old_color: oldLabel?.color,
+        color: config[name]!.color,
+      }
     }
   }
+
+  //
 }

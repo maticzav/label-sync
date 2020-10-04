@@ -263,7 +263,7 @@ Array [
     "meta": Object {
       "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
       "periodEndsAt": "periodEndsAt",
-      "reports": "[{\\"status\\":\\"Success\\",\\"repo\\":\\"changed\\",\\"owner\\":\\"maticzav\\",\\"additions\\":[{\\"name\\":\\"create/new\\",\\"color\\":\\"000000\\"}],\\"updates\\":[{\\"name\\":\\"alias/new\\",\\"color\\":\\"000000\\",\\"old_name\\":\\"alias/old:1\\"},{\\"name\\":\\"update/color\\",\\"color\\":\\"ffffff\\"}],\\"removals\\":[{\\"name\\":\\"alias/old:2\\",\\"color\\":\\"000000\\"},{\\"name\\":\\"remove\\",\\"color\\":\\"000000\\"}],\\"aliases\\":[{\\"name\\":\\"alias/new\\",\\"color\\":\\"000000\\",\\"old_name\\":\\"alias/old:2\\"}],\\"config\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}}},{\\"status\\":\\"Success\\",\\"repo\\":\\"unchanged\\",\\"owner\\":\\"maticzav\\",\\"additions\\":[],\\"updates\\":[],\\"removals\\":[],\\"aliases\\":[],\\"config\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":false},\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}]",
+      "reports": "[{\\"status\\":\\"Success\\",\\"repo\\":\\"changed\\",\\"owner\\":\\"maticzav\\",\\"additions\\":[{\\"name\\":\\"create/new\\",\\"color\\":\\"000000\\"}],\\"updates\\":[{\\"old_name\\":\\"alias/old:1\\",\\"name\\":\\"alias/new\\",\\"color\\":\\"000000\\"},{\\"old_name\\":\\"update/color\\",\\"name\\":\\"update/color\\",\\"old_color\\":\\"000000\\",\\"color\\":\\"ffffff\\"}],\\"removals\\":[{\\"name\\":\\"alias/old:2\\",\\"color\\":\\"000000\\"},{\\"name\\":\\"remove\\",\\"color\\":\\"000000\\"}],\\"aliases\\":[{\\"old_name\\":\\"alias/old:2\\",\\"name\\":\\"alias/new\\",\\"color\\":\\"000000\\"}],\\"config\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}}},{\\"status\\":\\"Success\\",\\"repo\\":\\"unchanged\\",\\"owner\\":\\"maticzav\\",\\"additions\\":[],\\"updates\\":[],\\"removals\\":[],\\"aliases\\":[],\\"config\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":false},\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}]",
     },
   },
   Object {
@@ -1130,52 +1130,51 @@ Object {
 
 exports[`github: FREE pull_request 2`] = `
 Object {
-  "body": "## LabelSync Overview 
-
-### Changes
+  "body": "## :label: Here's what's going to change when you merge
 
 #### \`changed\`
+
 <details>
   <summary>:sparkles: 1 new label.</summary>
 
- * ![create/new](https://img.shields.io/static/v1?color=000000&label=&message=create%2Fnew \\"create/new\\")
+- ![create/new](https://img.shields.io/static/v1?color=000000&label=&message=create%2Fnew \\"create/new\\")
 
 </details>
 
 <details>
   <summary>:lipstick: 2 changed labels.</summary>
 
- * ![alias/old:1](https://img.shields.io/static/v1?color=inactive&label=&message=alias%2Fold%3A1 \\"alias/old:1\\") → ![alias/new](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew \\"alias/new\\")
- * ![update/color](https://img.shields.io/static/v1?color=ffffff&label=&message=update%2Fcolor \\"update/color\\")
+- ![alias/new (name changed)](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew%20%28name%20changed%29 \\"alias/new (name changed)\\")
+- ![update/color (color changed)](https://img.shields.io/static/v1?color=ffffff&label=&message=update%2Fcolor%20%28color%20changed%29 \\"update/color (color changed)\\")
 
 </details>
 
 <details>
   <summary>:performing_arts: 1 new label alias.</summary>
 
- * ![alias/old:2](https://img.shields.io/static/v1?color=inactive&label=&message=alias%2Fold%3A2 \\"alias/old:2\\") → ![alias/new](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew \\"alias/new\\")
+- ![alias/new (name changed)](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew%20%28name%20changed%29 \\"alias/new (name changed)\\")
 
 </details>
 
 <details>
   <summary>:coffin: 2 removed labels.</summary>
 
- * ![alias/old:2](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fold%3A2 \\"alias/old:2\\")
- * ![remove](https://img.shields.io/static/v1?color=000000&label=&message=remove \\"remove\\")
+- ![alias/old:2](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fold%3A2 \\"alias/old:2\\")
+- ![remove](https://img.shields.io/static/v1?color=000000&label=&message=remove \\"remove\\")
 
 </details>
 
-
 ---
 
-### Unchanged repositories
+### You haven't made any changes in these repositories
 
 <details>
   <summary>1 repositories.</summary>
 
- * \`unchanged\`
+- \`unchanged\`
 
-</details>",
+</details>
+",
 }
 `;
 
@@ -1216,52 +1215,40 @@ Array [
 
 exports[`github: FREE push event 1`] = `
 Object {
-  "body": "## LabelSync Overview 
-
-### Changes
+  "body": "## :label: Here's what has changed.
 
 #### \`changed\`
+
 <details>
   <summary>:sparkles: 1 new label.</summary>
 
- * ![create/new](https://img.shields.io/static/v1?color=000000&label=&message=create%2Fnew \\"create/new\\")
+- ![create/new](https://img.shields.io/static/v1?color=000000&label=&message=create%2Fnew \\"create/new\\")
 
 </details>
 
 <details>
   <summary>:lipstick: 2 changed labels.</summary>
 
- * ![alias/old:1](https://img.shields.io/static/v1?color=inactive&label=&message=alias%2Fold%3A1 \\"alias/old:1\\") → ![alias/new](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew \\"alias/new\\")
- * ![update/color](https://img.shields.io/static/v1?color=ffffff&label=&message=update%2Fcolor \\"update/color\\")
+- ![alias/new (name changed)](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew%20%28name%20changed%29 \\"alias/new (name changed)\\")
+- ![update/color (color changed)](https://img.shields.io/static/v1?color=ffffff&label=&message=update%2Fcolor%20%28color%20changed%29 \\"update/color (color changed)\\")
 
 </details>
 
 <details>
   <summary>:performing_arts: 1 new label alias.</summary>
 
- * ![alias/old:2](https://img.shields.io/static/v1?color=inactive&label=&message=alias%2Fold%3A2 \\"alias/old:2\\") → ![alias/new](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew \\"alias/new\\")
+- ![alias/new (name changed)](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew%20%28name%20changed%29 \\"alias/new (name changed)\\")
 
 </details>
 
 <details>
   <summary>:coffin: 2 removed labels.</summary>
 
- * ![alias/old:2](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fold%3A2 \\"alias/old:2\\")
- * ![remove](https://img.shields.io/static/v1?color=000000&label=&message=remove \\"remove\\")
+- ![alias/old:2](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fold%3A2 \\"alias/old:2\\")
+- ![remove](https://img.shields.io/static/v1?color=000000&label=&message=remove \\"remove\\")
 
 </details>
-
-
----
-
-### Unchanged repositories
-
-<details>
-  <summary>1 repositories.</summary>
-
- * \`unchanged\`
-
-</details>",
+",
 }
 `;
 
@@ -1592,7 +1579,7 @@ Array [
     "meta": Object {
       "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
       "periodEndsAt": "periodEndsAt",
-      "reports": "[{\\"status\\":\\"Success\\",\\"repo\\":\\"changed\\",\\"owner\\":\\"maticzav\\",\\"additions\\":[{\\"name\\":\\"create/new\\",\\"color\\":\\"000000\\"}],\\"updates\\":[{\\"name\\":\\"alias/new\\",\\"color\\":\\"000000\\",\\"old_name\\":\\"alias/old:1\\"},{\\"name\\":\\"update/color\\",\\"color\\":\\"ffffff\\"}],\\"removals\\":[{\\"name\\":\\"alias/old:2\\",\\"color\\":\\"000000\\"},{\\"name\\":\\"remove\\",\\"color\\":\\"000000\\"}],\\"aliases\\":[{\\"name\\":\\"alias/new\\",\\"color\\":\\"000000\\",\\"old_name\\":\\"alias/old:2\\"}],\\"config\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}}},{\\"status\\":\\"Success\\",\\"repo\\":\\"unchanged\\",\\"owner\\":\\"maticzav\\",\\"additions\\":[],\\"updates\\":[],\\"removals\\":[],\\"aliases\\":[],\\"config\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":false},\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}]",
+      "reports": "[{\\"status\\":\\"Success\\",\\"repo\\":\\"changed\\",\\"owner\\":\\"maticzav\\",\\"additions\\":[{\\"name\\":\\"create/new\\",\\"color\\":\\"000000\\"}],\\"updates\\":[{\\"old_name\\":\\"alias/old:1\\",\\"name\\":\\"alias/new\\",\\"color\\":\\"000000\\"},{\\"old_name\\":\\"update/color\\",\\"name\\":\\"update/color\\",\\"old_color\\":\\"000000\\",\\"color\\":\\"ffffff\\"}],\\"removals\\":[{\\"name\\":\\"alias/old:2\\",\\"color\\":\\"000000\\"},{\\"name\\":\\"remove\\",\\"color\\":\\"000000\\"}],\\"aliases\\":[{\\"old_name\\":\\"alias/old:2\\",\\"name\\":\\"alias/new\\",\\"color\\":\\"000000\\"}],\\"config\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}}},{\\"status\\":\\"Success\\",\\"repo\\":\\"unchanged\\",\\"owner\\":\\"maticzav\\",\\"additions\\":[],\\"updates\\":[],\\"removals\\":[],\\"aliases\\":[],\\"config\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":false},\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}]",
     },
   },
   Object {
@@ -2553,52 +2540,51 @@ Object {
 
 exports[`github: PAID pull_request 2`] = `
 Object {
-  "body": "## LabelSync Overview 
-
-### Changes
+  "body": "## :label: Here's what's going to change when you merge
 
 #### \`changed\`
+
 <details>
   <summary>:sparkles: 1 new label.</summary>
 
- * ![create/new](https://img.shields.io/static/v1?color=000000&label=&message=create%2Fnew \\"create/new\\")
+- ![create/new](https://img.shields.io/static/v1?color=000000&label=&message=create%2Fnew \\"create/new\\")
 
 </details>
 
 <details>
   <summary>:lipstick: 2 changed labels.</summary>
 
- * ![alias/old:1](https://img.shields.io/static/v1?color=inactive&label=&message=alias%2Fold%3A1 \\"alias/old:1\\") → ![alias/new](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew \\"alias/new\\")
- * ![update/color](https://img.shields.io/static/v1?color=ffffff&label=&message=update%2Fcolor \\"update/color\\")
+- ![alias/new (name changed)](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew%20%28name%20changed%29 \\"alias/new (name changed)\\")
+- ![update/color (color changed)](https://img.shields.io/static/v1?color=ffffff&label=&message=update%2Fcolor%20%28color%20changed%29 \\"update/color (color changed)\\")
 
 </details>
 
 <details>
   <summary>:performing_arts: 1 new label alias.</summary>
 
- * ![alias/old:2](https://img.shields.io/static/v1?color=inactive&label=&message=alias%2Fold%3A2 \\"alias/old:2\\") → ![alias/new](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew \\"alias/new\\")
+- ![alias/new (name changed)](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew%20%28name%20changed%29 \\"alias/new (name changed)\\")
 
 </details>
 
 <details>
   <summary>:coffin: 2 removed labels.</summary>
 
- * ![alias/old:2](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fold%3A2 \\"alias/old:2\\")
- * ![remove](https://img.shields.io/static/v1?color=000000&label=&message=remove \\"remove\\")
+- ![alias/old:2](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fold%3A2 \\"alias/old:2\\")
+- ![remove](https://img.shields.io/static/v1?color=000000&label=&message=remove \\"remove\\")
 
 </details>
 
-
 ---
 
-### Unchanged repositories
+### You haven't made any changes in these repositories
 
 <details>
   <summary>1 repositories.</summary>
 
- * \`unchanged\`
+- \`unchanged\`
 
-</details>",
+</details>
+",
 }
 `;
 
@@ -2639,52 +2625,40 @@ Array [
 
 exports[`github: PAID push event 1`] = `
 Object {
-  "body": "## LabelSync Overview 
-
-### Changes
+  "body": "## :label: Here's what has changed.
 
 #### \`changed\`
+
 <details>
   <summary>:sparkles: 1 new label.</summary>
 
- * ![create/new](https://img.shields.io/static/v1?color=000000&label=&message=create%2Fnew \\"create/new\\")
+- ![create/new](https://img.shields.io/static/v1?color=000000&label=&message=create%2Fnew \\"create/new\\")
 
 </details>
 
 <details>
   <summary>:lipstick: 2 changed labels.</summary>
 
- * ![alias/old:1](https://img.shields.io/static/v1?color=inactive&label=&message=alias%2Fold%3A1 \\"alias/old:1\\") → ![alias/new](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew \\"alias/new\\")
- * ![update/color](https://img.shields.io/static/v1?color=ffffff&label=&message=update%2Fcolor \\"update/color\\")
+- ![alias/new (name changed)](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew%20%28name%20changed%29 \\"alias/new (name changed)\\")
+- ![update/color (color changed)](https://img.shields.io/static/v1?color=ffffff&label=&message=update%2Fcolor%20%28color%20changed%29 \\"update/color (color changed)\\")
 
 </details>
 
 <details>
   <summary>:performing_arts: 1 new label alias.</summary>
 
- * ![alias/old:2](https://img.shields.io/static/v1?color=inactive&label=&message=alias%2Fold%3A2 \\"alias/old:2\\") → ![alias/new](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew \\"alias/new\\")
+- ![alias/new (name changed)](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew%20%28name%20changed%29 \\"alias/new (name changed)\\")
 
 </details>
 
 <details>
   <summary>:coffin: 2 removed labels.</summary>
 
- * ![alias/old:2](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fold%3A2 \\"alias/old:2\\")
- * ![remove](https://img.shields.io/static/v1?color=000000&label=&message=remove \\"remove\\")
+- ![alias/old:2](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fold%3A2 \\"alias/old:2\\")
+- ![remove](https://img.shields.io/static/v1?color=000000&label=&message=remove \\"remove\\")
 
 </details>
-
-
----
-
-### Unchanged repositories
-
-<details>
-  <summary>1 repositories.</summary>
-
- * \`unchanged\`
-
-</details>",
+",
 }
 `;
 

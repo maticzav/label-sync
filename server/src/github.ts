@@ -43,16 +43,17 @@ export async function getFile(
 }
 
 export interface GithubLabel {
+  /* Naming */
   old_name?: string
   name: string
+  /* Description */
+  old_description?: string
   description?: string
+  /* Colors */
+  old_color?: string
   color: string
   default?: boolean
 }
-
-// export interface GithubLabelDiff extends GithubLabel {
-//   old: Partial<GithubLabel>
-// }
 
 /**
  * Fetches labels in a repository.
