@@ -2,26 +2,14 @@ import React from 'react'
 import { useState } from 'react'
 import App, { AppProps } from 'next/app'
 import Link from 'next/link'
-import Router from 'next/router'
 
 import '../styles/index.css'
 
 import Banner from '../components/Banner'
 
-import * as gtag from '../lib/gtag'
-
-Router.events.on('routeChangeComplete', (url) => {
-  gtag.pageview(url)
-})
-
 export default class MyApp extends App<{}, {}, {}> {
   constructor(props: AppProps) {
     super(props)
-  }
-
-  componentDidMount() {
-    gtag.init()
-    gtag.pageview(this.props.router.pathname)
   }
 
   render() {

@@ -49,6 +49,9 @@ export default class extends Document {
             href="/favicon-16x16.png"
           />
           <link rel="manifest" href="/site.webmanifest" />
+
+          {/* Splitbee */}
+          <script async src="https://cdn.splitbee.io/sb.js" />
         </Head>
 
         {/* App */}
