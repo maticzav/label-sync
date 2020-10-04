@@ -12,7 +12,6 @@ import Testimonial from '../components/Testimonial'
 
 import { NOTION_DOCS_URL, NOTION_SUPPORT_URL } from '../constants'
 
-import * as gtag from '../lib/gtag'
 import { scrollToId } from '../lib/scroll'
 
 /* Pricing event */
@@ -98,12 +97,7 @@ function Introduction() {
 
 function Features() {
   return (
-    <Section
-      id="features"
-      name="features"
-      className="bg-white overflow-hidden"
-      onReached={gtag.sectionreached}
-    >
+    <Section id="features" name="features" className="bg-white overflow-hidden">
       <div className="container">
         <div className="relative max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           {/* <!-- Side art --> */}
@@ -282,7 +276,6 @@ function DetailedFeatures() {
       id="detailed-features"
       name="detailed fetaures"
       className="relative bg-gray-50 overflow-hidden"
-      onReached={gtag.sectionreached}
     >
       {/* <!-- Leading text --> */}
 
@@ -409,7 +402,6 @@ function Testimonials() {
       id="prisma-testimonial"
       name="prisma testimonial"
       className="py-15 bg-gray-30 overflow-hidden md:py-20 lg:py-24"
-      onReached={gtag.sectionreached}
     >
       <Testimonial
         heading="What our users say about us?"
@@ -459,12 +451,7 @@ function Pricing() {
   }
 
   return (
-    <Section
-      id="pricing"
-      name="pricing"
-      className="bg-green-500"
-      onReached={gtag.sectionreached}
-    >
+    <Section id="pricing" name="pricing" className="bg-green-500">
       <div className="pt-12 container text-center px-10 sm:px-6 sm:pt-16 lg:pt-24">
         <h2 className="text-lg leading-6 font-semibold text-gray-300 uppercase tracking-wider">
           Pricing
