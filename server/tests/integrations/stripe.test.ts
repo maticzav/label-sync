@@ -79,13 +79,14 @@ describe('stripe:', () => {
 
     /* Test database */
 
-    const installation = await prisma.installation.findOne({
+    const installation: any = await prisma.installation.findOne({
       where: { account: 'maticzav' },
     })
 
     delete installation['createdAt']
     delete installation['updatedAt']
     delete installation['periodEndsAt']
+
     expect(installation).toMatchSnapshot()
   })
 

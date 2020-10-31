@@ -84,15 +84,17 @@ describe('rest:', () => {
       },
     }).promise()
 
-    const installation = await prisma.installation.findOne({
+    const installation: any = await prisma.installation.findOne({
       where: { account: 'maticzav' },
     })
 
     expect(body).toEqual({ status: 'ok', plan: 'FREE' })
+
     delete installation['id']
     delete installation['createdAt']
     delete installation['updatedAt']
     delete installation['periodEndsAt']
+
     expect(installation).toMatchSnapshot()
   })
 
@@ -122,7 +124,7 @@ describe('rest:', () => {
 
     /* Test database */
 
-    const installation = await prisma.installation.findOne({
+    const installation: any = await prisma.installation.findOne({
       where: { account: 'maticzav' },
     })
 
@@ -130,6 +132,7 @@ describe('rest:', () => {
     delete installation['createdAt']
     delete installation['updatedAt']
     delete installation['periodEndsAt']
+
     expect(installation).toMatchSnapshot()
   })
 
