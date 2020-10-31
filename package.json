@@ -14,7 +14,7 @@
   "devDependencies": {
     "@types/jest": "26.0.13",
     "chalk": "4.1.0",
-    "codecov": "3.7.0",
+    "codecov": "3.7.1",
     "execa": "4.0.3",
     "husky": "4.3.0",
     "jest": "26.4.2",
