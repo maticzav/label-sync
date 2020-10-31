@@ -89,10 +89,10 @@ describe('rest:', () => {
     })
 
     expect(body).toEqual({ status: 'ok', plan: 'FREE' })
-    delete installation!.id
-    delete installation!.createdAt
-    delete installation!.updatedAt
-    delete installation!.periodEndsAt
+    delete installation?.id
+    delete installation?.createdAt
+    delete installation?.updatedAt
+    delete installation?.periodEndsAt
     expect(installation).toMatchSnapshot()
   })
 
@@ -126,10 +126,10 @@ describe('rest:', () => {
       where: { account: 'maticzav' },
     })
 
-    delete installation!.id
-    delete installation!.createdAt
-    delete installation!.updatedAt
-    delete installation!.periodEndsAt
+    delete installation?.id
+    delete installation?.createdAt
+    delete installation?.updatedAt
+    delete installation?.periodEndsAt
     expect(installation).toMatchSnapshot()
   })
 
