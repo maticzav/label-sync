@@ -35,7 +35,7 @@ describe('rest:', () => {
       transports: [],
     })
     stripe = new Stripe(process.env.STRIPE_API_KEY!, {
-      apiVersion: '2020-03-02',
+      apiVersion: '2020-08-27',
     })
 
     /* Setup probot */
@@ -84,15 +84,17 @@ describe('rest:', () => {
       },
     }).promise()
 
-    const installation = await prisma.installation.findOne({
+    const installation: any = await prisma.installation.findOne({
       where: { account: 'maticzav' },
     })
 
     expect(body).toEqual({ status: 'ok', plan: 'FREE' })
-    delete installation!.id
-    delete installation!.createdAt
-    delete installation!.updatedAt
-    delete installation!.periodEndsAt
+
+    delete installation['id']
+    delete installation['createdAt']
+    delete installation['updatedAt']
+    delete installation['periodEndsAt']
+
     expect(installation).toMatchSnapshot()
   })
 
@@ -122,14 +124,15 @@ describe('rest:', () => {
 
     /* Test database */
 
-    const installation = await prisma.installation.findOne({
+    const installation: any = await prisma.installation.findOne({
       where: { account: 'maticzav' },
     })
 
-    delete installation!.id
-    delete installation!.createdAt
-    delete installation!.updatedAt
-    delete installation!.periodEndsAt
+    delete installation['id']
+    delete installation['createdAt']
+    delete installation['updatedAt']
+    delete installation['periodEndsAt']
+
     expect(installation).toMatchSnapshot()
   })
 
