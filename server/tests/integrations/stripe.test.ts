@@ -83,9 +83,9 @@ describe('stripe:', () => {
       where: { account: 'maticzav' },
     })
 
-    delete installation?.createdAt
-    delete installation?.updatedAt
-    delete installation?.periodEndsAt
+    delete installation['createdAt']
+    delete installation['updatedAt']
+    delete installation['periodEndsAt']
     expect(installation).toMatchSnapshot()
   })
 
