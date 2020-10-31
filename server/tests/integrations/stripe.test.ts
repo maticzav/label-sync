@@ -33,7 +33,7 @@ describe('stripe:', () => {
       transports: [],
     })
     stripe = new Stripe(process.env.STRIPE_API_KEY!, {
-      apiVersion: '2020-03-02',
+      apiVersion: '2020-08-27',
     })
 
     /* Setup probot */
