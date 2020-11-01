@@ -7,7 +7,7 @@
     "postinstall": "yarn run db:generate"
   },
   "dependencies": {
-    "@octokit/rest": "18.0.7",
+    "@octokit/rest": "18.0.8",
     "@prisma/client": "2.10.1",
     "body-parser": "1.19.0",
     "cors": "2.8.5",
