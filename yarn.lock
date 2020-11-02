@@ -2598,10 +2598,10 @@
   resolved "https://registry.yarnpkg.com/@tailwindcss/typography/-/typography-0.2.0.tgz#b597c83502e3c3c6641a8aaabda223cd494ab349"
   integrity sha512-aPgMH+CjQiScLZculoDNOQUrrK2ktkbl3D6uCLYp1jgYRlNDrMONu9nMu8LfwAeetYNpVNeIGx7WzHSu0kvECg==
 
-"@tailwindcss/ui@0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@tailwindcss/ui/-/ui-0.7.0.tgz#505c7a9ceb5e408561ef8c91e045e5d9a0e9e48c"
-  integrity sha512-PsIyXlbb58k3r8gMKDvgZHiJheo1KzpQGiZc+f73axGQ+VGLO5TZyb7xgPTtwUFM5sIU+FfSFQ5yAJaWXyhhhA==
+"@tailwindcss/ui@0.7.1":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@tailwindcss/ui/-/ui-0.7.1.tgz#bf2735fa56972e8351ac2301bd331565cefc2929"
+  integrity sha512-fELX9pwdQhk1e/w4pTPjnWQ/wTBbdKBSPy3cggYL61kDgfTNdBN+NCLUhEkZ4SSdf3nf4y+JxU5HeNmayFl36Q==
   dependencies:
     "@tailwindcss/custom-forms" "^0.2.1"
     "@tailwindcss/typography" "^0.2.0"
