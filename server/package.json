@@ -42,7 +42,7 @@
     "execa": "4.1.0",
     "js-yaml": "3.14.0",
     "lerna": "3.22.1",
-    "nock": "13.0.4",
+    "nock": "13.0.5",
     "request": "2.88.2",
     "request-promise-native": "1.0.9",
     "ts-node": "9.0.0",
