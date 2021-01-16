@@ -10,7 +10,6 @@ type Dict<T> = { [key: string]: T }
 
 /**
  * Negates the wrapped function.
- * @param fn
  */
 export function not<T, L extends Array<T>>(
   fn: (...args: L) => boolean,
@@ -20,8 +19,6 @@ export function not<T, L extends Array<T>>(
 
 /**
  * Loads a tree of utf-8 decoded files at paths.
- *
- * @param path
  */
 export function loadTreeFromPath(
   root: string,
@@ -48,8 +45,6 @@ export function loadTreeFromPath(
 
 /**
  * Adds a folder to the path.
- * @param pre
- * @param path
  */
 function unshift(pre: string, path: string): string {
   return [pre, ...path.split('/').filter(Boolean)].join('/')
@@ -57,8 +52,6 @@ function unshift(pre: string, path: string): string {
 
 /**
  * Maps entries in an object.
- * @param m
- * @param fn
  */
 export function mapEntries<T, V>(
   m: Dict<T>,
@@ -73,8 +66,6 @@ export function mapEntries<T, V>(
 
 /**
  * Writes virtual file system representation to the file system.
- *
- * @param vfs
  */
 export async function writeTreeToPath(
   root: string,
@@ -96,8 +87,6 @@ export async function writeTreeToPath(
 
 /**
  * Maps keys of an object.
- * @param m
- * @param fn
  */
 export function mapKeys<T>(
   m: Dict<T>,
@@ -112,8 +101,6 @@ export function mapKeys<T>(
 
 /**
  * Creates a fallback default value.
- * @param fallback
- * @param value
  */
 export function withDefault<T>(fallback: T, value: T | undefined): T {
   if (value) return value

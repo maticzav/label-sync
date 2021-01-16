@@ -5,14 +5,21 @@ import * as fs from 'fs'
 import * as handlebars from 'handlebars'
 import * as inquirer from 'inquirer'
 import meow from 'meow'
-import * as mkdirp from 'mkdirp'
 import { ml } from 'multilines'
 import ora from 'ora'
 import * as os from 'os'
 import * as path from 'path'
 import * as prettier from 'prettier'
+import { promisify } from 'util'
 
 import { loadTreeFromPath, mapEntries, writeTreeToPath } from './utils'
+
+/* Utility FS functions */
+
+const mkdir = promisify(fs.mkdir)
+const rmdir = promisify(fs.rmdir)
+const status = promisify(fs.stat)
+const access = promisify(fs.access)
 
 /* Templates */
 
@@ -105,7 +112,10 @@ async function main(
 
   let template
 
-  /* Process user input */
+  /**
+   * If user has provided a template flag,
+   * we check if we have it in the list of templates and load that one if it's there.
+   */
   if (cli.flags.template) {
     const matchingTemplate = templates.find(
       (temp) => temp.identifier === cli.flags.template,
@@ -180,16 +190,42 @@ async function main(
     process.exit(0)
   }
 
+  /* Scaffold the template. */
+
   /**
-   * Scaffold the template.
+   * We use tmp dir to load the whole repository there
+   * and then extract only relevant template to a desired destination.
+   * tmpdir should be empty yet exist.
+   *
+   * We try removing the directory and handle the error if needed.
    */
+  let tmpDist = path.resolve(os.tmpdir(), `./labelsync`)
 
-  /* Setup tmpdir */
-  const tmpDist = path.resolve(os.tmpdir(), `./labelsync`)
-  fs.rmdirSync(tmpDist, { recursive: true })
-  fs.mkdirSync(tmpDist, { recursive: true })
+  // let tmpDirFound = false
 
-  if (!fs.existsSync(dist)) mkdirp.sync(dist)
+  // while (!tmpDirFound) {
+
+  // }
+  try {
+    await rmdir(tmpDist, { recursive: true })
+  } catch (err) {}
+
+  try {
+    await mkdir(tmpDist, { recursive: true })
+  } catch (err) {}
+
+  /**
+   * Setup destination directory.
+   */
+  try {
+    await mkdir(dist, { recursive: true })
+  } catch (err) {
+    if (err.code != 'EEXIST') {
+      console.error(`Couldn't create destination folder ${dist}`)
+      console.error(err)
+      process.exit(1)
+    }
+  }
 
   /* Load template */
 

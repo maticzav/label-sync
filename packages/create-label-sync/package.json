@@ -16,18 +16,16 @@
     "creato": "^1.0.5",
     "handlebars": "^4.7.6",
     "inquirer": "^7.3.3",
-    "meow": "^6.1.1",
-    "mkdirp": "^1.0.4",
+    "meow": "^9.0.0",
     "multilines": "^1.0.3",
-    "ora": "^4.0.0",
-    "prettier": "^2.1.2"
+    "ora": "^5.2.0",
+    "prettier": "^2.2.1"
   },
   "devDependencies": {
-    "@types/inquirer": "6.5.0",
+    "@types/inquirer": "7.3.1",
     "@types/meow": "5.0.0",
-    "@types/mkdirp": "1.0.1",
-    "@types/node": "14.14.20",
-    "@types/prettier": "2.1.5"
+    "@types/node": "14.14.21",
+    "@types/prettier": "2.1.6"
   },
   "license": "MIT"
 }
