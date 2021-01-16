@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.67](https://github.com/maticzav/label-sync/compare/create-label-sync@2.4.66...create-label-sync@2.4.67) (2021-01-16)
+
+
+### Bug Fixes
+
+* create-label-sync scaffolding ([4214f6c](https://github.com/maticzav/label-sync/commit/4214f6c5d939e6698e5f79cd13357ee40b836c7f))
+
+
+
+
+
 ## [2.4.66](https://github.com/maticzav/label-sync/compare/create-label-sync@2.4.65...create-label-sync@2.4.66) (2021-01-07)
 
 **Note:** Version bump only for package create-label-sync
