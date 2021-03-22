@@ -3,16 +3,11 @@
 exports[`language: Commit report 1`] = `
 "## :label: Here's what has changed.
 
-#### \`unconfigured\`
+#### \`failure\`
 
-<details>
-  <summary>:sparkles: 1 new label.</summary>
+> ❗️ LabelSync encountered a problem syncing this repository.
 
-- ![addition](https://img.shields.io/static/v1?color=%23ee263c&label=&message=addition \\"addition\\")
-
-</details>
-
-> You have no unconfigured labels - you could make this repository \`strict\`.
+Couldn't make a diff of labels.
 
 ---
 
@@ -53,25 +48,27 @@ exports[`language: Commit report 1`] = `
 
 ---
 
-#### \`failure\`
+#### \`unconfigured\`
 
-Couldn't make a diff of labels.
+<details>
+  <summary>:sparkles: 1 new label.</summary>
+
+- ![addition](https://img.shields.io/static/v1?color=%23ee263c&label=&message=addition \\"addition\\")
+
+</details>
+
+> You have no unconfigured labels - you could make this repository \`strict\`.
 "
 `;
 
 exports[`language: Commit report 2`] = `
 "## :label: Here's what has changed.
 
-#### \`unconfigured\`
+#### \`failure\`
 
-<details>
-  <summary>:sparkles: 1 new label.</summary>
+> ❗️ LabelSync encountered a problem syncing this repository.
 
-- ![addition](https://img.shields.io/static/v1?color=%23ee263c&label=&message=addition \\"addition\\")
-
-</details>
-
-> You have no unconfigured labels - you could make this repository \`strict\`.
+Couldn't make a diff of labels.
 
 ---
 
@@ -112,14 +109,79 @@ exports[`language: Commit report 2`] = `
 
 ---
 
-#### \`failure\`
+#### \`unconfigured\`
 
-Couldn't make a diff of labels.
+<details>
+  <summary>:sparkles: 1 new label.</summary>
+
+- ![addition](https://img.shields.io/static/v1?color=%23ee263c&label=&message=addition \\"addition\\")
+
+</details>
+
+> You have no unconfigured labels - you could make this repository \`strict\`.
 "
 `;
 
 exports[`language: PR report 1`] = `
 "## :label: Here's what's going to change when you merge
+
+#### \`failure\`
+
+> ❗️ LabelSync encountered a problem syncing this repository.
+
+Couldn't make a diff of labels.
+
+---
+
+#### \`success\`
+
+<details>
+  <summary>:sparkles: 2 new labels.</summary>
+
+- ![addition/one](https://img.shields.io/static/v1?color=%23ee263c&label=&message=addition%2Fone \\"addition/one\\")
+- ![addition/two](https://img.shields.io/static/v1?color=%23ee263c&label=&message=addition%2Ftwo \\"addition/two\\")
+
+</details>
+
+<details>
+  <summary>:lipstick: 3 changed labels.</summary>
+
+- ![update/ena (name changed)](https://img.shields.io/static/v1?color=%23FDE8E8&label=&message=update%2Fena%20%28name%20changed%29 \\"update/ena (name changed)\\")
+- ![update/dve (name and color changed)](https://img.shields.io/static/v1?color=%23FDF6B2&label=&message=update%2Fdve%20%28name%20and%20color%20changed%29 \\"update/dve (name and color changed)\\")
+- ![update/tri (name, description and color changed)](https://img.shields.io/static/v1?color=%23E1EFFE&label=&message=update%2Ftri%20%28name%2C%20description%20and%20color%20changed%29 \\"update/tri (name, description and color changed)\\")
+
+</details>
+
+<details>
+  <summary>:performing_arts: 2 aliases.</summary>
+
+- ![label/alias (name changed)](https://img.shields.io/static/v1?color=%23ee263c&label=&message=label%2Falias%20%28name%20changed%29 \\"label/alias (name changed)\\")
+- ![label/alias (name changed)](https://img.shields.io/static/v1?color=%23ee263c&label=&message=label%2Falias%20%28name%20changed%29 \\"label/alias (name changed)\\")
+
+</details>
+
+<details>
+  <summary>:coffin: 2 removed labels.</summary>
+
+- ![removal/one](https://img.shields.io/static/v1?color=%23aa123c&label=&message=removal%2Fone \\"removal/one\\")
+- ![removal/two](https://img.shields.io/static/v1?color=%23aa123c&label=&message=removal%2Ftwo \\"removal/two\\")
+
+</details>
+
+---
+
+#### \`unconfigured\`
+
+<details>
+  <summary>:sparkles: 1 new label.</summary>
+
+- ![addition](https://img.shields.io/static/v1?color=%23ee263c&label=&message=addition \\"addition\\")
+
+</details>
+
+> You have no unconfigured labels - you could make this repository \`strict\`.
+
+---
 
 #### \`unconfigured-nonstrict\`
 
@@ -130,62 +192,6 @@ exports[`language: PR report 1`] = `
 - ![unconfigured-two](https://img.shields.io/static/v1?color=%23ee263c&label=&message=unconfigured-two \\"unconfigured-two\\")
 
 </details>
-
----
-
-#### \`unconfigured\`
-
-<details>
-  <summary>:sparkles: 1 new label.</summary>
-
-- ![addition](https://img.shields.io/static/v1?color=%23ee263c&label=&message=addition \\"addition\\")
-
-</details>
-
-> You have no unconfigured labels - you could make this repository \`strict\`.
-
----
-
-#### \`success\`
-
-<details>
-  <summary>:sparkles: 2 new labels.</summary>
-
-- ![addition/one](https://img.shields.io/static/v1?color=%23ee263c&label=&message=addition%2Fone \\"addition/one\\")
-- ![addition/two](https://img.shields.io/static/v1?color=%23ee263c&label=&message=addition%2Ftwo \\"addition/two\\")
-
-</details>
-
-<details>
-  <summary>:lipstick: 3 changed labels.</summary>
-
-- ![update/ena (name changed)](https://img.shields.io/static/v1?color=%23FDE8E8&label=&message=update%2Fena%20%28name%20changed%29 \\"update/ena (name changed)\\")
-- ![update/dve (name and color changed)](https://img.shields.io/static/v1?color=%23FDF6B2&label=&message=update%2Fdve%20%28name%20and%20color%20changed%29 \\"update/dve (name and color changed)\\")
-- ![update/tri (name, description and color changed)](https://img.shields.io/static/v1?color=%23E1EFFE&label=&message=update%2Ftri%20%28name%2C%20description%20and%20color%20changed%29 \\"update/tri (name, description and color changed)\\")
-
-</details>
-
-<details>
-  <summary>:performing_arts: 2 aliases.</summary>
-
-- ![label/alias (name changed)](https://img.shields.io/static/v1?color=%23ee263c&label=&message=label%2Falias%20%28name%20changed%29 \\"label/alias (name changed)\\")
-- ![label/alias (name changed)](https://img.shields.io/static/v1?color=%23ee263c&label=&message=label%2Falias%20%28name%20changed%29 \\"label/alias (name changed)\\")
-
-</details>
-
-<details>
-  <summary>:coffin: 2 removed labels.</summary>
-
-- ![removal/one](https://img.shields.io/static/v1?color=%23aa123c&label=&message=removal%2Fone \\"removal/one\\")
-- ![removal/two](https://img.shields.io/static/v1?color=%23aa123c&label=&message=removal%2Ftwo \\"removal/two\\")
-
-</details>
-
----
-
-#### \`failure\`
-
-Couldn't make a diff of labels.
 
 ---
 
@@ -198,28 +204,11 @@ No unchanged repositories.
 exports[`language: PR report 2`] = `
 "## :label: Here's what's going to change when you merge
 
-#### \`unconfigured-nonstrict\`
+#### \`failure\`
 
-<details>
-  <summary>:mailbox_with_mail: 2 unconfigured labels.</summary>
+> ❗️ LabelSync encountered a problem syncing this repository.
 
-- ![unconfigured-one](https://img.shields.io/static/v1?color=%23ee263c&label=&message=unconfigured-one \\"unconfigured-one\\")
-- ![unconfigured-two](https://img.shields.io/static/v1?color=%23ee263c&label=&message=unconfigured-two \\"unconfigured-two\\")
-
-</details>
-
----
-
-#### \`unconfigured\`
-
-<details>
-  <summary>:sparkles: 1 new label.</summary>
-
-- ![addition](https://img.shields.io/static/v1?color=%23ee263c&label=&message=addition \\"addition\\")
-
-</details>
-
-> You have no unconfigured labels - you could make this repository \`strict\`.
+Couldn't make a diff of labels.
 
 ---
 
@@ -260,9 +249,28 @@ exports[`language: PR report 2`] = `
 
 ---
 
-#### \`failure\`
+#### \`unconfigured\`
 
-Couldn't make a diff of labels.
+<details>
+  <summary>:sparkles: 1 new label.</summary>
+
+- ![addition](https://img.shields.io/static/v1?color=%23ee263c&label=&message=addition \\"addition\\")
+
+</details>
+
+> You have no unconfigured labels - you could make this repository \`strict\`.
+
+---
+
+#### \`unconfigured-nonstrict\`
+
+<details>
+  <summary>:mailbox_with_mail: 2 unconfigured labels.</summary>
+
+- ![unconfigured-one](https://img.shields.io/static/v1?color=%23ee263c&label=&message=unconfigured-one \\"unconfigured-one\\")
+- ![unconfigured-two](https://img.shields.io/static/v1?color=%23ee263c&label=&message=unconfigured-two \\"unconfigured-two\\")
+
+</details>
 
 ---
 

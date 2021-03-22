@@ -110,8 +110,8 @@ export function generateHumanReadableCommitReport(
  * Label report ordering function.
  */
 function orderReports(a: LabelSyncReport, b: LabelSyncReport): number {
-  /* Show Successes first. */
-  if (a.status === 'Success') return -1
+  /* Show Failures first. */
+  if (a.status === 'Failure') return -1
   return 0
 }
 
@@ -183,6 +183,8 @@ function parseLabelSyncReport(report: LabelSyncReport): string {
       return ml`
       | #### ${parseRepoName(report.repo)}
       |
+      | > ❗️ LabelSync encountered a problem syncing this repository.
+      |
       | ${report.message}
       `
     }
@@ -234,6 +236,7 @@ function ulOfLabels(
  * Returns a string representation of label.
  */
 function label(label: GithubLabel): string {
+  /* Find changes */
   const nameChanged = label.old_name && label.old_name !== label.name
   const descChanged =
     label.old_description && label.old_description !== label.description
