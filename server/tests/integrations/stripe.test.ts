@@ -79,7 +79,7 @@ describe('stripe:', () => {
 
     /* Test database */
 
-    const installation: any = await prisma.installation.findOne({
+    const installation: any = await prisma.installation.findUnique({
       where: { account: 'maticzav' },
     })
 

@@ -298,7 +298,7 @@ module.exports = (
         }
       }
     } catch (err) /* istanbul ignore next */ {
-      winston.warn(`Error in subscription flow: ${err.message}`)
+      winston.error(`Error in subscription flow: ${err.message}`)
       return res.send({ status: 'err', message: err.message })
     }
   })
@@ -323,7 +323,7 @@ module.exports = (
           process.env.STRIPE_ENDPOINT_SECRET!,
         )
       } catch (err) /* istanbul ingore next */ {
-        winston.warn(`Error in stripe webhook deconstruction.`, {
+        winston.error(`Error in stripe webhook deconstruction.`, {
           meta: {
             error: err.message,
           },
@@ -1131,49 +1131,51 @@ module.exports = (
       winston,
       withInstallation(
         prisma,
-        withSources(async (ctx) => {
-          const owner = ctx.payload.repository.owner.login.toLowerCase()
-          const repo = ctx.payload.repository.name.toLowerCase()
-          const config =
-            ctx.sources.config.repos[repo] || ctx.sources.config.repos['*']
-          const label = ctx.payload.label as GithubLabel
+        withSubscription(
+          withSources(async (ctx) => {
+            const owner = ctx.payload.repository.owner.login.toLowerCase()
+            const repo = ctx.payload.repository.name.toLowerCase()
+            const config =
+              ctx.sources.config.repos[repo] || ctx.sources.config.repos['*']
+            const label = ctx.payload.label as GithubLabel
 
-          ctx.logger.info(`New label create in ${repo}: "${label.name}".`)
+            ctx.logger.info(`New label create in ${repo}: "${label.name}".`)
 
-          /* Ignore no configuration. */
-          /* istanbul ignore if */
-          if (!config) {
-            ctx.logger.info(`No configuration, skipping`)
-            return
-          }
+            /* Ignore no configuration. */
+            /* istanbul ignore if */
+            if (!config) {
+              ctx.logger.info(`No configuration, skipping`)
+              return
+            }
 
-          /* Ignore complying changes. */
-          /* istanbul ignore if */
-          if (config.labels.hasOwnProperty(label.name)) {
-            ctx.logger.info(`Label is configured, skipping removal.`)
-            return
-          }
+            /* Ignore complying changes. */
+            /* istanbul ignore if */
+            if (config.labels.hasOwnProperty(label.name)) {
+              ctx.logger.info(`Label is configured, skipping removal.`)
+              return
+            }
 
-          /* Config */
-          const removeUnconfiguredLabels = withDefault(
-            false,
-            config.config?.removeUnconfiguredLabels,
-          )
-
-          if (removeUnconfiguredLabels) {
-            ctx.logger.info(`Removing "${label.name}" from ${repo}.`)
-
-            /* Prune unsupported labels in strict repositories. */
-            await removeLabelsFromRepository(
-              ctx.github,
-              { repo, owner },
-              [label],
-              removeUnconfiguredLabels,
+            /* Config */
+            const removeUnconfiguredLabels = withDefault(
+              false,
+              config.config?.removeUnconfiguredLabels,
             )
 
-            ctx.logger.info(`Removed label "${label.name}" from ${repo}.`)
-          }
-        }),
+            if (removeUnconfiguredLabels) {
+              ctx.logger.info(`Removing "${label.name}" from ${repo}.`)
+
+              /* Prune unsupported labels in strict repositories. */
+              await removeLabelsFromRepository(
+                ctx.github,
+                { repo, owner },
+                [label],
+                removeUnconfiguredLabels,
+              )
+
+              ctx.logger.info(`Removed label "${label.name}" from ${repo}.`)
+            }
+          }),
+        ),
       ),
     ),
   )
@@ -1191,60 +1193,64 @@ module.exports = (
       winston,
       withInstallation(
         prisma,
-        withSources(async (ctx) => {
-          const owner = ctx.payload.repository.owner.login.toLowerCase()
-          const repo = ctx.payload.repository.name.toLowerCase()
-          const config: LSCRepository | undefined =
-            ctx.sources.config.repos[repo]
-          const label = ((ctx.payload as any) as { label: GithubLabel }).label
-          const issue = ctx.payload.issue
+        withSubscription(
+          withSources(async (ctx) => {
+            const owner = ctx.payload.repository.owner.login.toLowerCase()
+            const repo = ctx.payload.repository.name.toLowerCase()
+            const config: LSCRepository | undefined =
+              ctx.sources.config.repos[repo]
+            const label = ((ctx.payload as any) as { label: GithubLabel }).label
+            const issue = ctx.payload.issue
 
-          ctx.logger.debug('IssueLabeled payload and config', {
-            payload: ctx.payload,
-            sources: ctx.sources.config,
-          })
+            ctx.logger.debug('IssueLabeled payload and config', {
+              payload: ctx.payload,
+              sources: ctx.sources.config,
+            })
 
-          ctx.logger.info(
-            `Issue (${issue.number}) labeled with "${label.name}".`,
-          )
+            ctx.logger.info(
+              `Issue (${issue.number}) labeled with "${label.name}".`,
+            )
 
-          /* Ignore changes in non-strict config */
-          /* istanbul ignore if */
-          if (!config) {
-            ctx.logger.info(`No configuration found, skipping.`)
-            return
-          }
+            /* Ignore changes in non-strict config */
+            /* istanbul ignore if */
+            if (!config) {
+              ctx.logger.info(`No configuration found, skipping.`)
+              return
+            }
 
-          /* istanbul ignore if */
-          if (!config.labels.hasOwnProperty(label.name)) {
-            ctx.logger.info(`Unconfigured label "${label.name}", skipping.`)
-            return
-          }
+            /* istanbul ignore if */
+            if (!config.labels.hasOwnProperty(label.name)) {
+              ctx.logger.info(`Unconfigured label "${label.name}", skipping.`)
+              return
+            }
 
-          /* Find siblings. */
-          const siblings = _.get(
-            config,
-            ['labels', label.name, 'siblings'],
-            [] as string[],
-          )
-          const ghSiblings = siblings.map((sibling) => ({ name: sibling }))
+            /* Find siblings. */
+            const siblings = _.get(
+              config,
+              ['labels', label.name, 'siblings'],
+              [] as string[],
+            )
+            const ghSiblings = siblings.map((sibling) => ({ name: sibling }))
 
-          /* istanbul ignore if */
-          if (ghSiblings.length === 0) {
-            ctx.logger.info(`No siblings to add to "${label.name}", skipping.`)
-            return
-          }
+            /* istanbul ignore if */
+            if (ghSiblings.length === 0) {
+              ctx.logger.info(
+                `No siblings to add to "${label.name}", skipping.`,
+              )
+              return
+            }
 
-          await addLabelsToIssue(
-            ctx.github,
-            { repo, owner, issue: issue.number },
-            ghSiblings,
-            true,
-          )
+            await addLabelsToIssue(
+              ctx.github,
+              { repo, owner, issue: issue.number },
+              ghSiblings,
+              true,
+            )
 
-          /* prettier-ignore */
-          ctx.logger.info(`Added siblings of ${label.name} to issue ${issue.number}: ${siblings.join(', ')}`)
-        }),
+            /* prettier-ignore */
+            ctx.logger.info(`Added siblings of ${label.name} to issue ${issue.number}: ${siblings.join(', ')}`)
+          }),
+        ),
       ),
     ),
   )
@@ -1262,60 +1268,64 @@ module.exports = (
       winston,
       withInstallation(
         prisma,
-        withSources(async (ctx) => {
-          const owner = ctx.payload.repository.owner.login.toLowerCase()
-          const repo = ctx.payload.repository.name.toLowerCase()
-          const config: LSCRepository | undefined =
-            ctx.sources.config.repos[repo]
-          const label = ((ctx.payload as any) as { label: GithubLabel }).label
-          const issue = ctx.payload.pull_request
+        withSubscription(
+          withSources(async (ctx) => {
+            const owner = ctx.payload.repository.owner.login.toLowerCase()
+            const repo = ctx.payload.repository.name.toLowerCase()
+            const config: LSCRepository | undefined =
+              ctx.sources.config.repos[repo]
+            const label = ((ctx.payload as any) as { label: GithubLabel }).label
+            const issue = ctx.payload.pull_request
 
-          ctx.logger.debug('PullRequestLabeled payload and config', {
-            payload: ctx.payload,
-            sources: ctx.sources.config,
-          })
+            ctx.logger.debug('PullRequestLabeled payload and config', {
+              payload: ctx.payload,
+              sources: ctx.sources.config,
+            })
 
-          ctx.logger.info(
-            `PullRequest (${issue.number}) labeled with "${label.name}".`,
-          )
+            ctx.logger.info(
+              `PullRequest (${issue.number}) labeled with "${label.name}".`,
+            )
 
-          /* Ignore changes in non-strict config */
-          /* istanbul ignore if */
-          if (!config) {
-            ctx.logger.info(`No configuration found, skipping.`)
-            return
-          }
+            /* Ignore changes in non-strict config */
+            /* istanbul ignore if */
+            if (!config) {
+              ctx.logger.info(`No configuration found, skipping.`)
+              return
+            }
 
-          /* istanbul ignore if */
-          if (!config.labels.hasOwnProperty(label.name)) {
-            ctx.logger.info(`Unconfigured label "${label.name}", skipping.`)
-            return
-          }
+            /* istanbul ignore if */
+            if (!config.labels.hasOwnProperty(label.name)) {
+              ctx.logger.info(`Unconfigured label "${label.name}", skipping.`)
+              return
+            }
 
-          /* Find siblings. */
-          const siblings = _.get(
-            config,
-            ['labels', label.name, 'siblings'],
-            [] as string[],
-          )
-          const ghSiblings = siblings.map((sibling) => ({ name: sibling }))
+            /* Find siblings. */
+            const siblings = _.get(
+              config,
+              ['labels', label.name, 'siblings'],
+              [] as string[],
+            )
+            const ghSiblings = siblings.map((sibling) => ({ name: sibling }))
 
-          /* istanbul ignore if */
-          if (ghSiblings.length === 0) {
-            ctx.logger.info(`No siblings to add to "${label.name}", skipping.`)
-            return
-          }
+            /* istanbul ignore if */
+            if (ghSiblings.length === 0) {
+              ctx.logger.info(
+                `No siblings to add to "${label.name}", skipping.`,
+              )
+              return
+            }
 
-          await addLabelsToIssue(
-            ctx.github,
-            { repo, owner, issue: issue.number },
-            ghSiblings,
-            true,
-          )
+            await addLabelsToIssue(
+              ctx.github,
+              { repo, owner, issue: issue.number },
+              ghSiblings,
+              true,
+            )
 
-          /* prettier-ignore */
-          ctx.logger.info(`Added siblings of ${label.name} to pr ${issue.number}: ${siblings.join(', ')}`)
-        }),
+            /* prettier-ignore */
+            ctx.logger.info(`Added siblings of ${label.name} to pr ${issue.number}: ${siblings.join(', ')}`)
+          }),
+        ),
       ),
     ),
   )
@@ -1329,33 +1339,37 @@ module.exports = (
    */
   app.on(
     'repository.created',
-    withUserContextLogger(
+    withUserContextLogger<Webhooks.WebhookPayloadRepository, any>(
       winston,
       withInstallation(
         prisma,
-        withSources(async (ctx) => {
-          const owner = ctx.payload.repository.owner.login.toLowerCase()
-          const repo = ctx.payload.repository.name.toLowerCase()
-          const config =
-            ctx.sources.config.repos[repo] || ctx.sources.config.repos['*']
+        withSubscription(
+          withSources(async (ctx) => {
+            const owner = ctx.payload.repository.owner.login.toLowerCase()
+            const repo = ctx.payload.repository.name.toLowerCase()
+            const config =
+              ctx.sources.config.repos[repo] || ctx.sources.config.repos['*']
 
-          ctx.logger.info(`New repository ${repo} in ${owner}.`)
+            ctx.logger.info(`New repository ${repo} in ${owner}.`)
 
-          /* Ignore no configuration. */
-          /* istanbul ignore if */
-          if (!config) {
-            ctx.logger.info(`No configuration, skipping sync.`)
-            return
-          }
+            /* Ignore no configuration. */
+            /* istanbul ignore if */
+            if (!config) {
+              ctx.logger.info(`No configuration, skipping sync.`)
+              return
+            }
 
-          ctx.logger.info(`Performing sync on ${repo}.`)
-          await handleLabelSync(ctx.github, owner, repo, config, true)
-          ctx.logger.info(`Repository synced ${repo}.`)
-        }),
+            ctx.logger.info(`Performing sync on ${repo}.`)
+            await handleLabelSync(ctx.github, owner, repo, config, true)
+            ctx.logger.info(`Repository synced ${repo}.`)
+          }),
+        ),
       ),
     ),
   )
 }
+
+// MARK: - Utilities
 
 interface Sources {
   config: LSCConfiguration
@@ -1370,7 +1384,8 @@ function withSources<
     | Webhooks.WebhookPayloadCheckRun
     | Webhooks.WebhookPayloadIssues
     | Webhooks.WebhookPayloadLabel
-    | Webhooks.WebhookPayloadPullRequest,
+    | Webhooks.WebhookPayloadPullRequest
+    | Webhooks.WebhookPayloadRepository,
   /* Additional context fields */
   W extends { installation: Installation; logger: Logger },
   /* Return type */
@@ -1414,6 +1429,37 @@ function withSources<
 }
 
 /**
+ * Wraps a function inside a subscriptions check.
+ */
+function withSubscription<
+  /* Context */
+  C extends
+    | Webhooks.WebhookPayloadCheckRun
+    | Webhooks.WebhookPayloadCheckSuite
+    | Webhooks.WebhookPayloadCommitComment
+    | Webhooks.WebhookPayloadLabel
+    | Webhooks.WebhookPayloadRepository,
+  /* Additional context fields */
+  W extends { installation: Installation; logger: Logger },
+  /* Return type */
+  T
+>(
+  fn: (ctx: Context<C> & W) => Promise<T>,
+): (ctx: Context<C> & W) => Promise<T | undefined> {
+  return async (ctx) => {
+    const now = moment()
+
+    /* istanbul ignore if */
+    if (moment(ctx.installation.periodEndsAt).isBefore(now)) {
+      ctx.logger.warn(`Expired subscription ${ctx.installation.account}`)
+      return
+    }
+
+    return fn(ctx as Context<C> & W)
+  }
+}
+
+/**
  * Wraps a function inside a sources loader.
  */
 function withInstallation<
@@ -1428,7 +1474,8 @@ function withInstallation<
     | Webhooks.WebhookPayloadPullRequest
     | Webhooks.WebhookPayloadPullRequestReview
     | Webhooks.WebhookPayloadPullRequestReviewComment
-    | Webhooks.WebhookPayloadPush,
+    | Webhooks.WebhookPayloadPush
+    | Webhooks.WebhookPayloadRepository,
   /* Additional context fields */
   W,
   /* Return type */
@@ -1439,10 +1486,9 @@ function withInstallation<
 ): (ctx: Context<C> & W) => Promise<T | undefined> {
   return async (ctx) => {
     const owner = ctx.payload.repository.owner.login.toLowerCase()
-    const now = moment()
 
     /* Try to find the purchase in the database. */
-    let installation = await prisma.installation.findOne({
+    let installation = await prisma.installation.findUnique({
       where: { account: owner },
     })
 
@@ -1452,10 +1498,6 @@ function withInstallation<
     }
 
     /* Handle expired purchases */
-    /* istanbul ignore if */
-    if (moment(installation.periodEndsAt).isBefore(now)) {
-      throw new Error(`Expired subscription.`)
-    }
 
     ;(ctx as Context<C> &
       W & {
@@ -1480,7 +1522,8 @@ function withUserContextLogger<
     | Webhooks.WebhookPayloadPullRequest
     | Webhooks.WebhookPayloadPullRequestReview
     | Webhooks.WebhookPayloadPullRequestReviewComment
-    | Webhooks.WebhookPayloadPush,
+    | Webhooks.WebhookPayloadPush
+    | Webhooks.WebhookPayloadRepository,
   /* Return type */
   T
 >(
@@ -1501,7 +1544,8 @@ function withUserContextLogger<
         | Webhooks.WebhookPayloadIssueComment
         | Webhooks.WebhookPayloadPullRequest
         | Webhooks.WebhookPayloadPullRequestReview
-        | Webhooks.WebhookPayloadPullRequestReviewComment).action || 'push'
+        | Webhooks.WebhookPayloadPullRequestReviewComment
+        | Webhooks.WebhookPayloadRepository).action || 'push'
 
     const eventLogger = logger.child({
       event: {
@@ -1531,7 +1575,7 @@ function withUserContextLogger<
       return await fn(ctx as Context<C> & { logger: Logger })
     } catch (err) /* istanbul ignore next */ {
       /* Report the error and skip evaluation. */
-      eventLogger.warn(`Event resulted in error.`, {
+      eventLogger.error(`Event resulted in error.`, {
         meta: { error: err.message },
       })
       if (process.env.NODE_ENV !== 'production') console.error(err)
@@ -1559,7 +1603,8 @@ function withLogger<
     | Webhooks.WebhookPayloadPullRequest
     | Webhooks.WebhookPayloadPullRequestReview
     | Webhooks.WebhookPayloadPullRequestReviewComment
-    | Webhooks.WebhookPayloadPush,
+    | Webhooks.WebhookPayloadPush
+    | Webhooks.WebhookPayloadRepository,
   /* Return type */
   T
 >(
@@ -1581,7 +1626,7 @@ function withLogger<
       return await fn(ctx as Context<C> & { logger: Logger })
     } catch (err) /* istanbul ignore next */ {
       /* Report the error and skip evaluation. */
-      eventLogger.warn(`Event resulted in error.`, {
+      eventLogger.error(`Event resulted in error.`, {
         meta: { error: err.message },
       })
       if (process.env.NODE_ENV !== 'production') console.error(err)

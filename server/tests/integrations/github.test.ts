@@ -125,7 +125,7 @@ describe('github:', () => {
 
       //     /* Tests */
 
-      //     const purchase = await client.purchase.findOne({
+      //     const purchase = await client.purchase.findUnique({
       //       where: { owner: 'username' },
       //     })
 
