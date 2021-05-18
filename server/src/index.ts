@@ -695,144 +695,63 @@ module.exports = (
     'push',
     withUserContextLogger(
       winston,
-      withInstallation(prisma, async (ctx) => {
-        const owner = ctx.payload.repository.owner.login.toLowerCase()
-        const repo = ctx.payload.repository.name
-        const ref = ctx.payload.ref
-        const defaultRef = `refs/heads/${ctx.payload.repository.default_branch}`
-        const commit_sha: string = ctx.payload.after
+      withInstallation(
+        prisma,
+        withSubscription(async (ctx) => {
+          const owner = ctx.payload.repository.owner.login.toLowerCase()
+          const repo = ctx.payload.repository.name
+          const ref = ctx.payload.ref
+          const defaultRef = `refs/heads/${ctx.payload.repository.default_branch}`
+          const commit_sha: string = ctx.payload.after
 
-        const configRepo = getLSConfigRepoName(owner)
+          const configRepo = getLSConfigRepoName(owner)
 
-        /* Skip non default branch and other repos pushes. */
-        /* istanbul ignore if */
-        if (defaultRef !== ref || !isConfigRepo(owner, repo)) {
-          ctx.logger.info(`Not config repo or ref. Skipping sync.`, {
-            meta: {
-              ref,
-              repo,
-              defaultRef,
-              configRepo,
-            },
-          })
-          return
-        }
+          /* Skip non default branch and other repos pushes. */
+          /* istanbul ignore if */
+          if (defaultRef !== ref || !isConfigRepo(owner, repo)) {
+            ctx.logger.info(`Not config repo or ref. Skipping sync.`, {
+              meta: {
+                ref,
+                repo,
+                defaultRef,
+                configRepo,
+              },
+            })
+            return
+          }
 
-        /* Load configuration */
-        const configRaw = await getFile(
-          ctx.github,
-          { owner, repo, ref },
-          LS_CONFIG_PATH,
-        )
+          /* Load configuration */
+          const configRaw = await getFile(
+            ctx.github,
+            { owner, repo, ref },
+            LS_CONFIG_PATH,
+          )
 
-        /* Skip altogether if there's no configuration. */
-        /* istanbul ignore next */
-        if (configRaw === null) {
-          ctx.logger.info(`No configuration, skipping sync.`)
-          return
-        }
+          /* Skip altogether if there's no configuration. */
+          /* istanbul ignore next */
+          if (configRaw === null) {
+            ctx.logger.info(`No configuration, skipping sync.`)
+            return
+          }
 
-        const [error, config] = parseConfig(ctx.installation.plan, configRaw)
+          const [error, config] = parseConfig(ctx.installation.plan, configRaw)
 
-        /* Open an issue about invalid configuration. */
-        if (error !== null) {
-          ctx.logger.info(`Error in config ${error}`, {
-            meta: {
-              config: JSON.stringify(config),
-              error: error,
-            },
-          })
+          /* Open an issue about invalid configuration. */
+          if (error !== null) {
+            ctx.logger.info(`Error in config ${error}`, {
+              meta: {
+                config: JSON.stringify(config),
+                error: error,
+              },
+            })
 
-          const report = ml`
+            const report = ml`
             | It seems like your configuration uses a format unknown to me. 
             | That might be a consequence of invalid yaml cofiguration file. 
             |
             | Here's what I am having problems with:
             |
             | ${error}
-            `
-
-          await ctx.github.repos.createCommitComment({
-            owner,
-            repo,
-            commit_sha,
-            body: report,
-          })
-
-          ctx.logger.info(`Commented on commit ${commit_sha}.`)
-          return
-        }
-
-        ctx.logger.info(`Configuration loaded.`, {
-          meta: {
-            config: JSON.stringify(config),
-          },
-        })
-
-        /* Verify that we can access all configured files. */
-        const access = await checkInstallationAccess(
-          ctx.github,
-          configRepos(config!),
-        )
-
-        /* Skip configurations that we can't access. */
-        switch (access.status) {
-          case 'Sufficient': {
-            ctx.logger.info(`Performing label sync on ${owner}.`)
-
-            /* Performs sync. */
-
-            const reports = await Promise.all(
-              configRepos(config!).map((repo) =>
-                handleLabelSync(
-                  ctx.github,
-                  owner,
-                  repo,
-                  config!.repos[repo],
-                  true,
-                ),
-              ),
-            )
-
-            ctx.logger.info(`Sync completed.`, {
-              meta: {
-                config: JSON.stringify(config),
-                reports: JSON.stringify(reports),
-              },
-            })
-
-            /* Comment on commit */
-
-            const report = generateHumanReadableCommitReport(reports)
-            const commit_sha: string = ctx.payload.after
-
-            await ctx.github.repos.createCommitComment({
-              owner,
-              repo,
-              commit_sha,
-              body: report,
-            })
-
-            return
-          }
-          case 'Insufficient': {
-            ctx.logger.info(
-              `Insufficient permissions: ${access.missing.join(', ')}`,
-              {
-                meta: {
-                  config: JSON.stringify(config),
-                  access: JSON.stringify(access),
-                },
-              },
-            )
-
-            const commit_sha: string = ctx.payload.after
-            const report = ml`
-            | Your configuration stretches beyond repositories I can access. 
-            | Please update it so I may sync your labels.
-            |
-            | _Missing repositories:_
-            | ${access.missing.map((missing) => ` * ${missing}`).join(os.EOL)}
             `
 
             await ctx.github.repos.createCommitComment({
@@ -845,8 +764,92 @@ module.exports = (
             ctx.logger.info(`Commented on commit ${commit_sha}.`)
             return
           }
-        }
-      }),
+
+          ctx.logger.info(`Configuration loaded.`, {
+            meta: {
+              config: JSON.stringify(config),
+            },
+          })
+
+          /* Verify that we can access all configured files. */
+          const access = await checkInstallationAccess(
+            ctx.github,
+            configRepos(config!),
+          )
+
+          /* Skip configurations that we can't access. */
+          switch (access.status) {
+            case 'Sufficient': {
+              ctx.logger.info(`Performing label sync on ${owner}.`)
+
+              /* Performs sync. */
+
+              const reports = await Promise.all(
+                configRepos(config!).map((repo) =>
+                  handleLabelSync(
+                    ctx.github,
+                    owner,
+                    repo,
+                    config!.repos[repo],
+                    true,
+                  ),
+                ),
+              )
+
+              ctx.logger.info(`Sync completed.`, {
+                meta: {
+                  config: JSON.stringify(config),
+                  reports: JSON.stringify(reports),
+                },
+              })
+
+              /* Comment on commit */
+
+              const report = generateHumanReadableCommitReport(reports)
+              const commit_sha: string = ctx.payload.after
+
+              await ctx.github.repos.createCommitComment({
+                owner,
+                repo,
+                commit_sha,
+                body: report,
+              })
+
+              return
+            }
+            case 'Insufficient': {
+              ctx.logger.info(
+                `Insufficient permissions: ${access.missing.join(', ')}`,
+                {
+                  meta: {
+                    config: JSON.stringify(config),
+                    access: JSON.stringify(access),
+                  },
+                },
+              )
+
+              const commit_sha: string = ctx.payload.after
+              const report = ml`
+            | Your configuration stretches beyond repositories I can access. 
+            | Please update it so I may sync your labels.
+            |
+            | _Missing repositories:_
+            | ${access.missing.map((missing) => ` * ${missing}`).join(os.EOL)}
+            `
+
+              await ctx.github.repos.createCommitComment({
+                owner,
+                repo,
+                commit_sha,
+                body: report,
+              })
+
+              ctx.logger.info(`Commented on commit ${commit_sha}.`)
+              return
+            }
+          }
+        }),
+      ),
     ),
   )
 
@@ -862,173 +865,110 @@ module.exports = (
     'pull_request',
     withUserContextLogger(
       winston,
-      withInstallation(prisma, async (ctx) => {
-        const owner = ctx.payload.repository.owner.login.toLowerCase()
-        const repo = ctx.payload.repository.name
-        const ref = ctx.payload.pull_request.head.ref
-        const number = ctx.payload.pull_request.number
+      withInstallation(
+        prisma,
+        withSubscription(async (ctx) => {
+          const owner = ctx.payload.repository.owner.login.toLowerCase()
+          const repo = ctx.payload.repository.name
+          const ref = ctx.payload.pull_request.head.ref
+          const number = ctx.payload.pull_request.number
 
-        const configRepo = getLSConfigRepoName(owner)
+          const configRepo = getLSConfigRepoName(owner)
 
-        ctx.logger.info(`PullRequest action: ${ctx.payload.action}`)
+          ctx.logger.info(`PullRequest action: ${ctx.payload.action}`)
 
-        /* istanbul ignore if */
-        if (!isConfigRepo(owner, repo)) {
-          ctx.logger.info(
-            `Not configuration repository, skipping pull request overview.`,
-            { meta: { configurationRepo: configRepo, currentRepo: repo } },
-          )
-          return
-        }
+          /* istanbul ignore if */
+          if (!isConfigRepo(owner, repo)) {
+            ctx.logger.info(
+              `Not configuration repository, skipping pull request overview.`,
+              { meta: { configurationRepo: configRepo, currentRepo: repo } },
+            )
+            return
+          }
 
-        /* Check changed files */
-        const compare = await ctx.github.repos.compareCommits({
-          owner: owner,
-          repo: repo,
-          base: ctx.payload.pull_request.base.ref,
-          head: ctx.payload.pull_request.head.ref,
-        })
-
-        /* istanbul ignore next */
-        if (
-          compare.data.files.every((file) => file.filename !== LS_CONFIG_PATH)
-        ) {
-          ctx.logger.info(`Configuration didn't change, skipping comment.`, {
-            meta: {
-              files: compare.data.files.map((file) => file.filename).join(', '),
-            },
-          })
-          return
-        }
-
-        /* Start the process of PR review. */
-
-        const startedAt = new Date()
-
-        /* Start a Github check. */
-        const check = await ctx.github.checks
-          .create({
-            name: 'label-sync/dryrun',
+          /* Check changed files */
+          const compare = await ctx.github.repos.compareCommits({
             owner: owner,
             repo: repo,
-            head_sha: ctx.payload.pull_request.head.sha,
-            started_at: startedAt.toISOString(),
-            status: 'in_progress',
-          })
-          .then((res) => res.data)
-
-        /* Load configuration */
-        const configRaw = await getFile(
-          ctx.github,
-          { owner, repo, ref },
-          LS_CONFIG_PATH,
-        )
-
-        /* Skip the pull request if there's no configuraiton. */
-        /* istanbul ignore next */
-        if (configRaw === null) {
-          ctx.logger.info(`No configuration, skipping comment.`)
-          return
-        }
-
-        const [error, config] = parseConfig(ctx.installation.plan, configRaw)
-
-        /* Skips invalid configuration. */
-        /* istanbul ignore if */
-        if (error !== null) {
-          ctx.logger.info(`Invalid configuration on ${ref}`, {
-            meta: {
-              config: JSON.stringify(config),
-              error: error,
-            },
+            base: ctx.payload.pull_request.base.ref,
+            head: ctx.payload.pull_request.head.ref,
           })
 
-          const report = ml`
-          | Your configuration seems a bit strange. Here's what I am having problems with:
-          |
-          | ${error}
-          `
-
-          const completedAt = new Date()
-
-          /* Complete a Github check. */
-          const completedCheck = await ctx.github.checks
-            .update({
-              check_run_id: check.id,
-              owner: owner,
-              repo: repo,
-              status: 'completed',
-              completed_at: completedAt.toISOString(),
-              conclusion: 'failure',
-              output: {
-                title: 'Invalid configuration',
-                summary: report,
+          /* istanbul ignore next */
+          if (
+            compare.data.files.every((file) => file.filename !== LS_CONFIG_PATH)
+          ) {
+            ctx.logger.info(`Configuration didn't change, skipping comment.`, {
+              meta: {
+                files: compare.data.files
+                  .map((file) => file.filename)
+                  .join(', '),
               },
             })
-            .then((res) => res.data)
+            return
+          }
 
-          ctx.logger.info(`Submited a check failure (${completedCheck.id})`)
-          return
-        }
+          /* Start the process of PR review. */
 
-        ctx.logger.info(`Configration loaded configuration on ${ref}`, {
-          meta: {
-            config: JSON.stringify(config),
-          },
-        })
+          /* Tackle PR Action */
 
-        /* Tackle PR Action */
+          switch (ctx.payload.action) {
+            case 'opened':
+            case 'reopened':
+            case 'ready_for_review':
+            case 'review_requested':
+            case 'synchronize':
+            case 'edited': {
+              /* Review pull request. */
 
-        switch (ctx.payload.action) {
-          case 'opened':
-          case 'reopened':
-          case 'ready_for_review':
-          case 'review_requested':
-          case 'synchronize':
-          case 'edited': {
-            /* Review pull request. */
+              const startedAt = new Date()
 
-            /* Verify that we can access all configured files. */
-            const access = await checkInstallationAccess(
-              ctx.github,
-              configRepos(config!),
-            )
+              /* Start a Github check. */
+              const check = await ctx.github.checks
+                .create({
+                  name: 'label-sync/dryrun',
+                  owner: owner,
+                  repo: repo,
+                  head_sha: ctx.payload.pull_request.head.sha,
+                  started_at: startedAt.toISOString(),
+                  status: 'in_progress',
+                })
+                .then((res) => res.data)
 
-            /* Skip configurations that we can't access. */
-            switch (access.status) {
-              case 'Sufficient': {
-                ctx.logger.info(`Simulating sync.`)
+              /* Load configuration */
+              const configRaw = await getFile(
+                ctx.github,
+                { owner, repo, ref },
+                LS_CONFIG_PATH,
+              )
 
-                /* Fetch changes to repositories. */
-                const reports = await Promise.all(
-                  configRepos(config!).map((repo) =>
-                    handleLabelSync(
-                      ctx.github,
-                      owner,
-                      repo,
-                      config!.repos[repo],
-                      false,
-                    ),
-                  ),
-                )
+              /* Skip the pull request if there's no configuraiton. */
+              /* istanbul ignore next */
+              if (configRaw === null) {
+                ctx.logger.info(`No configuration, skipping comment.`)
+                return
+              }
 
-                /* Comment on pull request. */
+              const [error, config] = parseConfig(
+                ctx.installation.plan,
+                configRaw,
+              )
 
-                const report = generateHumanReadablePRReport(reports)
-                const successful = reports.every(
-                  (report) => report.status === 'Success',
-                )
+              /* Skips invalid configuration. */
+              /* istanbul ignore if */
+              if (error !== null) {
+                ctx.logger.info(`Invalid configuration on ${ref}`, {
+                  meta: {
+                    config: JSON.stringify(config),
+                    error: error,
+                  },
+                })
 
-                /* Comment on a PR in a human friendly way. */
-                const comment = await createPRComment(
-                  ctx.github,
-                  owner,
-                  configRepo,
-                  number,
-                  report,
-                )
-
-                ctx.logger.info(`Commented on PullRequest (${comment.id})`)
+                const report = ml`
+                | Your configuration seems a bit strange. Here's what I am having problems with:
+                |
+                | ${error}
+                `
 
                 const completedAt = new Date()
 
@@ -1040,19 +980,93 @@ module.exports = (
                     repo: repo,
                     status: 'completed',
                     completed_at: completedAt.toISOString(),
-                    conclusion: successful ? 'success' : 'failure',
+                    conclusion: 'failure',
+                    output: {
+                      title: 'Invalid configuration',
+                      summary: report,
+                    },
                   })
                   .then((res) => res.data)
 
-                ctx.logger.info(`Completed a check (${completedCheck.id})`)
-
+                ctx.logger.info(
+                  `Submited a check failure (${completedCheck.id})`,
+                )
                 return
               }
-              case 'Insufficient': {
-                ctx.logger.info(`Insufficient permissions`)
 
-                /* Opens up an issue about insufficient permissions. */
-                const body = ml`
+              ctx.logger.info(`Configration loaded configuration on ${ref}`, {
+                meta: {
+                  config: JSON.stringify(config),
+                },
+              })
+
+              /* Verify that we can access all configured files. */
+              const access = await checkInstallationAccess(
+                ctx.github,
+                configRepos(config!),
+              )
+
+              /* Skip configurations that we can't access. */
+              switch (access.status) {
+                case 'Sufficient': {
+                  ctx.logger.info(`Simulating sync.`)
+
+                  /* Fetch changes to repositories. */
+                  const reports = await Promise.all(
+                    configRepos(config!).map((repo) =>
+                      handleLabelSync(
+                        ctx.github,
+                        owner,
+                        repo,
+                        config!.repos[repo],
+                        false,
+                      ),
+                    ),
+                  )
+
+                  /* Comment on pull request. */
+
+                  const report = generateHumanReadablePRReport(reports)
+                  const successful = reports.every(
+                    (report) => report.status === 'Success',
+                  )
+
+                  /* Comment on a PR in a human friendly way. */
+                  const comment = await createPRComment(
+                    ctx.github,
+                    owner,
+                    configRepo,
+                    number,
+                    report,
+                  )
+
+                  ctx.logger.info(`Commented on PullRequest (${comment.id})`)
+
+                  const completedAt = new Date()
+
+                  /* Complete a Github check. */
+                  const completedCheck = await ctx.github.checks
+                    .update({
+                      check_run_id: check.id,
+                      owner: owner,
+                      repo: repo,
+                      status: 'completed',
+                      completed_at: completedAt.toISOString(),
+                      conclusion: successful ? 'success' : 'failure',
+                    })
+                    .then((res) => res.data)
+
+                  ctx.logger.info(
+                    `Check updated (${completedCheck.id}) (#${number}) ${completedCheck.status}`,
+                  )
+
+                  return
+                }
+                case 'Insufficient': {
+                  ctx.logger.info(`Insufficient permissions`)
+
+                  /* Opens up an issue about insufficient permissions. */
+                  const body = ml`
                 | It seems like this configuration stretches beyond repositories we can access. Please update it so we can help you as best as we can.
                 |
                 | _Missing repositories:_
@@ -1061,60 +1075,61 @@ module.exports = (
                   .join(os.EOL)}
                 `
 
-                /* Complete a check run */
+                  /* Complete a check run */
 
-                const completedAt = new Date()
+                  const completedAt = new Date()
 
-                const completedCheck = await ctx.github.checks
-                  .update({
-                    check_run_id: check.id,
-                    owner: owner,
-                    repo: repo,
-                    status: 'completed',
-                    completed_at: completedAt.toISOString(),
-                    conclusion: 'failure',
-                    output: {
-                      title: 'Missing repository access.',
-                      summary: body,
-                    },
-                  })
-                  .then((res) => res.data)
+                  const completedCheck = await ctx.github.checks
+                    .update({
+                      check_run_id: check.id,
+                      owner: owner,
+                      repo: repo,
+                      status: 'completed',
+                      completed_at: completedAt.toISOString(),
+                      conclusion: 'failure',
+                      output: {
+                        title: 'Missing repository access.',
+                        summary: body,
+                      },
+                    })
+                    .then((res) => res.data)
 
-                ctx.logger.info(`Completed check ${completedCheck.id}`)
+                  ctx.logger.info(`Completed check ${completedCheck.id}`)
 
-                return
+                  return
+                }
               }
             }
+            /* istanbul ignore next */
+            case 'assigned':
+            /* istanbul ignore next */
+            case 'closed':
+            /* istanbul ignore next */
+            case 'labeled':
+            /* istanbul ignore next */
+            case 'locked':
+            /* istanbul ignore next */
+            case 'review_request_removed':
+            /* istanbul ignore next */
+            case 'unassigned':
+            /* istanbul ignore next */
+            case 'unlabeled':
+            /* istanbul ignore next */
+            case 'unlocked': {
+              /* Ignore other events. */
+              ctx.logger.info(`Ignoring event ${ctx.payload.action}.`)
+              return
+            }
+            /* istanbul ignore next */
+            default: {
+              /* Log unsupported pull_request action. */
+              /* prettier-ignore */
+              ctx.logger.warn(`Unhandled PullRequest action: ${ctx.payload.action}`)
+              return
+            }
           }
-          /* istanbul ignore next */
-          case 'assigned':
-          /* istanbul ignore next */
-          case 'closed':
-          /* istanbul ignore next */
-          case 'labeled':
-          /* istanbul ignore next */
-          case 'locked':
-          /* istanbul ignore next */
-          case 'review_request_removed':
-          /* istanbul ignore next */
-          case 'unassigned':
-          /* istanbul ignore next */
-          case 'unlabeled':
-          /* istanbul ignore next */
-          case 'unlocked': {
-            /* Ignore other events. */
-            ctx.logger.info(`Ignoring event ${ctx.payload.action}.`)
-            return
-          }
-          /* istanbul ignore next */
-          default: {
-            /* Log unsupported pull_request action. */
-            /* prettier-ignore */
-            ctx.logger.warn(`Unhandled PullRequest action: ${ctx.payload.action}`)
-            return
-          }
-        }
-      }),
+        }),
+      ),
     ),
   )
 

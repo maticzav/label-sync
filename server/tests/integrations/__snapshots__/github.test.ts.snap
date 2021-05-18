@@ -471,7 +471,7 @@ Array [
       },
     },
     "level": "info",
-    "message": "Completed a check (123)",
+    "message": "Check updated (123) (#2) undefined",
   },
   Object {
     "event": Object {
@@ -1787,7 +1787,7 @@ Array [
       },
     },
     "level": "info",
-    "message": "Completed a check (123)",
+    "message": "Check updated (123) (#2) undefined",
   },
   Object {
     "event": Object {
