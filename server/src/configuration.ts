@@ -157,10 +157,21 @@ function checkPurchase(plan: Plan, config: LSCConfiguration): LSCConfiguration {
 /* CONTENT CHECK */
 
 /**
- * Makes sure that content of the configuration is valid.
+ * Returns configuration if everything seems as expected. Throws otherwise
+ * with the error exaplanation.
  */
 function validateCongiuration(config: LSCConfiguration): LSCConfiguration {
+  /**
+   * We accumulate possible errors in all the checks and throw the collection.
+   */
+  let errors: string[] = []
+
   /* MISSING SIBLINGS */
+
+  /**
+   * All siblings should be defined in the configuration.
+   */
+
   let missingSiblings: { repo: string; sibling: string; label: string }[] = []
   for (const repoName in config.repos) {
     const repoConfig = config.repos[repoName]
@@ -179,9 +190,6 @@ function validateCongiuration(config: LSCConfiguration): LSCConfiguration {
     }
   }
 
-  /**
-   * Reports missing siblings.
-   */
   if (missingSiblings.length !== 0) {
     const report = ml`
     | Configuration references unconfigured siblings:
@@ -189,10 +197,14 @@ function validateCongiuration(config: LSCConfiguration): LSCConfiguration {
       .map((s) => `* \`${s.sibling}\` in ${s.repo}:${s.label}`)
       .join(os.EOL)}
     `
-    throw new Error(report)
+    errors.push(report)
   }
 
   /* ALIAS SPLITING */
+
+  /**
+   * You shouldn't make two new labels aliasing one label.
+   */
 
   let duplicateAliaii: { repo: string; alias: string; labels: string[] }[] = []
 
@@ -225,9 +237,6 @@ function validateCongiuration(config: LSCConfiguration): LSCConfiguration {
     }
   }
 
-  /**
-   * Reports missing siblings.
-   */
   if (duplicateAliaii.length !== 0) {
     const report = ml`
     | Configuration references same old label twice in alias:
@@ -239,6 +248,82 @@ function validateCongiuration(config: LSCConfiguration): LSCConfiguration {
     |
     | Each legacy label may only be referenced once in alias.
     `
+    errors.push(report)
+  }
+
+  /* SELF REFERENCES */
+
+  /**
+   * Siblings shouldn't self-reference themselves.
+   */
+
+  let selfreferencingSiblings: { repo: string; label: string }[] = []
+  for (const repoName in config.repos) {
+    const repoConfig = config.repos[repoName]
+
+    /**
+     * Check every label if it references itself.
+     */
+    for (const label in repoConfig.labels) {
+      const siblings = withDefault([], repoConfig.labels[label].siblings)
+
+      if (siblings.includes(label)) {
+        selfreferencingSiblings.push({ repo: repoName, label })
+      }
+    }
+  }
+
+  if (selfreferencingSiblings.length !== 0) {
+    const report = ml`
+    | Some of the labels in the configuration reference itself as a sibling:
+    | ${selfreferencingSiblings
+      .map((s) => `* \`${s.label}\` in ${s.repo}`)
+      .join(os.EOL)}
+    `
+    errors.push(report)
+  }
+
+  /* DESCRIPTION LENGTHS */
+
+  /**
+   * Siblings shouldn't self-reference themselves.
+   */
+
+  let labelsWithTooLongDescriptions: { repo: string; label: string }[] = []
+  for (const repoName in config.repos) {
+    const repoConfig = config.repos[repoName]
+
+    /**
+     * Check every label if it references itself.
+     */
+    for (const label in repoConfig.labels) {
+      const { description } = repoConfig.labels[label]
+
+      if (description && description.length > 1000) {
+        labelsWithTooLongDescriptions.push({ repo: repoName, label })
+      }
+    }
+  }
+
+  if (labelsWithTooLongDescriptions.length !== 0) {
+    const report = ml`
+     | Some of the labels in the configuration have too long descriptions:
+     | ${selfreferencingSiblings
+       .map((s) => `* \`${s.label}\` in ${s.repo}`)
+       .join(os.EOL)}
+      
+     | The maximum is 1000 characters.
+     `
+    errors.push(report)
+  }
+
+  /**
+   * Collect the errors and throw if necessary.
+   */
+
+  if (errors.length > 0) {
+    const report = errors.join(os.EOL)
+
     throw new Error(report)
   }
 
