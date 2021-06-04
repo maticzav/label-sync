@@ -307,45 +307,54 @@ colors:
   scope: &scope \\"#27CF79\\"
   team: &team'#FDF4E8'
   release: &release \\"#A5D8ff\\"
-  process: &process' \\"#EB9100\\"
+  process: &process \\"#EB9100\\"
+
+# There's one YAML feature that you *absolutely* want to use in your config.
+#
+# It's references. You make a referencable value using &name, and reuse it
+# by typing *name. If you are referencing an object (like \\"labels\\" below), use
+# \\"<<: *common\\" to spread the values out (like \\"repos\\" below \\"labels\\").
+#
+# To learn more about the special YAML symbols, check out
+# https://medium.com/@kinghuang/docker-compose-anchors-aliases-extensions-a1e4105d70bd.
 
 # Labels
 labels: &common
   \\"bug/0-needs-info\\":
-    color: &bug
+    color: *bug
     description: More information is needed for reproduction.
     siblings: [\\"kind/bug\\"]
   \\"bug/1-repro-available\\":
-    color: &bug
+    color: *bug
     description: A reproduction exists and needs to be confirmed.
     siblings: [\\"kind/bug\\"]
   \\"bug/2-confirmed\\":
-    color: &bug
+    color: *bug
     description: We have confirmed that this is a bug.
     siblings: [\\"kind/bug\\"]
   \\"kind/bug\\":
-    color: &bug
+    color: *bug
     description: A reported bug.
     alias: [\\"bug\\"]
   \\"kind/regression\\":
-    color: &kind
+    color: *kind
     description: A reported bug in functionality that used to work before.
   \\"kind/feature\\":
-    color: &kind
+    color: *kind
     description: A request for a new feature.
     alias: [\\"enhancement\\"]
   \\"kind/improvement\\":
-    color: &kind
+    color: *kind
     description: An improvement to existing feature and code.
   \\"kind/docs\\":
-    color: &kind
+    color: *kind
     description: A documentation change is required.
     alias: [\\"documentation\\"]
   \\"kind/discussion\\":
-    color: &kind
+    color: *kind
     description: Discussion is required.
   \\"kind/question\\":
-    color: &kind
+    color: *kind
     description: Developer asked a question. No code changes required.
     alias: [\\"question\\"]
 
