@@ -9,7 +9,7 @@ describe('dict:', () => {
           microsoft: 200,
           'label-sync': 10,
         },
-        val => val + 10,
+        (val) => val + 10,
       ),
     ).toEqual({
       apple: 310,
@@ -19,7 +19,8 @@ describe('dict:', () => {
   })
 
   test('mapEntriesAsync', async () => {
-    const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+    const wait = (ms: number) =>
+      new Promise((resolve) => setTimeout(resolve, ms))
 
     const dict: Dict<number> = await mapEntriesAsync(
       {
@@ -27,7 +28,7 @@ describe('dict:', () => {
         microsoft: 200,
         'label-sync': 10,
       },
-      async val => wait(10).then(() => val + 10),
+      async (val) => wait(10).then(() => val + 10),
     )
 
     expect(dict).toEqual({
@@ -45,7 +46,7 @@ describe('dict:', () => {
           microsoft: 200,
           'label-sync': 10,
         },
-        key => key.toUpperCase(),
+        (key) => key.toUpperCase(),
       ),
     ).toEqual({
       APPLE: 300,

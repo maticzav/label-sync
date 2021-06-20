@@ -1,6 +1,5 @@
 import { writeFileSync } from 'fs'
 import path from 'path'
-import { isNull, isNullOrUndefined } from 'util'
 
 import { findFileUp } from './fs'
 import { Repository, Configuration } from './generator'
@@ -15,24 +14,24 @@ export type LabelSyncConfig = {
 }
 
 /**
- * Parses a configuration file for the configuration.
- * @param param0
- * @param cwd
+ * Creates a configuration file out of TypeScript configuration.
  */
 export async function labelsync(
   config: LabelSyncConfig,
   output?: string,
   cwd: string = process.cwd(),
 ): Promise<Configuration | false> {
-  /* Search for git folder */
-  const pkgPath = findFileUp(cwd, 'package.json')
-
+  /**
+   * If there's no output path given, we try to find the first
+   * package.json file and use that as the root.
+   */
   /* istanbul ignore next */
-  if (isNull(pkgPath) && isNullOrUndefined(output)) {
-    return false
-  }
+  if (output === undefined) {
+    const pkgPath = findFileUp(cwd, 'package.json')
+    if (pkgPath === null) return false
 
-  output = withDefault(path.resolve(pkgPath!, LS_CONFIG_PATH), output)
+    output = withDefault(path.resolve(pkgPath, LS_CONFIG_PATH), output)
+  }
 
   /* Generate configuration */
 

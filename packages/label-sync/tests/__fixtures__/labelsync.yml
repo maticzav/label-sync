@@ -1,0 +1,35 @@
+repos:
+  prisma-test-utils:
+    config:
+      removeUnconfiguredLabels: true
+    labels:
+      type/bug:
+        color: '#ff0022'
+        alias: []
+        siblings: []
+      bug/1-has-reproduction:
+        color: '#ff0022'
+        description: Indicates that an issue has reproduction
+        alias:
+          - bug
+        siblings:
+          - kind/bug
+      kind/bug:
+        color: '#02f5aa'
+        alias: []
+        siblings: []
+  changed:
+    config:
+      removeUnconfiguredLabels: true
+    labels:
+      bug/1-has-reproduction:
+        color: '#ff0022'
+        description: Indicates that an issue has reproduction
+        alias:
+          - bug
+        siblings:
+          - kind/bug
+      kind/bug:
+        color: '#02f5aa'
+        alias: []
+        siblings: []

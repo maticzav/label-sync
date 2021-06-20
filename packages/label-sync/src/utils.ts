@@ -3,8 +3,8 @@ export type Maybe<T> = T | null
 
 /**
  * Creates a fallback default value.
- * @param fallback 
- * @param value 
+ * @param fallback
+ * @param value
  */
 export function withDefault<T>(fallback: T, value: T | undefined): T {
   if (value) return value
@@ -12,12 +12,19 @@ export function withDefault<T>(fallback: T, value: T | undefined): T {
 }
 
 /**
- * Maps entries of an object.
- * @param m 
- * @param fn 
+ * Maps entries in a map.
+ * @param m
+ * @param fn
  */
-export function mapEntries<T, V>(m: Dict<T>, fn: (v: T) => V): Dict<V> {
-  return Object.keys(m).reduce<Dict<V>>((acc, key) => {
-    return { ...acc, [key]: fn(m[key]) }
-  }, {})
+export function mapEntries<K, T, V>(
+  m: Map<K, T>,
+  fn: (v: T, key: K) => V,
+): Map<K, V> {
+  const map = new Map<K, V>()
+
+  for (const key of m.keys()) {
+    map.set(key, fn(m.get(key)!, key))
+  }
+
+  return map
 }

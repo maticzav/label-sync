@@ -3,13 +3,12 @@ import * as path from 'path'
 import * as prettier from 'prettier'
 
 import { mapEntries } from './data/dict'
-import { GHTree } from './github'
+import { GHTree } from './github/tree'
 
 /**
  * Populates the template with repositories.
- * @param tree
  */
-export function populateTemplate(
+export function populate(
   tree: GHTree,
   data: { repository: string; repositories: { name: string }[] },
 ): GHTree {

@@ -1,75 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`github: FREE installation event insufficient permissions 1`] = `
-Object {
-  "body": "# Insufficient permissions
-
-Hi there,
-Thank you for installing LabelSync. We have noticed that your configuration stretches beyond repositories we can access. We assume that you forgot to allow access to certain repositories.
-
-Please update your installation. 
-
-_Missing repositories:_
- * unchanged
-
-Best,
-LabelSync Team",
-  "title": "LabelSync - Insufficient permissions",
-}
-`;
-
-exports[`github: FREE installation event sync 1`] = `
-Array [
-  Object {
-    "body": Object {
-      "color": "000000",
-      "name": "alias/new",
-    },
-    "uri": "/repos/maticzav/changed/labels/alias/old:1",
-  },
-  Object {
-    "body": Object {
-      "color": "ffffff",
-      "name": "update/color",
-    },
-    "uri": "/repos/maticzav/changed/labels/update/color",
-  },
-]
-`;
-
-exports[`github: FREE installation event sync 2`] = `
-Array [
-  "/repos/maticzav/changed/labels/alias/old:2",
-  "/repos/maticzav/changed/labels/remove",
-]
-`;
-
-exports[`github: FREE installation invalid config issue 1`] = `
-Object {
-  "body": "# Welcome to LabelSync!
-
-Hi there,
-Thank you for using LabelSync. We hope you enjoyed the experience so far.
-It seems like there are some problems with your configuration.
-Our parser reported that:
-
-Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }
-
-Let us know if we can help you with the configuration by sending us an email to support@label-sync.com. We'll try to get back to you as quickly as possible.
-
-Best,
-LabelSync Team",
-  "title": "LabelSync - Onboarding configuration",
-}
-`;
-
-exports[`github: FREE issues.labeled adds siblings 1`] = `
-Array [
-  "label/regular",
-]
-`;
-
-exports[`github: FREE logs are reporting correctly 1`] = `
+exports[`github: logs are reporting correctly 1`] = `
 Array [
   Object {
     "event": Object {
@@ -79,7 +10,7 @@ Array [
     "message": "Onboarding maticzav.",
     "meta": Object {
       "periodEndsAt": "periodEndsAt",
-      "plan": "FREE",
+      "plan": "PAID",
     },
   },
   Object {
@@ -111,7 +42,7 @@ Array [
     "message": "Onboarding maticzav.",
     "meta": Object {
       "periodEndsAt": "periodEndsAt",
-      "plan": "FREE",
+      "plan": "PAID",
     },
   },
   Object {
@@ -128,7 +59,7 @@ Array [
     "level": "info",
     "message": "Error in config, skipping sync.",
     "meta": Object {
-      "error": "Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }",
+      "error": " * \`repos\`: Required",
       "periodEndsAt": "periodEndsAt",
     },
   },
@@ -147,32 +78,7 @@ Array [
     "message": "Onboarding maticzav.",
     "meta": Object {
       "periodEndsAt": "periodEndsAt",
-      "plan": "FREE",
-    },
-  },
-  Object {
-    "event": Object {
-      "name": "installation",
-    },
-    "level": "info",
-    "message": "User has existing repository in maticzav-labelsync, performing sync.",
-  },
-  Object {
-    "event": Object {
-      "name": "installation",
-    },
-    "level": "info",
-    "message": "Performing sync.",
-  },
-  Object {
-    "event": Object {
-      "name": "installation",
-    },
-    "level": "info",
-    "message": "Onboarding maticzav.",
-    "meta": Object {
-      "periodEndsAt": "periodEndsAt",
-      "plan": "FREE",
+      "plan": "PAID",
     },
   },
   Object {
@@ -189,7 +95,74 @@ Array [
     "level": "info",
     "message": "Insufficient permissions, skipping sync.",
     "meta": Object {
-      "access": "{\\"status\\":\\"Insufficient\\",\\"missing\\":[\\"unchanged\\"],\\"accessible\\":[\\"changed\\"]}",
+      "access": "{\\"status\\":\\"Insufficient\\",\\"missing\\":[\\"UNCHANGED\\"],\\"accessible\\":[\\"changed\\",\\"unchanged\\",\\"other\\"]}",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "event": Object {
+      "name": "installation",
+    },
+    "level": "error",
+    "message": "Event resulted in error.",
+    "meta": Object {
+      "error": "request to https://api.github.com/repos/maticzav/maticzav-labelsync/issues failed, reason: Nock: No match for request {
+  \\"method\\": \\"POST\\",
+  \\"url\\": \\"https://api.github.com/repos/maticzav/maticzav-labelsync/issues\\",
+  \\"headers\\": {
+    \\"accept\\": [
+      \\"application/vnd.github.v3+json\\"
+    ],
+    \\"user-agent\\": [
+      \\"octokit.js/16.43.1 Node.js/14.9.0 (macOS; x64)\\"
+    ],
+    \\"authorization\\": [
+      \\"token token\\"
+    ],
+    \\"content-type\\": [
+      \\"application/json; charset=utf-8\\"
+    ],
+    \\"content-length\\": [
+      \\"389\\"
+    ],
+    \\"accept-encoding\\": [
+      \\"gzip,deflate\\"
+    ],
+    \\"connection\\": [
+      \\"close\\"
+    ]
+  },
+  \\"body\\": \\"{\\\\\\"title\\\\\\":\\\\\\"LabelSync - Insufficient permissions\\\\\\",\\\\\\"body\\\\\\":\\\\\\"# Insufficient permissions\\\\\\\\n\\\\\\\\nHi there,\\\\\\\\nThank you for installing LabelSync. We have noticed that your configuration stretches beyond repositories we can access. We assume that you forgot to allow access to certain repositories.\\\\\\\\n\\\\\\\\nPlease update your installation. \\\\\\\\n\\\\\\\\n_Missing repositories:_\\\\\\\\n * UNCHANGED\\\\\\\\n\\\\\\\\nBest,\\\\\\\\nLabelSync Team\\\\\\"}\\"
+}",
+      "periodEndsAt": "periodEndsAt",
+    },
+  },
+  Object {
+    "event": Object {
+      "name": "installation",
+    },
+    "level": "info",
+    "message": "Onboarding maticzav.",
+    "meta": Object {
+      "periodEndsAt": "periodEndsAt",
+      "plan": "PAID",
+    },
+  },
+  Object {
+    "event": Object {
+      "name": "installation",
+    },
+    "level": "info",
+    "message": "User has existing repository in maticzav-labelsync, performing sync.",
+  },
+  Object {
+    "event": Object {
+      "name": "installation",
+    },
+    "level": "info",
+    "message": "Insufficient permissions, skipping sync.",
+    "meta": Object {
+      "access": "{\\"status\\":\\"Insufficient\\",\\"missing\\":[\\"UNCHANGED\\"],\\"accessible\\":[\\"changed\\"]}",
       "periodEndsAt": "periodEndsAt",
     },
   },
@@ -219,7 +192,7 @@ Array [
     "level": "info",
     "message": "Configuration loaded.",
     "meta": Object {
-      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
+      "config": "{\\"repos\\":{}}",
       "periodEndsAt": "periodEndsAt",
     },
   },
@@ -240,30 +213,11 @@ Array [
       },
     },
     "level": "info",
-    "message": "Performing label sync on maticzav.",
-  },
-  Object {
-    "event": Object {
-      "action": "push",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "push",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Sync completed.",
+    "message": "Insufficient permissions: UNCHANGED",
     "meta": Object {
-      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
+      "access": "{\\"status\\":\\"Insufficient\\",\\"missing\\":[\\"UNCHANGED\\"],\\"accessible\\":[\\"unchanged\\",\\"changed\\",\\"other\\"]}",
+      "config": "{\\"repos\\":{}}",
       "periodEndsAt": "periodEndsAt",
-      "reports": "[{\\"status\\":\\"Success\\",\\"repo\\":\\"changed\\",\\"owner\\":\\"maticzav\\",\\"additions\\":[{\\"name\\":\\"create/new\\",\\"color\\":\\"000000\\"}],\\"updates\\":[{\\"old_name\\":\\"alias/old:1\\",\\"name\\":\\"alias/new\\",\\"color\\":\\"000000\\"},{\\"old_name\\":\\"update/color\\",\\"name\\":\\"update/color\\",\\"old_color\\":\\"000000\\",\\"color\\":\\"ffffff\\"}],\\"removals\\":[{\\"name\\":\\"alias/old:2\\",\\"color\\":\\"000000\\"},{\\"name\\":\\"remove\\",\\"color\\":\\"000000\\"}],\\"aliases\\":[{\\"old_name\\":\\"alias/old:2\\",\\"name\\":\\"alias/new\\",\\"color\\":\\"000000\\"}],\\"config\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}}},{\\"status\\":\\"Success\\",\\"repo\\":\\"unchanged\\",\\"owner\\":\\"maticzav\\",\\"additions\\":[],\\"updates\\":[],\\"removals\\":[],\\"aliases\\":[],\\"config\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":false},\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}]",
     },
   },
   Object {
@@ -283,9 +237,28 @@ Array [
       },
     },
     "level": "info",
-    "message": "Error in config Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }",
+    "message": "Commented on commit 0000000000000000000000000000000000000000.",
+  },
+  Object {
+    "event": Object {
+      "action": "push",
+      "context": Object {
+        "user_id": 21031067,
+      },
+      "name": "push",
+      "repo": Object {
+        "name": "maticzav-labelsync",
+      },
+      "user": Object {
+        "id": 21031067,
+        "owner": "maticzav",
+        "type": "User",
+      },
+    },
+    "level": "info",
+    "message": "Error in config  * \`repos\`: Required",
     "meta": Object {
-      "error": "Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }",
+      "error": " * \`repos\`: Required",
       "periodEndsAt": "periodEndsAt",
     },
   },
@@ -327,7 +300,7 @@ Array [
     "level": "info",
     "message": "Configuration loaded.",
     "meta": Object {
-      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
+      "config": "{\\"repos\\":{}}",
       "periodEndsAt": "periodEndsAt",
     },
   },
@@ -348,10 +321,10 @@ Array [
       },
     },
     "level": "info",
-    "message": "Insufficient permissions: unchanged",
+    "message": "Insufficient permissions: UNCHANGED",
     "meta": Object {
-      "access": "{\\"status\\":\\"Insufficient\\",\\"missing\\":[\\"unchanged\\"],\\"accessible\\":[\\"changed\\"]}",
-      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
+      "access": "{\\"status\\":\\"Insufficient\\",\\"missing\\":[\\"UNCHANGED\\"],\\"accessible\\":[\\"changed\\"]}",
+      "config": "{\\"repos\\":{}}",
       "periodEndsAt": "periodEndsAt",
     },
   },
@@ -412,148 +385,7 @@ Array [
     "level": "info",
     "message": "Configration loaded configuration on labels",
     "meta": Object {
-      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
-      "periodEndsAt": "periodEndsAt",
-    },
-  },
-  Object {
-    "event": Object {
-      "action": "opened",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "pull_request",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Simulating sync.",
-  },
-  Object {
-    "event": Object {
-      "action": "opened",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "pull_request",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Commented on PullRequest (undefined)",
-  },
-  Object {
-    "event": Object {
-      "action": "opened",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "pull_request",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Check updated (123) (#2) undefined",
-  },
-  Object {
-    "event": Object {
-      "action": "opened",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "pull_request",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "PullRequest action: opened",
-  },
-  Object {
-    "event": Object {
-      "action": "opened",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "pull_request",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Configuration didn't change, skipping comment.",
-    "meta": Object {
-      "files": "README.md",
-      "periodEndsAt": "periodEndsAt",
-    },
-  },
-  Object {
-    "event": Object {
-      "action": "opened",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "pull_request",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "PullRequest action: opened",
-  },
-  Object {
-    "event": Object {
-      "action": "opened",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "pull_request",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Configration loaded configuration on labels",
-    "meta": Object {
-      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
+      "config": "{\\"repos\\":{}}",
       "periodEndsAt": "periodEndsAt",
     },
   },
@@ -597,1200 +429,6 @@ Array [
   },
   Object {
     "event": Object {
-      "action": "created",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "label.created",
-      "repo": Object {
-        "name": "changed",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "New label create in changed: \\":bug: Bugfix\\".",
-  },
-  Object {
-    "event": Object {
-      "action": "created",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "label.created",
-      "repo": Object {
-        "name": "changed",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Removing \\":bug: Bugfix\\" from changed.",
-  },
-  Object {
-    "event": Object {
-      "action": "created",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "label.created",
-      "repo": Object {
-        "name": "changed",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Removed label \\":bug: Bugfix\\" from changed.",
-  },
-  Object {
-    "event": Object {
-      "action": "labeled",
-      "context": Object {
-        "user_id": 43337079,
-      },
-      "name": "issues.labeled",
-      "repo": Object {
-        "name": "changed",
-      },
-      "user": Object {
-        "id": 43337079,
-        "owner": "maticzav",
-        "type": "Organization",
-      },
-    },
-    "level": "debug",
-    "message": "IssueLabeled payload and config",
-    "payload": Object {
-      "action": "labeled",
-      "installation": Object {
-        "id": 7501122,
-        "node_id": "asd==",
-      },
-      "issue": Object {
-        "assignee": null,
-        "assignees": Array [],
-        "author_association": "CONTRIBUTOR",
-        "body": "",
-        "closed_at": null,
-        "comments": 0,
-        "created_at": "2020-03-23T22:17:15Z",
-        "id": 586553190,
-        "labels": Array [],
-        "locked": false,
-        "milestone": null,
-        "node_id": "MDU6SXNzdWU1ODY1NTMxOTA=",
-        "number": 1,
-        "state": "open",
-        "title": "LabelSync - Invalid configuration",
-        "updated_at": "2020-03-24T07:24:21Z",
-        "user": Object {
-          "avatar_url": "https://avatars0.githubusercontent.com/in/42297?v=4",
-          "gravatar_id": "",
-          "html_url": "https://github.com/apps/labelsync-manager",
-          "id": 55896118,
-          "login": "labelsync-manager",
-          "node_id": "MDM6Qm90NTU4OTYxMTg=",
-          "received_events_url": "https://api.github.com/users/labelsync-manager%5Bbot%5D/received_events",
-          "site_admin": false,
-          "type": "Bot",
-          "url": "https://api.github.com/users/labelsync-manager%5Bbot%5D",
-        },
-      },
-      "label": Object {
-        "color": "0075ca",
-        "default": true,
-        "description": "Improvements or additions to documentation",
-        "id": 1929933064,
-        "name": "label/siblings",
-        "node_id": "MDU6TGFiZWwxOTI5OTMzMDY0",
-        "url": "https://api.github.com/repos/3-SemicolonClub/3-SemicolonClub-labelsync/labels/documentation",
-      },
-      "organization": Object {
-        "avatar_url": "https://avatars0.githubusercontent.com/u/43337079?v=4",
-        "description": "{ semi: true }",
-        "id": 43337079,
-        "login": "maticzav",
-        "node_id": "MDEyOk9yZ2FuaXphdGlvbjQzMzM3MDc5",
-        "public_members_url": "https://api.github.com/orgs/3-SemicolonClub/public_members{/member}",
-        "url": "https://api.github.com/orgs/3-SemicolonClub",
-      },
-      "repository": Object {
-        "archived": false,
-        "clone_url": "https://github.com/3-SemicolonClub/3-SemicolonClub-labelsync.git",
-        "created_at": "2020-03-23T22:17:05Z",
-        "default_branch": "master",
-        "deployments_url": "https://api.github.com/repos/3-SemicolonClub/3-SemicolonClub-labelsync/deployments",
-        "description": "LabelSync configuration repository.",
-        "disabled": false,
-        "fork": false,
-        "forks": 0,
-        "forks_count": 0,
-        "full_name": "maticzav/changed",
-        "git_url": "git://github.com/3-SemicolonClub/3-SemicolonClub-labelsync.git",
-        "has_downloads": true,
-        "has_issues": true,
-        "has_pages": false,
-        "has_projects": true,
-        "has_wiki": true,
-        "homepage": null,
-        "html_url": "https://github.com/3-SemicolonClub/3-SemicolonClub-labelsync",
-        "id": 249556373,
-        "language": null,
-        "license": null,
-        "mirror_url": null,
-        "name": "changed",
-        "node_id": "MDEwOlJlcG9zaXRvcnkyNDk1NTYzNzM=",
-        "open_issues": 1,
-        "open_issues_count": 1,
-        "owner": Object {
-          "avatar_url": "https://avatars0.githubusercontent.com/u/43337079?v=4",
-          "gravatar_id": "",
-          "html_url": "https://github.com/3-SemicolonClub",
-          "id": 43337079,
-          "login": "maticzav",
-          "node_id": "MDEyOk9yZ2FuaXphdGlvbjQzMzM3MDc5",
-          "received_events_url": "https://api.github.com/users/3-SemicolonClub/received_events",
-          "site_admin": false,
-          "type": "Organization",
-          "url": "https://api.github.com/users/3-SemicolonClub",
-        },
-        "private": false,
-        "pushed_at": "2020-03-23T22:17:13Z",
-        "size": 2,
-        "ssh_url": "git@github.com:3-SemicolonClub/3-SemicolonClub-labelsync.git",
-        "stargazers_count": 0,
-        "svn_url": "https://github.com/3-SemicolonClub/3-SemicolonClub-labelsync",
-        "updated_at": "2020-03-23T22:17:15Z",
-        "watchers": 0,
-        "watchers_count": 0,
-      },
-      "sender": Object {
-        "avatar_url": "https://avatars2.githubusercontent.com/u/3924224?v=4",
-        "followers_url": "https://api.github.com/users/maticzav/followers",
-        "gravatar_id": "",
-        "html_url": "https://github.com/maticzav",
-        "id": 3924224,
-        "login": "maticzav",
-        "node_id": "MDQ6VXNlcjM5MjQyMjQ=",
-        "site_admin": false,
-        "type": "User",
-        "url": "https://api.github.com/users/maticzav",
-      },
-    },
-    "sources": Object {
-      "repos": Object {
-        "changed": Object {
-          "config": Object {
-            "removeUnconfiguredLabels": true,
-          },
-          "labels": Object {
-            "label/regular": Object {
-              "color": "000000",
-            },
-            "label/siblings": Object {
-              "color": "000000",
-              "siblings": Array [
-                "label/regular",
-              ],
-            },
-          },
-        },
-      },
-    },
-  },
-  Object {
-    "event": Object {
-      "action": "labeled",
-      "context": Object {
-        "user_id": 43337079,
-      },
-      "name": "issues.labeled",
-      "repo": Object {
-        "name": "changed",
-      },
-      "user": Object {
-        "id": 43337079,
-        "owner": "maticzav",
-        "type": "Organization",
-      },
-    },
-    "level": "info",
-    "message": "Issue (1) labeled with \\"label/siblings\\".",
-  },
-  Object {
-    "event": Object {
-      "action": "labeled",
-      "context": Object {
-        "user_id": 43337079,
-      },
-      "name": "issues.labeled",
-      "repo": Object {
-        "name": "changed",
-      },
-      "user": Object {
-        "id": 43337079,
-        "owner": "maticzav",
-        "type": "Organization",
-      },
-    },
-    "level": "info",
-    "message": "Added siblings of label/siblings to issue 1: label/regular",
-  },
-  Object {
-    "event": Object {
-      "action": "labeled",
-      "context": Object {
-        "user_id": 43337079,
-      },
-      "name": "pull_request.labeled",
-      "repo": Object {
-        "name": "changed",
-      },
-      "user": Object {
-        "id": 43337079,
-        "owner": "maticzav",
-        "type": "Organization",
-      },
-    },
-    "level": "debug",
-    "message": "PullRequestLabeled payload and config",
-    "payload": Object {
-      "action": "labeled",
-      "installation": Object {
-        "id": 7501122,
-        "node_id": "asd==",
-      },
-      "label": Object {
-        "color": "0075ca",
-        "default": true,
-        "description": "Improvements or additions to documentation",
-        "id": 1929933064,
-        "name": "label/siblings",
-        "node_id": "MDU6TGFiZWwxOTI5OTMzMDY0",
-        "url": "https://api.github.com/repos/3-SemicolonClub/3-SemicolonClub-labelsync/labels/documentation",
-      },
-      "organization": Object {
-        "avatar_url": "https://avatars0.githubusercontent.com/u/43337079?v=4",
-        "description": "{ semi: true }",
-        "id": 43337079,
-        "login": "maticzav",
-        "node_id": "MDEyOk9yZ2FuaXphdGlvbjQzMzM3MDc5",
-        "public_members_url": "https://api.github.com/orgs/3-SemicolonClub/public_members{/member}",
-        "url": "https://api.github.com/orgs/3-SemicolonClub",
-      },
-      "pull_request": Object {
-        "assignee": null,
-        "assignees": Array [],
-        "author_association": "CONTRIBUTOR",
-        "body": "",
-        "closed_at": null,
-        "comments": 0,
-        "created_at": "2020-03-23T22:17:15Z",
-        "id": 586553190,
-        "labels": Array [],
-        "locked": false,
-        "milestone": null,
-        "node_id": "MDU6SXNzdWU1ODY1NTMxOTA=",
-        "number": 1,
-        "state": "open",
-        "title": "LabelSync - Invalid configuration",
-        "updated_at": "2020-03-24T07:24:21Z",
-        "user": Object {
-          "avatar_url": "https://avatars0.githubusercontent.com/in/42297?v=4",
-          "gravatar_id": "",
-          "html_url": "https://github.com/apps/labelsync-manager",
-          "id": 55896118,
-          "login": "labelsync-manager",
-          "node_id": "MDM6Qm90NTU4OTYxMTg=",
-          "received_events_url": "https://api.github.com/users/labelsync-manager%5Bbot%5D/received_events",
-          "site_admin": false,
-          "type": "Bot",
-          "url": "https://api.github.com/users/labelsync-manager%5Bbot%5D",
-        },
-      },
-      "repository": Object {
-        "archived": false,
-        "clone_url": "https://github.com/3-SemicolonClub/3-SemicolonClub-labelsync.git",
-        "created_at": "2020-03-23T22:17:05Z",
-        "default_branch": "master",
-        "deployments_url": "https://api.github.com/repos/3-SemicolonClub/3-SemicolonClub-labelsync/deployments",
-        "description": "LabelSync configuration repository.",
-        "disabled": false,
-        "fork": false,
-        "forks": 0,
-        "forks_count": 0,
-        "full_name": "maticzav/changed",
-        "git_url": "git://github.com/3-SemicolonClub/3-SemicolonClub-labelsync.git",
-        "has_downloads": true,
-        "has_issues": true,
-        "has_pages": false,
-        "has_projects": true,
-        "has_wiki": true,
-        "homepage": null,
-        "html_url": "https://github.com/3-SemicolonClub/3-SemicolonClub-labelsync",
-        "id": 249556373,
-        "language": null,
-        "license": null,
-        "mirror_url": null,
-        "name": "changed",
-        "node_id": "MDEwOlJlcG9zaXRvcnkyNDk1NTYzNzM=",
-        "open_issues": 1,
-        "open_issues_count": 1,
-        "owner": Object {
-          "avatar_url": "https://avatars0.githubusercontent.com/u/43337079?v=4",
-          "gravatar_id": "",
-          "html_url": "https://github.com/3-SemicolonClub",
-          "id": 43337079,
-          "login": "maticzav",
-          "node_id": "MDEyOk9yZ2FuaXphdGlvbjQzMzM3MDc5",
-          "received_events_url": "https://api.github.com/users/3-SemicolonClub/received_events",
-          "site_admin": false,
-          "type": "Organization",
-          "url": "https://api.github.com/users/3-SemicolonClub",
-        },
-        "private": false,
-        "pushed_at": "2020-03-23T22:17:13Z",
-        "size": 2,
-        "ssh_url": "git@github.com:3-SemicolonClub/3-SemicolonClub-labelsync.git",
-        "stargazers_count": 0,
-        "svn_url": "https://github.com/3-SemicolonClub/3-SemicolonClub-labelsync",
-        "updated_at": "2020-03-23T22:17:15Z",
-        "watchers": 0,
-        "watchers_count": 0,
-      },
-      "sender": Object {
-        "avatar_url": "https://avatars2.githubusercontent.com/u/3924224?v=4",
-        "followers_url": "https://api.github.com/users/maticzav/followers",
-        "gravatar_id": "",
-        "html_url": "https://github.com/maticzav",
-        "id": 3924224,
-        "login": "maticzav",
-        "node_id": "MDQ6VXNlcjM5MjQyMjQ=",
-        "site_admin": false,
-        "type": "User",
-        "url": "https://api.github.com/users/maticzav",
-      },
-    },
-    "sources": Object {
-      "repos": Object {
-        "changed": Object {
-          "config": Object {
-            "removeUnconfiguredLabels": true,
-          },
-          "labels": Object {
-            "label/regular": Object {
-              "color": "000000",
-            },
-            "label/siblings": Object {
-              "color": "000000",
-              "siblings": Array [
-                "label/regular",
-              ],
-            },
-          },
-        },
-      },
-    },
-  },
-  Object {
-    "event": Object {
-      "action": "labeled",
-      "context": Object {
-        "user_id": 43337079,
-      },
-      "name": "pull_request.labeled",
-      "repo": Object {
-        "name": "changed",
-      },
-      "user": Object {
-        "id": 43337079,
-        "owner": "maticzav",
-        "type": "Organization",
-      },
-    },
-    "level": "info",
-    "message": "PullRequest (1) labeled with \\"label/siblings\\".",
-  },
-  Object {
-    "event": Object {
-      "action": "labeled",
-      "context": Object {
-        "user_id": 43337079,
-      },
-      "name": "pull_request.labeled",
-      "repo": Object {
-        "name": "changed",
-      },
-      "user": Object {
-        "id": 43337079,
-        "owner": "maticzav",
-        "type": "Organization",
-      },
-    },
-    "level": "info",
-    "message": "Added siblings of label/siblings to pr 1: label/regular",
-  },
-  Object {
-    "event": Object {
-      "action": "created",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "repository",
-      "repo": Object {
-        "name": "newrepo",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "New repository newrepo in maticzav.",
-  },
-  Object {
-    "event": Object {
-      "action": "created",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "repository",
-      "repo": Object {
-        "name": "newrepo",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Performing sync on newrepo.",
-  },
-  Object {
-    "event": Object {
-      "action": "created",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "repository",
-      "repo": Object {
-        "name": "newrepo",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Repository synced newrepo.",
-  },
-  Object {
-    "event": Object {
-      "action": "created",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "repository",
-      "repo": Object {
-        "name": "newrepo",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "debug",
-    "message": "Error while loading sources: You are trying to configure a wildcard configuration on a free plan.
-Update your current plan to access all the features LabelSync offers.",
-  },
-]
-`;
-
-exports[`github: FREE pull_request 1`] = `
-Object {
-  "head_sha": "ec26c3e57ca3a959ca5aad62de7213c562f8c821",
-  "name": "label-sync/dryrun",
-  "status": "in_progress",
-}
-`;
-
-exports[`github: FREE pull_request 2`] = `
-Object {
-  "body": "## :label: Here's what's going to change when you merge
-
-#### \`changed\`
-
-<details>
-  <summary>:sparkles: 1 new label.</summary>
-
-- ![create/new](https://img.shields.io/static/v1?color=000000&label=&message=create%2Fnew \\"create/new\\")
-
-</details>
-
-<details>
-  <summary>:lipstick: 2 changed labels.</summary>
-
-- ![alias/new (name changed)](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew%20%28name%20changed%29 \\"alias/new (name changed)\\")
-- ![update/color (color changed)](https://img.shields.io/static/v1?color=ffffff&label=&message=update%2Fcolor%20%28color%20changed%29 \\"update/color (color changed)\\")
-
-</details>
-
-<details>
-  <summary>:performing_arts: 1 new label alias.</summary>
-
-- ![alias/new (name changed)](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew%20%28name%20changed%29 \\"alias/new (name changed)\\")
-
-</details>
-
-<details>
-  <summary>:coffin: 2 removed labels.</summary>
-
-- ![alias/old:2](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fold%3A2 \\"alias/old:2\\")
-- ![remove](https://img.shields.io/static/v1?color=000000&label=&message=remove \\"remove\\")
-
-</details>
-
----
-
-### You haven't made any changes in these repositories
-
-<details>
-  <summary>1 repositories.</summary>
-
-- \`unchanged\`
-
-</details>
-",
-}
-`;
-
-exports[`github: FREE pull_request 3`] = `
-Object {
-  "conclusion": "success",
-  "status": "completed",
-}
-`;
-
-exports[`github: FREE pull_request with insufficient permissions 1`] = `
-Object {
-  "head_sha": "ec26c3e57ca3a959ca5aad62de7213c562f8c821",
-  "name": "label-sync/dryrun",
-  "status": "in_progress",
-}
-`;
-
-exports[`github: FREE pull_request with insufficient permissions 2`] = `
-Object {
-  "conclusion": "failure",
-  "output": Object {
-    "summary": "It seems like this configuration stretches beyond repositories we can access. Please update it so we can help you as best as we can.
-
-_Missing repositories:_
- * unchanged",
-    "title": "Missing repository access.",
-  },
-  "status": "completed",
-}
-`;
-
-exports[`github: FREE pull_request.labeled adds siblings 1`] = `
-Array [
-  "label/regular",
-]
-`;
-
-exports[`github: FREE push event 1`] = `
-Object {
-  "body": "## :label: Here's what has changed.
-
-#### \`changed\`
-
-<details>
-  <summary>:sparkles: 1 new label.</summary>
-
-- ![create/new](https://img.shields.io/static/v1?color=000000&label=&message=create%2Fnew \\"create/new\\")
-
-</details>
-
-<details>
-  <summary>:lipstick: 2 changed labels.</summary>
-
-- ![alias/new (name changed)](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew%20%28name%20changed%29 \\"alias/new (name changed)\\")
-- ![update/color (color changed)](https://img.shields.io/static/v1?color=ffffff&label=&message=update%2Fcolor%20%28color%20changed%29 \\"update/color (color changed)\\")
-
-</details>
-
-<details>
-  <summary>:performing_arts: 1 new label alias.</summary>
-
-- ![alias/new (name changed)](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew%20%28name%20changed%29 \\"alias/new (name changed)\\")
-
-</details>
-
-<details>
-  <summary>:coffin: 2 removed labels.</summary>
-
-- ![alias/old:2](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fold%3A2 \\"alias/old:2\\")
-- ![remove](https://img.shields.io/static/v1?color=000000&label=&message=remove \\"remove\\")
-
-</details>
-",
-}
-`;
-
-exports[`github: FREE push event 2`] = `
-Array [
-  Object {
-    "body": Object {
-      "color": "000000",
-      "name": "alias/new",
-    },
-    "uri": "/repos/maticzav/changed/labels/alias/old:1",
-  },
-  Object {
-    "body": Object {
-      "color": "ffffff",
-      "name": "update/color",
-    },
-    "uri": "/repos/maticzav/changed/labels/update/color",
-  },
-]
-`;
-
-exports[`github: FREE push event 3`] = `
-Array [
-  "/repos/maticzav/changed/labels/alias/old:2",
-  "/repos/maticzav/changed/labels/remove",
-]
-`;
-
-exports[`github: FREE push event 4`] = `
-Array [
-  Object {
-    "body": Array [
-      "alias/new",
-    ],
-    "uri": "/repos/maticzav/changed/issues/1/labels",
-  },
-  Object {
-    "body": Array [
-      "alias/new",
-    ],
-    "uri": "/repos/maticzav/changed/issues/4/labels",
-  },
-]
-`;
-
-exports[`github: FREE push event invalid configuration 1`] = `
-Object {
-  "body": "It seems like your configuration uses a format unknown to me. 
-That might be a consequence of invalid yaml cofiguration file. 
-
-Here's what I am having problems with:
-
-Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }",
-}
-`;
-
-exports[`github: FREE push event with insufficient premissions 1`] = `
-Object {
-  "body": "Your configuration stretches beyond repositories I can access. 
-Please update it so I may sync your labels.
-
-_Missing repositories:_
- * unchanged",
-}
-`;
-
-exports[`github: PAID installation event insufficient permissions 1`] = `
-Object {
-  "body": "# Insufficient permissions
-
-Hi there,
-Thank you for installing LabelSync. We have noticed that your configuration stretches beyond repositories we can access. We assume that you forgot to allow access to certain repositories.
-
-Please update your installation. 
-
-_Missing repositories:_
- * unchanged
-
-Best,
-LabelSync Team",
-  "title": "LabelSync - Insufficient permissions",
-}
-`;
-
-exports[`github: PAID installation event sync 1`] = `
-Array [
-  Object {
-    "body": Object {
-      "color": "000000",
-      "name": "alias/new",
-    },
-    "uri": "/repos/maticzav/changed/labels/alias/old:1",
-  },
-  Object {
-    "body": Object {
-      "color": "ffffff",
-      "name": "update/color",
-    },
-    "uri": "/repos/maticzav/changed/labels/update/color",
-  },
-]
-`;
-
-exports[`github: PAID installation event sync 2`] = `
-Array [
-  "/repos/maticzav/changed/labels/alias/old:2",
-  "/repos/maticzav/changed/labels/remove",
-]
-`;
-
-exports[`github: PAID installation invalid config issue 1`] = `
-Object {
-  "body": "# Welcome to LabelSync!
-
-Hi there,
-Thank you for using LabelSync. We hope you enjoyed the experience so far.
-It seems like there are some problems with your configuration.
-Our parser reported that:
-
-Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }
-
-Let us know if we can help you with the configuration by sending us an email to support@label-sync.com. We'll try to get back to you as quickly as possible.
-
-Best,
-LabelSync Team",
-  "title": "LabelSync - Onboarding configuration",
-}
-`;
-
-exports[`github: PAID issues.labeled adds siblings 1`] = `
-Array [
-  "label/regular",
-]
-`;
-
-exports[`github: PAID logs are reporting correctly 1`] = `
-Array [
-  Object {
-    "event": Object {
-      "name": "installation",
-    },
-    "level": "info",
-    "message": "Onboarding maticzav.",
-    "meta": Object {
-      "periodEndsAt": "periodEndsAt",
-      "plan": "PAID",
-    },
-  },
-  Object {
-    "event": Object {
-      "name": "installation",
-    },
-    "level": "info",
-    "message": "No existing repository for maticzav, start onboarding.",
-  },
-  Object {
-    "event": Object {
-      "name": "installation",
-    },
-    "level": "info",
-    "message": "Bootstraping config repo for maticzav.",
-  },
-  Object {
-    "event": Object {
-      "name": "installation",
-    },
-    "level": "info",
-    "message": "Onboarding complete for maticzav.",
-  },
-  Object {
-    "event": Object {
-      "name": "installation",
-    },
-    "level": "info",
-    "message": "Onboarding maticzav.",
-    "meta": Object {
-      "periodEndsAt": "periodEndsAt",
-      "plan": "PAID",
-    },
-  },
-  Object {
-    "event": Object {
-      "name": "installation",
-    },
-    "level": "info",
-    "message": "User has existing repository in maticzav-labelsync, performing sync.",
-  },
-  Object {
-    "event": Object {
-      "name": "installation",
-    },
-    "level": "info",
-    "message": "Error in config, skipping sync.",
-    "meta": Object {
-      "error": "Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }",
-      "periodEndsAt": "periodEndsAt",
-    },
-  },
-  Object {
-    "event": Object {
-      "name": "installation",
-    },
-    "level": "info",
-    "message": "Opened issue undefined.",
-  },
-  Object {
-    "event": Object {
-      "name": "installation",
-    },
-    "level": "info",
-    "message": "Onboarding maticzav.",
-    "meta": Object {
-      "periodEndsAt": "periodEndsAt",
-      "plan": "PAID",
-    },
-  },
-  Object {
-    "event": Object {
-      "name": "installation",
-    },
-    "level": "info",
-    "message": "User has existing repository in maticzav-labelsync, performing sync.",
-  },
-  Object {
-    "event": Object {
-      "name": "installation",
-    },
-    "level": "info",
-    "message": "Performing sync.",
-  },
-  Object {
-    "event": Object {
-      "name": "installation",
-    },
-    "level": "info",
-    "message": "Onboarding maticzav.",
-    "meta": Object {
-      "periodEndsAt": "periodEndsAt",
-      "plan": "PAID",
-    },
-  },
-  Object {
-    "event": Object {
-      "name": "installation",
-    },
-    "level": "info",
-    "message": "User has existing repository in maticzav-labelsync, performing sync.",
-  },
-  Object {
-    "event": Object {
-      "name": "installation",
-    },
-    "level": "info",
-    "message": "Insufficient permissions, skipping sync.",
-    "meta": Object {
-      "access": "{\\"status\\":\\"Insufficient\\",\\"missing\\":[\\"unchanged\\"],\\"accessible\\":[\\"changed\\"]}",
-      "periodEndsAt": "periodEndsAt",
-    },
-  },
-  Object {
-    "event": Object {
-      "name": "installation",
-    },
-    "level": "info",
-    "message": "Opened issue undefined.",
-  },
-  Object {
-    "event": Object {
-      "action": "push",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "push",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Configuration loaded.",
-    "meta": Object {
-      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
-      "periodEndsAt": "periodEndsAt",
-    },
-  },
-  Object {
-    "event": Object {
-      "action": "push",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "push",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Performing label sync on maticzav.",
-  },
-  Object {
-    "event": Object {
-      "action": "push",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "push",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Sync completed.",
-    "meta": Object {
-      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
-      "periodEndsAt": "periodEndsAt",
-      "reports": "[{\\"status\\":\\"Success\\",\\"repo\\":\\"changed\\",\\"owner\\":\\"maticzav\\",\\"additions\\":[{\\"name\\":\\"create/new\\",\\"color\\":\\"000000\\"}],\\"updates\\":[{\\"old_name\\":\\"alias/old:1\\",\\"name\\":\\"alias/new\\",\\"color\\":\\"000000\\"},{\\"old_name\\":\\"update/color\\",\\"name\\":\\"update/color\\",\\"old_color\\":\\"000000\\",\\"color\\":\\"ffffff\\"}],\\"removals\\":[{\\"name\\":\\"alias/old:2\\",\\"color\\":\\"000000\\"},{\\"name\\":\\"remove\\",\\"color\\":\\"000000\\"}],\\"aliases\\":[{\\"old_name\\":\\"alias/old:2\\",\\"name\\":\\"alias/new\\",\\"color\\":\\"000000\\"}],\\"config\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}}},{\\"status\\":\\"Success\\",\\"repo\\":\\"unchanged\\",\\"owner\\":\\"maticzav\\",\\"additions\\":[],\\"updates\\":[],\\"removals\\":[],\\"aliases\\":[],\\"config\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":false},\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}]",
-    },
-  },
-  Object {
-    "event": Object {
-      "action": "push",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "push",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Error in config Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }",
-    "meta": Object {
-      "error": "Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }",
-      "periodEndsAt": "periodEndsAt",
-    },
-  },
-  Object {
-    "event": Object {
-      "action": "push",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "push",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Commented on commit 0000000000000000000000000000000000000000.",
-  },
-  Object {
-    "event": Object {
-      "action": "push",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "push",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Configuration loaded.",
-    "meta": Object {
-      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
-      "periodEndsAt": "periodEndsAt",
-    },
-  },
-  Object {
-    "event": Object {
-      "action": "push",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "push",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Insufficient permissions: unchanged",
-    "meta": Object {
-      "access": "{\\"status\\":\\"Insufficient\\",\\"missing\\":[\\"unchanged\\"],\\"accessible\\":[\\"changed\\"]}",
-      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
-      "periodEndsAt": "periodEndsAt",
-    },
-  },
-  Object {
-    "event": Object {
-      "action": "push",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "push",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Commented on commit 0000000000000000000000000000000000000000.",
-  },
-  Object {
-    "event": Object {
-      "action": "opened",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "pull_request",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "PullRequest action: opened",
-  },
-  Object {
-    "event": Object {
-      "action": "opened",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "pull_request",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Configration loaded configuration on labels",
-    "meta": Object {
-      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
-      "periodEndsAt": "periodEndsAt",
-    },
-  },
-  Object {
-    "event": Object {
-      "action": "opened",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "pull_request",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Simulating sync.",
-  },
-  Object {
-    "event": Object {
-      "action": "opened",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "pull_request",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Commented on PullRequest (undefined)",
-  },
-  Object {
-    "event": Object {
-      "action": "opened",
-      "context": Object {
-        "user_id": 21031067,
-      },
-      "name": "pull_request",
-      "repo": Object {
-        "name": "maticzav-labelsync",
-      },
-      "user": Object {
-        "id": 21031067,
-        "owner": "maticzav",
-        "type": "User",
-      },
-    },
-    "level": "info",
-    "message": "Check updated (123) (#2) undefined",
-  },
-  Object {
-    "event": Object {
       "action": "opened",
       "context": Object {
         "user_id": 21031067,
@@ -1869,7 +507,7 @@ Array [
     "level": "info",
     "message": "Configration loaded configuration on labels",
     "meta": Object {
-      "config": "{\\"repos\\":{\\"changed\\":{\\"config\\":{\\"removeUnconfiguredLabels\\":true},\\"labels\\":{\\"create/new\\":{\\"color\\":\\"000000\\"},\\"alias/new\\":{\\"color\\":\\"000000\\",\\"alias\\":[\\"alias/old:1\\",\\"alias/old:2\\"]},\\"update/color\\":{\\"color\\":\\"ffffff\\"}}},\\"unchanged\\":{\\"labels\\":{\\"label-a\\":{\\"color\\":\\"000000\\"}}}}}",
+      "config": "{\\"repos\\":{}}",
       "periodEndsAt": "periodEndsAt",
     },
   },
@@ -2161,24 +799,7 @@ Array [
       },
     },
     "sources": Object {
-      "repos": Object {
-        "changed": Object {
-          "config": Object {
-            "removeUnconfiguredLabels": true,
-          },
-          "labels": Object {
-            "label/regular": Object {
-              "color": "000000",
-            },
-            "label/siblings": Object {
-              "color": "000000",
-              "siblings": Array [
-                "label/regular",
-              ],
-            },
-          },
-        },
-      },
+      "repos": Object {},
     },
   },
   Object {
@@ -2217,7 +838,7 @@ Array [
       },
     },
     "level": "info",
-    "message": "Added siblings of label/siblings to issue 1: label/regular",
+    "message": "Unconfigured label \\"label/siblings\\", skipping.",
   },
   Object {
     "event": Object {
@@ -2355,24 +976,7 @@ Array [
       },
     },
     "sources": Object {
-      "repos": Object {
-        "changed": Object {
-          "config": Object {
-            "removeUnconfiguredLabels": true,
-          },
-          "labels": Object {
-            "label/regular": Object {
-              "color": "000000",
-            },
-            "label/siblings": Object {
-              "color": "000000",
-              "siblings": Array [
-                "label/regular",
-              ],
-            },
-          },
-        },
-      },
+      "repos": Object {},
     },
   },
   Object {
@@ -2411,7 +1015,7 @@ Array [
       },
     },
     "level": "info",
-    "message": "Added siblings of label/siblings to pr 1: label/regular",
+    "message": "Unconfigured label \\"label/siblings\\", skipping.",
   },
   Object {
     "event": Object {
@@ -2530,7 +1134,46 @@ Array [
 ]
 `;
 
-exports[`github: PAID pull_request 1`] = `
+exports[`github: paid plan installation event insufficient permissions 1`] = `
+Object {
+  "body": "# Insufficient permissions
+
+Hi there,
+Thank you for installing LabelSync. We have noticed that your configuration stretches beyond repositories we can access. We assume that you forgot to allow access to certain repositories.
+
+Please update your installation. 
+
+_Missing repositories:_
+ * UNCHANGED
+
+Best,
+LabelSync Team",
+  "title": "LabelSync - Insufficient permissions",
+}
+`;
+
+exports[`github: paid plan installation invalid config issue 1`] = `
+Object {
+  "body": "# Welcome to LabelSync!
+
+Hi there,
+Thank you for using LabelSync. We hope you enjoyed the experience so far.
+It seems like there are some problems with your configuration.
+Our parser reported that:
+
+ * \`repos\`: Required
+
+Let us know if we can help you with the configuration by sending us an email to support@label-sync.com. We'll try to get back to you as quickly as possible.
+
+Best,
+LabelSync Team",
+  "title": "LabelSync - Onboarding configuration",
+}
+`;
+
+exports[`github: paid plan issues.labeled adds siblings 1`] = `Array []`;
+
+exports[`github: paid plan pull_request 1`] = `
 Object {
   "head_sha": "ec26c3e57ca3a959ca5aad62de7213c562f8c821",
   "name": "label-sync/dryrun",
@@ -2538,190 +1181,71 @@ Object {
 }
 `;
 
-exports[`github: PAID pull_request 2`] = `
-Object {
-  "body": "## :label: Here's what's going to change when you merge
-
-#### \`changed\`
-
-<details>
-  <summary>:sparkles: 1 new label.</summary>
-
-- ![create/new](https://img.shields.io/static/v1?color=000000&label=&message=create%2Fnew \\"create/new\\")
-
-</details>
-
-<details>
-  <summary>:lipstick: 2 changed labels.</summary>
-
-- ![alias/new (name changed)](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew%20%28name%20changed%29 \\"alias/new (name changed)\\")
-- ![update/color (color changed)](https://img.shields.io/static/v1?color=ffffff&label=&message=update%2Fcolor%20%28color%20changed%29 \\"update/color (color changed)\\")
-
-</details>
-
-<details>
-  <summary>:performing_arts: 1 new label alias.</summary>
-
-- ![alias/new (name changed)](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew%20%28name%20changed%29 \\"alias/new (name changed)\\")
-
-</details>
-
-<details>
-  <summary>:coffin: 2 removed labels.</summary>
-
-- ![alias/old:2](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fold%3A2 \\"alias/old:2\\")
-- ![remove](https://img.shields.io/static/v1?color=000000&label=&message=remove \\"remove\\")
-
-</details>
-
----
-
-### You haven't made any changes in these repositories
-
-<details>
-  <summary>1 repositories.</summary>
-
-- \`unchanged\`
-
-</details>
-",
-}
-`;
-
-exports[`github: PAID pull_request 3`] = `
-Object {
-  "conclusion": "success",
-  "status": "completed",
-}
-`;
-
-exports[`github: PAID pull_request with insufficient permissions 1`] = `
-Object {
-  "head_sha": "ec26c3e57ca3a959ca5aad62de7213c562f8c821",
-  "name": "label-sync/dryrun",
-  "status": "in_progress",
-}
-`;
-
-exports[`github: PAID pull_request with insufficient permissions 2`] = `
+exports[`github: paid plan pull_request 2`] = `
 Object {
   "conclusion": "failure",
   "output": Object {
     "summary": "It seems like this configuration stretches beyond repositories we can access. Please update it so we can help you as best as we can.
 
 _Missing repositories:_
- * unchanged",
+ * UNCHANGED",
     "title": "Missing repository access.",
   },
   "status": "completed",
 }
 `;
 
-exports[`github: PAID pull_request.labeled adds siblings 1`] = `
-Array [
-  "label/regular",
-]
-`;
-
-exports[`github: PAID push event 1`] = `
+exports[`github: paid plan pull_request with insufficient permissions 1`] = `
 Object {
-  "body": "## :label: Here's what has changed.
-
-#### \`changed\`
-
-<details>
-  <summary>:sparkles: 1 new label.</summary>
-
-- ![create/new](https://img.shields.io/static/v1?color=000000&label=&message=create%2Fnew \\"create/new\\")
-
-</details>
-
-<details>
-  <summary>:lipstick: 2 changed labels.</summary>
-
-- ![alias/new (name changed)](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew%20%28name%20changed%29 \\"alias/new (name changed)\\")
-- ![update/color (color changed)](https://img.shields.io/static/v1?color=ffffff&label=&message=update%2Fcolor%20%28color%20changed%29 \\"update/color (color changed)\\")
-
-</details>
-
-<details>
-  <summary>:performing_arts: 1 new label alias.</summary>
-
-- ![alias/new (name changed)](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fnew%20%28name%20changed%29 \\"alias/new (name changed)\\")
-
-</details>
-
-<details>
-  <summary>:coffin: 2 removed labels.</summary>
-
-- ![alias/old:2](https://img.shields.io/static/v1?color=000000&label=&message=alias%2Fold%3A2 \\"alias/old:2\\")
-- ![remove](https://img.shields.io/static/v1?color=000000&label=&message=remove \\"remove\\")
-
-</details>
-",
+  "head_sha": "ec26c3e57ca3a959ca5aad62de7213c562f8c821",
+  "name": "label-sync/dryrun",
+  "status": "in_progress",
 }
 `;
 
-exports[`github: PAID push event 2`] = `
-Array [
-  Object {
-    "body": Object {
-      "color": "000000",
-      "name": "alias/new",
-    },
-    "uri": "/repos/maticzav/changed/labels/alias/old:1",
+exports[`github: paid plan pull_request with insufficient permissions 2`] = `
+Object {
+  "conclusion": "failure",
+  "output": Object {
+    "summary": "It seems like this configuration stretches beyond repositories we can access. Please update it so we can help you as best as we can.
+
+_Missing repositories:_
+ * UNCHANGED",
+    "title": "Missing repository access.",
   },
-  Object {
-    "body": Object {
-      "color": "ffffff",
-      "name": "update/color",
-    },
-    "uri": "/repos/maticzav/changed/labels/update/color",
-  },
-]
+  "status": "completed",
+}
 `;
 
-exports[`github: PAID push event 3`] = `
-Array [
-  "/repos/maticzav/changed/labels/alias/old:2",
-  "/repos/maticzav/changed/labels/remove",
-]
+exports[`github: paid plan pull_request.labeled adds siblings 1`] = `Array []`;
+
+exports[`github: paid plan push event 1`] = `
+Object {
+  "body": "Your configuration stretches beyond repositories I can access. 
+Please update it so I may sync your labels.
+
+_Missing repositories:_
+ * UNCHANGED",
+}
 `;
 
-exports[`github: PAID push event 4`] = `
-Array [
-  Object {
-    "body": Array [
-      "alias/new",
-    ],
-    "uri": "/repos/maticzav/changed/issues/1/labels",
-  },
-  Object {
-    "body": Array [
-      "alias/new",
-    ],
-    "uri": "/repos/maticzav/changed/issues/4/labels",
-  },
-]
-`;
-
-exports[`github: PAID push event invalid configuration 1`] = `
+exports[`github: paid plan push event invalid configuration 1`] = `
 Object {
   "body": "It seems like your configuration uses a format unknown to me. 
 That might be a consequence of invalid yaml cofiguration file. 
 
 Here's what I am having problems with:
 
-Invalid value undefined supplied to : { repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) } }/repos: { [K in string]: (Partial<{ config: Partial<{ removeUnconfiguredLabels: boolean }> }> & { labels: { [K in string]: ({ color: string } & Partial<{ description: string, siblings: Array<string>, alias: Array<string> }>) } }) }",
+ * \`repos\`: Required",
 }
 `;
 
-exports[`github: PAID push event with insufficient premissions 1`] = `
+exports[`github: paid plan push event with insufficient premissions 1`] = `
 Object {
   "body": "Your configuration stretches beyond repositories I can access. 
 Please update it so I may sync your labels.
 
 _Missing repositories:_
- * unchanged",
+ * UNCHANGED",
 }
 `;

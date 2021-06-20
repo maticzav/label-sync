@@ -1,0 +1,95 @@
+datasource postgresql {
+  provider = "postgresql"
+  url      = env("POSTGRESQL_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// MARK: - Models
+
+model Installation {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Info
+  owner String  @unique
+  email String?
+
+  // Plan
+  plan         Plan
+  periodEndsAt DateTime
+
+  // Configuration
+  active                Configuration? @relation("active", fields: [activeConfigurationId], references: [id])
+  activeConfigurationId String?
+
+  legacy Configuration[] @relation("legacy")
+}
+
+model Configuration {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+
+  // Info
+
+  repositories                     RepositoryConfiguration[] @relation("repository")
+  default                          RepositoryConfiguration?  @relation("default", fields: [defaultRepositoryConfigurationId], references: [id])
+  defaultRepositoryConfigurationId String?
+
+  // References
+
+  active Installation?  @relation("active")
+  legacy Installation[] @relation("legacy")
+}
+
+model RepositoryConfiguration {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // Info
+  repository String
+
+  labels LabelConfiguration[]
+
+  removeUnconfiguredLabels Boolean
+
+  // Changes
+  // additions
+  // updates
+  // removals
+
+  // References
+
+  configuration   Configuration?  @relation("repository", fields: [configurationId], references: [id])
+  configurationId String?
+  default         Configuration[] @relation("default")
+}
+
+model LabelConfiguration {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // Info
+
+  name        String
+  description String?
+  color       String
+  siblings    String[]
+  alias       String[]
+
+  // References
+
+  repository                RepositoryConfiguration? @relation(fields: [repositoryConfigurationId], references: [id])
+  repositoryConfigurationId String?
+}
+
+// MARK: - Enums
+
+enum Plan {
+  FREE
+  PAID
+}

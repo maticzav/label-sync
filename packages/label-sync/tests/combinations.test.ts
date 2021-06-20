@@ -1,9 +1,6 @@
-import fs from 'fs'
-import path from 'path'
-import { promisify } from 'util'
-
-import * as ls from '../src'
 import { repo, label } from '../src'
+
+import * as mock from './__fixtures__/mock'
 
 describe('combinations:', () => {
   test('extending repository extends labels', () => {
@@ -41,53 +38,19 @@ describe('combinations:', () => {
     expect(original.getConfiguration()).toEqual({
       config: {},
       labels: {
-        one: {
-          color: '#111111',
-          description: undefined,
-          alias: [],
-          siblings: [],
-        },
-        two: {
-          color: '#111111',
-          description: undefined,
-          alias: [],
-          siblings: [],
-        },
-        three: {
-          color: '#111111',
-          description: undefined,
-          alias: [],
-          siblings: [],
-        },
+        one: mock.label({ color: '#111111' }),
+        two: mock.label({ color: '#111111' }),
+        three: mock.label({ color: '#111111' }),
       },
     })
+
     expect(extended.getConfiguration()).toEqual({
       config: {},
       labels: {
-        one: {
-          color: '#222222',
-          description: undefined,
-          alias: [],
-          siblings: [],
-        },
-        two: {
-          color: '#111111',
-          description: undefined,
-          alias: [],
-          siblings: [],
-        },
-        three: {
-          color: '#111111',
-          description: undefined,
-          alias: [],
-          siblings: [],
-        },
-        four: {
-          color: '#222222',
-          description: undefined,
-          alias: [],
-          siblings: [],
-        },
+        one: mock.label({ color: '#222222' }),
+        two: mock.label({ color: '#111111' }),
+        three: mock.label({ color: '#111111' }),
+        four: mock.label({ color: '#222222' }),
       },
     })
   })

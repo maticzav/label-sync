@@ -57,6 +57,15 @@ function unshift(pre: string, path: string): string {
  * @param value
  */
 export function withDefault<T>(fallback: T, value: T | undefined | null): T {
-  if (isNullOrUndefined(value)) return fallback
+  if (value === null || value === undefined) return fallback
   return value
+}
+
+/**
+ * Tells whether a value is not null.
+ */
+export function nonnull<T>(value: T | null): value is T {
+  if (value === null) return false
+  const dummy: T = value
+  return true
 }

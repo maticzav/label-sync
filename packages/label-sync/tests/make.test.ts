@@ -4,7 +4,8 @@ import { promisify } from 'util'
 
 import * as ls from '../src'
 import { labelsync } from '../src'
-import { parseConfig } from '../../../server/src/configuration'
+
+import { parse } from '../../../server/src/config'
 
 const fsReadFile = promisify(fs.readFile)
 const fsUnlink = promisify(fs.unlink)
@@ -36,7 +37,7 @@ describe('make:', () => {
   test('integration test: compiles configuration to default path', async () => {
     const yamlPath = path.resolve(__dirname, './__fixtures__/labelsync.yml')
 
-    labelsync(
+    const res = await labelsync(
       {
         repos: {
           'prisma-test-utils': ls.repo({
@@ -75,13 +76,16 @@ describe('make:', () => {
       undefined,
       path.resolve(__dirname, './__fixtures__/'),
     )
+    if (res === false) fail()
+
+    // Read the file.
 
     const file = await fsReadFile(yamlPath, { encoding: 'utf-8' })
-    await fsUnlink(yamlPath)
+    // await fsUnlink(yamlPath)
 
     expect(file).toMatchSnapshot()
 
-    const [errors, config] = parseConfig('PAID', file)
+    const [errors, config] = parse({ plan: 'PAID', input: file })
     expect(errors).toBeNull()
     expect(config).toMatchSnapshot()
   })

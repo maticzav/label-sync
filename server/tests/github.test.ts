@@ -8,7 +8,7 @@ import {
   isLabelDefinition,
   bootstrapConfigRepository,
 } from '../src/github'
-import { populateTemplate } from '../src/bootstrap'
+import { populateTemplate } from '../src/templates'
 import { loadTreeFromPath } from '../src/utils'
 
 /* Fixtures */
@@ -26,6 +26,8 @@ const TEMPLATE = populateTemplate(
     repositories: [{ name: 'labelsync' }],
   },
 )
+
+// MARK: - Tests
 
 describe('github integration:', () => {
   beforeAll(() => {

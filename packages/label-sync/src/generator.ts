@@ -1,10 +1,6 @@
-import {
-  LSCConfiguration,
-  LSCRepository,
-  LSCLabel,
-} from '../../../server/src/types'
+import * as t from '../../../server/src/config/types'
 import { Configurable } from './configurable'
-import { Dict, withDefault, mapEntries } from './utils'
+import { withDefault, mapEntries, Dict } from './utils'
 import { YAML } from './yaml'
 
 /* Providers */
@@ -25,19 +21,34 @@ export type ConfigurationInput = {
   repos: Dict<Repository>
 }
 
-export class Configuration extends YAML<LSCConfiguration>
-  implements Configurable<LSCConfiguration> {
-  private repositories: Dict<Repository> = {}
+export type ConfigurationOutput = {
+  repos: Dict<RepositoryOutput>
+}
+
+export class Configuration extends YAML<ConfigurationOutput> {
+  private repositories: Map<string, Repository>
+
+  // MARK: - Constructor
 
   constructor(config: ConfigurationInput) {
     super()
-    this.repositories = config.repos
+
+    this.repositories = new Map<string, Repository>()
+    for (const repository in config.repos) {
+      this.repositories.set(repository, config.repos[repository])
+    }
   }
 
-  getConfiguration() {
-    return {
-      repos: mapEntries(this.repositories, (r) => r.getConfiguration()),
+  // MARK: - Methods
+
+  getConfiguration(): ConfigurationOutput {
+    const config: ConfigurationOutput['repos'] = {}
+
+    for (const repo of this.repositories.keys()) {
+      config[repo] = this.repositories.get(repo)!.getConfiguration()
     }
+
+    return { repos: config }
   }
 }
 
@@ -48,6 +59,11 @@ export type RepositoryInput = {
   labels: Label[]
 }
 
+export type RepositoryOutput = {
+  config?: RepositoryConfiguration
+  labels: Dict<LabelOutput>
+}
+
 export type RepositoryConfiguration = {
   removeUnconfiguredLabels?: boolean
 }
@@ -55,7 +71,7 @@ export type RepositoryConfiguration = {
 /**
  * Repository configuration.
  */
-export class Repository implements Configurable<LSCRepository> {
+export class Repository implements Configurable<RepositoryOutput> {
   private config: RepositoryConfiguration
   private labels: Label[] = []
 
@@ -70,6 +86,8 @@ export class Repository implements Configurable<LSCRepository> {
     }
   }
 
+  // MARK: - Methods
+
   /**
    * Returns the collection of labels configured in repository.
    */
@@ -79,16 +97,18 @@ export class Repository implements Configurable<LSCRepository> {
     }
   }
 
-  getConfiguration() {
-    let labels: { [label: string]: LSCLabel } = {}
+  getConfiguration(): RepositoryOutput {
+    const labels: RepositoryOutput['labels'] = {}
 
     /* Process labels */
     for (const label of this.labels) {
       const name = label.getName()
+
       /* istanbul ignore next */
       if (labels.hasOwnProperty(name)) {
         throw new Error(`Duplicate label ${name}`)
       }
+
       labels[name] = label.getConfiguration()
     }
 
@@ -111,12 +131,20 @@ export type LabelInput =
     }
   | string
 
-export class Label implements Configurable<LSCLabel> {
+export type LabelOutput = {
+  color: string
+  description?: string
+  alias: string[]
+  siblings: string[]
+}
+export class Label implements Configurable<t.LSCLabel> {
   private name: string
   private color: string = ''
   private description: string | undefined
   private siblings: string[] = []
   private alias: string[] = []
+
+  // MARK: - Constructor
 
   constructor(label: LabelInput | string, color?: string) {
     switch (typeof label) {
@@ -142,6 +170,8 @@ export class Label implements Configurable<LSCLabel> {
     }
   }
 
+  // MARK: - Methods
+
   fixColor(color: string): string {
     if (!color.startsWith('#')) {
       return `#${color}`
@@ -153,7 +183,7 @@ export class Label implements Configurable<LSCLabel> {
     return this.name
   }
 
-  getConfiguration() {
+  getConfiguration(): LabelOutput {
     return {
       color: this.color,
       description: this.description,

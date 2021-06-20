@@ -1,13 +1,19 @@
+/public
+
+coverage
+__tmp__
+
 node_modules
 dist
-/public
-coverage
 
 .DS_Store
 *.log*
 .env*
-*.tsbuildinfo
 package-lock.json
-elm-stuff
+tsconfig.tsbuildinfo
 
-__tmp__
+
+.yarn/cache
+.yarn/install-state.gz
+.yarn/build-state.yml 
+

@@ -2,6 +2,18 @@
 
 <a href="label-sync.com"><img src="assets/thumbnail.png" width="400" /></a>
 
+// TODO:
+
+<!-- - language -->
+
+<!-- - events -->
+<!-- - index -->
+
+- tests
+
+- subscriptions
+- reports page
+
 </div>
 
 <div align="center">

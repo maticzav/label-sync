@@ -1,10 +1,10 @@
-import { LSCRepository } from '../../src/configuration'
+import { LSCRepository } from '../../src/config'
 import { GithubLabel } from '../../src/github'
-import { calculateDiff } from '../../src/handlers/labels'
+import { diff } from '../../src/handlers/labels'
 
 describe('labels:', () => {
-  test('calculateDiff', () => {
-    const config: LSCRepository['labels'] = {
+  test('diff', () => {
+    const config: LSCRepository['labels'] = objectToMap({
       /* updates: */
       'updates/unchanged': {
         color: 'color:unchanged',
@@ -61,7 +61,7 @@ describe('labels:', () => {
       // 'alias/old:2': {
       //   color: 'color:alias:old',
       // },
-    }
+    })
 
     const currentLabels: GithubLabel[] = [
       /* updates: */
@@ -121,7 +121,7 @@ describe('labels:', () => {
       },
     ]
 
-    const diff = calculateDiff(config)(currentLabels)
+    const diff = diff(config)(currentLabels)
 
     expect(diff).toEqual({
       added: [
@@ -215,3 +215,18 @@ describe('labels:', () => {
     })
   })
 })
+
+// MARK: - Utils
+
+/**
+ * Converts an object to a map.
+ */
+function objectToMap<V>(o: { [key: string]: V }): Map<string, V> {
+  const map = new Map<string, V>()
+
+  for (const key in o) {
+    map.set(key, o[key])
+  }
+
+  return map
+}

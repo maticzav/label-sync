@@ -74,7 +74,7 @@ const reportOne: LabelSyncReport[] = [
       },
     ],
     config: {
-      labels: {}, // not used in report generation
+      labels: objectToMap({}), // not used in report generation
       config: {
         removeUnconfiguredLabels: true,
       },
@@ -87,7 +87,7 @@ const reportOne: LabelSyncReport[] = [
     repo: 'failure',
     message: `Couldn't make a diff of labels.`,
     config: {
-      labels: {}, // not used in report generation
+      labels: objectToMap({}), // not used in report generation
       config: {
         removeUnconfiguredLabels: false,
       },
@@ -110,7 +110,7 @@ const reportOne: LabelSyncReport[] = [
     removals: [],
     aliases: [],
     config: {
-      labels: {}, // not used in report generation
+      labels: objectToMap({}), // not used in report generation
       config: {
         removeUnconfiguredLabels: false,
       },
@@ -137,7 +137,7 @@ const reportOne: LabelSyncReport[] = [
     ],
     aliases: [],
     config: {
-      labels: {}, // not used in report generation
+      labels: objectToMap({}), // not used in report generation
       config: {
         removeUnconfiguredLabels: false,
       },
@@ -157,7 +157,7 @@ const reportTwo: LabelSyncReport[] = [
     removals: [],
     aliases: [],
     config: {
-      labels: {}, // not used in report generation
+      labels: objectToMap({}), // not used in report generation
       config: {
         removeUnconfiguredLabels: false,
       },
@@ -178,3 +178,18 @@ describe('language:', () => {
     })
   }
 })
+
+// MARK: - Utils
+
+/**
+ * Converts an object to a map.
+ */
+function objectToMap<V>(o: { [key: string]: V }): Map<string, V> {
+  const map = new Map<string, V>()
+
+  for (const key in o) {
+    map.set(key, o[key])
+  }
+
+  return map
+}
