@@ -1,6 +1,6 @@
 import { LSCRepository } from '../../src/config'
-import { GithubLabel } from '../../src/github'
-import { diff } from '../../src/handlers/labels'
+import * as gh from '../../src/github'
+import * as sync from '../../src/handlers/sync'
 
 describe('labels:', () => {
   test('diff', () => {
@@ -63,7 +63,7 @@ describe('labels:', () => {
       // },
     })
 
-    const currentLabels: GithubLabel[] = [
+    const currentLabels: gh.GithubLabel[] = [
       /* updates: */
       {
         name: 'updates/unchanged',
@@ -121,7 +121,7 @@ describe('labels:', () => {
       },
     ]
 
-    const diff = diff(config)(currentLabels)
+    const diff = sync.diff(config, currentLabels)
 
     expect(diff).toEqual({
       added: [

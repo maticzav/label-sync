@@ -10,7 +10,7 @@ import { divide, label, list, noun, repository } from './components'
 
 // MARK: - Reporters
 
-type GenerateReportParams = {
+export type GenerateReportParams = {
   /**
    * Name of the target repository.
    */

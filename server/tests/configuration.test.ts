@@ -13,6 +13,8 @@ const configurations = fs.readdirSync(configurationsPath).map((config) => ({
   path: path.resolve(configurationsPath, config),
 }))
 
+// MARK: - Tests
+
 describe('configurations', () => {
   const plans: Plan[] = ['PAID', 'FREE']
 

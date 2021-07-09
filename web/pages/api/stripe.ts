@@ -1,54 +1,4 @@
-const corsOrigins =
-  process.env.NODE_ENV === 'test'
-    ? ['http://localhost', 'http://127.0.0.1']
-    : [
-        'https://label-sync.com',
-        'https://www.label-sync.com',
-        'https://webhook.label-sync.com',
-      ]
-
-/* Subscription Plans */
-
-interface Plans {
-  ANNUALLY: string
-  MONTHLY: string
-}
-
-export type Period = keyof Plans
-
-const plans: Plans =
-  process.env.NODE_ENV === 'test'
-    ? {
-        ANNUALLY: 'plan_HEG5LPquldqfJp',
-        MONTHLY: 'plan_HEG5wHlZp4io5Q',
-      }
-    : {
-        ANNUALLY: 'price_HKxac3217AdNnw',
-        MONTHLY: 'price_HKxYK7gvZO3ieE',
-      }
-// : {
-//     ANNUALLY: 'plan_HCkpZId8BCi7cI',
-//     MONTHLY: 'plan_HCkojOBbK8hFh6',
-//   }
-
-/* istanbul ignore next */
-
-if (process.env.NODE_ENV === 'production') {
-  console.log('MIGRATING')
-  migrate()
-}
-
 /* API */
-
-const api = app.route('/subscribe')
-
-api.use(
-  cors({
-    origin: corsOrigins,
-    preflightContinue: true,
-  }),
-)
-api.use(bodyParser.json())
 
 /**
  * Handles request for subscription.
@@ -175,95 +125,95 @@ api.post('/session', async (req, res) => {
 
 /* Stripe */
 
-const router = app.route('/stripe')
+// const router = app.route('/stripe')
 
-router.post(
-  '/',
-  bodyParser.raw({ type: 'application/json' }),
-  async (req, res) => {
-    /**
-     * Stripe Webhook handler.
-     */
-    let event
+// router.post(
+//   '/',
+//   bodyParser.raw({ type: 'application/json' }),
+//   async (req, res) => {
+//     /**
+//      * Stripe Webhook handler.
+//      */
+//     let event
 
-    try {
-      event = stripe.webhooks.constructEvent(
-        req.body,
-        req.headers['stripe-signature'] as string,
-        process.env.STRIPE_ENDPOINT_SECRET!,
-      )
-    } catch (err) /* istanbul ingore next */ {
-      winston.error(`Error in stripe webhook deconstruction.`, {
-        meta: {
-          error: err.message,
-        },
-      })
-      return res.status(400).send(`Webhook Error: ${err.message}`)
-    }
+//     try {
+//       event = stripe.webhooks.constructEvent(
+//         req.body,
+//         req.headers['stripe-signature'] as string,
+//         process.env.STRIPE_ENDPOINT_SECRET!,
+//       )
+//     } catch (err) /* istanbul ingore next */ {
+//       winston.error(`Error in stripe webhook deconstruction.`, {
+//         meta: {
+//           error: err.message,
+//         },
+//       })
+//       return res.status(400).send(`Webhook Error: ${err.message}`)
+//     }
 
-    /* Logger */
+//     /* Logger */
 
-    winston.info(`Stripe event ${event.type}`, {
-      meta: {
-        payload: JSON.stringify(event.data.object),
-      },
-    })
+//     winston.info(`Stripe event ${event.type}`, {
+//       meta: {
+//         payload: JSON.stringify(event.data.object),
+//       },
+//     })
 
-    /* Event handlers */
+//     /* Event handlers */
 
-    switch (event.type) {
-      /* Customer successfully subscribed to LabelSync */
-      case 'checkout.session.completed':
-      /* Customer paid an invoice */
-      case 'invoice.payment_succeeded': {
-        const payload = event.data.object as {
-          subscription: string
-        }
+//     switch (event.type) {
+//       /* Customer successfully subscribed to LabelSync */
+//       case 'checkout.session.completed':
+//       /* Customer paid an invoice */
+//       case 'invoice.payment_succeeded': {
+//         const payload = event.data.object as {
+//           subscription: string
+//         }
 
-        const sub = await stripe.subscriptions.retrieve(payload.subscription)
+//         const sub = await stripe.subscriptions.retrieve(payload.subscription)
 
-        /* Calculate expiration date. */
-        const now = moment()
-        let expiresAt
-        switch (sub.metadata.period) {
-          case 'ANNUALLY': {
-            expiresAt = now.clone().add(1, 'year').add(3, 'day')
-            break
-          }
-          case 'MONTHLY': {
-            expiresAt = now.clone().add(1, 'month').add(3, 'day')
-            break
-          }
-          /* istanbul ingore next */
-          default: {
-            throw new Error(`Unknown period ${sub.metadata.period}`)
-          }
-        }
+//         /* Calculate expiration date. */
+//         const now = moment()
+//         let expiresAt
+//         switch (sub.metadata.period) {
+//           case 'ANNUALLY': {
+//             expiresAt = now.clone().add(1, 'year').add(3, 'day')
+//             break
+//           }
+//           case 'MONTHLY': {
+//             expiresAt = now.clone().add(1, 'month').add(3, 'day')
+//             break
+//           }
+//           /* istanbul ingore next */
+//           default: {
+//             throw new Error(`Unknown period ${sub.metadata.period}`)
+//           }
+//         }
 
-        /* Update the installation in the database. */
-        const installation = await prisma.installation.update({
-          where: { account: sub.metadata.account },
-          data: {
-            plan: 'PAID',
-            periodEndsAt: expiresAt.toDate(),
-          },
-        })
+//         /* Update the installation in the database. */
+//         const installation = await prisma.installation.update({
+//           where: { account: sub.metadata.account },
+//           data: {
+//             plan: 'PAID',
+//             periodEndsAt: expiresAt.toDate(),
+//           },
+//         })
 
-        winston.info(`New subscriber ${installation.account}`, {
-          meta: {
-            plan: 'PAID',
-            periodEndsAt: installation.periodEndsAt,
-          },
-        })
+//         winston.info(`New subscriber ${installation.account}`, {
+//           meta: {
+//             plan: 'PAID',
+//             periodEndsAt: installation.periodEndsAt,
+//           },
+//         })
 
-        return res.json({ received: true })
-      }
-      /* istanbul ignore next */
-      default: {
-        winston.warn(`unhandled stripe webhook event: ${event.type}`)
-        return res.status(400).end()
-      }
-    }
-    /* End of Stripe Webhook handler */
-  },
-)
+//         return res.json({ received: true })
+//       }
+//       /* istanbul ignore next */
+//       default: {
+//         winston.warn(`unhandled stripe webhook event: ${event.type}`)
+//         return res.status(400).end()
+//       }
+//     }
+//     /* End of Stripe Webhook handler */
+//   },
+// )

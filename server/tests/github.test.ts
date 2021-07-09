@@ -1,19 +1,18 @@
-import fs from 'fs'
 import nock from 'nock'
 import path from 'path'
-import { Octokit } from 'probot'
+import { ProbotOctokit } from 'probot'
 
 import {
   isLabel,
   isLabelDefinition,
   bootstrapConfigRepository,
 } from '../src/github'
-import { populateTemplate } from '../src/templates'
+import * as template from '../src/templates'
 import { loadTreeFromPath } from '../src/utils'
 
 /* Fixtures */
 const TEMPLATE_PATH = path.resolve(__dirname, '../../templates/typescript/')
-const TEMPLATE = populateTemplate(
+const TEMPLATE = template.populate(
   loadTreeFromPath(TEMPLATE_PATH, [
     'dist',
     'node_modules',
@@ -38,10 +37,10 @@ describe('github integration:', () => {
     nock.enableNetConnect()
   })
 
-  let github: Octokit
+  let github: InstanceType<typeof ProbotOctokit>
 
   beforeEach(() => {
-    github = new Octokit()
+    github = new ProbotOctokit()
   })
 
   afterEach(() => {
@@ -135,11 +134,11 @@ describe('github integration:', () => {
 
       /* Bootstrap. */
 
-      await bootstrapConfigRepository(
-        github,
-        { owner: 'maticzav', repo: 'maticzav-labelsync' },
-        TEMPLATE,
-      )
+      await bootstrapConfigRepository(github, {
+        owner: 'maticzav',
+        repo: 'maticzav-labelsync',
+        tree: TEMPLATE,
+      })
 
       /* Tests */
 

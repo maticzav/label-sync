@@ -1,46 +1,55 @@
 import React from 'react'
+import Link from 'next/link'
 
-import { NOTION_DOCS_URL, NOTION_PRIVACY_TOS_URL } from '../constants'
 import { scrollToId } from '../lib/scroll'
 
+// MARK: - Groups
+
+const groups = [
+  {
+    name: 'Support',
+    links: [
+      {
+        label: 'Documentation',
+        link: '/docs',
+      },
+      {
+        label: 'Pricing',
+        href: '#',
+        onClick: () => scrollToId('pricing'),
+      },
+      {
+        label: 'Status',
+        href: 'https://labelsync.statuspage.io',
+      },
+      {
+        label: 'Support',
+        href: 'mailto:support@labelsync.com',
+      },
+    ],
+  },
+  {
+    name: 'Legal',
+    links: [
+      {
+        label: 'Terms of Service',
+        link: '/privacy',
+      },
+      {
+        label: 'Privacy Policy',
+        link: '/privacy',
+      },
+    ],
+  },
+]
+
+/**
+ * Renders the footer of the webpage. Footer is used as a component
+ * inside Page component that wraps other pages used in LabelSync website.
+ */
+
 export default function Footer() {
-  const groups = [
-    {
-      name: 'Support',
-      links: [
-        {
-          label: 'Documentation',
-          href: NOTION_DOCS_URL,
-        },
-        {
-          label: 'Pricing',
-          href: '#',
-          onClick: () => scrollToId('pricing'),
-        },
-        {
-          href: 'https://labelsync.statuspage.io',
-          label: 'Status',
-        },
-        {
-          label: 'Support',
-          href: 'mailto:support@labelsync.com',
-        },
-      ],
-    },
-    {
-      name: 'Legal',
-      links: [
-        {
-          label: 'Terms of Service',
-          href: NOTION_PRIVACY_TOS_URL,
-        },
-        {
-          label: 'Privacy Policy',
-          href: NOTION_PRIVACY_TOS_URL,
-        },
-      ],
-    },
-  ]
+  // MARK: - View
 
   return (
     <div className="bg-white">
@@ -58,8 +67,8 @@ export default function Footer() {
             />
             <p className="mt-8 text-gray-500 text-base leading-6">
               Our vision is to develop the best in class software that would
-              help companies triage issues and pull requests, and simplify the
-              use of labels.
+              simplify the use of labels. If you want to get your labels under
+              control, this is the right tool for you.
             </p>
 
             {/* <!-- Social networks --> */}
@@ -109,15 +118,7 @@ export default function Footer() {
                 </h4>
                 <ul>
                   {group.links.map((link) => (
-                    <li key={link.label} className="mt-4">
-                      <a
-                        href={link.href}
-                        onClick={link.onClick}
-                        className="text-base leading-6 text-gray-500 hover:text-gray-900"
-                      >
-                        {link.label}
-                      </a>
-                    </li>
+                    <URL key={link.label} {...link} />
                   ))}
                 </ul>
               </div>
@@ -133,5 +134,43 @@ export default function Footer() {
         </div>
       </div>
     </div>
+  )
+}
+
+// MARK: - Utilities
+
+type URLProps = {
+  label: string
+  href?: string
+  link?: string
+  onClick?: () => void
+}
+
+/**
+ * Renders the link to the page using given parameters.
+ */
+function URL(props: URLProps) {
+  if (props.link) {
+    return (
+      <li className="mt-4">
+        <Link href={props.link}>
+          <a className="text-base leading-6 text-gray-500 hover:text-gray-900">
+            {props.label}
+          </a>
+        </Link>
+      </li>
+    )
+  }
+
+  return (
+    <li className="mt-4">
+      <a
+        href={props.href}
+        onClick={props.onClick}
+        className="text-base leading-6 text-gray-500 hover:text-gray-900"
+      >
+        {props.label}
+      </a>
+    </li>
   )
 }

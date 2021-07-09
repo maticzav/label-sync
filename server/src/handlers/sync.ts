@@ -15,7 +15,7 @@ type Octokit = InstanceType<typeof ProbotOctokit>
 
 // MARK: - Methods
 
-type HandleLabelSyncParams = {
+export type HandleLabelSyncParams = {
   /**
    * Owner of the repository.
    */
@@ -128,7 +128,7 @@ export async function changes(
 /**
  * Calculates the diff of two label configurations.
  */
-function diff(
+export function diff(
   config: config.LSCRepository['labels'],
   current: gh.GithubLabel[],
 ): Changes {

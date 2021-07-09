@@ -1,16 +1,14 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { CSSTransition } from 'react-transition-group'
 
-export interface Navigation {
-  links: {
-    label: string
-    href: string
-    onClick?: () => void
-  }[]
+export interface NavigationProps {
+  /**
+   * Links to websites.
+   */
+  links: URLProps[]
 }
 
-export default function Navigation(props: Navigation) {
+export default function Navigation(props: NavigationProps) {
   const [open, setOpen] = useState(false)
 
   function toggle() {
@@ -60,14 +58,7 @@ export default function Navigation(props: Navigation) {
           {/* Links */}
           <div className="hidden md:block">
             {props.links.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={link.onClick}
-                className="ml-10 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out"
-              >
-                {link.label}
-              </a>
+              <URL key={link.label} {...link} />
             ))}
           </div>
           {/*  */}
@@ -76,7 +67,7 @@ export default function Navigation(props: Navigation) {
 
       {/* Mobile navigation */}
 
-      <div className="absolute top-0 inset-x-0 p-2 md:hidden">
+      <div className="absolute z-50 top-0 inset-x-0 p-2 md:hidden">
         <div
           className="ease-in duration-700"
           style={{ display: open ? 'block' : 'none' }}
@@ -121,14 +112,7 @@ export default function Navigation(props: Navigation) {
               {/* Links */}
               <div className="px-2 pt-2 pb-3">
                 {props.links.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    onClick={link.onClick}
-                    className="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
-                  >
-                    {link.label}
-                  </a>
+                  <MobileURL key={link.label} {...link} />
                 ))}
               </div>
               {/*  */}
@@ -137,5 +121,58 @@ export default function Navigation(props: Navigation) {
         </div>
       </div>
     </>
+  )
+}
+
+// MARK: - Utilities
+
+type URLProps = {
+  label: string
+  href?: string
+  link?: string
+  onClick?: () => void
+}
+
+function URL(props: URLProps) {
+  if (props.link) {
+    return (
+      <Link href={props.link}>
+        <a className="ml-10 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out">
+          {props.label}
+        </a>
+      </Link>
+    )
+  }
+
+  return (
+    <a
+      href={props.href}
+      onClick={props.onClick}
+      className="ml-10 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out"
+    >
+      {props.label}
+    </a>
+  )
+}
+
+function MobileURL(props: URLProps) {
+  if (props.link) {
+    return (
+      <Link href={props.link}>
+        <a className="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out">
+          {props.label}
+        </a>
+      </Link>
+    )
+  }
+
+  return (
+    <a
+      href={props.href}
+      onClick={props.onClick}
+      className="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
+    >
+      {props.label}
+    </a>
   )
 }

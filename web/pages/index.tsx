@@ -1,18 +1,15 @@
-import React, { useState, PropsWithChildren } from 'react'
+import React, { useState } from 'react'
+
+import { Head } from 'next/document'
 import Link from 'next/link'
 
 import Button from '../components/Button'
-import Hero from '../components/Hero'
 import * as Feature from '../components/Feature'
-import Footer from '../components/Footer'
-import Navigation from '../components/Navigation'
+import Hero from '../components/Hero'
+import Page from '../components/Page'
 import Section from '../components/Section'
-import Tier from '../components/Tier'
 import Testimonial from '../components/Testimonial'
-
-import { NOTION_DOCS_URL, NOTION_SUPPORT_URL } from '../constants'
-
-import { scrollToId } from '../lib/scroll'
+import Tier from '../components/Tier'
 
 /* Pricing event */
 
@@ -21,57 +18,20 @@ export default function Home() {
     <>
       <title>GitHub LabelSync - The best way to sync labels</title>
 
-      <Title></Title>
-      <Introduction></Introduction>
-      <Features></Features>
-      <DetailedFeatures></DetailedFeatures>
-      <Testimonials></Testimonials>
-      <Pricing></Pricing>
-      <FAQ></FAQ>
-      <Footer></Footer>
+      <Page>
+        <Hero />
+        <Introduction />
+        <Features />
+        <DetailedFeatures />
+        <Testimonials />
+        <Pricing />
+        <FAQ />
+      </Page>
     </>
   )
 }
 
 /* Sections */
-
-function Title() {
-  return (
-    <div className="relative bg-gray-80 overflow-hidden">
-      <div className="relative pt-6 pb-12 sm:pb-16 md:pb-20 lg:pb-28 xl:pb-32">
-        <Navigation
-          links={[
-            {
-              label: 'Documentation',
-              href: NOTION_DOCS_URL,
-            },
-            {
-              label: 'Install',
-              href: 'https://github.com/apps/labelsync-manager',
-            },
-            {
-              label: 'Pricing',
-              href: '#',
-              onClick: () => scrollToId('pricing'),
-            },
-            {
-              label: 'Features',
-              href: '#',
-              onClick: () => scrollToId('features'),
-            },
-            {
-              label: 'Support',
-              href: NOTION_SUPPORT_URL,
-            },
-          ]}
-        ></Navigation>
-
-        {/* Hero */}
-        <Hero></Hero>
-      </div>
-    </div>
-  )
-}
 
 function Introduction() {
   return (
@@ -87,7 +47,7 @@ function Introduction() {
             struggle with repository organisation. In particular, companies
             struggle with managing labels across multiple repositories in their
             GitHub accounts. That's why I created LabelSync - to help you get to
-            the best parts of labels more quickly. &rdquo;
+            the best parts of labels more quickly.&rdquo;
           </p>
         }
       ></Testimonial>
@@ -424,7 +384,7 @@ function Testimonials() {
           url: 'https://prisma.io',
         }}
         pattern
-      ></Testimonial>
+      />
     </Section>
   )
 }

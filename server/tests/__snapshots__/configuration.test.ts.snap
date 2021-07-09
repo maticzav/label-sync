@@ -166,6 +166,9 @@ Array [
   Object {
     "repos": Map {
       "repo-one" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "label/1" => Object {
             "alias": Array [
@@ -182,6 +185,9 @@ Array [
         },
       },
       "repo-two" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "label/4" => Object {
             "alias": Array [
@@ -208,6 +214,9 @@ Array [
   Object {
     "repos": Map {
       "repo-one" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "label/1" => Object {
             "alias": Array [
@@ -224,6 +233,9 @@ Array [
         },
       },
       "repo-two" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "label/4" => Object {
             "alias": Array [
@@ -268,6 +280,9 @@ Array [
   Object {
     "repos": Map {
       "prisma-test-utils" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "bug/0-needs-reproduction" => Object {
             "color": "#ff0022",
@@ -275,6 +290,9 @@ Array [
         },
       },
       "label-sync" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "bug/0-needs-reproduction" => Object {
             "color": "#ff0022",
@@ -282,6 +300,9 @@ Array [
         },
       },
       "unchanged" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "bug/0-needs-reproduction" => Object {
             "color": "#ff0022",
@@ -289,6 +310,9 @@ Array [
         },
       },
       "notquitethere" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "bug/0-needs-reproduction" => Object {
             "color": "#ff0022",
@@ -296,6 +320,9 @@ Array [
         },
       },
       "last-one" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "bug/0-needs-reproduction" => Object {
             "color": "#ff0022",
@@ -303,6 +330,9 @@ Array [
         },
       },
       "overthetop" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "bug/0-needs-reproduction" => Object {
             "color": "#ff0022",
@@ -320,6 +350,9 @@ Array [
   Object {
     "repos": Map {
       "prisma-test-utils" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "bug/0-needs-reproduction" => Object {
             "color": "#ff0022",
@@ -327,6 +360,9 @@ Array [
         },
       },
       "label-sync" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "bug/0-needs-reproduction" => Object {
             "color": "#ff0022",
@@ -334,6 +370,9 @@ Array [
         },
       },
       "unchanged" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "bug/0-needs-reproduction" => Object {
             "color": "#ff0022",
@@ -341,6 +380,9 @@ Array [
         },
       },
       "notquitethere" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "bug/0-needs-reproduction" => Object {
             "color": "#ff0022",
@@ -348,6 +390,9 @@ Array [
         },
       },
       "last-one" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "bug/0-needs-reproduction" => Object {
             "color": "#ff0022",
@@ -355,6 +400,9 @@ Array [
         },
       },
       "overthetop" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "bug/0-needs-reproduction" => Object {
             "color": "#ff0022",
@@ -384,6 +432,9 @@ Array [
   Object {
     "repos": Map {
       "repo-one" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "label/1" => Object {
             "color": "#ff0022",
@@ -401,6 +452,9 @@ Array [
         },
       },
       "repo-two" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "label/4" => Object {
             "color": "#ff0022",
@@ -425,6 +479,9 @@ Array [
   Object {
     "repos": Map {
       "repo-one" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "label/1" => Object {
             "color": "#ff0022",
@@ -442,6 +499,9 @@ Array [
         },
       },
       "repo-two" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "label/4" => Object {
             "color": "#ff0022",
@@ -466,6 +526,9 @@ Array [
   Object {
     "repos": Map {
       "repo-one" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "label/1" => Object {
             "alias": Array [
@@ -483,6 +546,9 @@ Array [
         },
       },
       "repo-two" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "label/4" => Object {
             "alias": Array [
@@ -503,6 +569,9 @@ Array [
   Object {
     "repos": Map {
       "repo-one" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "label/1" => Object {
             "alias": Array [
@@ -520,6 +589,9 @@ Array [
         },
       },
       "repo-two" => Object {
+        "config": Object {
+          "removeUnconfiguredLabels": false,
+        },
         "labels": Map {
           "label/4" => Object {
             "alias": Array [
