@@ -8,6 +8,10 @@ coverage
 .env*
 *.tsbuildinfo
 package-lock.json
-elm-stuff
 
 __tmp__
+
+# yarn
+.yarn/cache
+.yarn/install-state.gz
+.yarn/build-state.yml 

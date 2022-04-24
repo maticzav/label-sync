@@ -1,5 +1,6 @@
-import { LSCRepository } from '../../src/configuration'
-import { GithubLabel } from '../../src/github'
+import { LSCRepository } from '@labelsync/config'
+
+import { GithubLabel } from '../../src/lib/github'
 import { calculateDiff } from '../../src/handlers/labels'
 
 describe('labels:', () => {

@@ -1,0 +1,16 @@
+{
+  "name": "@labelsync/database",
+  "scripts": {
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "^3.12.0",
+    "cuid": "^2.1.8",
+    "luxon": "^2.3.2",
+    "query-string": "^7.1.1"
+  },
+  "devDependencies": {
+    "@types/luxon": "^2.3.1",
+    "prisma": "^3.12.0"
+  }
+}

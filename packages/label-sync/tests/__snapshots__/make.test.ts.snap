@@ -54,56 +54,59 @@ exports[`make: integration test: compiles configuration to default path 1`] = `
 
 exports[`make: integration test: compiles configuration to default path 2`] = `
 Object {
-  "repos": Object {
-    "changed": Object {
-      "config": Object {
-        "removeUnconfiguredLabels": true,
+  "config": Object {
+    "repos": Object {
+      "changed": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "bug/1-has-reproduction": Object {
+            "alias": Array [
+              "bug",
+            ],
+            "color": "ff0022",
+            "description": "Indicates that an issue has reproduction",
+            "siblings": Array [
+              "kind/bug",
+            ],
+          },
+          "kind/bug": Object {
+            "alias": Array [],
+            "color": "02f5aa",
+            "siblings": Array [],
+          },
+        },
       },
-      "labels": Object {
-        "bug/1-has-reproduction": Object {
-          "alias": Array [
-            "bug",
-          ],
-          "color": "ff0022",
-          "description": "Indicates that an issue has reproduction",
-          "siblings": Array [
-            "kind/bug",
-          ],
+      "prisma-test-utils": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
         },
-        "kind/bug": Object {
-          "alias": Array [],
-          "color": "02f5aa",
-          "siblings": Array [],
-        },
-      },
-    },
-    "prisma-test-utils": Object {
-      "config": Object {
-        "removeUnconfiguredLabels": true,
-      },
-      "labels": Object {
-        "bug/1-has-reproduction": Object {
-          "alias": Array [
-            "bug",
-          ],
-          "color": "ff0022",
-          "description": "Indicates that an issue has reproduction",
-          "siblings": Array [
-            "kind/bug",
-          ],
-        },
-        "kind/bug": Object {
-          "alias": Array [],
-          "color": "02f5aa",
-          "siblings": Array [],
-        },
-        "type/bug": Object {
-          "alias": Array [],
-          "color": "ff0022",
-          "siblings": Array [],
+        "labels": Object {
+          "bug/1-has-reproduction": Object {
+            "alias": Array [
+              "bug",
+            ],
+            "color": "ff0022",
+            "description": "Indicates that an issue has reproduction",
+            "siblings": Array [
+              "kind/bug",
+            ],
+          },
+          "kind/bug": Object {
+            "alias": Array [],
+            "color": "02f5aa",
+            "siblings": Array [],
+          },
+          "type/bug": Object {
+            "alias": Array [],
+            "color": "ff0022",
+            "siblings": Array [],
+          },
         },
       },
     },
   },
+  "ok": true,
 }
 `;

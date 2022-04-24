@@ -1,27 +1,37 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+
     "target": "es2019",
     "module": "commonjs",
     "lib": ["dom", "es2017", "es2019"],
     "declaration": true,
     "declarationMap": true,
-    // "importHelpers": true,
-    // "isolatedModules": true,
 
     "strict": true,
 
-    /* Additional Checks */
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
 
-    /* Module Resolution Options */
     "moduleResolution": "node",
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "skipDefaultLibCheck": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+
+    "paths": {
+      "@labelsync/config": ["packages/config/src/index.ts"],
+      "@labelsync/database": ["packages/database/src/index.ts"]
+    }
   },
-  "exclude": ["**/tests/**/*", "**/dist/**/*", "**/template/**/*"]
+  "include": ["packages", "workers", "server"],
+  "exclude": ["**/dist/**/*", "**/templates/**/*"],
+  "ts-node": {
+    "compilerOptions": {
+      "target": "ES2017",
+      "module": "commonjs"
+    },
+
+    "require": ["tsconfig-paths/register"]
+  }
 }

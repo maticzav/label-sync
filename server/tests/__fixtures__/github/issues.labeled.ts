@@ -1,4 +1,6 @@
-export default {
+import { EventPayloadMap } from '@octokit/webhooks-types'
+
+const payload: EventPayloadMap['issues'] = {
   action: 'labeled',
   issue: {
     id: 586553190,
@@ -13,11 +15,10 @@ export default {
       gravatar_id: '',
       url: 'https://api.github.com/users/labelsync-manager%5Bbot%5D',
       html_url: 'https://github.com/apps/labelsync-manager',
-      received_events_url:
-        'https://api.github.com/users/labelsync-manager%5Bbot%5D/received_events',
+      received_events_url: 'https://api.github.com/users/labelsync-manager%5Bbot%5D/received_events',
       type: 'Bot',
       site_admin: false,
-    },
+    } as any,
     labels: [],
     state: 'open',
     locked: false,
@@ -30,12 +31,11 @@ export default {
     closed_at: null,
     author_association: 'CONTRIBUTOR',
     body: '',
-  },
+  } as any,
   label: {
     id: 1929933064,
     node_id: 'MDU6TGFiZWwxOTI5OTMzMDY0',
-    url:
-      'https://api.github.com/repos/3-SemicolonClub/3-SemicolonClub-labelsync/labels/documentation',
+    url: 'https://api.github.com/repos/3-SemicolonClub/3-SemicolonClub-labelsync/labels/documentation',
     name: 'label/siblings',
     color: '0075ca',
     default: true,
@@ -55,23 +55,28 @@ export default {
       gravatar_id: '',
       url: 'https://api.github.com/users/3-SemicolonClub',
       html_url: 'https://github.com/3-SemicolonClub',
-      received_events_url:
-        'https://api.github.com/users/3-SemicolonClub/received_events',
+      received_events_url: 'https://api.github.com/users/3-SemicolonClub/received_events',
       type: 'Organization',
       site_admin: false,
+      events_url: '',
+      repos_url: '',
+      following_url: '',
+      gists_url: '',
+      organizations_url: '',
+      starred_url: '',
+      subscriptions_url: '',
+      followers_url: '',
     },
     html_url: 'https://github.com/3-SemicolonClub/3-SemicolonClub-labelsync',
     description: 'LabelSync configuration repository.',
     fork: false,
-    deployments_url:
-      'https://api.github.com/repos/3-SemicolonClub/3-SemicolonClub-labelsync/deployments',
+    deployments_url: 'https://api.github.com/repos/3-SemicolonClub/3-SemicolonClub-labelsync/deployments',
     created_at: '2020-03-23T22:17:05Z',
     updated_at: '2020-03-23T22:17:15Z',
     pushed_at: '2020-03-23T22:17:13Z',
     git_url: 'git://github.com/3-SemicolonClub/3-SemicolonClub-labelsync.git',
     ssh_url: 'git@github.com:3-SemicolonClub/3-SemicolonClub-labelsync.git',
-    clone_url:
-      'https://github.com/3-SemicolonClub/3-SemicolonClub-labelsync.git',
+    clone_url: 'https://github.com/3-SemicolonClub/3-SemicolonClub-labelsync.git',
     svn_url: 'https://github.com/3-SemicolonClub/3-SemicolonClub-labelsync',
     homepage: null,
     size: 2,
@@ -93,16 +98,20 @@ export default {
     open_issues: 1,
     watchers: 0,
     default_branch: 'master',
-  },
+  } as any,
   organization: {
     login: 'maticzav',
     id: 43337079,
     node_id: 'MDEyOk9yZ2FuaXphdGlvbjQzMzM3MDc5',
     url: 'https://api.github.com/orgs/3-SemicolonClub',
-    public_members_url:
-      'https://api.github.com/orgs/3-SemicolonClub/public_members{/member}',
+    public_members_url: 'https://api.github.com/orgs/3-SemicolonClub/public_members{/member}',
     avatar_url: 'https://avatars0.githubusercontent.com/u/43337079?v=4',
     description: '{ semi: true }',
+    events_url: '',
+    hooks_url: '',
+    issues_url: '',
+    members_url: '',
+    repos_url: '',
   },
   sender: {
     login: 'maticzav',
@@ -115,9 +124,19 @@ export default {
     followers_url: 'https://api.github.com/users/maticzav/followers',
     type: 'User',
     site_admin: false,
+    events_url: '',
+    repos_url: '',
+    following_url: '',
+    gists_url: '',
+    organizations_url: '',
+    received_events_url: '',
+    starred_url: '',
+    subscriptions_url: '',
   },
   installation: {
     id: 7501122,
     node_id: 'asd==',
   },
 }
+
+export default payload

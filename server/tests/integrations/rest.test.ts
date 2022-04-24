@@ -1,68 +1,51 @@
-import { PrismaClient, Plan } from '@prisma/client'
+import { InstallationsSource } from '@labelsync/database'
+import express from 'express'
+import { Server } from 'http'
 import nock from 'nock'
-import { Probot, createProbot } from 'probot'
+import pino from 'pino'
+import { Probot } from 'probot'
 import request from 'request-promise-native'
 import Stripe from 'stripe'
-import { createLogger, Logger, format, transports } from 'winston'
 
-const manager = require('../../src')
+import { Sources } from '../../src/lib/sources'
+
+import { subscribe } from '../../src/routes/subscribe.route'
 
 describe('rest:', () => {
-  let prisma: PrismaClient
-  let winston: Logger
-  let stripe: Stripe
-
-  let logs: string[] = []
+  let sources: Sources
+  let server: Server
 
   beforeAll(async () => {
     // Network settings
     nock.disableNetConnect()
     // local servers
     nock.enableNetConnect((host) => {
-      return (
-        host.includes('localhost') ||
-        host.includes('127.0.0.1') ||
-        host.includes('stripe')
-      )
+      return host.includes('localhost') || host.includes('127.0.0.1') || host.includes('stripe')
     })
 
     // DataStores
-    prisma = new PrismaClient()
-    winston = createLogger({
-      level: 'info',
-      exitOnError: false,
-      format: format.json(),
-      transports: [],
-    })
-    stripe = new Stripe(process.env.STRIPE_API_KEY!, {
-      apiVersion: '2020-08-27',
-    })
+    sources = {
+      installations: new InstallationsSource(5, 60 * 1000),
+      stripe: new Stripe('sk_test_gQB5rH8aGqEhNGuBtgk9yK8L007RgZDRLh', {
+        apiVersion: '2020-08-27',
+      }),
+      log: pino(),
+    }
 
-    /* Setup probot */
-    probot = createProbot({
-      id: 1,
-      cert: 'test',
-      githubToken: 'test',
-      port: 4040,
-    })
+    const exprs = express()
+    const subrouter = express.Router()
+    subscribe(subrouter, sources)
+    exprs.use('/subscribe', subrouter)
 
-    probot.load((app) => manager(app, prisma, winston, stripe))
-    probot.start()
+    server = exprs.listen(4040)
   })
 
   afterAll(async () => {
     nock.cleanAll()
     nock.enableNetConnect()
 
-    probot.httpServer!.close()
-    await prisma.$disconnect()
-  })
-
-  let probot: Probot
-
-  beforeEach(async () => {
-    /* Clean the database */
-    await prisma.installation.deleteMany({ where: {} })
+    sources.installations.dispose()
+    server.close()
   })
 
   afterEach(() => {
@@ -84,16 +67,15 @@ describe('rest:', () => {
       },
     }).promise()
 
-    const installation: any = await prisma.installation.findUnique({
-      where: { account: 'maticzav' },
-    })
-
     expect(body).toEqual({ status: 'ok', plan: 'FREE' })
+
+    let installation: any = await sources.installations.get({ account: 'maticzav' })
 
     delete installation['id']
     delete installation['createdAt']
     delete installation['updatedAt']
     delete installation['periodEndsAt']
+    delete installation['ttl']
 
     expect(installation).toMatchSnapshot()
   })
@@ -116,7 +98,7 @@ describe('rest:', () => {
 
     /* Test Stripe */
 
-    const session = await stripe.checkout.sessions.retrieve(body.session, {
+    const session = await sources.stripe.checkout.sessions.retrieve(body.session, {
       expand: ['subscription'],
     })
 
@@ -124,14 +106,13 @@ describe('rest:', () => {
 
     /* Test database */
 
-    const installation: any = await prisma.installation.findUnique({
-      where: { account: 'maticzav' },
-    })
+    let installation: any = await sources.installations.get({ account: 'maticzav' })
 
     delete installation['id']
     delete installation['createdAt']
     delete installation['updatedAt']
     delete installation['periodEndsAt']
+    delete installation['ttl']
 
     expect(installation).toMatchSnapshot()
   })

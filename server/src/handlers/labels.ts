@@ -1,13 +1,9 @@
-import { Octokit } from 'probot'
+import { LSCRepository, LSCLabel, LSCRepositoryConfiguration, normalizeColor } from '@labelsync/config'
 
-import {
-  LSCRepository,
-  LSCLabel,
-  LSCRepositoryConfiguration,
-  fixLabelColor,
-} from '../configuration'
 import * as maybe from '../data/maybe'
 import { Dict } from '../data/dict'
+
+import { Octokit } from '../lib/context'
 import {
   GithubLabel,
   getRepositoryLabels,
@@ -15,8 +11,8 @@ import {
   updateLabelsInRepository,
   removeLabelsFromRepository,
   aliasLabelsInRepository,
-} from '../github'
-import { withDefault } from '../utils'
+} from '../lib/github'
+import { withDefault } from '../lib/utils'
 
 export type LabelSyncReport =
   | {
@@ -71,10 +67,7 @@ export async function handleLabelSync(
 
   /* Configuration */
 
-  const removeUnconfiguredLabels = withDefault(
-    false,
-    config?.removeUnconfiguredLabels,
-  )
+  const removeUnconfiguredLabels = withDefault(false, config?.removeUnconfiguredLabels)
 
   /* istanbul ignore if */
   if (labelsDiff === null) {
@@ -102,24 +95,9 @@ export async function handleLabelSync(
    * 4. Remove labels.
    */
   try {
-    const additions = await addLabelsToRepository(
-      octokit,
-      { repo, owner },
-      added,
-      persist,
-    )
-    const updates = await updateLabelsInRepository(
-      octokit,
-      { repo, owner },
-      changed,
-      persist,
-    )
-    const aliases = await aliasLabelsInRepository(
-      octokit,
-      { repo, owner },
-      aliased,
-      persist,
-    )
+    const additions = await addLabelsToRepository(octokit, { repo, owner }, added, persist)
+    const updates = await updateLabelsInRepository(octokit, { repo, owner }, changed, persist)
+    const aliases = await aliasLabelsInRepository(octokit, { repo, owner }, aliased, persist)
     const removals = await removeLabelsFromRepository(
       octokit,
       { repo, owner },
@@ -142,7 +120,7 @@ export async function handleLabelSync(
         labels,
       },
     }
-  } catch (err) /* istanbul ignore next */ {
+  } catch (err: any) /* istanbul ignore next */ {
     return {
       status: 'Failure',
       owner,
@@ -165,11 +143,7 @@ export async function handleLabelSync(
  * @param currentLabels
  * @param newLabels
  */
-export function calculateDiff(
-  config: LSCRepository['labels'],
-): (
-  currentLabels: GithubLabel[],
-) => {
+export function calculateDiff(config: LSCRepository['labels']): (currentLabels: GithubLabel[]) => {
   added: GithubLabel[]
   changed: GithubLabel[]
   aliased: GithubLabel[]
@@ -247,14 +221,11 @@ export function calculateDiff(
          *  - it wasn't defined and now is
          *  - it was defined and has changed
          */
-        const descriptionChanged =
-          withDefault('', cLabel.description) !==
-          withDefault('', hydratedLabel.description)
+        const descriptionChanged = withDefault('', cLabel.description) !== withDefault('', hydratedLabel.description)
         /**
          * Color of a label is always defined. We check whether it has changed.
          */
-        const colorChanged =
-          fixLabelColor(cLabel.color) !== fixLabelColor(hydratedLabel.color)
+        const colorChanged = normalizeColor(cLabel.color) !== normalizeColor(hydratedLabel.color)
 
         return sameName && (descriptionChanged || colorChanged)
       })
@@ -270,9 +241,7 @@ export function calculateDiff(
        *  - this one shouldn't be removed afterwards since we
        *    are renaming it.
        */
-      const existingAliasedLabel = labelAlias.find((alias) =>
-        currentLabelsMap.has(alias),
-      )
+      const existingAliasedLabel = labelAlias.find((alias) => currentLabelsMap.has(alias))
 
       for (const alias of labelAlias) {
         /**
@@ -298,9 +267,7 @@ export function calculateDiff(
     for (const label of currentLabels) {
       /* Indicates that a label has been removed */
       const labelRemoved = !config.hasOwnProperty(label.name)
-      const labelRenamed = changed.find(
-        ({ old_name }) => old_name === label.name,
-      )
+      const labelRenamed = changed.find(({ old_name }) => old_name === label.name)
 
       /**
        * Remove all the labels that weren't renamed (changed)

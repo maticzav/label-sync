@@ -1,0 +1,27 @@
+datasource postgresql {
+  url      = env("DATABASE_URL")
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Installation {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // Info
+  account      String   @unique
+  email        String?
+  plan         Plan
+  periodEndsAt DateTime
+
+  // Manager properties
+  activated Boolean @default(false)
+}
+
+enum Plan {
+  FREE
+  PAID
+}

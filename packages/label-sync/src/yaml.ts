@@ -4,6 +4,6 @@ import { Configurable } from './configurable'
 export abstract class YAML<T> extends Configurable<T> {
   getYAML(): string {
     const cleanJSON = JSON.parse(JSON.stringify(this.getConfiguration()))
-    return yaml.safeDump(cleanJSON)
+    return yaml.dump(cleanJSON)
   }
 }

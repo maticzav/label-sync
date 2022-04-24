@@ -1,0 +1,9 @@
+{
+  "name": "@labelsync/sync",
+  "scripts": {
+    "start": "yarn g:ts-node src/index.ts"
+  },
+  "dependencies": {
+    "pino": "^7.10.0"
+  }
+}

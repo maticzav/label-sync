@@ -1,4 +1,6 @@
-export default {
+import { EventPayloadMap } from '@octokit/webhooks-types'
+
+const payload: EventPayloadMap['installation'] = {
   action: 'created',
   installation: {
     id: 2,
@@ -11,17 +13,14 @@ export default {
       url: 'https://api.github.com/users/octocat',
       html_url: 'https://github.com/octocat',
       followers_url: 'https://api.github.com/users/octocat/followers',
-      following_url:
-        'https://api.github.com/users/octocat/following{/other_user}',
+      following_url: 'https://api.github.com/users/octocat/following{/other_user}',
       gists_url: 'https://api.github.com/users/octocat/gists{/gist_id}',
-      starred_url:
-        'https://api.github.com/users/octocat/starred{/owner}{/repo}',
+      starred_url: 'https://api.github.com/users/octocat/starred{/owner}{/repo}',
       subscriptions_url: 'https://api.github.com/users/octocat/subscriptions',
       organizations_url: 'https://api.github.com/users/octocat/orgs',
       repos_url: 'https://api.github.com/users/octocat/repos',
       events_url: 'https://api.github.com/users/octocat/events{/privacy}',
-      received_events_url:
-        'https://api.github.com/users/octocat/received_events',
+      received_events_url: 'https://api.github.com/users/octocat/received_events',
       type: 'Organization',
       site_admin: false,
     },
@@ -41,6 +40,8 @@ export default {
     created_at: 1525109898,
     updated_at: 1525109899,
     single_file_name: 'config.yml',
+    suspended_at: null,
+    suspended_by: null,
   },
   repositories: [],
   sender: {
@@ -52,8 +53,7 @@ export default {
     url: 'https://api.github.com/users/octocat',
     html_url: 'https://github.com/octocat',
     followers_url: 'https://api.github.com/users/octocat/followers',
-    following_url:
-      'https://api.github.com/users/octocat/following{/other_user}',
+    following_url: 'https://api.github.com/users/octocat/following{/other_user}',
     gists_url: 'https://api.github.com/users/octocat/gists{/gist_id}',
     starred_url: 'https://api.github.com/users/octocat/starred{/owner}{/repo}',
     subscriptions_url: 'https://api.github.com/users/octocat/subscriptions',
@@ -65,3 +65,5 @@ export default {
     site_admin: false,
   },
 }
+
+export default payload

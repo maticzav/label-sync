@@ -1,5 +1,5 @@
 import path from 'path'
-import { not, loadTreeFromPath } from '../src/utils'
+import { not, loadTreeFromPath } from '../src/lib/utils'
 
 describe('utils:', () => {
   test('not', () => {
@@ -8,10 +8,7 @@ describe('utils:', () => {
   })
 
   test('loadTreeFromPath', () => {
-    const tree = loadTreeFromPath(
-      path.resolve(__dirname, './__fixtures__/template'),
-      ['ignore'],
-    )
+    const tree = loadTreeFromPath(path.resolve(__dirname, './__fixtures__/template'), ['ignore'])
 
     expect(tree).toMatchSnapshot()
   })

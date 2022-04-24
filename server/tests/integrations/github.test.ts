@@ -1,12 +1,17 @@
-import { Plan, PrismaClient } from '@prisma/client'
 import fs from 'fs'
-import moment from 'moment'
+import { Probot } from 'probot'
 import nock from 'nock'
 import path from 'path'
-import { createProbot, Probot } from 'probot'
-import { createLogger, format, Logger, transports } from 'winston'
+import pino from 'pino'
+import Stream from 'stream'
+import Stripe from 'stripe'
 
-import { logToJSON, removeLogsDateFields } from '../__fixtures__/utils'
+import { InstallationsSource } from '@labelsync/database'
+
+import { Sources } from '../../src/lib/sources'
+import { github } from '../../src/events/github.events'
+
+import { removeLogsDateFields } from '../__fixtures__/utils'
 
 /* Fixtures */
 
@@ -20,34 +25,26 @@ import prPayload from './../__fixtures__/github/pullrequest.opened'
 import pushPayload from './../__fixtures__/github/push'
 import repositoryCreatedPayload from './../__fixtures__/github/repository.created'
 
-const configFixture = fs.readFileSync(
-  path.resolve(__dirname, './../__fixtures__/labelsync.yml'),
-  { encoding: 'utf-8' },
-)
+const configFixture = fs.readFileSync(path.resolve(__dirname, './../__fixtures__/labelsync.yml'), { encoding: 'utf-8' })
 
 const wildcardConfigFixture = fs.readFileSync(
   path.resolve(__dirname, './../__fixtures__/configurations/wildcard.yml'),
   { encoding: 'utf-8' },
 )
 
-const newRepoConfigFixture = fs.readFileSync(
-  path.resolve(__dirname, './../__fixtures__/configurations/new.yml'),
-  { encoding: 'utf-8' },
-)
+const newRepoConfigFixture = fs.readFileSync(path.resolve(__dirname, './../__fixtures__/configurations/new.yml'), {
+  encoding: 'utf-8',
+})
 
 const siblingsConfigFixture = fs.readFileSync(
   path.resolve(__dirname, './../__fixtures__/configurations/siblings.yml'),
   { encoding: 'utf-8' },
 )
 
-const LOGS_FILE = path.resolve(__dirname, 'logs', 'github_integration.log')
-
-/* Probot app */
-
-const manager = require('../../src')
-
 describe('github:', () => {
-  let client: PrismaClient
+  let sources: Sources
+  let probot: Probot
+  let logs: object[] = []
 
   beforeAll(async () => {
     // Network settings
@@ -56,106 +53,61 @@ describe('github:', () => {
     nock.enableNetConnect((host) => {
       return host.includes('localhost') || host.includes('127.0.0.1')
     })
-
-    // DataStores
-    client = new PrismaClient()
   })
 
   afterAll(async () => {
     nock.cleanAll()
     nock.enableNetConnect()
-
-    await client.$disconnect()
   })
 
-  /**
-   * TESTS
-   */
+  beforeEach(() => {
+    const streamLogsToOutput = new Stream.Writable({ objectMode: true })
+    streamLogsToOutput._write = (object, encoding, done) => {
+      logs.push(JSON.parse(object))
+      done()
+    }
 
-  const plans: Plan[] = ['FREE', 'PAID']
+    sources = {
+      installations: new InstallationsSource(5, 60 * 1000),
+      stripe: new Stripe('sk_test_gQB5rH8aGqEhNGuBtgk9yK8L007RgZDRLh', {
+        apiVersion: '2020-08-27',
+      }),
+      log: pino(streamLogsToOutput),
+    }
+
+    probot = new Probot({
+      githubToken: 'test',
+      log: pino(streamLogsToOutput),
+    })
+
+    github(probot, sources)
+  })
+
+  afterEach(() => {
+    sources.installations.dispose()
+    nock.cleanAll()
+  })
+
+  // Test for each plan and collect logs.
+
+  const plans: ('FREE' | 'PAID')[] = ['FREE' as const]
 
   for (const plan of plans) {
     describe(`${plan}`, () => {
-      /* Tests on each plan. */
-      let winston: Logger
-      let probot: Probot
-
-      /* Plan specific setup */
       beforeEach(async () => {
-        await client.installation.deleteMany({ where: {} })
         // Create an installation.
-        await client.installation.create({
-          data: {
-            account: 'maticzav',
-            email: 'email',
-            plan,
-            periodEndsAt: moment().add(1, 'h').toDate(),
-            activated: true,
-          },
+        sources.installations.upsert({
+          account: 'maticzav',
+          email: 'email',
+          plan,
+          cadence: 'MONTHLY',
+          activated: true,
         })
-
-        /* Setup probot */
-        probot = createProbot({ id: 123, githubToken: 'token', cert: 'test' })
-        const app = probot.load((app) => manager(app, client, winston))
-      })
-
-      afterEach(() => {
-        nock.cleanAll()
       })
 
       beforeAll(() => {
-        /* Reset logs. */
-        if (fs.existsSync(LOGS_FILE)) fs.unlinkSync(LOGS_FILE)
-        winston = createLogger({
-          level: 'debug',
-          exitOnError: false,
-          format: format.json(),
-          transports: [new transports.File({ filename: LOGS_FILE })],
-        })
+        logs = []
       })
-
-      // test(
-      //   'marketplace purchase event',
-      //   async () => {
-      //     await probot.receive({
-      //       id: 'marketplace.purchased',
-      //       name: 'marketplace_purchase',
-      //       payload: marketplacePurchasePayload,
-      //     })
-
-      //     /* Tests */
-
-      //     const purchase = await client.purchase.findUnique({
-      //       where: { owner: 'username' },
-      //     })
-
-      //     expect(purchase).not.toBeNull()
-      //     expect(purchase).not.toBeUndefined()
-      //   },
-      //   5 * 60 * 1000,
-      // )
-
-      // test(
-      //   'marketplace cancel event',
-      //   async () => {
-      //     await probot.receive({
-      //       id: 'marketplace.cancel',
-      //       name: 'marketplace_purchase',
-      //       payload: marketplaceCancelPayload,
-      //     })
-
-      //     /* Tests */
-
-      //     const purchases = await client.purchase.findMany({
-      //       where: {
-      //         owner: 'maticzav',
-      //       },
-      //     })
-
-      //     expect(purchases.length).toBe(0)
-      //   },
-      //   5 * 60 * 1000,
-      // )
 
       test(
         'installation event bootstrap config',
@@ -163,36 +115,30 @@ describe('github:', () => {
           expect.assertions(5)
 
           const repoEndpoint = jest.fn().mockReturnValue({})
-          const createRepoEndpoint = jest
-            .fn()
-            .mockImplementation((uri, body) => {
-              expect(body).toEqual({
-                name: 'maticzav-labelsync',
-                description: 'LabelSync configuration repository.',
-                auto_init: true,
-              })
-              return
+          const createRepoEndpoint = jest.fn().mockImplementation((uri, body) => {
+            expect(body).toEqual({
+              name: 'maticzav-labelsync',
+              description: 'LabelSync configuration repository.',
+              auto_init: true,
             })
+            return
+          })
 
           let blobs: { [sha: number]: string } = {}
 
-          const createBlobEndpoint = jest
-            .fn()
-            .mockImplementation((uri, body) => {
-              const sha = Object.keys(blobs).length
-              blobs[sha] = body.content
-              return { url: 'url', sha }
-            })
+          const createBlobEndpoint = jest.fn().mockImplementation((uri, body) => {
+            const sha = Object.keys(blobs).length
+            blobs[sha] = body.content
+            return { url: 'url', sha }
+          })
 
           let trees: { [sha: number]: string } = {}
 
-          const createTreeEndpoint = jest
-            .fn()
-            .mockImplementation((uri, body) => {
-              const sha = Object.keys(trees).length
-              trees[sha] = body.tree
-              return { sha: sha, url: 'url', tree: body.tree }
-            })
+          const createTreeEndpoint = jest.fn().mockImplementation((uri, body) => {
+            const sha = Object.keys(trees).length
+            trees[sha] = body.tree
+            return { sha: sha, url: 'url', tree: body.tree }
+          })
 
           const parentSha = Math.floor(Math.random() * 1000).toString()
 
@@ -202,33 +148,23 @@ describe('github:', () => {
 
           const commitSha = Math.floor(Math.random() * 1000).toString()
 
-          const createCommitEndpoint = jest
-            .fn()
-            .mockImplementation((uri, body) => {
-              expect(body.parents).toEqual([parentSha])
-              return { sha: commitSha }
-            })
+          const createCommitEndpoint = jest.fn().mockImplementation((uri, body) => {
+            expect(body.parents).toEqual([parentSha])
+            return { sha: commitSha }
+          })
 
-          const updateRefEndpoint = jest
-            .fn()
-            .mockImplementation((uri, body) => {
-              expect(body.sha).toBe(commitSha)
-              return { object: { sha: '' } }
-            })
+          const updateRefEndpoint = jest.fn().mockImplementation((uri, body) => {
+            expect(body.sha).toBe(commitSha)
+            return { object: { sha: '' } }
+          })
 
           /* Mocks */
 
-          nock('https://api.github.com')
-            .post('/app/installations/13055/access_tokens')
-            .reply(200, { token: 'test' })
+          nock('https://api.github.com').post('/app/installations/13055/access_tokens').reply(200, { token: 'test' })
 
-          nock('https://api.github.com')
-            .get('/repos/maticzav/maticzav-labelsync')
-            .reply(404, repoEndpoint)
+          nock('https://api.github.com').get('/repos/maticzav/maticzav-labelsync').reply(404, repoEndpoint)
 
-          nock('https://api.github.com')
-            .post('/orgs/maticzav/repos')
-            .reply(200, createRepoEndpoint)
+          nock('https://api.github.com').post('/orgs/maticzav/repos').reply(200, createRepoEndpoint)
 
           nock('https://api.github.com')
             .post('/repos/maticzav/maticzav-labelsync/git/blobs')
@@ -241,7 +177,7 @@ describe('github:', () => {
             .persist()
 
           nock('https://api.github.com')
-            .get('/repos/maticzav/maticzav-labelsync/git/refs/heads/master')
+            .get('/repos/maticzav/maticzav-labelsync/git/ref/heads%2Fmaster')
             .reply(200, getRefEndpoint)
 
           nock('https://api.github.com')
@@ -249,7 +185,7 @@ describe('github:', () => {
             .reply(200, createCommitEndpoint)
 
           nock('https://api.github.com')
-            .patch('/repos/maticzav/maticzav-labelsync/git/refs/heads/master')
+            .patch('/repos/maticzav/maticzav-labelsync/git/refs/heads%2Fmaster')
             .reply(200, updateRefEndpoint)
 
           await probot.receive({
@@ -270,7 +206,7 @@ describe('github:', () => {
         5 * 60 * 1000,
       )
 
-      test(
+      test.only(
         'installation invalid config issue',
         async () => {
           expect.assertions(3)
@@ -296,14 +232,10 @@ describe('github:', () => {
               return { token: 'test' }
             })
 
-          nock('https://api.github.com')
-            .get('/repos/maticzav/maticzav-labelsync')
-            .reply(200, repoEndpoint)
+          nock('https://api.github.com').get('/repos/maticzav/maticzav-labelsync').reply(200, repoEndpoint)
 
           nock('https://api.github.com')
-            .get(
-              '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
-            )
+            .get('/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster')
             .reply(200, configEndpoint)
 
           nock('https://api.github.com')
@@ -339,11 +271,7 @@ describe('github:', () => {
           })
 
           const installationsEndpoint = jest.fn().mockReturnValue({
-            repositories: [
-              { name: 'changed' },
-              { name: 'unchanged' },
-              { name: 'other' },
-            ],
+            repositories: [{ name: 'changed' }, { name: 'unchanged' }, { name: 'other' }],
           })
 
           const labelsEndpoint = jest.fn().mockImplementation((uri) => {
@@ -390,41 +318,33 @@ describe('github:', () => {
             }
           })
 
-          const getIssuesForRepoEndpoint = jest
-            .fn()
-            .mockImplementation((uri, body) => {
-              return []
-            })
+          const getIssuesForRepoEndpoint = jest.fn().mockImplementation((uri, body) => {
+            return []
+          })
 
-          const createLabelsEndpoint = jest
-            .fn()
-            .mockImplementation((uri, body) => {
-              expect({ body, uri }).toEqual({
-                uri: '/repos/maticzav/changed/labels',
-                body: {
-                  color: '000000',
-                  name: 'create/new',
-                },
-              })
-              return
+          const createLabelsEndpoint = jest.fn().mockImplementation((uri, body) => {
+            expect({ body, uri }).toEqual({
+              uri: '/repos/maticzav/changed/labels',
+              body: {
+                color: '000000',
+                name: 'create/new',
+              },
             })
+            return
+          })
 
           let updatedLabels: { uri: string; body: object }[] = []
 
-          const updateLabelsEndpoint = jest
-            .fn()
-            .mockImplementation((uri, body) => {
-              updatedLabels.push({ uri, body })
-              return
-            })
+          const updateLabelsEndpoint = jest.fn().mockImplementation((uri, body) => {
+            updatedLabels.push({ uri, body })
+            return
+          })
 
           let removedLabels: string[] = []
-          const removeLabelsEndpoint = jest
-            .fn()
-            .mockImplementation((uri, body) => {
-              removedLabels.push(uri)
-              return
-            })
+          const removeLabelsEndpoint = jest.fn().mockImplementation((uri, body) => {
+            removedLabels.push(uri)
+            return
+          })
 
           /* Mocks */
 
@@ -434,14 +354,10 @@ describe('github:', () => {
               return { token: 'test' }
             })
 
-          nock('https://api.github.com')
-            .get('/repos/maticzav/maticzav-labelsync')
-            .reply(200, repoEndpoint)
+          nock('https://api.github.com').get('/repos/maticzav/maticzav-labelsync').reply(200, repoEndpoint)
 
           nock('https://api.github.com')
-            .get(
-              '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
-            )
+            .get('/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster')
             .reply(200, configEndpoint)
 
           nock('https://api.github.com')
@@ -520,14 +436,10 @@ describe('github:', () => {
               return { token: 'test' }
             })
 
-          nock('https://api.github.com')
-            .get('/repos/maticzav/maticzav-labelsync')
-            .reply(200, repoEndpoint)
+          nock('https://api.github.com').get('/repos/maticzav/maticzav-labelsync').reply(200, repoEndpoint)
 
           nock('https://api.github.com')
-            .get(
-              '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
-            )
+            .get('/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster')
             .reply(200, configEndpoint)
 
           nock('https://api.github.com')
@@ -566,11 +478,7 @@ describe('github:', () => {
           })
 
           const installationsEndpoint = jest.fn().mockReturnValue({
-            repositories: [
-              { name: 'unchanged' },
-              { name: 'CHANGED' },
-              { name: 'other' },
-            ],
+            repositories: [{ name: 'unchanged' }, { name: 'CHANGED' }, { name: 'other' }],
           })
 
           const labelsEndpoint = jest.fn().mockImplementation((uri) => {
@@ -617,79 +525,63 @@ describe('github:', () => {
             }
           })
 
-          const getIssuesForRepoEndpoint = jest
-            .fn()
-            .mockImplementation((uri, body) => {
-              return [
-                {
-                  number: 1,
-                  labels: [{ name: 'alias/old:1' }, { name: 'alias/old:2' }],
-                },
-                {
-                  number: 3,
-                  labels: [],
-                },
-                {
-                  number: 4,
-                  labels: [{ name: 'alias/old:2' }],
-                },
-              ]
-            })
+          const getIssuesForRepoEndpoint = jest.fn().mockImplementation((uri, body) => {
+            return [
+              {
+                number: 1,
+                labels: [{ name: 'alias/old:1' }, { name: 'alias/old:2' }],
+              },
+              {
+                number: 3,
+                labels: [],
+              },
+              {
+                number: 4,
+                labels: [{ name: 'alias/old:2' }],
+              },
+            ]
+          })
 
-          const createLabelsEndpoint = jest
-            .fn()
-            .mockImplementation((uri, body) => {
-              expect({ body, uri }).toEqual({
-                uri: '/repos/maticzav/changed/labels',
-                body: {
-                  color: '000000',
-                  name: 'create/new',
-                },
-              })
-              return
+          const createLabelsEndpoint = jest.fn().mockImplementation((uri, body) => {
+            expect({ body, uri }).toEqual({
+              uri: '/repos/maticzav/changed/labels',
+              body: {
+                color: '000000',
+                name: 'create/new',
+              },
             })
+            return
+          })
 
           let updatedLabels: { uri: string; body: object }[] = []
-          const updateLabelsEndpoint = jest
-            .fn()
-            .mockImplementation((uri, body) => {
-              updatedLabels.push({ uri, body })
-              return
-            })
+          const updateLabelsEndpoint = jest.fn().mockImplementation((uri, body) => {
+            updatedLabels.push({ uri, body })
+            return
+          })
 
           let removedLabels: string[] = []
-          const removeLabelsEndpoint = jest
-            .fn()
-            .mockImplementation((uri, body) => {
-              removedLabels.push(uri)
-              return
-            })
+          const removeLabelsEndpoint = jest.fn().mockImplementation((uri, body) => {
+            removedLabels.push(uri)
+            return
+          })
 
           let aliasedLabels: { uri: string; body: object }[] = []
-          const issueLabelsEndpoint = jest
-            .fn()
-            .mockImplementation((uri, body) => {
-              aliasedLabels.push({ uri, body })
-              return
-            })
+          const issueLabelsEndpoint = jest.fn().mockImplementation((uri, body) => {
+            aliasedLabels.push({ uri, body })
+            return
+          })
 
-          const commitCommentEndpoint = jest
-            .fn()
-            .mockImplementation((uri, body) => {
-              expect(body).toMatchSnapshot()
-              return
-            })
+          const commitCommentEndpoint = jest.fn().mockImplementation((uri, body) => {
+            expect(body).toMatchSnapshot()
+            return
+          })
 
           /* Mocks */
 
-          nock('https://api.github.com')
-            .post('/app/installations/13055/access_tokens')
-            .reply(200, { token: 'test' })
+          nock('https://api.github.com').post('/app/installations/13055/access_tokens').reply(200, { token: 'test' })
 
           nock('https://api.github.com')
-            .get(
-              '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
-            )
+            .get('/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster')
             .reply(200, configEndpoint)
 
           nock('https://api.github.com')
@@ -727,9 +619,7 @@ describe('github:', () => {
             .persist()
 
           nock('https://api.github.com')
-            .post(
-              '/repos/maticzav/maticzav-labelsync/commits/0000000000000000000000000000000000000000/comments',
-            )
+            .post('/repos/maticzav/maticzav-labelsync/commits/0000000000000000000000000000000000000000/comments')
             .reply(200, commitCommentEndpoint)
             .persist()
 
@@ -765,29 +655,21 @@ describe('github:', () => {
             content: Buffer.from('invalid: invalid').toString('base64'),
           })
 
-          const commitCommentEndpoint = jest
-            .fn()
-            .mockImplementation((uri, body) => {
-              expect(body).toMatchSnapshot()
-              return
-            })
+          const commitCommentEndpoint = jest.fn().mockImplementation((uri, body) => {
+            expect(body).toMatchSnapshot()
+            return
+          })
 
           /* Mocks */
 
-          nock('https://api.github.com')
-            .post('/app/installations/13055/access_tokens')
-            .reply(200, { token: 'test' })
+          nock('https://api.github.com').post('/app/installations/13055/access_tokens').reply(200, { token: 'test' })
 
           nock('https://api.github.com')
-            .get(
-              '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
-            )
+            .get('/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster')
             .reply(200, configEndpoint)
 
           nock('https://api.github.com')
-            .post(
-              '/repos/maticzav/maticzav-labelsync/commits/0000000000000000000000000000000000000000/comments',
-            )
+            .post('/repos/maticzav/maticzav-labelsync/commits/0000000000000000000000000000000000000000/comments')
             .reply(200, commitCommentEndpoint)
             .persist()
 
@@ -820,14 +702,10 @@ describe('github:', () => {
 
           /* Mocks */
 
-          nock('https://api.github.com')
-            .post('/app/installations/13055/access_tokens')
-            .reply(200, { token: 'test' })
+          nock('https://api.github.com').post('/app/installations/13055/access_tokens').reply(200, { token: 'test' })
 
           nock('https://api.github.com')
-            .get(
-              '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
-            )
+            .get('/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster')
             .reply(200, configEndpoint)
 
           nock('https://api.github.com')
@@ -835,9 +713,7 @@ describe('github:', () => {
             .reply(200, installationsEndpoint)
 
           nock('https://api.github.com')
-            .post(
-              '/repos/maticzav/maticzav-labelsync/commits/0000000000000000000000000000000000000000/comments',
-            )
+            .post('/repos/maticzav/maticzav-labelsync/commits/0000000000000000000000000000000000000000/comments')
             .reply(200, (uri, body) => {
               expect(body).toMatchSnapshot()
               return
@@ -872,11 +748,7 @@ describe('github:', () => {
           })
 
           const installationsEndpoint = jest.fn().mockReturnValue({
-            repositories: [
-              { name: 'changed' },
-              { name: 'unchanged' },
-              { name: 'other' },
-            ],
+            repositories: [{ name: 'changed' }, { name: 'unchanged' }, { name: 'other' }],
           })
 
           const labelsEndpoint = jest.fn().mockImplementation((uri) => {
@@ -923,16 +795,14 @@ describe('github:', () => {
             }
           })
 
-          const getIssuesForRepoEndpoint = jest
-            .fn()
-            .mockImplementation((uri, body) => {
-              return [
-                {
-                  number: 1,
-                  labels: [{ name: 'alias/old:1' }, { name: 'alias/old:2' }],
-                },
-              ]
-            })
+          const getIssuesForRepoEndpoint = jest.fn().mockImplementation((uri, body) => {
+            return [
+              {
+                number: 1,
+                labels: [{ name: 'alias/old:1' }, { name: 'alias/old:2' }],
+              },
+            ]
+          })
 
           /* Mocks */
 
@@ -940,9 +810,7 @@ describe('github:', () => {
             .get('/repos/maticzav/maticzav-labelsync/compare/master...labels')
             .reply(200, compareEndpoint)
 
-          nock('https://api.github.com')
-            .post('/app/installations/13055/access_tokens')
-            .reply(200, { token: 'test' })
+          nock('https://api.github.com').post('/app/installations/13055/access_tokens').reply(200, { token: 'test' })
 
           nock('https://api.github.com')
             .post('/repos/maticzav/maticzav-labelsync/check-runs')
@@ -954,9 +822,7 @@ describe('github:', () => {
             })
 
           nock('https://api.github.com')
-            .get(
-              '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=labels',
-            )
+            .get('/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=labels')
             .reply(200, configEndpoint)
 
           nock('https://api.github.com')
@@ -1020,9 +886,7 @@ describe('github:', () => {
             .get('/repos/maticzav/maticzav-labelsync/compare/master...labels')
             .reply(200, compareEndpoint)
 
-          nock('https://api.github.com')
-            .post('/app/installations/13055/access_tokens')
-            .reply(200, { token: 'test' })
+          nock('https://api.github.com').post('/app/installations/13055/access_tokens').reply(200, { token: 'test' })
 
           await probot.receive({
             id: 'pr.no_changes',
@@ -1060,9 +924,7 @@ describe('github:', () => {
             .get('/repos/maticzav/maticzav-labelsync/compare/master...labels')
             .reply(200, compareEndpoint)
 
-          nock('https://api.github.com')
-            .post('/app/installations/13055/access_tokens')
-            .reply(200, { token: 'test' })
+          nock('https://api.github.com').post('/app/installations/13055/access_tokens').reply(200, { token: 'test' })
 
           nock('https://api.github.com')
             .post('/repos/maticzav/maticzav-labelsync/check-runs')
@@ -1074,9 +936,7 @@ describe('github:', () => {
             })
 
           nock('https://api.github.com')
-            .get(
-              '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=labels',
-            )
+            .get('/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=labels')
             .reply(200, configEndpoint)
 
           nock('https://api.github.com')
@@ -1117,14 +977,10 @@ describe('github:', () => {
 
           /* Mocks */
 
-          nock('https://api.github.com')
-            .post('/app/installations/13055/access_tokens')
-            .reply(200, { token: 'test' })
+          nock('https://api.github.com').post('/app/installations/13055/access_tokens').reply(200, { token: 'test' })
 
           nock('https://api.github.com')
-            .get(
-              '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
-            )
+            .get('/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster')
             .reply(200, configEndpoint)
 
           nock('https://api.github.com')
@@ -1136,7 +992,7 @@ describe('github:', () => {
 
           await probot.receive({
             id: 'labelcreated',
-            name: 'label.created',
+            name: 'label',
             payload: labelCreatedPayload,
           })
 
@@ -1159,28 +1015,22 @@ describe('github:', () => {
 
             /* Mocks */
 
-            nock('https://api.github.com')
-              .post('/app/installations/13055/access_tokens')
-              .reply(200, { token: 'test' })
+            nock('https://api.github.com').post('/app/installations/13055/access_tokens').reply(200, { token: 'test' })
 
             nock('https://api.github.com')
-              .get(
-                '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
-              )
+              .get('/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster')
               .reply(200, configEndpoint)
 
             nock('https://api.github.com')
               .delete(/\/repos\/maticzav\/\w+\/labels/)
               .reply(200, (uri) => {
-                expect(uri).toBe(
-                  '/repos/maticzav/changed/labels/:bug:%20Bugfix',
-                )
+                expect(uri).toBe('/repos/maticzav/changed/labels/:bug:%20Bugfix')
               })
               .persist()
 
             await probot.receive({
               id: 'labelcreated-wildcard',
-              name: 'label.created',
+              name: 'label',
               payload: labelCreatedPayload,
             })
 
@@ -1202,14 +1052,10 @@ describe('github:', () => {
 
           /* Mocks */
 
-          nock('https://api.github.com')
-            .post('/app/installations/13055/access_tokens')
-            .reply(200, { token: 'test' })
+          nock('https://api.github.com').post('/app/installations/13055/access_tokens').reply(200, { token: 'test' })
 
           nock('https://api.github.com')
-            .get(
-              '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
-            )
+            .get('/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster')
             .reply(200, configEndpoint)
 
           let addedLabels: string[] = []
@@ -1223,7 +1069,7 @@ describe('github:', () => {
 
           await probot.receive({
             id: 'issueslabeled',
-            name: 'issues.labeled',
+            name: 'issues',
             payload: issuesLabeledPayload,
           })
 
@@ -1246,14 +1092,10 @@ describe('github:', () => {
 
           /* Mocks */
 
-          nock('https://api.github.com')
-            .post('/app/installations/13055/access_tokens')
-            .reply(200, { token: 'test' })
+          nock('https://api.github.com').post('/app/installations/13055/access_tokens').reply(200, { token: 'test' })
 
           nock('https://api.github.com')
-            .get(
-              '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
-            )
+            .get('/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster')
             .reply(200, configEndpoint)
 
           let addedLabels: string[] = []
@@ -1267,7 +1109,7 @@ describe('github:', () => {
 
           await probot.receive({
             id: 'pullrequestlabled',
-            name: 'pull_request.labeled',
+            name: 'pull_request',
             payload: pullRequestLabeledPayload,
           })
 
@@ -1293,22 +1135,16 @@ describe('github:', () => {
             return []
           })
 
-          const crudLabelEndpoint = jest
-            .fn()
-            .mockImplementation((uri, body) => {
-              return
-            })
+          const crudLabelEndpoint = jest.fn().mockImplementation((uri, body) => {
+            return
+          })
 
           /* Mocks */
 
-          nock('https://api.github.com')
-            .post('/app/installations/13055/access_tokens')
-            .reply(200, { token: 'test' })
+          nock('https://api.github.com').post('/app/installations/13055/access_tokens').reply(200, { token: 'test' })
 
           nock('https://api.github.com')
-            .get(
-              '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
-            )
+            .get('/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster')
             .reply(200, configEndpoint)
 
           nock('https://api.github.com')
@@ -1351,22 +1187,16 @@ describe('github:', () => {
               return []
             })
 
-            const crudLabelEndpoint = jest
-              .fn()
-              .mockImplementation((uri, body) => {
-                return
-              })
+            const crudLabelEndpoint = jest.fn().mockImplementation((uri, body) => {
+              return
+            })
 
             /* Mocks */
 
-            nock('https://api.github.com')
-              .post('/app/installations/13055/access_tokens')
-              .reply(200, { token: 'test' })
+            nock('https://api.github.com').post('/app/installations/13055/access_tokens').reply(200, { token: 'test' })
 
             nock('https://api.github.com')
-              .get(
-                '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
-              )
+              .get('/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster')
               .reply(200, configEndpoint)
 
             nock('https://api.github.com')
@@ -1406,14 +1236,10 @@ describe('github:', () => {
 
             /* Mocks */
 
-            nock('https://api.github.com')
-              .post('/app/installations/13055/access_tokens')
-              .reply(200, { token: 'test' })
+            nock('https://api.github.com').post('/app/installations/13055/access_tokens').reply(200, { token: 'test' })
 
             nock('https://api.github.com')
-              .get(
-                '/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster',
-              )
+              .get('/repos/maticzav/maticzav-labelsync/contents/labelsync.yml?ref=refs%2Fheads%2Fmaster')
               .reply(200, configEndpoint)
 
             await probot.receive({
@@ -1430,10 +1256,7 @@ describe('github:', () => {
         )
 
       test('logs are reporting correctly', async () => {
-        const logs = fs.readFileSync(LOGS_FILE, { encoding: 'utf-8' })
-        const json = logToJSON(logs)
-
-        expect(json.map(removeLogsDateFields)).toMatchSnapshot()
+        expect(logs.map(removeLogsDateFields)).toMatchSnapshot()
       })
 
       /* End of tests */

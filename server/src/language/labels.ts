@@ -3,21 +3,16 @@ import os from 'os'
 import prettier from 'prettier'
 import { stringifyUrl } from 'query-string'
 
-import { GithubLabel } from '../github'
 import { LabelSyncReport } from '../handlers/labels'
-import { not } from '../utils'
-import { isNull } from 'util'
+
+import { GithubLabel } from '../lib/github'
+import { not } from '../lib/utils'
 
 /**
  * Generates a human readable report out of PR changes.
  */
-export function generateHumanReadablePRReport(
-  reports: LabelSyncReport[],
-): string {
-  const changedReports = reports
-    .filter(reportHasChanges)
-    .sort(orderReports)
-    .map(parseLabelSyncReport)
+export function generateHumanReadablePRReport(reports: LabelSyncReport[]): string {
+  const changedReports = reports.filter(reportHasChanges).sort(orderReports).map(parseLabelSyncReport)
 
   const unchangedReports = reports.filter(not(reportHasChanges))
   const report = ml`
@@ -42,13 +37,7 @@ export function generateHumanReadablePRReport(
   function reportHasChanges(report: LabelSyncReport): boolean {
     switch (report.status) {
       case 'Success': {
-        return (
-          report.additions.length +
-            report.aliases.length +
-            report.removals.length +
-            report.updates.length >
-          0
-        )
+        return report.additions.length + report.aliases.length + report.removals.length + report.updates.length > 0
       }
       case 'Failure': {
         /* Failure should always be treated as report with changes. */
@@ -61,13 +50,8 @@ export function generateHumanReadablePRReport(
 /**
  * Generates a concise review of changes.
  */
-export function generateHumanReadableCommitReport(
-  reports: LabelSyncReport[],
-): string {
-  const changedReports = reports
-    .filter(reportHasChanges)
-    .sort(orderReports)
-    .map(parseLabelSyncReport)
+export function generateHumanReadableCommitReport(reports: LabelSyncReport[]): string {
+  const changedReports = reports.filter(reportHasChanges).sort(orderReports).map(parseLabelSyncReport)
 
   const report = ml`
   | ## :label: Here's what has changed.
@@ -86,15 +70,9 @@ export function generateHumanReadableCommitReport(
     switch (report.status) {
       case 'Success': {
         /* Create read or update actions */
-        const crus =
-          report.additions.length +
-            report.aliases.length +
-            report.updates.length >
-          0
+        const crus = report.additions.length + report.aliases.length + report.updates.length > 0
         /* Actual removals. */
-        const ds =
-          report.config.config.removeUnconfiguredLabels &&
-          report.removals.length > 0
+        const ds = report.config.config.removeUnconfiguredLabels && report.removals.length > 0
 
         return crus || ds
       }
@@ -128,36 +106,24 @@ function parseLabelSyncReport(report: LabelSyncReport): string {
         /* New labels */
         ulOfLabels(
           report.additions,
-          singular(
-            ':sparkles: 1 new label.',
-            (n) => `:sparkles: ${n} new labels.`,
-          ),
+          singular(':sparkles: 1 new label.', (n) => `:sparkles: ${n} new labels.`),
         ),
         /* Updated labels */
         ulOfLabels(
           report.updates,
-          singular(
-            ':lipstick: 1 label changed.',
-            (n) => `:lipstick: ${n} changed labels.`,
-          ),
+          singular(':lipstick: 1 label changed.', (n) => `:lipstick: ${n} changed labels.`),
         ),
         /* Aliased labels */
         ulOfLabels(
           report.aliases,
-          singular(
-            ':performing_arts: 1 new label alias.',
-            (n) => `:performing_arts: ${n} aliases.`,
-          ),
+          singular(':performing_arts: 1 new label alias.', (n) => `:performing_arts: ${n} aliases.`),
         ),
         /* Unconfigured labels and removals */
         (() => {
           if (removeUnconfiguredLabels) {
             return ulOfLabels(
               report.removals,
-              singular(
-                ':coffin: 1 removed label.',
-                (n) => `:coffin: ${n} removed labels.`,
-              ),
+              singular(':coffin: 1 removed label.', (n) => `:coffin: ${n} removed labels.`),
             )
           }
           return ulOfLabels(
@@ -177,7 +143,7 @@ function parseLabelSyncReport(report: LabelSyncReport): string {
         })(),
       ]
 
-      return sections.filter(not(isNull)).join(os.EOL)
+      return sections.filter((s) => s != null).join(os.EOL)
     }
     case 'Failure': {
       return ml`
@@ -194,10 +160,7 @@ function parseLabelSyncReport(report: LabelSyncReport): string {
 /**
  * Let's you create singular and plural versions of a string.
  */
-function singular(
-  singular: string,
-  plural: (val: number) => string,
-): (val: number) => string {
+function singular(singular: string, plural: (val: number) => string): (val: number) => string {
   return (n: number) => {
     if (n == 1) return singular
     return plural(n)
@@ -216,10 +179,7 @@ function parseRepoName(name: string): string {
 /**
  * Creates a human readable list of labels.
  */
-function ulOfLabels(
-  labels: GithubLabel[],
-  summary: (n: number) => string,
-): string | null {
+function ulOfLabels(labels: GithubLabel[], summary: (n: number) => string): string | null {
   if (labels.length == 0) return null
   return ml`
   | <details>
@@ -238,8 +198,7 @@ function ulOfLabels(
 function label(label: GithubLabel): string {
   /* Find changes */
   const nameChanged = label.old_name && label.old_name !== label.name
-  const descChanged =
-    label.old_description && label.old_description !== label.description
+  const descChanged = label.old_description && label.old_description !== label.description
   const colorChanged = label.old_color && label.old_color !== label.color
 
   const changes: string[] = [
@@ -275,9 +234,7 @@ function label(label: GithubLabel): string {
 function ulOfUnchangedReports(reports: LabelSyncReport[]): string {
   if (reports.length === 0) return `No unchanged repositories.`
 
-  const repos = reports
-    .map((report) => ` * ${parseRepoName(report.repo)}`)
-    .join(os.EOL)
+  const repos = reports.map((report) => ` * ${parseRepoName(report.repo)}`).join(os.EOL)
 
   return ml`
   | <details>

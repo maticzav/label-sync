@@ -1,8 +1,5 @@
 import { LabelSyncReport } from '../../src/handlers/labels'
-import {
-  generateHumanReadablePRReport,
-  generateHumanReadableCommitReport,
-} from '../../src/language/labels'
+import { generateHumanReadablePRReport, generateHumanReadableCommitReport } from '../../src/language/labels'
 
 /* Data */
 const reportOne: LabelSyncReport[] = [

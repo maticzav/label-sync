@@ -1,26 +1,16 @@
-import fs from 'fs'
 import nock from 'nock'
 import path from 'path'
-import { Octokit } from 'probot'
+import { ProbotOctokit } from 'probot'
 
-import {
-  isLabel,
-  isLabelDefinition,
-  bootstrapConfigRepository,
-} from '../src/github'
-import { populateTemplate } from '../src/bootstrap'
-import { loadTreeFromPath } from '../src/utils'
+import { isLabel, isLabelDefinition, bootstrapConfigRepository } from '../src/lib/github'
+import { populateTemplate } from '../src/lib/bootstrap'
+import { loadTreeFromPath } from '../src/lib/utils'
+import { Octokit } from 'server/src/lib/context'
 
 /* Fixtures */
 const TEMPLATE_PATH = path.resolve(__dirname, '../../templates/typescript/')
 const TEMPLATE = populateTemplate(
-  loadTreeFromPath(TEMPLATE_PATH, [
-    'dist',
-    'node_modules',
-    '.DS_Store',
-    /.*\.log.*/,
-    /.*\.lock.*/,
-  ]),
+  loadTreeFromPath(TEMPLATE_PATH, ['dist', 'node_modules', '.DS_Store', /.*\.log.*/, /.*\.lock.*/]),
   {
     repository: 'config-labelsync',
     repositories: [{ name: 'labelsync' }],
@@ -39,7 +29,7 @@ describe('github integration:', () => {
   let github: Octokit
 
   beforeEach(() => {
-    github = new Octokit()
+    github = new ProbotOctokit()
   })
 
   afterEach(() => {
@@ -105,9 +95,7 @@ describe('github integration:', () => {
       //   .get('/repos/maticzav/maticzav-labelsync')
       //   .reply(404, repoEndpoint)
 
-      nock('https://api.github.com')
-        .post('/orgs/maticzav/repos')
-        .reply(200, createRepoEndpoint)
+      nock('https://api.github.com').post('/orgs/maticzav/repos').reply(200, createRepoEndpoint)
 
       nock('https://api.github.com')
         .post('/repos/maticzav/maticzav-labelsync/git/blobs')
@@ -120,7 +108,7 @@ describe('github integration:', () => {
         .persist()
 
       nock('https://api.github.com')
-        .get('/repos/maticzav/maticzav-labelsync/git/ref/heads/master')
+        .get('/repos/maticzav/maticzav-labelsync/git/ref/heads%2Fmaster')
         .reply(200, getRefEndpoint)
 
       nock('https://api.github.com')
@@ -128,16 +116,12 @@ describe('github integration:', () => {
         .reply(200, createCommitEndpoint)
 
       nock('https://api.github.com')
-        .patch('/repos/maticzav/maticzav-labelsync/git/refs/heads/master')
+        .patch('/repos/maticzav/maticzav-labelsync/git/refs/heads%2Fmaster')
         .reply(200, updateRefEndpoint)
 
       /* Bootstrap. */
 
-      await bootstrapConfigRepository(
-        github,
-        { owner: 'maticzav', repo: 'maticzav-labelsync' },
-        TEMPLATE,
-      )
+      await bootstrapConfigRepository(github, { owner: 'maticzav', repo: 'maticzav-labelsync' }, TEMPLATE)
 
       /* Tests */
 
