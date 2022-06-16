@@ -1,4 +1,5 @@
 import { InstallationsSource } from '@labelsync/database'
+import { TaskQueue } from '@labelsync/queues'
 import pino from 'pino'
 import Stripe from 'stripe'
 
@@ -7,6 +8,7 @@ import Stripe from 'stripe'
  */
 export type Sources = {
   installations: InstallationsSource
+  tasks: TaskQueue
   stripe: Stripe
   log: pino.Logger
 }

@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { DateTime } from 'luxon'
 
-import { prisma } from './prisma'
+import { getUnsafeGlobalClient } from './prisma'
 
 export enum CacheStrategy {
   // Only use cached value.
@@ -52,7 +52,7 @@ export abstract class Source<Key, Value extends { ttl: DateTime }> {
     this.concurrency = concurrency
     this.clear = this.clear.bind(this)
     this.timer = setInterval(this.clear, timeout)
-    this.prisma = prisma
+    this.prisma = getUnsafeGlobalClient
   }
 
   /**

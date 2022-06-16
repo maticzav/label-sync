@@ -5,6 +5,8 @@
   },
   "dependencies": {
     "@octokit/rest": "18.12.0",
+    "@sentry/node": "^6.19.7",
+    "@sentry/tracing": "^6.19.7",
     "body-parser": "1.19.0",
     "cors": "2.8.5",
     "express": "4.17.3",

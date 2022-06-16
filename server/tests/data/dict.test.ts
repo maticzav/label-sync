@@ -1,4 +1,4 @@
-import { mapEntries, mapEntriesAsync, Dict, mapKeys } from '../../src/data/dict'
+import { mapEntries, mapEntriesAsync, Dict, mapKeys } from '../../../workers/sync/src/data/dict'
 
 describe('dict:', () => {
   test('mapEntries', () => {

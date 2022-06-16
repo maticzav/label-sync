@@ -2,9 +2,9 @@ import nock from 'nock'
 import path from 'path'
 import { ProbotOctokit } from 'probot'
 
-import { isLabel, isLabelDefinition, bootstrapConfigRepository } from '../src/lib/github'
+import { isLabel, isLabelDefinition, bootstrapConfigRepository } from '../src/lib/github/installation'
 import { populateTemplate } from '../src/lib/bootstrap'
-import { loadTreeFromPath } from '../src/lib/utils'
+import { loadTreeFromPath } from '../../../server/src/lib/utils'
 import { Octokit } from 'server/src/lib/context'
 
 /* Fixtures */

@@ -6,9 +6,9 @@ import qs from 'query-string'
 let client: PrismaClient | null = null
 
 /**
- * Your database connection.
+ * Returns a PrismaClient instance that shares resources globally.
  */
-export const prisma = (): PrismaClient => {
+export const getUnsafeGlobalClient = (): PrismaClient => {
   if (client === null) {
     // We manually set the connection_limit to avoid congestion.
     const { url, query } = qs.parseUrl(process.env.DATABASE_URL!)

@@ -1,4 +1,4 @@
-import { andThen } from '../../src/data/maybe'
+import { andThen } from '../../../workers/sync/src/data/maybe'
 
 describe('maybe:', () => {
   test('andThen', () => {

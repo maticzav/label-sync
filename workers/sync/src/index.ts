@@ -1,18 +1,17 @@
 import { Syncer } from './syncer'
 
-const watch = new Syncer({
-  credentials: {
-    bitQueryToken: 'BQYo9LejuTvc3XmESV3tuy1O1gjh9WfP',
-    infuraKey: '',
-  },
-  executor: {
-    address: '',
-  },
+const syncer = new Syncer({
+  redis: '',
 })
 
-console.log(`Started watching...  `)
+syncer
+  .start()
+  .then(() => {
+    console.log(`Started watching...  `)
+  })
+  .catch(() => {})
 
 process.on('SIGINT', () => {
-  watch.stop()
+  syncer.stop()
   process.exit(0)
 })

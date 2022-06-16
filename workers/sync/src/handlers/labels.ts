@@ -3,7 +3,7 @@ import { LSCRepository, LSCLabel, LSCRepositoryConfiguration, normalizeColor } f
 import * as maybe from '../data/maybe'
 import { Dict } from '../data/dict'
 
-import { Octokit } from '../lib/context'
+import { Octokit } from '../../../../server/src/lib/context'
 import {
   GithubLabel,
   getRepositoryLabels,
@@ -11,8 +11,8 @@ import {
   updateLabelsInRepository,
   removeLabelsFromRepository,
   aliasLabelsInRepository,
-} from '../lib/github'
-import { withDefault } from '../lib/utils'
+} from '../lib/github/installation'
+import { withDefault } from '../../../../server/src/lib/utils'
 
 export type LabelSyncReport =
   | {

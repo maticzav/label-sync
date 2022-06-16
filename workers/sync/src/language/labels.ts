@@ -5,8 +5,8 @@ import { stringifyUrl } from 'query-string'
 
 import { LabelSyncReport } from '../handlers/labels'
 
-import { GithubLabel } from '../lib/github'
-import { not } from '../lib/utils'
+import { GithubLabel } from '../lib/github/installation'
+import { not } from '../../../../server/src/lib/utils'
 
 /**
  * Generates a human readable report out of PR changes.

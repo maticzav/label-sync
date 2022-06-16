@@ -4,6 +4,7 @@
     "start": "yarn g:ts-node src/index.ts"
   },
   "dependencies": {
+    "multilines": "^1.0.3",
     "pino": "^7.10.0"
   }
 }

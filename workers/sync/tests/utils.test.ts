@@ -1,5 +1,5 @@
 import path from 'path'
-import { not, loadTreeFromPath } from '../src/lib/utils'
+import { not, loadTreeFromPath } from '../../../server/src/lib/utils'
 
 describe('utils:', () => {
   test('not', () => {

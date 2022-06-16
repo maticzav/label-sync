@@ -11,19 +11,18 @@ import { InstallationsSource } from '@labelsync/database'
 import { Sources } from '../../src/lib/sources'
 import { github } from '../../src/events/github.events'
 
-import { removeLogsDateFields } from '../__fixtures__/utils'
+import { removeLogsDateFields } from '../../../workers/sync/tests/__fixtures__/utils'
 
 /* Fixtures */
 
-import installationPayload from './../__fixtures__/github/installation.created'
-import issuesLabeledPayload from './../__fixtures__/github/issues.labeled'
-import pullRequestLabeledPayload from './../__fixtures__/github/pr.labeled'
-import labelCreatedPayload from './../__fixtures__/github/label.created'
-// import marketplacePurchasePayload from './../__fixtures__/github/marketplace_purchase.purchased'
-// import marketplaceCancelPayload from './../__fixtures__/github/marketplace_purchase.cancelled'
-import prPayload from './../__fixtures__/github/pullrequest.opened'
-import pushPayload from './../__fixtures__/github/push'
-import repositoryCreatedPayload from './../__fixtures__/github/repository.created'
+import installationPayload from '../../../workers/sync/tests/__fixtures__/github/installation.created'
+import issuesLabeledPayload from '../../../workers/sync/tests/__fixtures__/github/issues.labeled'
+import pullRequestLabeledPayload from '../../../workers/sync/tests/__fixtures__/github/pr.labeled'
+import labelCreatedPayload from '../../../workers/sync/tests/__fixtures__/github/label.created'
+import prPayload from '../../../workers/sync/tests/__fixtures__/github/pullrequest.opened'
+import pushPayload from '../../../workers/sync/tests/__fixtures__/github/push'
+import repositoryCreatedPayload from '../../../workers/sync/tests/__fixtures__/github/repository.created'
+import { TaskQueue } from '@labelsync/queues'
 
 const configFixture = fs.readFileSync(path.resolve(__dirname, './../__fixtures__/labelsync.yml'), { encoding: 'utf-8' })
 
@@ -72,6 +71,7 @@ describe('github:', () => {
       stripe: new Stripe('sk_test_gQB5rH8aGqEhNGuBtgk9yK8L007RgZDRLh', {
         apiVersion: '2020-08-27',
       }),
+      tasks: new TaskQueue('redis://localhost:6379'),
       log: pino(streamLogsToOutput),
     }
 

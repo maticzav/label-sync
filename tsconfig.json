@@ -21,11 +21,12 @@
 
     "paths": {
       "@labelsync/config": ["packages/config/src/index.ts"],
-      "@labelsync/database": ["packages/database/src/index.ts"]
+      "@labelsync/database": ["packages/database/src/index.ts"],
+      "@labelsync/queues": ["packages/queues/src/index.ts"]
     }
   },
   "include": ["packages", "workers", "server"],
-  "exclude": ["**/dist/**/*", "**/templates/**/*"],
+  "exclude": ["**/dist/**/*", "**/templates/**/*", "**/web/**/*"],
   "ts-node": {
     "compilerOptions": {
       "target": "ES2017",

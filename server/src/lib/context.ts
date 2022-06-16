@@ -1,10 +1,11 @@
 import _ from 'lodash'
 import { ProbotOctokit } from 'probot'
+import * as octokit from '@octokit/core'
 
 import { getLSConfigRepoName, LSCConfiguration, LS_CONFIG_PATH, parseConfig } from '@labelsync/config'
 import { Installation } from '@labelsync/database'
 
-import { getFile } from './github'
+import { getFile } from '../../../workers/sync/src/lib/github/installation'
 import { Sources } from './sources'
 import { DateTime } from 'luxon'
 import pino from 'pino'

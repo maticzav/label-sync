@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 
 import { populateTemplate } from '../src/lib/bootstrap'
-import { loadTreeFromPath } from '../src/lib/utils'
+import { loadTreeFromPath } from '../../../server/src/lib/utils'
 
 const templatesPath = path.resolve(__dirname, '../../templates')
 const templates = fs.readdirSync(templatesPath).map((template) => ({
