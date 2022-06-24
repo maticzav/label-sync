@@ -2996,10 +2996,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-typist@2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@types/react-typist/-/react-typist-2.0.1.tgz#c3d8d9dc29598737a6b53b087404c0e10485b119"
-  integrity sha512-SxKLwnX8feAB565481AuwezqJ+DWjtri6pgGLzw3SzX/o/UT9kadp1A6fBrRNqJiGOsxh59NE+7KOOVeTkVV0Q==
+"@types/react-typist@2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@types/react-typist/-/react-typist-2.0.3.tgz#fd2b47b88b16358c0f822f6e8b44b8e0f5421220"
+  integrity sha512-5eDrikVNJ73qR5XEV+ZNApoYarzYUD5OOPdNwnNY5RtqituZl9haq0OdZUaac2R751QSOe3zDwnqYhBmdFhG7g==
   dependencies:
     "@types/react" "*"
 
