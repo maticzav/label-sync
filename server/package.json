@@ -11,7 +11,7 @@
     "@prisma/client": "2.12.1",
     "body-parser": "1.20.0",
     "cors": "2.8.5",
-    "express": "4.17.1",
+    "express": "4.18.1",
     "fp-ts": "2.9.5",
     "handlebars": "4.7.7",
     "io-ts": "2.2.16",
@@ -29,7 +29,7 @@
   "devDependencies": {
     "@prisma/cli": "2.12.1",
     "@types/cors": "2.8.12",
-    "@types/express": "4.17.12",
+    "@types/express": "4.17.13",
     "@types/jest": "26.0.24",
     "@types/js-yaml": "3.12.7",
     "@types/jsonwebtoken": "8.5.8",
