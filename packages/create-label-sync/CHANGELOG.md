@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.74](https://github.com/maticzav/label-sync/compare/create-label-sync@2.4.73...create-label-sync@2.4.74) (2022-06-26)
+
+
+### Bug Fixes
+
+* **deps:** update dependency prettier to v2.7.1 ([8c68e7b](https://github.com/maticzav/label-sync/commit/8c68e7b0a7394fb96fcd22e2bc6653cc064e0288))
+
+
+
+
+
 ## [2.4.73](https://github.com/maticzav/label-sync/compare/create-label-sync@2.4.72...create-label-sync@2.4.73) (2022-06-25)
 
 **Note:** Version bump only for package create-label-sync
