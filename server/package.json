@@ -24,7 +24,7 @@
     "probot": "9.15.1",
     "query-string": "6.14.1",
     "stripe": "8.125.0",
-    "winston": "3.3.3"
+    "winston": "3.8.0"
   },
   "devDependencies": {
     "@prisma/cli": "2.12.1",
