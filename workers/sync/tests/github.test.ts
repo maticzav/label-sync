@@ -1,21 +1,19 @@
+import { Octokit } from '@octokit/core'
 import nock from 'nock'
 import path from 'path'
-import { ProbotOctokit } from 'probot'
 
-import { isLabel, isLabelDefinition, bootstrapConfigRepository } from '../src/lib/github/installation'
-import { populateTemplate } from '../src/lib/bootstrap'
-import { loadTreeFromPath } from '../../../server/src/lib/utils'
-import { Octokit } from 'server/src/lib/context'
+import { GitHubEndpoints } from '../src/lib/github'
+import { populateTemplate, loadTreeFromPath } from '../src/lib/templates'
 
-/* Fixtures */
 const TEMPLATE_PATH = path.resolve(__dirname, '../../templates/typescript/')
-const TEMPLATE = populateTemplate(
-  loadTreeFromPath(TEMPLATE_PATH, ['dist', 'node_modules', '.DS_Store', /.*\.log.*/, /.*\.lock.*/]),
-  {
-    repository: 'config-labelsync',
-    repositories: [{ name: 'labelsync' }],
-  },
-)
+const RAW_TEMPLATE = loadTreeFromPath({
+  root: TEMPLATE_PATH,
+  ignore: ['dist', 'node_modules', '.DS_Store', /.*\.log.*/, /.*\.lock.*/],
+})
+const TEMPLATE = populateTemplate(RAW_TEMPLATE, {
+  repository: 'config-labelsync',
+  repositories: [{ name: 'labelsync' }],
+})
 
 describe('github integration:', () => {
   beforeAll(() => {
@@ -26,10 +24,11 @@ describe('github integration:', () => {
     nock.enableNetConnect()
   })
 
-  let github: Octokit
+  let github: GitHubEndpoints
 
   beforeEach(() => {
-    github = new ProbotOctokit()
+    const octokit = new Octokit()
+    github = new GitHubEndpoints(octokit)
   })
 
   afterEach(() => {
@@ -121,7 +120,7 @@ describe('github integration:', () => {
 
       /* Bootstrap. */
 
-      await bootstrapConfigRepository(github, { owner: 'maticzav', repo: 'maticzav-labelsync' }, TEMPLATE)
+      await github.bootstrapConfigRepository({ owner: 'maticzav', repo: 'maticzav-labelsync' }, TEMPLATE)
 
       /* Tests */
 
@@ -136,65 +135,80 @@ describe('github integration:', () => {
 describe('github:', () => {
   test('isLabel', () => {
     expect(
-      isLabel({
-        name: 'bug',
-        color: 'ff',
-        description: 'desc',
-      })({
-        name: 'bug',
-        description: 'desc',
-        color: 'ff',
-      }),
+      GitHubEndpoints.equals(
+        {
+          name: 'bug',
+          color: 'ff',
+          description: 'desc',
+        },
+        {
+          name: 'bug',
+          description: 'desc',
+          color: 'ff',
+        },
+      ),
     ).toBeTruthy()
 
     expect(
-      isLabel({
-        name: 'bug',
-        color: '00',
-        description: 'desc',
-      })({
-        name: 'bug',
-        description: 'desc',
-        color: 'ff',
-      }),
+      GitHubEndpoints.equals(
+        {
+          name: 'bug',
+          color: '00',
+          description: 'desc',
+        },
+        {
+          name: 'bug',
+          description: 'desc',
+          color: 'ff',
+        },
+      ),
     ).toBeFalsy()
 
     expect(
-      isLabel({
-        name: 'bug',
-        color: '00',
-        description: 'desc',
-      })({
-        name: 'bug/0',
-        description: 'this is a bug',
-        color: 'ff',
-      }),
+      GitHubEndpoints.equals(
+        {
+          name: 'bug',
+          color: '00',
+          description: 'desc',
+        },
+        {
+          name: 'bug/0',
+          description: 'this is a bug',
+          color: 'ff',
+        },
+      ),
     ).toBeFalsy()
   })
 
   test('isLabelDefinition', () => {
     expect(
-      isLabelDefinition({
-        name: 'bug',
-        color: '00',
-        description: 'desc',
-      })({
-        name: 'bug',
-        description: 'this is a bug',
-        color: 'ff',
-      }),
+      GitHubEndpoints.definition(
+        {
+          name: 'bug',
+          color: '00',
+          description: 'desc',
+        },
+        {
+          name: 'bug',
+          description: 'this is a bug',
+          color: 'ff',
+        },
+      ),
     ).toBeTruthy()
 
     expect(
-      isLabelDefinition({
-        name: 'bug',
-        color: '00',
-        description: 'desc',
-      })({
-        name: 'bug/0',
-        description: 'this is a bug',
-        color: 'ff',
-      }),
+      GitHubEndpoints.definition(
+        {
+          name: 'bug',
+          color: '00',
+          description: 'desc',
+        },
+        {
+          name: 'bug/0',
+          description: 'this is a bug',
+          color: 'ff',
+        },
+      ),
     ).toBeFalsy()
   })
 })

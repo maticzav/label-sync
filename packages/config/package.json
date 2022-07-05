@@ -2,7 +2,7 @@
   "name": "@labelsync/config",
   "dependencies": {
     "js-yaml": "^4.1.0",
-    "zod": "^3.14.4"
+    "zod": "^3.17.3"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.5"

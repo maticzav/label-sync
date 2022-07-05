@@ -1,10 +1,8 @@
-import { Syncer } from './syncer'
+import { Worker } from './worker'
 
-const syncer = new Syncer({
-  redis: '',
-})
+const worker = new Worker()
 
-syncer
+worker
   .start()
   .then(() => {
     console.log(`Started watching...  `)
@@ -12,6 +10,6 @@ syncer
   .catch(() => {})
 
 process.on('SIGINT', () => {
-  syncer.stop()
+  worker.stop()
   process.exit(0)
 })

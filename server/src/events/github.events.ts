@@ -12,26 +12,9 @@ import {
   isConfigRepo,
 } from '@labelsync/config'
 
-import { handleLabelSync } from '../../../workers/sync/src/handlers/labels'
-import {
-  generateHumanReadableCommitReport,
-  generateHumanReadablePRReport,
-} from '../../../workers/sync/src/language/labels'
+import { generateHumanReadableCommitReport, generateHumanReadablePRReport } from '../../../workers/sync/src/lib/reports'
 
-import { populateTemplate } from '../../../workers/sync/src/lib/bootstrap'
-import { getAccountConfiguration, getAccountInstallation, withContext } from '../lib/context'
-import {
-  addLabelsToIssue,
-  bootstrapConfigRepository,
-  checkInstallationAccess,
-  createPRComment,
-  getFile,
-  getRepo,
-  GitHubTree,
-  GithubLabel,
-  openIssue,
-  removeLabelsFromRepository,
-} from '../../../workers/sync/src/lib/github/installation'
+import { getAccountInstallation, withContext } from '../lib/context'
 import { Sources } from '../lib/sources'
 import { withDefault } from '../lib/utils'
 
@@ -44,188 +27,188 @@ const TEMPLATES = {
  * Events associated with the Github App.
  */
 export const github = (app: Probot, sources: Sources) => {
-  /**
-   * Installation event
-   *
-   * Performs an onboarding configuration to make it easier to get acquainted
-   * with LabelSync.
-   *
-   * Tasks:
-   *  - check whether there exists a configuration repository,
-   *  - create a configuration repository from template.
-   */
-  app.on('installation.created', async (ctx) => {
-    const account = ctx.payload.installation.account
-    const owner = account.login.toLowerCase()
+  // /**
+  //  * Installation event
+  //  *
+  //  * Performs an onboarding configuration to make it easier to get acquainted
+  //  * with LabelSync.
+  //  *
+  //  * Tasks:
+  //  *  - check whether there exists a configuration repository,
+  //  *  - create a configuration repository from template.
+  //  */
+  // app.on('installation.created', async (ctx) => {
+  //   const account = ctx.payload.installation.account
+  //   const owner = account.login.toLowerCase()
 
-    /* Find installation. */
+  //   /* Find installation. */
 
-    const installation = sources.installations.upsert({
-      account: owner,
-      cadence: 'YEARLY',
-      plan: 'FREE',
-      activated: true,
-    })
+  //   const installation = sources.installations.upsert({
+  //     account: owner,
+  //     cadence: 'YEARLY',
+  //     plan: 'FREE',
+  //     activated: true,
+  //   })
 
-    app.log.info(`Onboarding ${owner}.`, {
-      meta: {
-        plan: installation.plan,
-        periodEndsAt: installation.periodEndsAt,
-      },
-    })
+  //   app.log.info(`Onboarding ${owner}.`, {
+  //     meta: {
+  //       plan: installation.plan,
+  //       periodEndsAt: installation.periodEndsAt,
+  //     },
+  //   })
 
-    await sources.tasks.push({ kind: 'onboard', organisation: owner })
-  })
+  //   await sources.tasks.push({ kind: 'onboard', organisation: owner })
+  // })
 
-  /**
-   * Push Event
-   *
-   * Listens for changes to the configuration file.
-   *
-   * Tasks:
-   *  - determine whether the configuration file is OK,
-   *  - sync labels across repositories (i.e. create new ones, remove old ones)
-   *    on master branch,
-   *  - perform check runs on non-master branch.
-   */
-  app.on('push', (ctx) =>
-    withContext({ ...ctx, sources }, async () => {
-      const owner = ctx.payload.repository.owner.login.toLowerCase()
-      const repo = ctx.payload.repository.name
-      const ref = ctx.payload.ref
-      const defaultRef = `refs/heads/${ctx.payload.repository.default_branch}`
-      const commit_sha: string = ctx.payload.after
+  // /**
+  //  * Push Event
+  //  *
+  //  * Listens for changes to the configuration file.
+  //  *
+  //  * Tasks:
+  //  *  - determine whether the configuration file is OK,
+  //  *  - sync labels across repositories (i.e. create new ones, remove old ones)
+  //  *    on master branch,
+  //  *  - perform check runs on non-master branch.
+  //  */
+  // app.on('push', (ctx) =>
+  //   withContext({ ...ctx, sources }, async () => {
+  //     const owner = ctx.payload.repository.owner.login.toLowerCase()
+  //     const repo = ctx.payload.repository.name
+  //     const ref = ctx.payload.ref
+  //     const defaultRef = `refs/heads/${ctx.payload.repository.default_branch}`
+  //     const commit_sha: string = ctx.payload.after
 
-      const configRepo = getLSConfigRepoName(owner)
+  //     const configRepo = getLSConfigRepoName(owner)
 
-      /* Skip non default branch and other repos pushes. */
-      /* istanbul ignore if */
-      if (defaultRef !== ref || !isConfigRepo(owner, repo)) {
-        app.log.info(`Not config repo or ref. Skipping sync.`, {
-          meta: {
-            ref,
-            repo,
-            defaultRef,
-            configRepo,
-          },
-        })
-        return
-      }
+  //     /* Skip non default branch and other repos pushes. */
+  //     /* istanbul ignore if */
+  //     if (defaultRef !== ref || !isConfigRepo(owner, repo)) {
+  //       app.log.info(`Not config repo or ref. Skipping sync.`, {
+  //         meta: {
+  //           ref,
+  //           repo,
+  //           defaultRef,
+  //           configRepo,
+  //         },
+  //       })
+  //       return
+  //     }
 
-      /* Load configuration */
-      const rawConfig = await getFile(ctx.octokit, { owner, repo, ref }, LS_CONFIG_PATH)
+  //     /* Load configuration */
+  //     const rawConfig = await getFile(ctx.octokit, { owner, repo, ref }, LS_CONFIG_PATH)
 
-      /* Skip altogether if there's no configuration. */
-      /* istanbul ignore next */
-      if (rawConfig === null) {
-        app.log.info(`No configuration, skipping sync.`)
-        return
-      }
+  //     /* Skip altogether if there's no configuration. */
+  //     /* istanbul ignore next */
+  //     if (rawConfig === null) {
+  //       app.log.info(`No configuration, skipping sync.`)
+  //       return
+  //     }
 
-      const installation = await getAccountInstallation({ ...ctx, sources })
+  //     const installation = await getAccountInstallation({ ...ctx, sources })
 
-      const parsedConfig = parseConfig({
-        input: rawConfig,
-        isPro: installation.plan === 'PAID',
-      })
+  //     const parsedConfig = parseConfig({
+  //       input: rawConfig,
+  //       isPro: installation.plan === 'PAID',
+  //     })
 
-      /* Open an issue about invalid configuration. */
-      if (!parsedConfig.ok) {
-        app.log.info(`Error in config ${parsedConfig.error}`)
+  //     /* Open an issue about invalid configuration. */
+  //     if (!parsedConfig.ok) {
+  //       app.log.info(`Error in config ${parsedConfig.error}`)
 
-        const report = ml`
-            | It seems like your configuration uses a format unknown to me. 
-            | That might be a consequence of invalid yaml cofiguration file. 
-            |
-            | Here's what I am having problems with:
-            |
-            | ${parsedConfig.error}
-            `
+  //       const report = ml`
+  //       | It seems like your configuration uses a format unknown to me.
+  //       | That might be a consequence of invalid yaml cofiguration file.
+  //       |
+  //       | Here's what I am having problems with:
+  //       |
+  //       | ${parsedConfig.error}
+  //       `
 
-        await ctx.octokit.repos.createCommitComment({
-          owner,
-          repo,
-          commit_sha,
-          body: report,
-        })
+  //       await ctx.octokit.repos.createCommitComment({
+  //         owner,
+  //         repo,
+  //         commit_sha,
+  //         body: report,
+  //       })
 
-        app.log.info(`Commented on commit ${commit_sha}.`)
-        return
-      }
+  //       app.log.info(`Commented on commit ${commit_sha}.`)
+  //       return
+  //     }
 
-      app.log.info(`Configuration loaded.`, {
-        meta: {
-          config: JSON.stringify(parsedConfig.config),
-        },
-      })
+  //     app.log.info(`Configuration loaded.`, {
+  //       meta: {
+  //         config: JSON.stringify(parsedConfig.config),
+  //       },
+  //     })
 
-      /* Verify that we can access all configured files. */
-      const access = await checkInstallationAccess(ctx.octokit, getPhysicalRepositories(parsedConfig.config))
+  //     /* Verify that we can access all configured files. */
+  //     const access = await checkInstallationAccess(ctx.octokit, getPhysicalRepositories(parsedConfig.config))
 
-      /* Skip configurations that we can't access. */
-      switch (access.status) {
-        case 'Sufficient': {
-          app.log.info(`Performing label sync on ${owner}.`)
+  //     /* Skip configurations that we can't access. */
+  //     switch (access.status) {
+  //       case 'Sufficient': {
+  //         app.log.info(`Performing label sync on ${owner}.`)
 
-          /* Performs sync. */
+  //         /* Performs sync. */
 
-          const reports = await Promise.all(
-            getPhysicalRepositories(parsedConfig.config).map((repo) =>
-              handleLabelSync(ctx.octokit, owner, repo, parsedConfig.config.repos[repo], true),
-            ),
-          )
+  //         const reports = await Promise.all(
+  //           getPhysicalRepositories(parsedConfig.config).map((repo) =>
+  //             handleLabelSync(ctx.octokit, owner, repo, parsedConfig.config.repos[repo], true),
+  //           ),
+  //         )
 
-          app.log.info(`Sync completed.`, {
-            meta: {
-              config: JSON.stringify(parsedConfig.config),
-              reports: JSON.stringify(reports),
-            },
-          })
+  //         app.log.info(`Sync completed.`, {
+  //           meta: {
+  //             config: JSON.stringify(parsedConfig.config),
+  //             reports: JSON.stringify(reports),
+  //           },
+  //         })
 
-          /* Comment on commit */
+  //         /* Comment on commit */
 
-          const report = generateHumanReadableCommitReport(reports)
-          const commit_sha: string = ctx.payload.after
+  //         const report = generateHumanReadableCommitReport(reports)
+  //         const commit_sha: string = ctx.payload.after
 
-          await ctx.octokit.repos.createCommitComment({
-            owner,
-            repo,
-            commit_sha,
-            body: report,
-          })
+  //         await ctx.octokit.repos.createCommitComment({
+  //           owner,
+  //           repo,
+  //           commit_sha,
+  //           body: report,
+  //         })
 
-          return
-        }
-        case 'Insufficient': {
-          app.log.info(`Insufficient permissions: ${access.missing.join(', ')}`, {
-            meta: {
-              config: JSON.stringify(parsedConfig.config),
-              access: JSON.stringify(access),
-            },
-          })
+  //         return
+  //       }
+  //       case 'Insufficient': {
+  //         app.log.info(`Insufficient permissions: ${access.missing.join(', ')}`, {
+  //           meta: {
+  //             config: JSON.stringify(parsedConfig.config),
+  //             access: JSON.stringify(access),
+  //           },
+  //         })
 
-          const commit_sha: string = ctx.payload.after
-          const report = ml`
-              | Your configuration stretches beyond repositories I can access. 
-              | Please update it so I may sync your labels.
-              |
-              | _Missing repositories:_
-              | ${access.missing.map((missing) => ` * ${missing}`).join(os.EOL)}
-              `
+  //         const commit_sha: string = ctx.payload.after
+  //         const report = ml`
+  //             | Your configuration stretches beyond repositories I can access.
+  //             | Please update it so I may sync your labels.
+  //             |
+  //             | _Missing repositories:_
+  //             | ${access.missing.map((missing) => ` * ${missing}`).join(os.EOL)}
+  //             `
 
-          await ctx.octokit.repos.createCommitComment({
-            owner,
-            repo,
-            commit_sha,
-            body: report,
-          })
+  //         await ctx.octokit.repos.createCommitComment({
+  //           owner,
+  //           repo,
+  //           commit_sha,
+  //           body: report,
+  //         })
 
-          app.log.info(`Commented on commit ${commit_sha}.`)
-          return
-        }
-      }
-    }),
-  )
+  //         app.log.info(`Commented on commit ${commit_sha}.`)
+  //         return
+  //       }
+  //     }
+  //   }),
+  // )
 
   /**
    * Pull Request event
@@ -401,12 +384,12 @@ export const github = (app: Probot, sources: Sources) => {
 
               /* Opens up an issue about insufficient permissions. */
               const body = ml`
-                  | It seems like this configuration stretches beyond repositories we can access. 
-                  | Please update it so we can help you as best as we can.
-                  |
-                  | _Missing repositories:_
-                  | ${access.missing.map((missing) => ` * ${missing}`).join(os.EOL)}
-                  `
+              | It seems like this configuration stretches beyond repositories we can access. 
+              | Please update it so we can help you as best as we can.
+              |
+              | _Missing repositories:_
+              | ${access.missing.map((missing) => ` * ${missing}`).join(os.EOL)}
+              `
 
               /* Complete a check run */
 
@@ -464,190 +447,190 @@ export const github = (app: Probot, sources: Sources) => {
     }),
   )
 
-  /**
-   * Label Created
-   *
-   * Tasks:
-   *  - figure out whether repository is strict
-   *  - prune unsupported labels.
-   */
-  app.on('label.created', (ctx) =>
-    withContext({ ...ctx, sources }, async () => {
-      const owner = ctx.payload.repository.owner.login.toLowerCase()
-      const repo = ctx.payload.repository.name.toLowerCase()
+  // /**
+  //  * Label Created
+  //  *
+  //  * Tasks:
+  //  *  - figure out whether repository is strict
+  //  *  - prune unsupported labels.
+  //  */
+  // app.on('label.created', (ctx) =>
+  //   withContext({ ...ctx, sources }, async () => {
+  //     const owner = ctx.payload.repository.owner.login.toLowerCase()
+  //     const repo = ctx.payload.repository.name.toLowerCase()
 
-      const configuration = await getAccountConfiguration({ ...ctx, sources })
-      const config = configuration.repos[repo] || configuration.repos['*']
+  //     const configuration = await getAccountConfiguration({ ...ctx, sources })
+  //     const config = configuration.repos[repo] || configuration.repos['*']
 
-      const label = ctx.payload.label as GithubLabel
+  //     const label = ctx.payload.label as GithubLabel
 
-      app.log.info(`New label create in ${repo}: "${label.name}".`)
+  //     app.log.info(`New label create in ${repo}: "${label.name}".`)
 
-      /* Ignore no configuration. */
-      /* istanbul ignore if */
-      if (!config) {
-        app.log.info(`No configuration, skipping`)
-        return
-      }
+  //     /* Ignore no configuration. */
+  //     /* istanbul ignore if */
+  //     if (!config) {
+  //       app.log.info(`No configuration, skipping`)
+  //       return
+  //     }
 
-      /* Ignore complying changes. */
-      /* istanbul ignore if */
-      if (config.labels.hasOwnProperty(label.name)) {
-        app.log.info(`Label is configured, skipping removal.`)
-        return
-      }
+  //     /* Ignore complying changes. */
+  //     /* istanbul ignore if */
+  //     if (config.labels.hasOwnProperty(label.name)) {
+  //       app.log.info(`Label is configured, skipping removal.`)
+  //       return
+  //     }
 
-      /* Config */
-      const removeUnconfiguredLabels = withDefault(false, config.config?.removeUnconfiguredLabels)
+  //     /* Config */
+  //     const removeUnconfiguredLabels = withDefault(false, config.config?.removeUnconfiguredLabels)
 
-      if (removeUnconfiguredLabels) {
-        app.log.info(`Removing "${label.name}" from ${repo}.`)
+  //     if (removeUnconfiguredLabels) {
+  //       app.log.info(`Removing "${label.name}" from ${repo}.`)
 
-        /* Prune unsupported labels in strict repositories. */
-        await removeLabelsFromRepository(ctx.octokit, { repo, owner }, [label], removeUnconfiguredLabels)
+  //       /* Prune unsupported labels in strict repositories. */
+  //       await removeLabelsFromRepository(ctx.octokit, { repo, owner }, [label], removeUnconfiguredLabels)
 
-        app.log.info(`Removed label "${label.name}" from ${repo}.`)
-      }
-    }),
-  )
+  //       app.log.info(`Removed label "${label.name}" from ${repo}.`)
+  //     }
+  //   }),
+  // )
 
-  /**
-   * Label assigned to issue
-   *
-   * Tasks:
-   *  - check if there are any siblings that we should add
-   *  - add siblings
-   */
-  app.on('issues.labeled', (ctx) =>
-    withContext({ ...ctx, sources }, async () => {
-      const owner = ctx.payload.repository.owner.login.toLowerCase()
-      const repo = ctx.payload.repository.name.toLowerCase()
+  // /**
+  //  * Label assigned to issue
+  //  *
+  //  * Tasks:
+  //  *  - check if there are any siblings that we should add
+  //  *  - add siblings
+  //  */
+  // app.on('issues.labeled', (ctx) =>
+  //   withContext({ ...ctx, sources }, async () => {
+  //     const owner = ctx.payload.repository.owner.login.toLowerCase()
+  //     const repo = ctx.payload.repository.name.toLowerCase()
 
-      const configuration = await getAccountConfiguration({ ...ctx, sources })
-      const config = configuration.repos[repo]
+  //     const configuration = await getAccountConfiguration({ ...ctx, sources })
+  //     const config = configuration.repos[repo]
 
-      const label = (ctx.payload as any as { label: GithubLabel }).label
-      const issue = ctx.payload.issue
+  //     const label = (ctx.payload as any as { label: GithubLabel }).label
+  //     const issue = ctx.payload.issue
 
-      app.log.debug('IssueLabeled payload and config', {
-        payload: ctx.payload,
-        config: config,
-      })
+  //     app.log.debug('IssueLabeled payload and config', {
+  //       payload: ctx.payload,
+  //       config: config,
+  //     })
 
-      app.log.info(`Issue (${issue.number}) labeled with "${label.name}".`)
+  //     app.log.info(`Issue (${issue.number}) labeled with "${label.name}".`)
 
-      /* Ignore changes in non-strict config */
-      /* istanbul ignore if */
-      if (!config) {
-        app.log.info(`No configuration found, skipping.`)
-        return
-      }
+  //     /* Ignore changes in non-strict config */
+  //     /* istanbul ignore if */
+  //     if (!config) {
+  //       app.log.info(`No configuration found, skipping.`)
+  //       return
+  //     }
 
-      /* istanbul ignore if */
-      if (!config.labels.hasOwnProperty(label.name)) {
-        app.log.info(`Unconfigured label "${label.name}", skipping.`)
-        return
-      }
+  //     /* istanbul ignore if */
+  //     if (!config.labels.hasOwnProperty(label.name)) {
+  //       app.log.info(`Unconfigured label "${label.name}", skipping.`)
+  //       return
+  //     }
 
-      /* Find siblings. */
-      const siblings = _.get(config, ['labels', label.name, 'siblings'], [] as string[])
-      const ghSiblings = siblings.map((sibling) => ({ name: sibling }))
+  //     /* Find siblings. */
+  //     const siblings = _.get(config, ['labels', label.name, 'siblings'], [] as string[])
+  //     const ghSiblings = siblings.map((sibling) => ({ name: sibling }))
 
-      /* istanbul ignore if */
-      if (ghSiblings.length === 0) {
-        app.log.info(`No siblings to add to "${label.name}", skipping.`)
-        return
-      }
+  //     /* istanbul ignore if */
+  //     if (ghSiblings.length === 0) {
+  //       app.log.info(`No siblings to add to "${label.name}", skipping.`)
+  //       return
+  //     }
 
-      await addLabelsToIssue(ctx.octokit, { repo, owner, issue: issue.number }, ghSiblings, true)
+  //     await addLabelsToIssue(ctx.octokit, { repo, owner, issue: issue.number }, ghSiblings, true)
 
-      /* prettier-ignore */
-      app.log.info(`Added siblings of ${label.name} to issue ${issue.number}: ${siblings.join(', ')}`)
-    }),
-  )
+  //     /* prettier-ignore */
+  //     app.log.info(`Added siblings of ${label.name} to issue ${issue.number}: ${siblings.join(', ')}`)
+  //   }),
+  // )
 
-  /**
-   * Label assigned to pull_request
-   *
-   * Tasks:
-   *  - check if there are any siblings that we should add
-   *  - add siblings
-   */
-  app.on('pull_request.labeled', (ctx) =>
-    withContext({ ...ctx, sources }, async () => {
-      const owner = ctx.payload.repository.owner.login.toLowerCase()
-      const repo = ctx.payload.repository.name.toLowerCase()
+  // /**
+  //  * Label assigned to pull_request
+  //  *
+  //  * Tasks:
+  //  *  - check if there are any siblings that we should add
+  //  *  - add siblings
+  //  */
+  // app.on('pull_request.labeled', (ctx) =>
+  //   withContext({ ...ctx, sources }, async () => {
+  //     const owner = ctx.payload.repository.owner.login.toLowerCase()
+  //     const repo = ctx.payload.repository.name.toLowerCase()
 
-      const configuration = await getAccountConfiguration({ ...ctx, sources })
-      const config = configuration.repos[repo]
+  //     const configuration = await getAccountConfiguration({ ...ctx, sources })
+  //     const config = configuration.repos[repo]
 
-      const label = ctx.payload.label
-      const issue = ctx.payload.pull_request
+  //     const label = ctx.payload.label
+  //     const issue = ctx.payload.pull_request
 
-      app.log.debug('PullRequestLabeled payload and config', {
-        payload: ctx.payload,
-        config,
-      })
+  //     app.log.debug('PullRequestLabeled payload and config', {
+  //       payload: ctx.payload,
+  //       config,
+  //     })
 
-      app.log.info(`PullRequest (${issue.number}) labeled with "${label.name}".`)
+  //     app.log.info(`PullRequest (${issue.number}) labeled with "${label.name}".`)
 
-      /* Ignore changes in non-strict config */
-      /* istanbul ignore if */
-      if (!config) {
-        app.log.info(`No configuration found, skipping.`)
-        return
-      }
+  //     /* Ignore changes in non-strict config */
+  //     /* istanbul ignore if */
+  //     if (!config) {
+  //       app.log.info(`No configuration found, skipping.`)
+  //       return
+  //     }
 
-      /* istanbul ignore if */
-      if (!config.labels.hasOwnProperty(label.name)) {
-        app.log.info(`Unconfigured label "${label.name}", skipping.`)
-        return
-      }
+  //     /* istanbul ignore if */
+  //     if (!config.labels.hasOwnProperty(label.name)) {
+  //       app.log.info(`Unconfigured label "${label.name}", skipping.`)
+  //       return
+  //     }
 
-      /* Find siblings. */
-      const siblings = _.get(config, ['labels', label.name, 'siblings'], [] as string[])
-      const ghSiblings = siblings.map((sibling) => ({ name: sibling }))
+  //     /* Find siblings. */
+  //     const siblings = _.get(config, ['labels', label.name, 'siblings'], [] as string[])
+  //     const ghSiblings = siblings.map((sibling) => ({ name: sibling }))
 
-      /* istanbul ignore if */
-      if (ghSiblings.length === 0) {
-        app.log.info(`No siblings to add to "${label.name}", skipping.`)
-        return
-      }
+  //     /* istanbul ignore if */
+  //     if (ghSiblings.length === 0) {
+  //       app.log.info(`No siblings to add to "${label.name}", skipping.`)
+  //       return
+  //     }
 
-      await addLabelsToIssue(ctx.octokit, { repo, owner, issue: issue.number }, ghSiblings, true)
+  //     await addLabelsToIssue(ctx.octokit, { repo, owner, issue: issue.number }, ghSiblings, true)
 
-      /* prettier-ignore */
-      app.log.info(`Added siblings of ${label.name} to pr ${issue.number}: ${siblings.join(', ')}`)
-    }),
-  )
+  //     /* prettier-ignore */
+  //     app.log.info(`Added siblings of ${label.name} to pr ${issue.number}: ${siblings.join(', ')}`)
+  //   }),
+  // )
 
-  /**
-   * New repository created
-   *
-   * Tasks:
-   *  - check if there's a wildcard configuration
-   *  - sync labels on that repository
-   */
-  app.on('repository.created', (ctx) =>
-    withContext({ ...ctx, sources }, async () => {
-      const owner = ctx.payload.repository.owner.login.toLowerCase()
-      const repo = ctx.payload.repository.name.toLowerCase()
+  // /**
+  //  * New repository created
+  //  *
+  //  * Tasks:
+  //  *  - check if there's a wildcard configuration
+  //  *  - sync labels on that repository
+  //  */
+  // app.on('repository.created', (ctx) =>
+  //   withContext({ ...ctx, sources }, async () => {
+  //     const owner = ctx.payload.repository.owner.login.toLowerCase()
+  //     const repo = ctx.payload.repository.name.toLowerCase()
 
-      const configuration = await getAccountConfiguration({ ...ctx, sources })
-      const config = configuration.repos[repo] || configuration.repos['*']
+  //     const configuration = await getAccountConfiguration({ ...ctx, sources })
+  //     const config = configuration.repos[repo] || configuration.repos['*']
 
-      app.log.info(`New repository ${repo} in ${owner}.`)
+  //     app.log.info(`New repository ${repo} in ${owner}.`)
 
-      /* Ignore no configuration. */
-      /* istanbul ignore if */
-      if (!config) {
-        app.log.info(`No configuration, skipping sync.`)
-        return
-      }
+  //     /* Ignore no configuration. */
+  //     /* istanbul ignore if */
+  //     if (!config) {
+  //       app.log.info(`No configuration, skipping sync.`)
+  //       return
+  //     }
 
-      app.log.info(`Performing sync on ${repo}.`)
-      await handleLabelSync(ctx.octokit, owner, repo, config, true)
-      app.log.info(`Repository synced ${repo}.`)
-    }),
-  )
+  //     app.log.info(`Performing sync on ${repo}.`)
+  //     await handleLabelSync(ctx.octokit, owner, repo, config, true)
+  //     app.log.info(`Repository synced ${repo}.`)
+  //   }),
+  // )
 }

@@ -1,8 +1,9 @@
-import { Installation } from '@prisma/client'
 import cuid from 'cuid'
 import { DateTime } from 'luxon'
+import plimit from 'p-limit'
 
 import { Source } from '../lib/source'
+import { Installation } from '../lib/types'
 
 type Key = { account: string }
 
@@ -30,10 +31,12 @@ export class InstallationsSource extends Source<Key, Value> {
     return key.account
   }
 
+  // Utility Methods
+
   /**
    * Creates a new installation or updates the existing one with given data.
    */
-  upsert(
+  public upsert(
     installation: Pick<Installation, 'account' | 'activated' | 'plan'> & {
       email?: string | null
       cadence: 'YEARLY' | 'MONTHLY'
@@ -88,12 +91,12 @@ export class InstallationsSource extends Source<Key, Value> {
   /**
    * Upgrades plan to pro.
    *
-   * @cadence Number of months covered by the payment.
+   * @parameter cadence - Number of months covered by the payment.
    *
    * NOTE: This function assumes that the user has already created
    * account. If they haven't, it will fail.
    */
-  async upgrade(data: { account: string; cadence: number }): Promise<Installation | null> {
+  public async upgrade(data: { account: string; cadence: number }): Promise<Installation | null> {
     const installation = await this.get({ account: data.account })
     if (!installation) {
       return null
@@ -118,6 +121,34 @@ export class InstallationsSource extends Source<Key, Value> {
     this.set({ account: data.account }, updatedInstallation)
 
     return updatedInstallation
+  }
+
+  /**
+   * Traverses the list of installations and registers them in the database if they don't exist yet.
+   */
+  public async migrate(installations: Pick<Installation, 'account' | 'email'>[]): Promise<void> {
+    const climit = plimit(5)
+    const time = DateTime.now()
+
+    const tasks = installations.map((installation) =>
+      climit(async () => {
+        this.prisma().installation.upsert({
+          where: { account: installation.account },
+          create: {
+            account: installation.account,
+            email: installation.email,
+            plan: 'FREE',
+            periodEndsAt: time.plus({ years: 1 }).toJSDate(),
+            activated: true,
+          },
+          update: {
+            activated: true,
+          },
+        })
+      }),
+    )
+
+    await Promise.all(tasks)
   }
 }
 

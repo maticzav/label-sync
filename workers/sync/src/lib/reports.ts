@@ -3,10 +3,35 @@ import os from 'os'
 import prettier from 'prettier'
 import { stringifyUrl } from 'query-string'
 
-import { LabelSyncReport } from '../handlers/labels'
-
-import { GithubLabel } from '../lib/github/installation'
+import { GitHubLabel } from './github'
 import { not } from '../../../../server/src/lib/utils'
+import { LSCLabel, LSCRepositoryConfiguration } from '@labelsync/config'
+import { Dict } from '../data/dict'
+
+export type LabelSyncReport =
+  | {
+      status: 'Success'
+      owner: string
+      repo: string
+      additions: GitHubLabel[]
+      updates: GitHubLabel[]
+      removals: GitHubLabel[]
+      aliases: GitHubLabel[]
+      config: {
+        config: Required<LSCRepositoryConfiguration>
+        labels: Dict<LSCLabel>
+      }
+    }
+  | {
+      status: 'Failure'
+      repo: string
+      owner: string
+      message: string
+      config: {
+        config: LSCRepositoryConfiguration
+        labels: Dict<LSCLabel>
+      }
+    }
 
 /**
  * Generates a human readable report out of PR changes.
@@ -179,7 +204,7 @@ function parseRepoName(name: string): string {
 /**
  * Creates a human readable list of labels.
  */
-function ulOfLabels(labels: GithubLabel[], summary: (n: number) => string): string | null {
+function ulOfLabels(labels: GitHubLabel[], summary: (n: number) => string): string | null {
   if (labels.length == 0) return null
   return ml`
   | <details>
@@ -195,7 +220,7 @@ function ulOfLabels(labels: GithubLabel[], summary: (n: number) => string): stri
 /**
  * Returns a string representation of label.
  */
-function label(label: GithubLabel): string {
+function label(label: GitHubLabel): string {
   /* Find changes */
   const nameChanged = label.old_name && label.old_name !== label.name
   const descChanged = label.old_description && label.old_description !== label.description
@@ -264,7 +289,6 @@ function badge(props: { name: string; color: string }): string {
 
 /**
  * Joins reports with a separator.
- * @param reports
  */
 function joinReports(reports: string[]): string {
   const separator = ['\n', '---', '\n'].join(os.EOL)

@@ -3,27 +3,35 @@ import fs from 'fs'
 import * as handlebars from 'handlebars'
 import * as prettier from 'prettier'
 
-import { GitHubTree } from './github/installation'
+import { FileTree } from './filetree'
 import { mapKeys, mapEntries } from '../data/dict'
 
 const IGNORED_FILES = ['dist', 'node_modules', '.DS_Store', /.*\.log.*/, /.*\.lock.*/]
 
 export const TEMPLATES = {
-  yaml: loadTreeFromPath(path.resolve(__dirname, '../../../templates/yaml'), IGNORED_FILES),
-  typescript: loadTreeFromPath(path.resolve(__dirname, '../../../templates/typescript'), IGNORED_FILES),
+  yaml: loadTreeFromPath({
+    root: path.resolve(__dirname, '../../../templates/yaml'),
+    ignore: IGNORED_FILES,
+  }),
+  typescript: loadTreeFromPath({
+    root: path.resolve(__dirname, '../../../templates/typescript'),
+    ignore: IGNORED_FILES,
+  }),
 }
 
 /**
  * Loads a tree of utf-8 decoded files at paths.
  */
-export function loadTreeFromPath(root: string, ignore: (string | RegExp)[]): { [path: string]: string } {
+export function loadTreeFromPath({ root, ignore }: { root: string; ignore: (string | RegExp)[] }): {
+  [path: string]: string
+} {
   const files = fs.readdirSync(root, { encoding: 'utf-8' })
   const tree = files
     .filter((file) => !ignore.some((glob) => RegExp(glob).test(file)))
     .flatMap((file) => {
       const rootFilePath = path.resolve(root, file)
       if (fs.lstatSync(rootFilePath).isDirectory()) {
-        return Object.entries(mapKeys(loadTreeFromPath(rootFilePath, ignore), (key) => unshift(file, key)))
+        return Object.entries(mapKeys(loadTreeFromPath({ root: rootFilePath, ignore }), (key) => unshift(file, key)))
       } else {
         return [[file, fs.readFileSync(rootFilePath, { encoding: 'utf-8' })]]
       }
@@ -46,9 +54,12 @@ function unshift(pre: string, path: string): string {
  * @param tree
  */
 export function populateTemplate(
-  tree: GitHubTree,
-  data: { repository: string; repositories: { name: string }[] },
-): GitHubTree {
+  tree: FileTree,
+  data: {
+    repository: string
+    repositories: { name: string }[]
+  },
+): FileTree {
   return mapEntries(tree, (file, name) => {
     /* Personalize file */
     const populatedFile = handlebars.compile(file)(data)

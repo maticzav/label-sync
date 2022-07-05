@@ -4,9 +4,7 @@
 
     "target": "es2019",
     "module": "commonjs",
-    "lib": ["dom", "es2017", "es2019"],
-    "declaration": true,
-    "declarationMap": true,
+    "lib": ["es2017", "es2019"],
 
     "strict": true,
 

@@ -1,2 +1,2 @@
 export { InstallationsSource } from './sources/installations'
-export { Installation } from '@prisma/client'
+export { Installation, Plan } from './lib/types'

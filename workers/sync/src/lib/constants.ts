@@ -2,7 +2,7 @@ import ml from 'multilines'
 import os from 'os'
 
 export const messages = {
-  'insufficient.permissions': (missingRepos: string[]) => ml`
+  'insufficient.permissions.issue': (missingRepos: string[]) => ml`
 	| # Insufficient permissions
 	|
 	| Hi there,
@@ -15,7 +15,23 @@ export const messages = {
 	| Best,
 	| LabelSync Team
 	`,
-  'onboarding.error': (error: string) => ml`
+  'invalid.config.comment': (error: string) => ml`
+	| It seems like your configuration uses a format unknown to me. 
+	| That might be a consequence of invalid yaml cofiguration file. 
+	|
+	| Here's what I am having problems with:
+	|
+	| ${error}
+
+	`,
+  'insufficient.permissions.comment': (missingRepos: string[]) => ml`
+	| Your configuration stretches beyond repositories we can access. 
+	| Please update it so I may sync your labels.
+	|
+	| _Missing repositories:_
+	| ${missingRepos.map((missing) => ` * ${missing}`).join(os.EOL)}
+	`,
+  'onboarding.error.issue': (error: string) => ml`
 	| # Welcome to LabelSync!
 	|
 	| Hi there,

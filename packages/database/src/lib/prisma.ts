@@ -16,7 +16,7 @@ export const getUnsafeGlobalClient = (): PrismaClient => {
       url,
       query: {
         // https://render.com/docs/databases#connecting-to-your-database
-        connection_limit: 30,
+        connection_limit: 5,
         pool_timeout: 30,
         ...query,
       },

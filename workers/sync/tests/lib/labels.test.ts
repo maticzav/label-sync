@@ -1,7 +1,7 @@
 import { LSCRepository } from '@labelsync/config'
 
-import { GithubLabel } from '../../src/lib/github/installation'
-import { calculateDiff } from '../../src/handlers/labels'
+import { calculateConfigurationDiff } from '../../src/lib/config'
+import { GitHubLabel } from '../../src/lib/github'
 
 describe('labels:', () => {
   test('calculateDiff', () => {
@@ -64,7 +64,7 @@ describe('labels:', () => {
       // },
     }
 
-    const currentLabels: GithubLabel[] = [
+    const currentLabels: GitHubLabel[] = [
       /* updates: */
       {
         name: 'updates/unchanged',
@@ -122,7 +122,7 @@ describe('labels:', () => {
       },
     ]
 
-    const diff = calculateDiff(config)(currentLabels)
+    const diff = calculateConfigurationDiff({ config, currentLabels })
 
     expect(diff).toEqual({
       added: [
