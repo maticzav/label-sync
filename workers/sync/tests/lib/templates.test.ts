@@ -1,26 +1,38 @@
 import fs from 'fs'
 import path from 'path'
 
-import { populateTemplate } from '../src/lib/bootstrap'
-import { loadTreeFromPath } from '../../../server/src/lib/utils'
+import { populateTemplate, loadTreeFromPath } from '../../src/lib/templates'
 
-const templatesPath = path.resolve(__dirname, '../../templates')
-const templates = fs.readdirSync(templatesPath).map((template) => ({
+const TEMPLATES_PATH = path.resolve(__dirname, '../../../../templates')
+const TEMPLATES = fs.readdirSync(TEMPLATES_PATH).map((template) => ({
+  root: path.resolve(TEMPLATES_PATH, template),
   name: template,
-  path: path.resolve(templatesPath, template),
 }))
 
-describe('templates:', () => {
-  const data = {
-    repository: 'maticzav-labelsync',
-    repositories: [{ name: 'changed' }, { name: 'label-sync' }, { name: 'resk' }],
-  }
+const DATA = {
+  repository: 'maticzav-labelsync',
+  repositories: [{ name: 'changed' }, { name: 'label-sync' }, { name: 'resk' }],
+}
 
-  for (const template of templates) {
-    test(`populates ${template.name} tempalate`, () => {
-      const tree = loadTreeFromPath(template.path, ['dist', 'node_modules', '.DS_Store', /.*\.log.*/, /.*\.lock.*/])
+describe('templates', () => {
+  for (const { name, root } of TEMPLATES) {
+    test(`correctly populates "${name}" tempalate`, () => {
+      const tree = loadTreeFromPath({
+        root: root,
+        ignore: ['dist', 'node_modules', '.DS_Store', /.*\.log.*/, /.*\.lock.*/],
+      })
+      const filled = populateTemplate(tree, DATA)
 
-      expect(populateTemplate(tree, data)).toMatchSnapshot()
+      expect(filled).toMatchSnapshot()
     })
   }
+
+  test('correctly loads tree from path', () => {
+    const tree = loadTreeFromPath({
+      root: path.resolve(__dirname, '../__fixtures__/template'),
+      ignore: ['ignore'],
+    })
+
+    expect(tree).toMatchSnapshot()
+  })
 })

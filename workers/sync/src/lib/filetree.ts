@@ -20,7 +20,7 @@ export namespace FileTree {
   /**
    * Returns the files that are not nested.
    */
-  export function getFiles(tree: FileTree): Dict<string> {
+  export function getRootFiles(tree: FileTree): Dict<string> {
     const files = Object.keys(tree)
       .filter(isFileInRootFolder)
       .map((name) => [name, tree[name]])

@@ -2,8 +2,8 @@ import { Octokit } from '@octokit/core'
 import nock from 'nock'
 import path from 'path'
 
-import { GitHubEndpoints } from '../src/lib/github'
-import { populateTemplate, loadTreeFromPath } from '../src/lib/templates'
+import { GitHubEndpoints } from '../../src/lib/github'
+import { populateTemplate, loadTreeFromPath } from '../../src/lib/templates'
 
 const TEMPLATE_PATH = path.resolve(__dirname, '../../templates/typescript/')
 const RAW_TEMPLATE = loadTreeFromPath({

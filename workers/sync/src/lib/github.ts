@@ -604,7 +604,7 @@ export class GitHubEndpoints implements IGitHubEndpoints {
    * trees on folders.
    */
   public async createFileTree(repo: RepositoryIdentifier, tree: FileTree.Type): Promise<{ sha: string }> {
-    const blobs = await dict.mapEntriesAsync(FileTree.getFiles(tree), (content) => {
+    const blobs = await dict.mapEntriesAsync(FileTree.getRootFiles(tree), (content) => {
       return this.createBlob(repo, content)
     })
     const trees = await dict.mapEntriesAsync(FileTree.getSubtrees(tree), (subTree) => {

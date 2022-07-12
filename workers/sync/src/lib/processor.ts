@@ -1,4 +1,4 @@
-import { Task, TaskQueue } from '@labelsync/queues'
+import { TaskQueue } from '@labelsync/queues'
 import pino from 'pino'
 
 import { IGitHubEndpoints } from './github'

@@ -8,13 +8,18 @@ import { mapKeys, mapEntries } from '../data/dict'
 
 const IGNORED_FILES = ['dist', 'node_modules', '.DS_Store', /.*\.log.*/, /.*\.lock.*/]
 
+const TEMPLATES_PATH = path.resolve(__dirname, '../../../../templates')
+
+/**
+ * Preloaded template files.
+ */
 export const TEMPLATES = {
   yaml: loadTreeFromPath({
-    root: path.resolve(__dirname, '../../../templates/yaml'),
+    root: path.resolve(TEMPLATES_PATH, 'yaml'),
     ignore: IGNORED_FILES,
   }),
   typescript: loadTreeFromPath({
-    root: path.resolve(__dirname, '../../../templates/typescript'),
+    root: path.resolve(TEMPLATES_PATH, 'typescript'),
     ignore: IGNORED_FILES,
   }),
 }

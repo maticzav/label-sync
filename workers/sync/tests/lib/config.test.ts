@@ -3,8 +3,8 @@ import { LSCRepository } from '@labelsync/config'
 import { calculateConfigurationDiff } from '../../src/lib/config'
 import { GitHubLabel } from '../../src/lib/github'
 
-describe('labels:', () => {
-  test('calculateDiff', () => {
+describe('configuration', () => {
+  test('correctly calculates the difference between configuration and state', () => {
     const config: LSCRepository['labels'] = {
       /* updates: */
       'updates/unchanged': {
