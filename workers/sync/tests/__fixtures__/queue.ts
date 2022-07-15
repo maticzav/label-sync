@@ -9,7 +9,7 @@ export class MockTaskQueue implements ITaskQueue {
     return id
   }
 
-  async process(fn: (task: Task) => Promise<void>): Promise<void> {
+  async process(fn: (task: Task) => Promise<boolean>): Promise<void> {
     let task: Task | undefined = undefined
 
     while ((task = this.queue.shift())) {

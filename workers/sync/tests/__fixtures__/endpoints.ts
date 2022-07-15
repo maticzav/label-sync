@@ -22,13 +22,15 @@ interface MockGitHubEndpointsData {
   installations?: { [owner: string]: string[] }
 }
 
+type StackItem = { method: string; params: any }
+
 export class MockGitHubEndpoints implements IGitHubEndpoints {
-  private _stack: { method: string; params: any }[] = []
+  private _stack: StackItem[] = []
 
   /**
    * Returns the callstack of functions since the beginning of class creation.
    */
-  get stack() {
+  public stack(): StackItem[] {
     return this._stack
   }
 
@@ -41,6 +43,135 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
     this.files = data.files ?? {}
     this.configs = data.configs ?? {}
     this.installations = data.installations ?? {}
+  }
+
+  // EVENTS
+
+  /**
+   * Returns the Stack representation of the event.
+   */
+  private static push(method: string, params: any): StackItem {
+    return { method, params }
+  }
+
+  static getRepo({ owner, repo }: { owner: string; repo: string }): StackItem {
+    return MockGitHubEndpoints.push('get_repo', { owner, repo })
+  }
+
+  static getFile({ owner, repo, ref, path }: { owner: string; repo: string; ref: string; path: string }): StackItem {
+    return MockGitHubEndpoints.push('get_file', { owner, repo, ref, path })
+  }
+
+  static getConfig(id: { owner: string }): StackItem {
+    return MockGitHubEndpoints.push('get_config', id)
+  }
+
+  static getLabels({ repo, owner }: { owner: string; repo: string }, page?: number | undefined): StackItem {
+    return MockGitHubEndpoints.push('get_labels', { repo, owner, page })
+  }
+
+  static createLabel(
+    id: { owner: string; repo: string },
+    label: Pick<GitHubLabel, 'color' | 'description' | 'name'>,
+  ): StackItem {
+    return MockGitHubEndpoints.push('create_label', { id, label })
+  }
+
+  static updateLabel(id: { owner: string; repo: string }, label: GitHubLabel): StackItem {
+    return MockGitHubEndpoints.push('update_label', { id, label })
+  }
+
+  static removeLabel(id: { owner: string; repo: string }, label: Pick<GitHubLabel, 'name'>): StackItem {
+    return MockGitHubEndpoints.push('remove_label', { id, label })
+  }
+
+  static addLabelsToIssue(
+    id: { owner: string; repo: string },
+    params: { issue_number: number; labels: Pick<GitHubLabel, 'name'>[] },
+  ): StackItem {
+    return MockGitHubEndpoints.push('add_labels_to_issue', { id, params })
+  }
+
+  static aliasLabels(id: { owner: string; repo: string }, labels: GitHubLabel[]): StackItem {
+    return MockGitHubEndpoints.push('alias_labels', { id, labels })
+  }
+
+  static getRepositoryIssues(params: { owner: string; repo: string; page: number }): StackItem {
+    return MockGitHubEndpoints.push('get_repository_issues', params)
+  }
+
+  static openIssue({ owner, repo, title }: { owner: string; repo: string; title: string }): StackItem {
+    return MockGitHubEndpoints.push('open_issue', { owner, repo, title })
+  }
+
+  static comment(id: { owner: string; repo: string }, params: { issue: number; comment: string }): StackItem {
+    return MockGitHubEndpoints.push('comment', { id, params })
+  }
+
+  static createFileTree(repo: { owner: string; repo: string }, tree: FileTree): StackItem {
+    return MockGitHubEndpoints.push('create_file_tree', { repo, tree })
+  }
+
+  static createBlob(id: { owner: string; repo: string }, content: string): StackItem {
+    return MockGitHubEndpoints.push('create_blob', { ...id, content })
+  }
+
+  static createRepository(
+    { owner, repo }: { owner: string; repo: string },
+    params: { description: string },
+  ): StackItem {
+    return MockGitHubEndpoints.push('create_repository', { owner, repo, params })
+  }
+
+  static createCommit(id: { owner: string; repo: string }, params: { sha: string; message: string; parent: string }) {
+    return MockGitHubEndpoints.push('create_commit', { id, params })
+  }
+
+  static getRef(id: { owner: string; repo: string; ref: string }): StackItem {
+    return MockGitHubEndpoints.push('get_ref', id)
+  }
+
+  static updateRef({ repo, owner, ...params }: { owner: string; repo: string; ref: string; sha: string }): StackItem {
+    return MockGitHubEndpoints.push('update_ref', { repo, owner, params })
+  }
+
+  static bootstrapConfigRepository({ repo, owner, tree }: { repo: string; owner: string; tree: FileTree }): StackItem {
+    return MockGitHubEndpoints.push('bootstrap_config_repository', { repo, owner, tree })
+  }
+
+  static checkInstallationAccess({ owner, repos }: { owner: string; repos: string[] }): StackItem {
+    return MockGitHubEndpoints.push('check_installation_access', { owner, repos })
+  }
+
+  static getInstallationRepos({ owner, page }: { owner: string; page: number }): StackItem {
+    return MockGitHubEndpoints.push('get_installation_repos', { owner, params: { page } })
+  }
+
+  static getPullRequest(id: { owner: string; repo: string; number: number }): StackItem {
+    return MockGitHubEndpoints.push('get_pull_request', id)
+  }
+
+  static createPRCheckRun(id: { owner: string; repo: string }, params: { name: string; pr_number: string }) {
+    return MockGitHubEndpoints.push('create_pr_check_run', { id, params })
+  }
+
+  static completePRCheckRun(
+    { owner, repo }: { owner: string; repo: string },
+    {
+      check_run,
+      conclusion,
+      output,
+    }: {
+      check_run: number
+      conclusion: 'action_required' | 'cancelled' | 'failure' | 'neutral' | 'success' | 'skipped' | 'timed_out'
+      output?: { title: string; summary: string; text?: string | undefined } | undefined
+    },
+  ) {
+    return MockGitHubEndpoints.push('complete_pr_check_run', { owner, repo, check_run, conclusion, output })
+  }
+
+  static mergePR({ owner, repo, pr_number }: { owner: string; repo: string; pr_number: number }): StackItem {
+    return MockGitHubEndpoints.push('merge_pr', { owner, repo, pr_number })
   }
 
   // METHODS
@@ -63,8 +194,11 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
 
   private files: { [path: string]: string }
 
-  async getFile(id: { owner: string; repo: string } & { ref: string }, path: string): Promise<string | null> {
-    this.push('get_file', { id, path })
+  async getFile(
+    { owner, repo, ref }: { owner: string; repo: string; ref: string },
+    path: string,
+  ): Promise<string | null> {
+    this.push('get_file', { owner, repo, ref, path })
     return this.files[path] ?? null
   }
 
@@ -123,10 +257,10 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
   }
 
   async openIssue(
-    id: { owner: string; repo: string },
-    params: { title: string; body: string },
+    { owner, repo }: { owner: string; repo: string },
+    { title, body }: { title: string; body: string },
   ): Promise<GitHubIssue | null> {
-    this.push('open_issue', { id, params })
+    this.push('open_issue', { owner, repo, title, body })
     return { id: 42, number: 1, labels: [] }
   }
 
@@ -187,10 +321,10 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
   }
 
   async bootstrapConfigRepository(
-    repo: { owner: string; repo: string },
+    { repo, owner }: { owner: string; repo: string },
     tree: FileTree.Type,
   ): Promise<GitHubRef | null> {
-    this.push('bootstrap_config_repository', { repo, tree })
+    this.push('bootstrap_config_repository', { repo, owner, tree })
     return { ref: 'main', object: { type: 'commit', sha: 'sha' } }
   }
 
@@ -222,10 +356,10 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
   }
 
   async getPullRequest(
-    id: { owner: string; repo: string },
-    params: { number: number },
+    { owner, repo }: { owner: string; repo: string },
+    { number }: { number: number },
   ): Promise<GitHubPullRequest | null> {
-    this.push('get_pull_request', { id, params })
+    this.push('get_pull_request', { owner, repo, number })
     return {
       id: 42,
       /** Number uniquely identifying the pull request within its repository. */
@@ -276,31 +410,38 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
   }
 
   async completePRCheckRun(
-    id: { owner: string; repo: string },
-    params: {
+    { owner, repo }: { owner: string; repo: string },
+    {
+      check_run,
+      conclusion,
+      output,
+    }: {
       check_run: number
       conclusion: 'action_required' | 'cancelled' | 'failure' | 'neutral' | 'success' | 'skipped' | 'timed_out'
       output?: { title: string; summary: string; text?: string | undefined } | undefined
     },
   ): Promise<GitHubCheckRun | null> {
-    this.push('complete_pr_check_run', { id, params })
+    this.push('complete_pr_check_run', { owner, repo, check_run, conclusion, output })
     return {
-      id: params.check_run,
+      id: check_run,
       head_sha: 'head_sha',
       status: 'in_progress',
-      conclusion: params.conclusion,
+      conclusion: conclusion,
       output: {
-        title: params.output?.title ?? null,
-        summary: params.output?.summary ?? null,
-        text: params.output?.text ?? null,
+        title: output?.title ?? null,
+        summary: output?.summary ?? null,
+        text: output?.text ?? null,
       },
       name: 'Existing PR Run!',
       check_suite: null,
     }
   }
 
-  async mergePR(id: { owner: string; repo: string }, params: { pr_number: number }): Promise<GitHubMergeCommit | null> {
-    this.push('merge_pr', { id, params })
+  async mergePR(
+    { owner, repo }: { owner: string; repo: string },
+    { pr_number }: { pr_number: number },
+  ): Promise<GitHubMergeCommit | null> {
+    this.push('merge_pr', { owner, repo, pr_number })
     return { sha: 'merge_sha' }
   }
 }

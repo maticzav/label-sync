@@ -32,7 +32,7 @@ export class OrganizationSyncProcessor extends Processor<ProcessorData> {
         meta: { config: rawConfig, error: parsedConfig.error },
       })
 
-      const title = 'LabelSync - Onboarding configuration'
+      const title = 'Configuration Issue'
       const body = messages['onboarding.error.issue'](parsedConfig.error)
       const issue = await this.endpoints.openIssue({ owner, repo: configRepoName }, { title, body })
       if (issue == null) {
@@ -56,6 +56,7 @@ export class OrganizationSyncProcessor extends Processor<ProcessorData> {
     }
 
     if (access.status === 'Sufficient') {
+      // Even if there's no wildcard configuration, we try to sync all accessible repositories.
       for (const repo of access.accessible) {
         this.queue.push({
           kind: 'sync_repo',
@@ -73,7 +74,7 @@ export class OrganizationSyncProcessor extends Processor<ProcessorData> {
       meta: { access: JSON.stringify(access) },
     })
 
-    const title = 'LabelSync - Insufficient permissions'
+    const title = 'Insufficient Permissions'
     const body = messages['insufficient.permissions.issue'](access.missing)
 
     const issue = await this.endpoints.openIssue({ owner, repo: configRepoName }, { title, body })

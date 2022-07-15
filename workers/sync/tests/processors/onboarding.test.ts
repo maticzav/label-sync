@@ -1,4 +1,5 @@
 import pino from 'pino'
+import { populateTemplate, TEMPLATES } from '../../src/lib/templates'
 import { OnboardingProcessor } from '../../src/processors/onboardingProcessor'
 import { MockGitHubEndpoints } from '../__fixtures__/endpoints'
 import { MockTaskQueue } from '../__fixtures__/queue'
@@ -23,7 +24,16 @@ describe('onboarding', () => {
       owner: 'test-org',
     })
 
-    expect(endpoints.stack).toMatchSnapshot()
+    const tree = populateTemplate(TEMPLATES.yaml, {
+      repository: 'test-org-labelsync',
+      repositories: [{ name: 'a' }, { name: 'b' }, { name: 'c' }],
+    })
+
+    expect(endpoints.stack()).toEqual([
+      MockGitHubEndpoints.checkInstallationAccess({ owner: 'test-org', repos: [] }),
+      MockGitHubEndpoints.getRepo({ repo: 'test-org-labelsync', owner: 'test-org' }),
+      MockGitHubEndpoints.bootstrapConfigRepository({ owner: 'test-org', repo: 'test-org-labelsync', tree }),
+    ])
   })
 
   test('skips onboarding when config repo exists', async () => {
@@ -55,7 +65,10 @@ describe('onboarding', () => {
       owner: 'test-org',
     })
 
-    expect(endpoints.stack).toMatchSnapshot()
+    expect(endpoints.stack()).toEqual([
+      MockGitHubEndpoints.checkInstallationAccess({ owner: 'test-org', repos: [] }),
+      MockGitHubEndpoints.getRepo({ repo: 'test-org-labelsync', owner: 'test-org' }),
+    ])
   })
 
   test('onboards personal account', async () => {
@@ -79,6 +92,9 @@ describe('onboarding', () => {
       owner: 'test-user',
     })
 
-    expect(endpoints.stack).toMatchSnapshot()
+    expect(endpoints.stack()).toEqual([
+      MockGitHubEndpoints.checkInstallationAccess({ owner: 'test-user', repos: [] }),
+      MockGitHubEndpoints.getRepo({ repo: 'test-user-labelsync', owner: 'test-user' }),
+    ])
   })
 })
