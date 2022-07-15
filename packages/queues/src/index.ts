@@ -1,1 +1,1 @@
-export { Task, TaskQueue } from './queues/tasks'
+export { Task, TaskQueue, ITaskQueue } from './queues/tasks'

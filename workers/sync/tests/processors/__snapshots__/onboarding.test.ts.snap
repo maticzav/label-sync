@@ -1,0 +1,169 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`onboarding onboards organization 1`] = `
+Array [
+  Object {
+    "method": "check_installation_access",
+    "params": Object {
+      "owner": "test-org",
+      "repos": Array [],
+    },
+  },
+  Object {
+    "method": "get_repo",
+    "params": Object {
+      "owner": "test-org",
+      "repo": "test-org-labelsync",
+    },
+  },
+  Object {
+    "method": "bootstrap_config_repository",
+    "params": Object {
+      "repo": Object {
+        "owner": "test-org",
+        "repo": "test-org-labelsync",
+      },
+      "tree": Object {
+        ".gitignore": "dist
+node_modules
+
+.DS_Store
+*.log*",
+        "README.md": "# LabelSync Yaml configuration.
+
+Hey there! Welcome to LabelSync. We have scaffolded the configuration file for you. Check it out!
+
+### Setting up LabelSync
+
+1. Create a repository on Github and name it \`test-org-labelsync\`.
+1. Commit your configuration (this repository) to Github.
+1. Head over to [LabelSync Manager Github Application](https://github.com/apps/labelsync-manager) and make sure that you install it in all repositories that you have configured.
+",
+        "labelsync.yml": "# Colors
+colors:
+  area: &area \\"#FFD700\\"
+  kind: &kind \\"#3B5BDB\\"
+  status: &status \\"#F8F9FA\\"
+  bug: &bug \\"#EE0000\\"
+  priority: &priority \\"#F783AC\\"
+  scope: &scope \\"#27CF79\\"
+  team: &team'#FDF4E8'
+  release: &release \\"#A5D8ff\\"
+  process: &process \\"#EB9100\\"
+
+# There's one YAML feature that you *absolutely* want to use in your config.
+#
+# It's references. You make a referencable value using &name, and reuse it
+# by typing *name. If you are referencing an object (like \\"labels\\" below), use
+# \\"<<: *common\\" to spread the values out (like \\"repos\\" below \\"labels\\").
+#
+# To learn more about the special YAML symbols, check out
+# https://medium.com/@kinghuang/docker-compose-anchors-aliases-extensions-a1e4105d70bd.
+
+# Labels
+labels: &common
+  \\"bug/0-needs-info\\":
+    color: *bug
+    description: More information is needed for reproduction.
+    siblings: [\\"kind/bug\\"]
+  \\"bug/1-repro-available\\":
+    color: *bug
+    description: A reproduction exists and needs to be confirmed.
+    siblings: [\\"kind/bug\\"]
+  \\"bug/2-confirmed\\":
+    color: *bug
+    description: We have confirmed that this is a bug.
+    siblings: [\\"kind/bug\\"]
+  \\"kind/bug\\":
+    color: *bug
+    description: A reported bug.
+    alias: [\\"bug\\"]
+  \\"kind/regression\\":
+    color: *kind
+    description: A reported bug in functionality that used to work before.
+  \\"kind/feature\\":
+    color: *kind
+    description: A request for a new feature.
+    alias: [\\"enhancement\\"]
+  \\"kind/improvement\\":
+    color: *kind
+    description: An improvement to existing feature and code.
+  \\"kind/docs\\":
+    color: *kind
+    description: A documentation change is required.
+    alias: [\\"documentation\\"]
+  \\"kind/discussion\\":
+    color: *kind
+    description: Discussion is required.
+  \\"kind/question\\":
+    color: *kind
+    description: Developer asked a question. No code changes required.
+    alias: [\\"question\\"]
+
+# Repositories
+repos:
+  a:
+    config:
+      removeUnconfiguredLabels: false
+    labels:
+      {}
+      # <<: *common
+      # Add labels here.
+  b:
+    config:
+      removeUnconfiguredLabels: false
+    labels:
+      {}
+      # <<: *common
+      # Add labels here.
+  c:
+    config:
+      removeUnconfiguredLabels: false
+    labels:
+      {}
+      # <<: *common
+      # Add labels here.
+",
+      },
+    },
+  },
+]
+`;
+
+exports[`onboarding onboards personal account 1`] = `
+Array [
+  Object {
+    "method": "check_installation_access",
+    "params": Object {
+      "owner": "test-user",
+      "repos": Array [],
+    },
+  },
+  Object {
+    "method": "get_repo",
+    "params": Object {
+      "owner": "test-user",
+      "repo": "test-user-labelsync",
+    },
+  },
+]
+`;
+
+exports[`onboarding skips onboarding when config repo exists 1`] = `
+Array [
+  Object {
+    "method": "check_installation_access",
+    "params": Object {
+      "owner": "test-org",
+      "repos": Array [],
+    },
+  },
+  Object {
+    "method": "get_repo",
+    "params": Object {
+      "owner": "test-org",
+      "repo": "test-org-labelsync",
+    },
+  },
+]
+`;

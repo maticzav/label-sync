@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import redis, { RedisClientType } from 'redis'
+import * as redis from 'redis'
 
 /**
  * The base type to use to build a new task.
@@ -28,19 +28,31 @@ export class Queue<Task extends TaskSpec> {
   /**
    * Client to use for communication with the Redis queue.
    */
-  private client: RedisClientType
+  private client: redis.RedisClientType
+
+  /**
+   * Number of functions that are currently processing tasks.
+   */
+  private locks: number = 0
 
   /**
    * Tells whether the queue has stopped processing requests.
    */
-  private disposed: boolean
+  private disposed: boolean = false
+
+  /**
+   * Functions that should be called when the queue is successfully disposed.
+   */
+  private releases: (() => void)[] = []
 
   constructor(name: string, url: string) {
     this.name = name
     this.client = redis.createClient({ url })
-    this.disposed = false
   }
 
+  /**
+   * Starts the queue and connects to Redis.
+   */
   public async start(): Promise<void> {
     await this.client.connect()
   }
@@ -56,14 +68,24 @@ export class Queue<Task extends TaskSpec> {
    * Returns the name of the set used to list unprocessed tasks.
    */
   private members(): string {
-    return `queue:members:${this.name}`
+    return `queuemembers:${this.name}`
+  }
+
+  /**
+   * Lists all tasks that are currently in the queue.
+   */
+  public async list(): Promise<Task[]> {
+    const rawtasks = await this.client.LRANGE(this.queue(), 0, -1)
+    const tasks = rawtasks.map((raw) => JSON.parse(raw) as Task)
+
+    return tasks
   }
 
   /**
    * Function that pushes a new task to the queue and returns
    * the task identifier.
    */
-  protected async push(task: Omit<Task, 'id'>): Promise<string> {
+  public async push(task: Omit<Task, 'id'>): Promise<string> {
     const id = crypto.randomUUID()
     const hydratedTask = { id, ...task }
 
@@ -79,11 +101,16 @@ export class Queue<Task extends TaskSpec> {
    * A function that waits for new task in the queue and forwards it
    * to the executor for processing.
    */
-  protected async process(fn: (task: Task) => Promise<void>) {
-    while (!this.disposed) {
+  public async process(fn: (task: Task) => Promise<boolean>) {
+    processor: while (!this.disposed) {
       const rawtask = await this.client.BLPOP([this.queue()], 30)
       if (!rawtask) {
-        continue
+        if (!this.disposed) {
+          continue
+        }
+
+        // If we're disposed, we're done and stop processing tasks.
+        return
       }
       const task = JSON.parse(rawtask.element) as Task
 
@@ -92,29 +119,60 @@ export class Queue<Task extends TaskSpec> {
       // task usually only depends on a few dependencies and it
       // doesn't add significant overhead to the processing.
       for (const dependencyId of task.dependsOn) {
-        const unprocessed = await this.client.SISMEMBER(this.queue(), dependencyId)
+        const unprocessed = await this.client.SISMEMBER(this.members(), dependencyId)
         if (unprocessed) {
-          this.push(task)
-          return
+          await this.push(task)
+          continue processor
         }
       }
 
       // We process the task and add it back to the queue in case
       // something went wrong.
       try {
-        await fn(task)
+        this.locks++
+        const more = await fn(task)
         await this.client.SREM(this.members(), task.id)
+        this.locks--
+
+        await this._dispose()
+
+        if (!more || this.disposed) {
+          return
+        }
       } catch {
-        this.push(task)
+        await this.push(task)
       }
     }
   }
 
   /**
-   * Disposes the client.
+   * Intenal utility function that disposes the client.
    */
-  public async dispose() {
-    this.disposed = true
+  private async _dispose() {
+    if (this.locks > 0 || !this.disposed) {
+      return
+    }
+
     await this.client.disconnect()
+    this.locks = -1
+    for (const release of this.releases) {
+      release()
+    }
+  }
+
+  /**
+   * Disposes the client and returns a promise that resolves when
+   * the connection is dropped.
+   */
+  public async dispose(): Promise<void> {
+    this.disposed = true
+
+    if (this.locks > 0) {
+      return new Promise<void>((resolve) => {
+        this.releases.push(resolve)
+      })
+    }
+
+    return
   }
 }

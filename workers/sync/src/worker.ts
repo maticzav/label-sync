@@ -27,6 +27,11 @@ export class Worker {
    */
   private logger: pino.Logger
 
+  /**
+   * Tells whether the worker has been stopped.
+   */
+  private disposed: boolean = false
+
   constructor() {
     this.tick = this.tick.bind(this)
 
@@ -46,7 +51,7 @@ export class Worker {
   /**
    * Performs a single lookup and possible execution.
    */
-  private async tick(task: Task) {
+  private async tick(task: Task): Promise<boolean> {
     this.logger.info(`New task "${task.kind}"!`)
 
     const octokit = getOctokitForInstallation(task.ghInstallationId)
@@ -98,12 +103,19 @@ export class Worker {
       default:
         throw new ExhaustiveSwitchCheck(task)
     }
+
+    return !this.disposed
   }
 
   /**
    * Stops the worker.
    */
   public async stop() {
+    if (this.disposed) {
+      return
+    }
+
+    this.disposed = true
     await this.queue.dispose()
   }
 }

@@ -56,12 +56,9 @@ export interface GitHubPullRequest {
   body: string | null
   labels: {
     id?: number
-    node_id?: string
-    url?: string
     name?: string
     description?: string | null
     color?: string
-    default?: boolean
   }[]
   merge_commit_sha: string | null
   head: {
@@ -107,7 +104,6 @@ export interface GitHubRef {
   object: {
     type: string
     sha: string
-    url: string
   }
 }
 
@@ -121,7 +117,6 @@ export interface GitHubCommit {
   message: string
   tree: {
     sha: string
-    url: string
   }
 }
 

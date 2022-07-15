@@ -59,9 +59,9 @@ export class OrganizationSyncProcessor extends Processor<ProcessorData> {
       for (const repo of access.accessible) {
         this.queue.push({
           kind: 'sync_repo',
-          dependsOn: [],
+          repo: repo,
           org: owner,
-          repo,
+          dependsOn: [],
           ghInstallationId: this.installation.id,
           isPaidPlan: this.installation.isPaidPlan,
         })

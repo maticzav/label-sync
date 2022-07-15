@@ -1,0 +1,70 @@
+#####
+# Documentation
+# YAML (all config values): https://render.com/docs/yaml-spec
+#####
+
+services:
+  - name: labelsync-api
+    type: web
+    env: node
+    region: frankfurt
+    buildCommand: yarn workspaces focus wordo @wordo/server
+    startCommand: yarn workspace @wordo/server start
+    envVars:
+      - key: NODE_VERSION
+        value: 16
+      - key: DATABASE_URL
+        fromDatabase:
+          name: petka-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: petka-redis
+          type: redis
+          property: connectionString
+    buildFilter:
+      paths:
+        - server/**/*
+        - packages/**/*
+        - package.json
+      ignoredPaths:
+        - '**/*.test.ts'
+
+  - name: labelsync-worker
+    type: web
+    env: node
+    region: frankfurt
+    buildCommand: yarn workspaces focus wordo @wordo/server
+    startCommand: yarn workspace @wordo/server start
+    envVars:
+      - key: NODE_VERSION
+        value: 16
+      - key: DATABASE_URL
+        fromDatabase:
+          name: labelsync-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: labelsync-redis
+          type: redis
+          property: connectionString
+    buildFilter:
+      paths:
+        - server/**/*
+        - packages/**/*
+        - package.json
+      ignoredPaths:
+        - '**/*.test.ts'
+
+  # Redis
+
+  - name: labelsync-redis
+    type: redis
+    ipAllowList: # required
+      - source: 0.0.0.0/0
+        description: everywhere
+    plan: starter
+
+databases:
+  - name: labelsync-db
+    region: frankfurt

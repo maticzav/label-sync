@@ -1,9 +1,7 @@
-import { TaskQueue } from '@labelsync/queues'
+import { ITaskQueue } from '@labelsync/queues'
 import pino from 'pino'
 
 import { IGitHubEndpoints } from './github'
-
-interface ITaskManager {}
 
 /**
  * A blueprint specification for a task processor that all processors
@@ -29,11 +27,11 @@ export class Processor<T> {
   /**
    * A queue that lets you push new tasks to the queue.
    */
-  protected queue: Pick<TaskQueue, 'push'>
+  protected queue: Pick<ITaskQueue, 'push'>
 
   constructor(
     installation: { id: number; isPaidPlan: boolean },
-    queue: Pick<TaskQueue, 'push'>,
+    queue: Pick<ITaskQueue, 'push'>,
     endpoints: IGitHubEndpoints,
     logger: pino.Logger,
   ) {
