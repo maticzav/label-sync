@@ -173,6 +173,8 @@ export class Queue<Task extends TaskSpec> {
       })
     }
 
+    await this._dispose()
+
     return
   }
 }

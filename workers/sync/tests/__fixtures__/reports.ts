@@ -47,12 +47,10 @@ export const strict: LabelSyncReport = {
     {
       name: 'removal/one',
       color: '#aa123c',
-      default: false,
     },
     {
       name: 'removal/two',
       color: '#aa123c',
-      default: false,
     },
   ],
   aliases: [
@@ -60,13 +58,11 @@ export const strict: LabelSyncReport = {
       old_name: 'label/old-first',
       name: 'label/alias',
       color: '#ee263c',
-      default: false,
     },
     {
       old_name: 'label/old-second',
       name: 'label/alias',
       color: '#ee263c',
-      default: false,
     },
   ],
   config: {
@@ -131,12 +127,10 @@ export const nonstrict: LabelSyncReport = {
     {
       name: 'unconfigured-one',
       color: '#ee263c',
-      default: false,
     },
     {
       name: 'unconfigured-two',
       color: '#ee263c',
-      default: false,
     },
   ],
   aliases: [],

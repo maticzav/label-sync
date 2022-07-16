@@ -42,8 +42,13 @@ export class UnconfiguredLabelsProcessor extends Processor<ProcessorData> {
       return
     }
 
-    if (label in config.labels && config.config?.removeUnconfiguredLabels === true) {
-      this.log.info(`Removing "${label}" from ${repo}.`)
+    if (label in config.labels) {
+      this.log.info(`Label "${label}" is configured, skipping.`)
+      return
+    }
+
+    if (config.config?.removeUnconfiguredLabels === true) {
+      this.log.info(`Removing "${label}" from ${repo} because it's not configured.`)
       await this.endpoints.removeLabel({ repo, owner }, { name: label })
       this.log.info(`Removed label "${label}" from ${repo}.`)
     }

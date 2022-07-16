@@ -2,7 +2,6 @@ import ml from 'multilines'
 import pino from 'pino'
 
 import { MockGitHubEndpoints } from '../__fixtures__/endpoints'
-import { MockTaskQueue } from '../__fixtures__/queue'
 
 import { DryRunProcessor } from '../../src/processors/prDryRunProcessor'
 
@@ -39,10 +38,18 @@ describe('dry run', () => {
       },
     })
 
-    const queue = new MockTaskQueue()
     const logger = pino()
 
-    const processor = new DryRunProcessor(installation, queue, endpoints, logger)
+    const processor = new DryRunProcessor(
+      installation,
+      {
+        push: () => {
+          fail()
+        },
+      },
+      endpoints,
+      logger,
+    )
     await processor.perform({ owner: 'test-org', pr_number: 1 })
 
     expect(endpoints.stack()).toMatchObject([
@@ -91,10 +98,18 @@ describe('dry run', () => {
       },
     })
 
-    const queue = new MockTaskQueue()
     const logger = pino()
 
-    const processor = new DryRunProcessor(installation, queue, endpoints, logger)
+    const processor = new DryRunProcessor(
+      installation,
+      {
+        push: () => {
+          fail()
+        },
+      },
+      endpoints,
+      logger,
+    )
     await processor.perform({ owner: 'test-org', pr_number: 1 })
 
     expect(endpoints.stack()).toMatchObject([
@@ -141,10 +156,18 @@ describe('dry run', () => {
       },
     })
 
-    const queue = new MockTaskQueue()
     const logger = pino()
 
-    const processor = new DryRunProcessor(installation, queue, endpoints, logger)
+    const processor = new DryRunProcessor(
+      installation,
+      {
+        push: () => {
+          fail()
+        },
+      },
+      endpoints,
+      logger,
+    )
     await processor.perform({ owner: 'test-org', pr_number: 1 })
 
     expect(endpoints.stack()).toMatchObject([

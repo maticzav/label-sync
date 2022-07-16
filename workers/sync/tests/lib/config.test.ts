@@ -199,15 +199,19 @@ describe('configuration', () => {
       removed: [
         {
           name: 'removed',
+          color: 'color:removed',
         },
         {
           name: 'alias/old:2',
+          color: 'color:alias:old',
         },
         {
           name: 'alias/old:3',
+          color: 'color:alias:old',
         },
         {
           name: 'alias/old:4',
+          color: 'color:alias:old',
         },
       ],
     })

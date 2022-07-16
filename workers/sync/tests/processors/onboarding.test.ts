@@ -2,7 +2,6 @@ import pino from 'pino'
 
 import { populateTemplate, TEMPLATES } from '../../src/lib/templates'
 import { MockGitHubEndpoints } from '../__fixtures__/endpoints'
-import { MockTaskQueue } from '../__fixtures__/queue'
 
 import { OnboardingProcessor } from '../../src/processors/onboardingProcessor'
 
@@ -16,10 +15,18 @@ describe('onboarding', () => {
       },
       repos: {},
     })
-    const queue = new MockTaskQueue()
     const logger = pino()
 
-    const processor = new OnboardingProcessor(installation, queue, endpoints, logger)
+    const processor = new OnboardingProcessor(
+      installation,
+      {
+        push: () => {
+          fail()
+        },
+      },
+      endpoints,
+      logger,
+    )
 
     await processor.perform({
       accountType: 'Organization',
@@ -57,10 +64,18 @@ describe('onboarding', () => {
         },
       },
     })
-    const queue = new MockTaskQueue()
     const logger = pino()
 
-    const processor = new OnboardingProcessor(installation, queue, endpoints, logger)
+    const processor = new OnboardingProcessor(
+      installation,
+      {
+        push: () => {
+          fail()
+        },
+      },
+      endpoints,
+      logger,
+    )
 
     await processor.perform({
       accountType: 'Organization',
@@ -84,10 +99,18 @@ describe('onboarding', () => {
         'test-user': ['a', 'b', 'c'],
       },
     })
-    const queue = new MockTaskQueue()
     const logger = pino()
 
-    const processor = new OnboardingProcessor(installation, queue, endpoints, logger)
+    const processor = new OnboardingProcessor(
+      installation,
+      {
+        push: () => {
+          fail()
+        },
+      },
+      endpoints,
+      logger,
+    )
 
     await processor.perform({
       accountType: 'User',

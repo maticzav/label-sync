@@ -101,11 +101,13 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
     return MockGitHubEndpoints.push('remove_label', { owner, repo, label })
   }
 
-  static addLabelsToIssue(
-    id: { owner: string; repo: string },
-    params: { issue_number: number; labels: Pick<GitHubLabel, 'name'>[] },
-  ): StackItem {
-    return MockGitHubEndpoints.push('add_labels_to_issue', { id, params })
+  static addLabelsToIssue(id: {
+    owner: string
+    repo: string
+    issue_number: number
+    labels: Pick<GitHubLabel, 'name'>[]
+  }): StackItem {
+    return MockGitHubEndpoints.push('add_labels_to_issue', id)
   }
 
   static aliasLabels({
@@ -282,12 +284,11 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
 
   async addLabelsToIssue(
     { owner, repo }: { owner: string; repo: string },
-    params: { issue_number: number; labels: Pick<GitHubLabel, 'name'>[] },
+    { issue_number, labels }: { issue_number: number; labels: Pick<GitHubLabel, 'name'>[] },
   ): Promise<GitHubLabel[] | null> {
-    this.push('add_labels_to_issue', { owner, repo, params })
+    this.push('add_labels_to_issue', { owner, repo, issue_number, labels })
 
-    const labels = params.labels.map((label) => ({ ...label, id: 42, color: '#000fff' }))
-    return labels
+    return labels.map((label) => ({ ...label, id: 42, color: '#000fff' }))
   }
 
   async aliasLabels(
