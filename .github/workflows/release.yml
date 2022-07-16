@@ -71,14 +71,15 @@ jobs:
         with:
           node-version: '16.x'
 
-      - name: Setup NPM and Github credentials
-        run: |
-          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-          git config --global github.token $GH_TOKEN
-          git config --global user.email $GH_EMAIL
-          git config --global user.name $GH_USER
+      - name: Install dependencies
+        run: yarn install
 
-      - name: Build packages
-        run: yarn build
-
-      - run: ./scripts/release.sh
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          # This expects you to have a script called release which does a build for your packages and calls changeset publish
+          publish: yarn release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

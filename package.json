@@ -4,10 +4,11 @@
   "scripts": {
     "g:ts-node": "cd $INIT_CWD && ts-node",
     "build": "node scripts/build.js",
-    "release": "",
+    "release": "yarn build && changeset publish",
     "test": "NODE_ENV=test LOG_LEVEL=fatal jest"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.23.2",
     "@types/node": "^18.0.1",
     "chalk": "4.1.2",
     "execa": "4.1.0",

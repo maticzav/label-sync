@@ -1,9 +1,13 @@
 {
   "name": "@labelsync/sync",
+  "private": true,
   "scripts": {
     "start": "yarn g:ts-node src/index.ts"
   },
   "dependencies": {
+    "@labelsync/config": "workspace:*",
+    "@labelsync/database": "workspace:*",
+    "@labelsync/queues": "workspace:*",
     "@octokit/auth-app": "^3.6.1",
     "@octokit/core": "^3.6.0",
     "luxon": "^2.4.0",

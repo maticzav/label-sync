@@ -1,5 +1,6 @@
 {
   "name": "@labelsync/queues",
+  "private": true,
   "dependencies": {
     "pino": "^8.1.0",
     "redis": "^4.1.0"

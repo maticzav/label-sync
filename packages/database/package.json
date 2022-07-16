@@ -1,5 +1,6 @@
 {
   "name": "@labelsync/database",
+  "private": true,
   "scripts": {
     "postinstall": "prisma generate",
     "deploy": "prisma migrate deploy"

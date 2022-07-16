@@ -13,27 +13,19 @@ const PACKAGES_DIR = path.resolve(__dirname, '../packages')
 
 const packages = fs
   .readdirSync(PACKAGES_DIR)
-  .map(file => path.resolve(PACKAGES_DIR, file))
-  .filter(f => fs.lstatSync(path.resolve(f)).isDirectory())
+  .map((file) => path.resolve(PACKAGES_DIR, file))
+  .filter((f) => fs.lstatSync(path.resolve(f)).isDirectory())
 
-const packagesWithTs = packages.filter(p =>
-  fs.existsSync(path.resolve(p, 'tsconfig.json')),
-)
-
-/* Server module */
-
-const server = path.resolve(__dirname, '../server')
+const builds = packages.filter((p) => fs.existsSync(path.resolve(p, 'tsconfig.json')))
 
 /* Build */
 
-const builds = [server, ...packagesWithTs]
-
 console.log(ml`
   | ${chalk.reset.inverse.bold.cyan(' BUILDING ')}
-  | ${builds.map(build => `- ${build}`).join('\n')}
+  | ${builds.map((build) => `- ${build}`).join('\n')}
 `)
 
-const args = ['-b', server, ...packagesWithTs, ...process.argv.slice(2)]
+const args = ['-b', ...builds, ...process.argv.slice(2)]
 
 console.log(chalk.inverse('Building TypeScript definition files\n'))
 
@@ -42,9 +34,7 @@ try {
   process.stdout.write(`${chalk.reset.inverse.bold.green(' DONE ')}\n`)
 } catch (e) {
   process.stdout.write('\n')
-  console.error(
-    chalk.inverse.red('Unable to build TypeScript definition files'),
-  )
+  console.error(chalk.inverse.red('Unable to build TypeScript definition files'))
   console.error(e.stack)
   process.exitCode = 1
 }
