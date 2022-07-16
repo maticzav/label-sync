@@ -83,11 +83,9 @@ function Introduction() {
         image="/img/testimonial/matic.jpg"
         content={
           <p>
-            &ldquo;While working at Prisma, I discovered that many companies
-            struggle with repository organisation. In particular, companies
-            struggle with managing labels across multiple repositories in their
-            GitHub accounts. That's why I created LabelSync - to help you get to
-            the best parts of labels more quickly. &rdquo;
+            &ldquo;While working at Prisma, I discovered that many companies struggle with repository organisation. In
+            particular, companies struggle with managing labels across multiple repositories in their GitHub accounts.
+            That's why I created LabelSync - to help you get to the best parts of labels more quickly. &rdquo;
           </p>
         }
       ></Testimonial>
@@ -118,21 +116,10 @@ function Features() {
                 height="20"
                 patternUnits="userSpaceOnUse"
               >
-                <rect
-                  x="0"
-                  y="0"
-                  width="4"
-                  height="4"
-                  className="text-gray-200"
-                  fill="currentColor"
-                />
+                <rect x="0" y="0" width="4" height="4" className="text-gray-200" fill="currentColor" />
               </pattern>
             </defs>
-            <rect
-              width="404"
-              height="784"
-              fill="url(#8b1b5f72-e944-4457-af67-0c6d15a99f38)"
-            />
+            <rect width="404" height="784" fill="url(#8b1b5f72-e944-4457-af67-0c6d15a99f38)" />
           </svg>
 
           {/* <!-- Features --> */}
@@ -149,12 +136,7 @@ function Features() {
               {/* <!-- Features --> */}
               <div>
                 <div className="flex items-center justify-center h-12 w-12 rounded-md bg-green-500 text-white">
-                  <svg
-                    className="h-6 w-6"
-                    stroke="currentColor"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -164,23 +146,16 @@ function Features() {
                   </svg>
                 </div>
                 <div className="mt-5">
-                  <h5 className="text-lg leading-6 font-medium text-gray-900">
-                    Centralised management
-                  </h5>
+                  <h5 className="text-lg leading-6 font-medium text-gray-900">Centralised management</h5>
                   <p className="mt-2 text-base leading-6 text-gray-500">
-                    Sync all your repositories from a central management
-                    repository using one of the configuration languages.
+                    Sync all your repositories from a central management repository using one of the configuration
+                    languages.
                   </p>
                 </div>
               </div>
               <div className="mt-10 sm:mt-0">
                 <div className="flex items-center justify-center h-12 w-12 rounded-md bg-green-500 text-white">
-                  <svg
-                    className="h-6 w-6"
-                    stroke="currentColor"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -190,42 +165,24 @@ function Features() {
                   </svg>
                 </div>
                 <div className="mt-5">
-                  <h5 className="text-lg leading-6 font-medium text-gray-900">
-                    Flexible configuration
-                  </h5>
+                  <h5 className="text-lg leading-6 font-medium text-gray-900">Flexible configuration</h5>
                   <p className="mt-2 text-base leading-6 text-gray-500">
-                    Restrict unconfigured labels, or create a set of common ones
-                    to share between repositories.
+                    Restrict unconfigured labels, or create a set of common ones to share between repositories.
                   </p>
                 </div>
               </div>
 
               <div className="mt-10 sm:mt-0">
                 <div className="flex items-center justify-center h-12 w-12 rounded-md bg-green-500 text-white">
-                  <svg
-                    className="h-6 w-6"
-                    stroke="currentColor"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M13 10V3L4 14h7v7l9-11h-7z"
-                    />
+                  <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
                 <div className="mt-5">
-                  <h5 className="text-lg leading-6 font-medium text-gray-900">
-                    Label Aliases
-                  </h5>
+                  <h5 className="text-lg leading-6 font-medium text-gray-900">Label Aliases</h5>
                   <p className="mt-2 text-base leading-6 text-gray-500">
                     Align label configurations quickly by
-                    <a
-                      href="https://github.com/maticzav/label-sync#yaml"
-                      className="font-bold mx-1"
-                    >
+                    <a href="https://github.com/maticzav/label-sync#yaml" className="font-bold mx-1">
                       aliasing
                     </a>
                     a group of old labels to a new, single label.
@@ -247,15 +204,10 @@ function Features() {
                   </svg>
                 </div>
                 <div className="mt-5">
-                  <h5 className="text-lg leading-6 font-medium text-gray-900">
-                    Automate your workflow
-                  </h5>
+                  <h5 className="text-lg leading-6 font-medium text-gray-900">Automate your workflow</h5>
                   <p className="mt-2 text-base leading-6 text-gray-500">
                     Create Label workflows using label
-                    <a
-                      href="https://github.com/maticzav/label-sync#yaml"
-                      className="font-bold ml-1"
-                    >
+                    <a href="https://github.com/maticzav/label-sync#yaml" className="font-bold ml-1">
                       siblings
                     </a>
                     .
@@ -272,11 +224,7 @@ function Features() {
 
 function DetailedFeatures() {
   return (
-    <Section
-      id="detailed-features"
-      name="detailed fetaures"
-      className="relative bg-gray-50 overflow-hidden"
-    >
+    <Section id="detailed-features" name="detailed fetaures" className="relative bg-gray-50 overflow-hidden">
       {/* <!-- Leading text --> */}
 
       <div className="text-center">
@@ -296,8 +244,8 @@ function DetailedFeatures() {
           icon={<span className="mr-2">🌈</span>}
           description={
             <>
-              Keep your workflow in GitHub so everyone can see what the
-              priorities are and how far down the chain bug has come.
+              Keep your workflow in GitHub so everyone can see what the priorities are and how far down the chain bug
+              has come.
             </>
           }
           alt="Issues Overview"
@@ -310,10 +258,7 @@ function DetailedFeatures() {
           caption="Immediate feedback"
           title={['get feedback', 'instantly']}
           description={
-            <>
-              LabelSync manager comments on your pull request so you can predict
-              what changes are going to happen.
-            </>
+            <>LabelSync manager comments on your pull request so you can predict what changes are going to happen.</>
           }
           alt="PullRequest message"
           image="/img/examples/pr-comment.png"
@@ -333,9 +278,8 @@ function DetailedFeatures() {
           }
           description={
             <>
-              LabelSync uses YAML as a default configuration language. This
-              allows you to use features such as anchors to organise your
-              configuration more efficiently.
+              LabelSync uses YAML as a default configuration language. This allows you to use features such as anchors
+              to organise your configuration more efficiently.
             </>
           }
           image="/img/examples/yaml.png"
@@ -346,7 +290,7 @@ function DetailedFeatures() {
 
         <Feature.Right
           caption="Prefer TypeScript?"
-          title={['Use TypeScript to', 'configure anything.']}
+          title={['Use TypeScript to', 'configure everything.']}
           icon={
             <span className="mr-3">
               <svg className="h-10 w-10 inline-block" viewBox="0 0 128 128">
@@ -356,8 +300,8 @@ function DetailedFeatures() {
           }
           description={
             <>
-              LabelSync ships with a TypeScript library that lets you use
-              everything that TypeScript offers to automate you configuration.
+              LabelSync ships with a TypeScript library that lets you use everything that TypeScript offers to automate
+              you configuration.
             </>
           }
           image="/img/examples/typescript.png"
@@ -373,9 +317,8 @@ function DetailedFeatures() {
           description={
             <>
               Each label in your configuration can reference
-              <span className="underline-green ml-1">mutliple siblings</span>.
-              Whenever you add a label to an issue or pull request, LabelSync
-              will automatically add all the missing siblings as well.
+              <span className="underline-green ml-1">mutliple siblings</span>. Whenever you add a label to an issue or
+              pull request, LabelSync will automatically add all the missing siblings as well.
             </>
           }
           image="/img/examples/siblings.png"
@@ -408,10 +351,9 @@ function Testimonials() {
         content={
           <>
             <p className="mb-3">
-              &ldquo;Label-Sync enables us to have much a more efficient project
-              management process where everything relies on a consistent set of
-              labels. Triage, Prioritization, Estimation, everything can be done
-              with labels now. &rdquo;
+              &ldquo;Label-Sync enables us to have much a more efficient project management process where everything
+              relies on a consistent set of labels. Triage, Prioritization, Estimation, everything can be done with
+              labels now. &rdquo;
             </p>
           </>
         }
@@ -453,15 +395,13 @@ function Pricing() {
   return (
     <Section id="pricing" name="pricing" className="bg-green-500">
       <div className="pt-12 container text-center px-10 sm:px-6 sm:pt-16 lg:pt-24">
-        <h2 className="text-lg leading-6 font-semibold text-gray-300 uppercase tracking-wider">
-          Pricing
-        </h2>
+        <h2 className="text-lg leading-6 font-semibold text-gray-300 uppercase tracking-wider">Pricing</h2>
         <p className="mt-2 text-3xl leading-9 font-extrabold text-white sm:text-4xl sm:leading-10 lg:text-5xl lg:leading-none">
           Ready to get started?
         </p>
         <p className="mt-4 md:mt-6 text-xl mx-auto md:max-w-2xl leading-7 text-gray-200">
-          We are also giving you an option for 14-day free trial to find out how
-          the tool works and a free tier to see how great it is.
+          We are also giving you an option for 14-day free trial to find out how the tool works and a free tier to see
+          how great it is.
         </p>
       </div>
 
@@ -475,9 +415,7 @@ function Pricing() {
       {/* Period changer */}
 
       <div className="block mx-auto flex justify-center mt-8 lg:mt-12">
-        <span className="mr-3 text-gray-200 font-semibold align-baseline">
-          Pay monthly
-        </span>
+        <span className="mr-3 text-gray-200 font-semibold align-baseline">Pay monthly</span>
 
         {/*
           Simple toggle
@@ -500,9 +438,7 @@ function Pricing() {
           ></span>
         </span>
 
-        <span className="align-baseline font-semibold ml-3 text-gray-200">
-          Pay annualy
-        </span>
+        <span className="align-baseline font-semibold ml-3 text-gray-200">Pay annualy</span>
       </div>
 
       {/* <!-- Tiers --> */}
@@ -570,9 +506,7 @@ function Pricing() {
                           </span> */}
                         </>
                       )}
-                      <span className="ml-1 text-2xl leading-8 font-medium text-gray-500">
-                        /mo
-                      </span>
+                      <span className="ml-1 text-2xl leading-8 font-medium text-gray-500">/mo</span>
                     </>
                   }
                   features={[
@@ -611,9 +545,7 @@ function FAQ() {
   return (
     <div className="bg-white">
       <div className="container mx-auto pt-12 pb-16 sm:pt-16 sm:pb-20 px-4 sm:px-6 lg:pt-20 lg:pb-28 lg:px-8">
-        <h2 className="text-3xl leading-9 font-extrabold text-gray-900">
-          Frequently asked questions
-        </h2>
+        <h2 className="text-3xl leading-9 font-extrabold text-gray-900">Frequently asked questions</h2>
         <div className="mt-6 border-t-2 border-gray-100 pt-10">
           <dl className="md:grid md:grid-cols-2 md:gap-8">
             {/* <!-- LEFT Questions --> */}
@@ -628,8 +560,7 @@ function FAQ() {
                     <a className="mx-1" href="mailto:support@label-sync.com">
                       email
                     </a>
-                    to our support team. We'll try to get back to you as soon as
-                    possible.
+                    to our support team. We'll try to get back to you as soon as possible.
                   </p>
                 </dd>
               </div>

@@ -2,9 +2,10 @@ import fs from 'fs'
 import path from 'path'
 import { promisify } from 'util'
 
+import { parseConfig } from '@labelsync/config'
+
 import * as ls from '../src'
 import { labelsync } from '../src'
-import { parseConfig } from '../../../server/src/configuration'
 
 const fsReadFile = promisify(fs.readFile)
 const fsUnlink = promisify(fs.unlink)
@@ -81,8 +82,11 @@ describe('make:', () => {
 
     expect(file).toMatchSnapshot()
 
-    const [errors, config] = parseConfig('PAID', file)
-    expect(errors).toBeNull()
+    const config = parseConfig({
+      input: file,
+      isPro: true,
+    })
+
     expect(config).toMatchSnapshot()
   })
 })

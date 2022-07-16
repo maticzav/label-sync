@@ -1,8 +1,4 @@
-import {
-  LSCConfiguration,
-  LSCRepository,
-  LSCLabel,
-} from '../../../server/src/types'
+import type { LSCConfiguration, LSCRepository, LSCLabel } from '@labelsync/config'
 import { Configurable } from './configurable'
 import { Dict, withDefault, mapEntries } from './utils'
 import { YAML } from './yaml'
@@ -25,8 +21,7 @@ export type ConfigurationInput = {
   repos: Dict<Repository>
 }
 
-export class Configuration extends YAML<LSCConfiguration>
-  implements Configurable<LSCConfiguration> {
+export class Configuration extends YAML<LSCConfiguration> implements Configurable<LSCConfiguration> {
   private repositories: Dict<Repository> = {}
 
   constructor(config: ConfigurationInput) {
@@ -124,9 +119,7 @@ export class Label implements Configurable<LSCLabel> {
         this.name = label
         /* istanbul ignore next */
         if (!color) {
-          throw new Error(
-            `Label either accepts label(name, color) or label(config) object!`,
-          )
+          throw new Error(`Label either accepts label(name, color) or label(config) object!`)
         }
         this.color = this.fixColor(color)
         return

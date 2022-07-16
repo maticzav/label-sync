@@ -1,9 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist",
-    "esModuleInterop": true
+    "outDir": "dist"
   },
-  "references": [{ "path": "../../server" }]
+  "include": ["src/**/*.ts"]
 }

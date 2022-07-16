@@ -1,0 +1,19 @@
+{
+  "name": "@labelsync/sync",
+  "private": true,
+  "scripts": {
+    "start": "yarn g:ts-node src/index.ts"
+  },
+  "dependencies": {
+    "@labelsync/config": "workspace:*",
+    "@labelsync/queues": "workspace:*",
+    "@octokit/auth-app": "^3.6.1",
+    "@octokit/core": "^3.6.0",
+    "luxon": "^2.4.0",
+    "multilines": "^1.0.3",
+    "pino": "^7.11.0"
+  },
+  "devDependencies": {
+    "@octokit/types": "^6.38.2"
+  }
+}

@@ -1,0 +1,11 @@
+repos:
+  changed:
+    # needs sync
+    config:
+      removeUnconfiguredLabels: true
+    labels:
+      'label/siblings':
+        color: '000000'
+        siblings: ['label/regular']
+      'label/regular':
+        color: '000000'

@@ -12,10 +12,7 @@ import { Maybe } from './utils'
  * @param name
  */
 export function findFolderUp(dir: string, name: string): Maybe<string> {
-  return findUp(
-    dir,
-    (p) => fs.lstatSync(p).isDirectory() && path.basename(p) === name,
-  )
+  return findUp(dir, (p) => fs.lstatSync(p).isDirectory() && path.basename(p) === name)
 }
 
 /**
@@ -26,10 +23,7 @@ export function findFolderUp(dir: string, name: string): Maybe<string> {
  * @param name
  */
 export function findFileUp(dir: string, name: string): Maybe<string> {
-  return findUp(
-    dir,
-    (p) => fs.lstatSync(p).isFile() && path.basename(p) === name,
-  )
+  return findUp(dir, (p) => fs.lstatSync(p).isFile() && path.basename(p) === name)
 }
 
 /**
@@ -39,10 +33,7 @@ export function findFileUp(dir: string, name: string): Maybe<string> {
  * @param dir
  * @param pattern
  */
-export function findUp(
-  dir: string,
-  pattern: (path: string) => boolean,
-): Maybe<string> {
+export function findUp(dir: string, pattern: (path: string) => boolean): Maybe<string> {
   switch (path.normalize(dir)) {
     /* End case: we reached the root. */
     /* istanbul ignore next */
@@ -52,9 +43,7 @@ export function findUp(
     /* Recursive case. */
     default: {
       const elements = fs.readdirSync(dir)
-      const includes = elements
-        .map((name) => path.resolve(dir, name))
-        .some(pattern)
+      const includes = elements.map((name) => path.resolve(dir, name)).some(pattern)
 
       if (includes) return dir
       else return findUp(path.resolve(dir, '../'), pattern)

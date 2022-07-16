@@ -1,0 +1,554 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`configurations: anchors.yml on FREE 1`] = `
+Object {
+  "config": Object {
+    "repos": Object {},
+  },
+  "ok": true,
+}
+`;
+
+exports[`configurations: anchors.yml on PAID 1`] = `
+Object {
+  "config": Object {
+    "repos": Object {},
+  },
+  "ok": true,
+}
+`;
+
+exports[`configurations: basic.yml on FREE 1`] = `
+Object {
+  "config": Object {
+    "repos": Object {
+      "prisma-test-utils": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+          "bug/1-has-reproduction": Object {
+            "color": "ff0022",
+            "description": "Indicates that an issue has reproduction",
+          },
+          "bug/2-bug-confirmed": Object {
+            "color": "red",
+          },
+          "bug/3-fixing": Object {
+            "color": "00ff22",
+            "description": "Indicates that we are working on fixing the issue.",
+          },
+        },
+      },
+    },
+  },
+  "ok": true,
+}
+`;
+
+exports[`configurations: basic.yml on PAID 1`] = `
+Object {
+  "config": Object {
+    "repos": Object {
+      "prisma-test-utils": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+          "bug/1-has-reproduction": Object {
+            "color": "ff0022",
+            "description": "Indicates that an issue has reproduction",
+          },
+          "bug/2-bug-confirmed": Object {
+            "color": "red",
+          },
+          "bug/3-fixing": Object {
+            "color": "00ff22",
+            "description": "Indicates that we are working on fixing the issue.",
+          },
+        },
+      },
+    },
+  },
+  "ok": true,
+}
+`;
+
+exports[`configurations: capitalization.yml on FREE 1`] = `
+Object {
+  "config": Object {
+    "repos": Object {
+      "lowercase": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "label": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "mixed": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "label": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "uppercase": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "label": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+    },
+  },
+  "ok": true,
+}
+`;
+
+exports[`configurations: capitalization.yml on PAID 1`] = `
+Object {
+  "config": Object {
+    "repos": Object {
+      "lowercase": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "label": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "mixed": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "label": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "uppercase": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "label": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+    },
+  },
+  "ok": true,
+}
+`;
+
+exports[`configurations: duplicate_aliases.yml on FREE 1`] = `
+Object {
+  "error": "Configuration references same old label twice in alias:
+* \`alias\` appears in repo-two:label/4, label/5
+
+Each legacy label may only be referenced once in alias.",
+  "ok": false,
+}
+`;
+
+exports[`configurations: duplicate_aliases.yml on PAID 1`] = `
+Object {
+  "error": "Configuration references same old label twice in alias:
+* \`alias\` appears in repo-two:label/4, label/5
+
+Each legacy label may only be referenced once in alias.",
+  "ok": false,
+}
+`;
+
+exports[`configurations: empty.yml on FREE 1`] = `
+Object {
+  "config": Object {
+    "repos": Object {},
+  },
+  "ok": true,
+}
+`;
+
+exports[`configurations: empty.yml on PAID 1`] = `
+Object {
+  "config": Object {
+    "repos": Object {},
+  },
+  "ok": true,
+}
+`;
+
+exports[`configurations: free.yml on FREE 1`] = `
+Object {
+  "error": "You are trying to configure more repositories than there are available in your plan.
+Update your current plan to access all the features LabelSync offers.",
+  "ok": false,
+}
+`;
+
+exports[`configurations: free.yml on PAID 1`] = `
+Object {
+  "config": Object {
+    "repos": Object {
+      "label-sync": Object {
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "last-one": Object {
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "notquitethere": Object {
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "overthetop": Object {
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "prisma-test-utils": Object {
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "unchanged": Object {
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+    },
+  },
+  "ok": true,
+}
+`;
+
+exports[`configurations: invalid.yml on FREE 1`] = `
+Object {
+  "error": "[
+  {
+    \\"code\\": \\"invalid_type\\",
+    \\"expected\\": \\"object\\",
+    \\"received\\": \\"undefined\\",
+    \\"path\\": [
+      \\"repos\\"
+    ],
+    \\"message\\": \\"Required\\"
+  }
+]",
+  "ok": false,
+}
+`;
+
+exports[`configurations: invalid.yml on PAID 1`] = `
+Object {
+  "error": "[
+  {
+    \\"code\\": \\"invalid_type\\",
+    \\"expected\\": \\"object\\",
+    \\"received\\": \\"undefined\\",
+    \\"path\\": [
+      \\"repos\\"
+    ],
+    \\"message\\": \\"Required\\"
+  }
+]",
+  "ok": false,
+}
+`;
+
+exports[`configurations: missing_siblings.yml on FREE 1`] = `
+Object {
+  "error": "Configuration references unconfigured siblings:
+* \`label/6\` in repo-one:label/1
+* \`label/7\` in repo-one:label/1
+* \`label/8\` in repo-two:label/4",
+  "ok": false,
+}
+`;
+
+exports[`configurations: missing_siblings.yml on PAID 1`] = `
+Object {
+  "error": "Configuration references unconfigured siblings:
+* \`label/6\` in repo-one:label/1
+* \`label/7\` in repo-one:label/1
+* \`label/8\` in repo-two:label/4",
+  "ok": false,
+}
+`;
+
+exports[`configurations: multiple_aliases.yml on FREE 1`] = `
+Object {
+  "config": Object {
+    "repos": Object {
+      "repo-one": Object {
+        "labels": Object {
+          "label/1": Object {
+            "alias": Array [
+              "alias",
+              "two",
+            ],
+            "color": "ff0022",
+          },
+          "label/2": Object {
+            "color": "ff0022",
+          },
+          "label/3": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "repo-two": Object {
+        "labels": Object {
+          "label/4": Object {
+            "alias": Array [
+              "alias",
+            ],
+            "color": "ff0022",
+          },
+        },
+      },
+    },
+  },
+  "ok": true,
+}
+`;
+
+exports[`configurations: multiple_aliases.yml on PAID 1`] = `
+Object {
+  "config": Object {
+    "repos": Object {
+      "repo-one": Object {
+        "labels": Object {
+          "label/1": Object {
+            "alias": Array [
+              "alias",
+              "two",
+            ],
+            "color": "ff0022",
+          },
+          "label/2": Object {
+            "color": "ff0022",
+          },
+          "label/3": Object {
+            "color": "ff0022",
+          },
+        },
+      },
+      "repo-two": Object {
+        "labels": Object {
+          "label/4": Object {
+            "alias": Array [
+              "alias",
+            ],
+            "color": "ff0022",
+          },
+        },
+      },
+    },
+  },
+  "ok": true,
+}
+`;
+
+exports[`configurations: new.yml on FREE 1`] = `
+Object {
+  "config": Object {
+    "repos": Object {
+      "newrepo": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+          "bug/1-has-reproduction": Object {
+            "color": "ff0022",
+            "description": "Indicates that an issue has reproduction",
+          },
+          "bug/2-bug-confirmed": Object {
+            "color": "red",
+          },
+          "bug/3-fixing": Object {
+            "color": "00ff22",
+            "description": "Indicates that we are working on fixing the issue.",
+          },
+        },
+      },
+    },
+  },
+  "ok": true,
+}
+`;
+
+exports[`configurations: new.yml on PAID 1`] = `
+Object {
+  "config": Object {
+    "repos": Object {
+      "newrepo": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+          "bug/1-has-reproduction": Object {
+            "color": "ff0022",
+            "description": "Indicates that an issue has reproduction",
+          },
+          "bug/2-bug-confirmed": Object {
+            "color": "red",
+          },
+          "bug/3-fixing": Object {
+            "color": "00ff22",
+            "description": "Indicates that we are working on fixing the issue.",
+          },
+        },
+      },
+    },
+  },
+  "ok": true,
+}
+`;
+
+exports[`configurations: siblings.yml on FREE 1`] = `
+Object {
+  "config": Object {
+    "repos": Object {
+      "changed": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "label/regular": Object {
+            "color": "000000",
+          },
+          "label/siblings": Object {
+            "color": "000000",
+            "siblings": Array [
+              "label/regular",
+            ],
+          },
+        },
+      },
+    },
+  },
+  "ok": true,
+}
+`;
+
+exports[`configurations: siblings.yml on PAID 1`] = `
+Object {
+  "config": Object {
+    "repos": Object {
+      "changed": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "label/regular": Object {
+            "color": "000000",
+          },
+          "label/siblings": Object {
+            "color": "000000",
+            "siblings": Array [
+              "label/regular",
+            ],
+          },
+        },
+      },
+    },
+  },
+  "ok": true,
+}
+`;
+
+exports[`configurations: wildcard.yml on FREE 1`] = `
+Object {
+  "error": "You are trying to configure a wildcard configuration on a free plan.
+Update your current plan to access all the features LabelSync offers.",
+  "ok": false,
+}
+`;
+
+exports[`configurations: wildcard.yml on PAID 1`] = `
+Object {
+  "config": Object {
+    "repos": Object {
+      "*": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+          "bug/1-has-reproduction": Object {
+            "color": "ff0022",
+            "description": "Indicates that an issue has reproduction",
+          },
+          "bug/2-bug-confirmed": Object {
+            "color": "red",
+          },
+          "bug/3-fixing": Object {
+            "color": "00ff22",
+            "description": "Indicates that we are working on fixing the issue.",
+          },
+        },
+      },
+      "prisma-test-utils": Object {
+        "config": Object {
+          "removeUnconfiguredLabels": true,
+        },
+        "labels": Object {
+          "bug/0-needs-reproduction": Object {
+            "color": "ff0022",
+          },
+          "bug/1-has-reproduction": Object {
+            "color": "ff0022",
+            "description": "Indicates that an issue has reproduction",
+          },
+        },
+      },
+    },
+  },
+  "ok": true,
+}
+`;

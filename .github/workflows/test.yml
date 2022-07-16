@@ -1,0 +1,51 @@
+name: Perform Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: prisma
+          POSTGRES_PASSWORD: prisma
+          POSTGRES_DB: prisma
+        ports:
+          - 5432:5432
+        # Add a health check
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout Main
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Use Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: SetUp Test Database
+        run: yarn workspace @labelsync/database deploy
+        env:
+          DATABASE_URL: postgresql://prisma:prisma@localhost:5432/prisma
+
+      - name: Test Packages
+        run: yarn test
+        env:
+          DATABASE_URL: postgresql://prisma:prisma@localhost:5432/prisma
+          REDIS_URL: redis://localhost:6379
