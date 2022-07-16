@@ -1,45 +1,15 @@
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import { Router } from 'express'
+import { config } from '../lib/config'
 
 import { Sources } from '../lib/sources'
-
-// Subscription Plans
-
-interface Plans {
-  ANNUALLY: string
-  MONTHLY: string
-}
-
-export type Period = keyof Plans
-
-const plans: Plans =
-  process.env.NODE_ENV === 'test'
-    ? {
-        ANNUALLY: 'plan_HEG5LPquldqfJp',
-        MONTHLY: 'plan_HEG5wHlZp4io5Q',
-      }
-    : {
-        ANNUALLY: 'price_HKxac3217AdNnw',
-        MONTHLY: 'price_HKxYK7gvZO3ieE',
-      }
-// : {
-//     ANNUALLY: 'plan_HCkpZId8BCi7cI',
-//     MONTHLY: 'plan_HCkojOBbK8hFh6',
-//   }
-
-// CORS spec
-
-const corsOrigins =
-  process.env.NODE_ENV === 'test'
-    ? ['http://localhost', 'http://127.0.0.1']
-    : ['https://label-sync.com', 'https://www.label-sync.com', 'https://webhook.label-sync.com']
 
 /**
  * Routes associated with subscribing to the service.
  */
 export const subscribe = (router: Router, sources: Sources) => {
-  router.use(cors({ origin: corsOrigins, preflightContinue: true }))
+  router.use(cors({ origin: config.corsOrigins, preflightContinue: true }))
   router.use(bodyParser.json())
 
   /**
@@ -112,9 +82,12 @@ export const subscribe = (router: Router, sources: Sources) => {
           let plan: string
 
           switch (period) {
-            case 'MONTHLY':
+            case 'MONTHLY': {
+              plan = config.planIds.monthly
+              break
+            }
             case 'ANNUALLY': {
-              plan = plans[period as Period]
+              plan = config.planIds.annual
               break
             }
             /* istanbul ignore next */

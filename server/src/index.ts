@@ -20,16 +20,16 @@ import { subscribe } from './routes/subscribe.route'
 const setup = (app: Probot, { getRouter }: ApplicationFunctionOptions) => {
   const sources: Sources = {
     installations: new InstallationsSource(),
-    stripe: new Stripe(process.env.STRIPE_API_KEY!, {
+    stripe: new Stripe(config.stripeApiKey, {
       apiVersion: '2020-08-27',
     }),
-    tasks: new TaskQueue(process.env.REDIS_URL!),
+    tasks: new TaskQueue(config.redisUrl),
     log: app.log,
   }
 
   Sentry.init({
     dsn: config.sentryDSN,
-    environment: process.env.NODE_ENV,
+    environment: config.prod ? 'production' : 'development',
     // Set tracesSampleRate to 1.0 to capture 100%
     // of transactions for performance monitoring.
     // We recommend adjusting this value in production
@@ -68,7 +68,7 @@ const setup = (app: Probot, { getRouter }: ApplicationFunctionOptions) => {
  */
 async function main() {
   const writeStream = await dd.createWriteStream({
-    apiKey: process.env.DATADOG_APIKEY!,
+    apiKey: config.datadogApiKey,
     ddsource: 'server',
     service: 'label-sync',
   })

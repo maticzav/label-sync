@@ -28,7 +28,11 @@ export class InstallationsSource extends Source<Key, Value> {
       return null
     }
 
-    return { ...installation, ttl: DateTime.now().plus({ days: 1 }) }
+    return {
+      ...installation,
+      periodEndsAt: DateTime.fromJSDate(installation.periodEndsAt),
+      ttl: DateTime.now().plus({ days: 1 }),
+    }
   }
 
   identify(key: Key): string {
@@ -66,17 +70,20 @@ export class InstallationsSource extends Source<Key, Value> {
       account: installation.account,
       email: installation.email ?? null,
       plan: installation.plan,
-      periodEndsAt: periodEndsAt.toJSDate(),
+      periodEndsAt: periodEndsAt,
       activated: installation.activated,
     }
 
     this.enqueue(async () => {
       await this.prisma().installation.upsert({
         where: { account: installation.account },
-        create: data,
+        create: {
+          ...data,
+          periodEndsAt: data.periodEndsAt.toJSDate(),
+        },
         update: {
           activated: data.activated,
-          periodEndsAt: data.periodEndsAt,
+          periodEndsAt: data.periodEndsAt.toJSDate(),
         },
       })
     })
@@ -109,7 +116,7 @@ export class InstallationsSource extends Source<Key, Value> {
     const updatedInstallation = {
       ...installation,
       plan: 'PAID' as const,
-      periodEndsAt: DateTime.now().plus({ months: data.cadence }).toJSDate(),
+      periodEndsAt: DateTime.now().plus({ months: data.cadence }),
       ttl: DateTime.now().plus({ days: 1 }),
     }
 
@@ -118,7 +125,7 @@ export class InstallationsSource extends Source<Key, Value> {
         where: { account: data.account },
         data: {
           plan: 'PAID' as const,
-          periodEndsAt: updatedInstallation.periodEndsAt,
+          periodEndsAt: updatedInstallation.periodEndsAt.toJSDate(),
         },
       })
     })

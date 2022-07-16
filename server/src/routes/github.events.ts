@@ -4,6 +4,7 @@ import { Probot } from 'probot'
 import { LS_CONFIG_PATH, isConfigRepo } from '@labelsync/config'
 
 import { Sources } from '../lib/sources'
+import { DateTime } from 'luxon'
 
 /**
  * Events associated with the Github App.
@@ -61,6 +62,11 @@ export const github = (app: Probot, sources: Sources) => {
       return
     }
 
+    if (installation.periodEndsAt < DateTime.now()) {
+      sources.log.info(`Installation for ${owner} has expired.`)
+      return
+    }
+
     await sources.tasks.push({
       kind: 'sync_org',
       dependsOn: [],
@@ -96,6 +102,11 @@ export const github = (app: Probot, sources: Sources) => {
     const installation = await sources.installations.get({ account: owner })
     if (!installation) {
       app.log.info(`No installation for ${owner}.`)
+      return
+    }
+
+    if (installation.periodEndsAt < DateTime.now()) {
+      sources.log.info(`Installation for ${owner} has expired.`)
       return
     }
 
@@ -172,6 +183,11 @@ export const github = (app: Probot, sources: Sources) => {
       return
     }
 
+    if (installation.periodEndsAt < DateTime.now()) {
+      sources.log.info(`Installation for ${owner} has expired.`)
+      return
+    }
+
     await sources.tasks.push({
       kind: 'check_unconfigured_labels',
       dependsOn: [],
@@ -190,6 +206,11 @@ export const github = (app: Probot, sources: Sources) => {
     const installation = await sources.installations.get({ account: owner })
     if (!installation || !ctx.payload.installation) {
       app.log.info(`No installation for ${owner}.`)
+      return
+    }
+
+    if (installation.periodEndsAt < DateTime.now()) {
+      sources.log.info(`Installation for ${owner} has expired.`)
       return
     }
 
@@ -219,6 +240,11 @@ export const github = (app: Probot, sources: Sources) => {
       return
     }
 
+    if (installation.periodEndsAt < DateTime.now()) {
+      sources.log.info(`Installation for ${owner} has expired.`)
+      return
+    }
+
     if (!ctx.payload.label) {
       return
     }
@@ -242,6 +268,11 @@ export const github = (app: Probot, sources: Sources) => {
     const installation = await sources.installations.get({ account: owner })
     if (!installation || !ctx.payload.installation) {
       app.log.info(`No installation for ${owner}.`)
+      return
+    }
+
+    if (installation.periodEndsAt < DateTime.now()) {
+      sources.log.info(`Installation for ${owner} has expired.`)
       return
     }
 

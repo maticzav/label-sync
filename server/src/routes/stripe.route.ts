@@ -1,5 +1,6 @@
 import bodyParser from 'body-parser'
 import { Router } from 'express'
+import { config } from '../lib/config'
 
 import { Sources } from '../lib/sources'
 
@@ -7,34 +8,26 @@ import { Sources } from '../lib/sources'
  * Routes associated with Stripe Webhooks.
  */
 export const stripe = (router: Router, sources: Sources) => {
+  // Stripe Webhook handler
   router.post('/', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
-    /**
-     * Stripe Webhook handler.
-     */
     let event
 
     try {
       event = sources.stripe.webhooks.constructEvent(
         req.body,
         req.headers['stripe-signature'] as string,
-        process.env.STRIPE_ENDPOINT_SECRET!,
+        config.stripeEndpointSecret,
       )
     } catch (err: any) /* istanbul ingore next */ {
-      sources.log.error(`Error in stripe webhook deconstruction.`, {
-        meta: {
-          error: err.message,
-        },
-      })
-      return res.status(400).send(`Webhook Error: ${err.message}`)
+      sources.log.error(err, `Error in stripe webhook deconstruction.`)
+      res.status(400).send(`Webhook Error: ${err.message}`)
+
+      return
     }
 
     /* Logger */
 
-    sources.log.info(`Stripe event ${event.type}`, {
-      meta: {
-        payload: JSON.stringify(event.data.object),
-      },
-    })
+    sources.log.info(event.data, `Stripe WebHook event "${event.type}"`)
 
     /* Event handlers */
 
@@ -64,13 +57,16 @@ export const stripe = (router: Router, sources: Sources) => {
             throw new Error(`Unknown period ${sub.metadata.period}`)
         }
 
-        const installation = await sources.installations.upgrade({ account: sub.metadata.account, cadence })
-        sources.log.info(`New subscriber ${installation?.account ?? 'NONE'}`, {
+        const installation = await sources.installations.upgrade({
           account: sub.metadata.account,
+          cadence,
         })
+
+        sources.log.info(sub.metadata, `New subscriber ${installation?.account ?? 'NONE'}`)
 
         return res.json({ received: true })
       }
+
       /* istanbul ignore next */
       default: {
         sources.log.warn(`unhandled stripe webhook event: ${event.type}`)

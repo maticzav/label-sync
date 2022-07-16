@@ -79,8 +79,7 @@ export const Subscribe = () => {
     if (!agreed) {
       setFetching({
         status: 'ERR',
-        message:
-          'You forgot to agree with Terms of Service and Privacy Policy.',
+        message: 'You forgot to agree with Terms of Service and Privacy Policy.',
       })
       return
     }
@@ -116,19 +115,16 @@ export const Subscribe = () => {
         }
       }
 
-      const res = (await fetch(
-        'https://webhook.label-sync.com/subscribe/session',
-        {
-          method: 'POST',
-          mode: 'cors',
-          credentials: 'same-origin',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: body,
+      const res = (await fetch('https://webhook.label-sync.com/subscribe/session', {
+        method: 'POST',
+        mode: 'cors',
+        credentials: 'same-origin',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
-      ).then((res) => res.json())) as
+        body: body,
+      }).then((res) => res.json())) as
         | { status: 'ok'; plan: 'FREE' }
         | { status: 'ok'; plan: 'PAID'; session: string }
         | { status: 'err'; message: string }
@@ -155,7 +151,7 @@ export const Subscribe = () => {
       } else {
         setFetching({ status: 'ERR', message: res.message })
       }
-    } catch (err) {
+    } catch (err: any) {
       setFetching({ status: 'ERR', message: err.message })
     }
   }
@@ -197,27 +193,19 @@ export const Subscribe = () => {
               Subscribe to LabelSync
             </h2>
             <p className="mt-4 text-lg leading-6 text-gray-500">
-              We'll sign you in the LabelSync database so you can start syncing
-              labels. If you are purchasing a paid plan we'll redirect you to
-              our payments provider after you complete the form below. Your
-              subscription starts once you complete the purchase.
+              We'll sign you in the LabelSync database so you can start syncing labels. If you are purchasing a paid
+              plan we'll redirect you to our payments provider after you complete the form below. Your subscription
+              starts once you complete the purchase.
             </p>
           </div>
 
           {/* Form */}
 
           <div className="mt-12">
-            <form
-              action="#"
-              onSubmit={subscribe}
-              className="grid grid-cols-1 row-gap-6 sm:grid-cols-2 sm:col-gap-8"
-            >
+            <form action="#" onSubmit={subscribe} className="grid grid-cols-1 row-gap-6 sm:grid-cols-2 sm:col-gap-8">
               {/* Email */}
               <div className="sm:col-span-2">
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium leading-5 text-gray-700"
-                >
+                <label htmlFor="email" className="block text-sm font-medium leading-5 text-gray-700">
                   Email
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
@@ -234,10 +222,7 @@ export const Subscribe = () => {
 
               {/* Github account */}
               <div className="sm:col-span-2">
-                <label
-                  htmlFor="account"
-                  className="block text-sm font-medium leading-5 text-gray-700"
-                >
+                <label htmlFor="account" className="block text-sm font-medium leading-5 text-gray-700">
                   Github Account or Organisation
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
@@ -253,10 +238,7 @@ export const Subscribe = () => {
 
               {/* Plan */}
               <div className="sm:col-span-2">
-                <label
-                  htmlFor="plan"
-                  className="block text-sm font-medium leading-5 text-gray-700"
-                >
+                <label htmlFor="plan" className="block text-sm font-medium leading-5 text-gray-700">
                   Subscription Plan
                 </label>
 
@@ -276,10 +258,7 @@ export const Subscribe = () => {
               {/* Period */}
               {plan === 'PAID' && (
                 <div className="sm:col-span-2">
-                  <label
-                    htmlFor="period"
-                    className="block text-sm font-medium leading-5 text-gray-700"
-                  >
+                  <label htmlFor="period" className="block text-sm font-medium leading-5 text-gray-700">
                     Subscription Period
                   </label>
 
@@ -300,10 +279,7 @@ export const Subscribe = () => {
               {/* Discount */}
               {plan === 'PAID' && (
                 <div className="sm:col-span-2">
-                  <label
-                    htmlFor="coupon"
-                    className="block text-sm font-medium leading-5 text-gray-700"
-                  >
+                  <label htmlFor="coupon" className="block text-sm font-medium leading-5 text-gray-700">
                     Discount Coupon
                   </label>
                   <div className="mt-1 relative rounded-md shadow-sm">
@@ -380,9 +356,7 @@ export const Subscribe = () => {
                     <span className="flex rounded-full bg-pink-500 uppercase px-2 py-1 text-xs font-bold mr-3">
                       Error
                     </span>
-                    <span className="font-semibold mr-2 text-left flex-auto">
-                      {fetching.message}
-                    </span>
+                    <span className="font-semibold mr-2 text-left flex-auto">{fetching.message}</span>
                   </div>
                 )}
               </div>
