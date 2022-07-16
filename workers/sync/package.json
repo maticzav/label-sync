@@ -6,7 +6,6 @@
   },
   "dependencies": {
     "@labelsync/config": "workspace:*",
-    "@labelsync/database": "workspace:*",
     "@labelsync/queues": "workspace:*",
     "@octokit/auth-app": "^3.6.1",
     "@octokit/core": "^3.6.0",

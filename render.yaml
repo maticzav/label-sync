@@ -8,8 +8,8 @@ services:
     type: web
     env: node
     region: frankfurt
-    buildCommand: yarn workspaces focus wordo @wordo/server
-    startCommand: yarn workspace @wordo/server start
+    buildCommand: yarn workspaces focus @labelsync/server
+    startCommand: yarn workspace @labelsync/server start
     envVars:
       - key: NODE_VERSION
         value: 16
@@ -34,8 +34,8 @@ services:
     type: web
     env: node
     region: frankfurt
-    buildCommand: yarn workspaces focus wordo @wordo/server
-    startCommand: yarn workspace @wordo/server start
+    buildCommand: yarn workspaces focus @labelsync/sync
+    startCommand: yarn workspace @labelsync/sync start
     envVars:
       - key: NODE_VERSION
         value: 16

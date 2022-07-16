@@ -4,6 +4,9 @@
     "start": "yarn g:ts-node ./src/index.ts"
   },
   "dependencies": {
+    "@labelsync/config": "workspace:*",
+    "@labelsync/database": "workspace:*",
+    "@labelsync/queues": "workspace:*",
     "@octokit/rest": "18.12.0",
     "@sentry/node": "^6.19.7",
     "@sentry/tracing": "^6.19.7",
