@@ -52,7 +52,7 @@ services:
       - fromGroup: labelsync-secrets
     buildFilter:
       paths:
-        - server/**/*
+        - workers/**/*
         - packages/**/*
         - package.json
       ignoredPaths:
