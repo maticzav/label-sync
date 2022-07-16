@@ -14,8 +14,8 @@ export function calculateConfigurationDiff({
 }): {
   added: GitHubLabel[]
   changed: GitHubLabel[]
-  aliased: Required<Pick<GitHubLabel, 'name' | 'old_name'>>[]
-  removed: Pick<GitHubLabel, 'name'>[]
+  aliased: Required<Pick<GitHubLabel, 'name' | 'old_name' | 'color'>>[]
+  removed: Pick<GitHubLabel, 'name' | 'color'>[]
 } {
   /**
    * Label may fall into four classes:
@@ -44,8 +44,8 @@ export function calculateConfigurationDiff({
 
   const added: GitHubLabel[] = []
   const changed: GitHubLabel[] = []
-  const aliased: Required<Pick<GitHubLabel, 'name' | 'old_name'>>[] = []
-  const removed: Pick<GitHubLabel, 'name'>[] = []
+  const aliased: Required<Pick<GitHubLabel, 'name' | 'old_name' | 'color'>>[] = []
+  const removed: Pick<GitHubLabel, 'name' | 'color'>[] = []
 
   for (const label of Object.keys(config)) {
     // This algorithm assumes each label is only referenced once.
@@ -117,7 +117,7 @@ export function calculateConfigurationDiff({
     //
     // NOTE: This also catches aliased labels that won't be renamed.
     if (!isLabelConfigured && !isLabelRenamed) {
-      removed.push({ name: label.name })
+      removed.push({ name: label.name, color: label.color })
     }
   }
 

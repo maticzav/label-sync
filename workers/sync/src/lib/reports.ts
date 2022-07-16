@@ -15,8 +15,8 @@ export type LabelSyncReport =
       repo: string
       additions: GitHubLabel[]
       updates: GitHubLabel[]
-      removals: GitHubLabel[]
-      aliases: GitHubLabel[]
+      removals: Required<Pick<GitHubLabel, 'name' | 'color'>>[]
+      aliases: Required<Pick<GitHubLabel, 'name' | 'old_name' | 'color'>>[]
       config: {
         config: Required<LSCRepositoryConfiguration>
         labels: Dict<LSCLabel>

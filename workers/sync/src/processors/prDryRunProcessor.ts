@@ -21,8 +21,8 @@ export class DryRunProcessor extends Processor<ProcessorData> {
     const check = await this.endpoints.createPRCheckRun(
       { repo: configRepoName, owner },
       {
-        pr_number: pr_number,
         name: 'LabelSync Configuration Check',
+        pr_number: pr_number,
       },
     )
 
@@ -68,12 +68,12 @@ export class DryRunProcessor extends Processor<ProcessorData> {
   }) {
     const rawConfig = await this.endpoints.getConfig({ owner })
 
-    /* No configuration, skip the evaluation. */
-    /* istanbul ignore next */
+    // No configuration, skip the evaluation.
     if (rawConfig === null) {
       this.log.info(`No configuration, skipping dryrun.`)
       return { ok: false, message: 'No configuration found.' }
     }
+
     const parsedConfig = parseConfig({
       input: rawConfig,
       isPro: installation.isPaidPlan,

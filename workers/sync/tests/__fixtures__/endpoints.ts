@@ -128,8 +128,17 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
     return MockGitHubEndpoints.push('open_issue', { owner, repo, title })
   }
 
-  static comment(id: { owner: string; repo: string }, params: { issue: number; comment: string }): StackItem {
-    return MockGitHubEndpoints.push('comment', { id, params })
+  static comment({
+    owner,
+    repo,
+    ...params
+  }: {
+    owner: string
+    repo: string
+    issue: number
+    comment?: string
+  }): StackItem {
+    return MockGitHubEndpoints.push('comment', { owner, repo, ...params })
   }
 
   static createFileTree(repo: { owner: string; repo: string }, tree: FileTree): StackItem {
@@ -175,22 +184,33 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
     return MockGitHubEndpoints.push('get_pull_request', id)
   }
 
-  static createPRCheckRun(id: { owner: string; repo: string }, params: { name: string; pr_number: string }) {
-    return MockGitHubEndpoints.push('create_pr_check_run', { id, params })
+  static createPRCheckRun({
+    owner,
+    repo,
+    name,
+    pr_number,
+  }: {
+    owner: string
+    repo: string
+    name: string
+    pr_number: number
+  }) {
+    return MockGitHubEndpoints.push('create_pr_check_run', { owner, repo, name, pr_number })
   }
 
-  static completePRCheckRun(
-    { owner, repo }: { owner: string; repo: string },
-    {
-      check_run,
-      conclusion,
-      output,
-    }: {
-      check_run: number
-      conclusion: 'action_required' | 'cancelled' | 'failure' | 'neutral' | 'success' | 'skipped' | 'timed_out'
-      output?: { title: string; summary: string; text?: string | undefined } | undefined
-    },
-  ) {
+  static completePRCheckRun({
+    owner,
+    repo,
+    check_run,
+    conclusion,
+    output,
+  }: {
+    owner: string
+    repo: string
+    check_run: number
+    conclusion: 'action_required' | 'cancelled' | 'failure' | 'neutral' | 'success' | 'skipped' | 'timed_out'
+    output?: { title: string; summary?: string; text?: string | undefined } | undefined
+  }) {
     return MockGitHubEndpoints.push('complete_pr_check_run', { owner, repo, check_run, conclusion, output })
   }
 
@@ -293,8 +313,11 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
     return { id: 42, number: 1, labels: [] }
   }
 
-  async comment(id: { owner: string; repo: string }, params: { comment: string; issue: number }): Promise<void> {
-    this.push('comment', { id, params })
+  async comment(
+    { owner, repo }: { owner: string; repo: string },
+    { comment, issue }: { comment: string; issue: number },
+  ): Promise<void> {
+    this.push('comment', { owner, repo, issue, comment })
   }
 
   async createFileTree(repo: { owner: string; repo: string }, tree: FileTree.Type): Promise<{ sha: string } | null> {
@@ -419,21 +442,21 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
   }
 
   async createPRCheckRun(
-    id: { owner: string; repo: string },
-    params: { pr_number: number; name: string },
+    { owner, repo }: { owner: string; repo: string },
+    { name, pr_number }: { pr_number: number; name: string },
   ): Promise<GitHubCheckRun | null> {
-    this.push('create_pr_check_run', { id, params })
+    this.push('create_pr_check_run', { owner, repo, name, pr_number })
     return {
       id: 1,
       head_sha: 'head_sha',
       status: 'in_progress',
       conclusion: null,
       output: {
-        title: params.name,
+        title: name,
         summary: null,
         text: null,
       },
-      name: params.name,
+      name: name,
       check_suite: null,
     }
   }

@@ -29,6 +29,9 @@ describe('repository sync', () => {
           ],
         },
       },
+      installations: {
+        'test-org': ['a'],
+      },
     })
 
     const queue = new MockTaskQueue()
