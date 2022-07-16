@@ -75,6 +75,9 @@ async function main() {
 
   const server = new Server({
     Probot: Probot.defaults({
+      appId: config.ghAppId,
+      privateKey: config.ghPrivateKey,
+      secret: config.ghSecret,
       log: pinoms({ streams: [{ stream: writeStream }] }),
     }),
   })

@@ -6,6 +6,7 @@ type Config = {
   // https://probot.github.io/docs/configuration/
   ghAppId: string
   ghPrivateKey: string
+  ghSecret: string
 
   stripeApiKey: string
   stripeEndpointSecret: string
@@ -33,6 +34,7 @@ const prod = {
 
   ghAppId: process.env.GH_APP_ID!,
   ghPrivateKey: process.env.GH_PRIVATE_KEY!,
+  ghSecret: process.env.GH_SECRET!,
 
   stripeApiKey: process.env.STRIPE_API_KEY!,
   stripeEndpointSecret: process.env.STRIPE_ENDPOINT_SECRET!,
@@ -56,6 +58,7 @@ const dev = {
 
   ghAppId: '',
   ghPrivateKey: '',
+  ghSecret: '',
 
   stripeApiKey: '',
   stripeEndpointSecret: '',
