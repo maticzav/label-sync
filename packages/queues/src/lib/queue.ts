@@ -2,7 +2,7 @@ import crypto from 'crypto'
 import pino from 'pino'
 import * as redis from 'redis'
 
-import { sleep } from './utils'
+import { sleep, UnionOmit } from './utils'
 
 /**
  * The base type to use to build a new task.
@@ -96,18 +96,25 @@ export class Queue<Task extends TaskSpec> {
    * Function that pushes a new task to the queue and returns
    * the task identifier.
    */
-  public async push(task: Omit<Task, 'id'>): Promise<string> {
+  public async push(task: UnionOmit<Task, 'id'>): Promise<string> {
     const id = crypto.randomUUID()
-    const hydratedTask = { id, ...task }
+    const hydratedTask = { id, ...task } as Task
 
-    this.logger.info(hydratedTask, `Pushing task "${id}" to queue "${this.name}"!`)
+    return this._push(hydratedTask)
+  }
+
+  /**
+   * Adds a complete task to the queue.
+   */
+  private async _push(task: Task): Promise<string> {
+    this.logger.info(task, `Pushing task "${task.id}" to queue "${this.name}"!`)
 
     await Promise.all([
-      this.client.RPUSH(this.queue(), JSON.stringify(hydratedTask)),
-      this.client.SADD(this.members(), id),
+      this.client.RPUSH(this.queue(), JSON.stringify(task)),
+      this.client.SADD(this.members(), task.id),
     ])
 
-    return id
+    return task.id
   }
 
   /**
@@ -137,7 +144,7 @@ export class Queue<Task extends TaskSpec> {
       for (const dependencyId of task.dependsOn) {
         const unprocessed = await this.client.SISMEMBER(this.members(), dependencyId)
         if (unprocessed) {
-          await this.push(task)
+          await this._push(task)
           continue processor
         }
       }
@@ -156,7 +163,7 @@ export class Queue<Task extends TaskSpec> {
           return
         }
       } catch {
-        await this.push(task)
+        await this._push(task)
       }
     }
   }

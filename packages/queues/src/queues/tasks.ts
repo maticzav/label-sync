@@ -1,28 +1,30 @@
 import { Queue, TaskSpec } from '../lib/queue'
-import { UnionOmit } from '../lib/utils'
+import { UnionOmit, UnionShare } from '../lib/utils'
 
-export type Task = TaskSpec & {
+type SharedTaskInfo = TaskSpec & {
   ghInstallationId: number
   isPaidPlan: boolean
-} & (
-    | { kind: 'onboard_org'; org: string; accountType: string }
-    | { kind: 'sync_org'; org: string }
-    | { kind: 'sync_repo'; repo: string; org: string }
-    | { kind: 'dryrun_config'; org: string; pr_number: number }
-    | {
-        kind: 'add_siblings'
-        org: string
-        repo: string
-        issue_number: number
-        label: string
-      }
-    | {
-        kind: 'check_unconfigured_labels'
-        org: string
-        repo: string
-        label: string
-      }
-  )
+}
+export type Task = UnionShare<
+  | { kind: 'onboard_org'; org: string; accountType: string }
+  | { kind: 'sync_org'; org: string }
+  | { kind: 'sync_repo'; repo: string; org: string }
+  | { kind: 'dryrun_config'; org: string; pr_number: number }
+  | {
+      kind: 'add_siblings'
+      org: string
+      repo: string
+      issue_number: number
+      label: string
+    }
+  | {
+      kind: 'check_unconfigured_labels'
+      org: string
+      repo: string
+      label: string
+    },
+  SharedTaskInfo
+>
 
 export interface ITaskQueue {
   /**

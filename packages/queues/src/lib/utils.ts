@@ -19,6 +19,11 @@ export type UnionPick<T, K extends keyof T> = T extends unknown ? Pick<T, K> : n
 export type UnionOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never
 
 /**
+ * Lets you distribute a shared type over each union separately.
+ */
+export type UnionShare<T, V> = T extends unknown ? T & V : never
+
+/**
  * Returns a promise that resolves after given number of milliseconds.
  */
 export function sleep(ms: number) {

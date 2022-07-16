@@ -3,9 +3,9 @@ import os from 'os'
 import prettier from 'prettier'
 import { stringifyUrl } from 'query-string'
 
-import { GitHubLabel } from './github'
-import { not } from '../../../../server/src/lib/utils'
 import { LSCLabel, LSCRepositoryConfiguration } from '@labelsync/config'
+
+import { GitHubLabel } from './github'
 import { Dict } from '../data/dict'
 
 export type LabelSyncReport =
@@ -39,7 +39,7 @@ export type LabelSyncReport =
 export function generateHumanReadablePRReport(reports: LabelSyncReport[]): string {
   const changedReports = reports.filter(reportHasChanges).sort(orderReports).map(parseLabelSyncReport)
 
-  const unchangedReports = reports.filter(not(reportHasChanges))
+  const unchangedReports = reports.filter((r) => !reportHasChanges(r))
   const report = ml`
   | ## :label: Here's what's going to change when you merge
   | 

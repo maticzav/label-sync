@@ -4,14 +4,12 @@
   "scripts": {
     "g:ts-node": "cd $INIT_CWD && ts-node",
     "build": "node scripts/build.js",
-    "coverage": "yarn codecov",
     "release": "",
     "test": "NODE_ENV=test LOG_LEVEL=fatal jest"
   },
   "devDependencies": {
     "@types/node": "^18.0.1",
     "chalk": "4.1.2",
-    "codecov": "3.8.3",
     "execa": "4.1.0",
     "jest": "^28.1.2",
     "jest-serializer-ansi": "1.0.3",
