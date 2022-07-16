@@ -1,5 +1,8 @@
 import crypto from 'crypto'
+import pino from 'pino'
 import * as redis from 'redis'
+
+import { sleep } from './utils'
 
 /**
  * The base type to use to build a new task.
@@ -31,6 +34,11 @@ export class Queue<Task extends TaskSpec> {
   private client: redis.RedisClientType
 
   /**
+   * An intenral logger that the queue may use to log events.
+   */
+  private logger: pino.Logger
+
+  /**
    * Number of functions that are currently processing tasks.
    */
   private locks: number = 0
@@ -48,6 +56,7 @@ export class Queue<Task extends TaskSpec> {
   constructor(name: string, url: string) {
     this.name = name
     this.client = redis.createClient({ url })
+    this.logger = pino()
   }
 
   /**
@@ -75,6 +84,8 @@ export class Queue<Task extends TaskSpec> {
    * Lists all tasks that are currently in the queue.
    */
   public async list(): Promise<Task[]> {
+    this.logger.info(`Listing tasks in queue "${this.name}"!`)
+
     const rawtasks = await this.client.LRANGE(this.queue(), 0, -1)
     const tasks = rawtasks.map((raw) => JSON.parse(raw) as Task)
 
@@ -88,6 +99,8 @@ export class Queue<Task extends TaskSpec> {
   public async push(task: Omit<Task, 'id'>): Promise<string> {
     const id = crypto.randomUUID()
     const hydratedTask = { id, ...task }
+
+    this.logger.info(hydratedTask, `Pushing task "${id}" to queue "${this.name}"!`)
 
     await Promise.all([
       this.client.RPUSH(this.queue(), JSON.stringify(hydratedTask)),
@@ -103,9 +116,12 @@ export class Queue<Task extends TaskSpec> {
    */
   public async process(fn: (task: Task) => Promise<boolean>) {
     processor: while (!this.disposed) {
+      this.logger.info(`Checking for new task in queue "${this.name}"!`)
+
       const rawtask = await this.client.BLPOP([this.queue()], 30)
       if (!rawtask) {
         if (!this.disposed) {
+          await sleep(100)
           continue
         }
 

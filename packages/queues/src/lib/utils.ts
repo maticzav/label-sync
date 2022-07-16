@@ -17,3 +17,10 @@ export type UnionPick<T, K extends keyof T> = T extends unknown ? Pick<T, K> : n
  * Like UnionPick, but for Omit
  */
 export type UnionOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never
+
+/**
+ * Returns a promise that resolves after given number of milliseconds.
+ */
+export function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}

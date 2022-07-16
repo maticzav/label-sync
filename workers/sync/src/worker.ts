@@ -37,8 +37,6 @@ export class Worker {
 
     this.queue = new TaskQueue(config.redisUrl)
     this.logger = pino()
-
-    this.queue.process(this.tick)
   }
 
   /**
@@ -46,6 +44,8 @@ export class Worker {
    */
   public async start() {
     await this.queue.start()
+
+    this.queue.process(this.tick)
   }
 
   /**
