@@ -1,5 +1,6 @@
 {
   "name": "@labelsync/server",
+  "private": true,
   "scripts": {
     "start": "yarn g:ts-node ./src/index.ts"
   },
