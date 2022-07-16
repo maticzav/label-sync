@@ -4,7 +4,7 @@ import { calculateConfigurationDiff } from '../../src/lib/config'
 import { GitHubLabel } from '../../src/lib/github'
 
 describe('configuration', () => {
-  test('correctly calculates the difference between configuration and state', () => {
+  test('correctly calculates the difference between configuration and current state', () => {
     const config: LSCRepository['labels'] = {
       /* updates: */
       'updates/unchanged': {
@@ -22,7 +22,8 @@ describe('configuration', () => {
       /* creates: */
       /**
        * Both of these should act as new labels:
-       *  - we shouldn't try to update them from the old ones.
+       *  - the first one is new,
+       *  - the second one is aliasing a label that doesn't exist anymore.
        */
       'new/noalias': {
         color: 'color:noalias',
@@ -56,10 +57,10 @@ describe('configuration', () => {
         color: 'color:alias',
         alias: ['alias/old:3', 'alias/old:4'],
       },
-      // 'alias/old:1': {
+      // 'alias/old:3': {
       //   color: 'color:alias:old',
       // },
-      // 'alias/old:2': {
+      // 'alias/old:4': {
       //   color: 'color:alias:old',
       // },
     }
@@ -127,20 +128,20 @@ describe('configuration', () => {
     expect(diff).toEqual({
       added: [
         {
-          old_name: undefined,
           name: 'new/noalias',
-          old_description: undefined,
+          old_name: undefined,
           description: undefined,
-          old_color: undefined,
+          old_description: undefined,
           color: 'color:noalias',
+          old_color: undefined,
         },
         {
-          old_name: undefined,
           name: 'new/deadalias',
-          old_description: undefined,
+          old_name: undefined,
           description: undefined,
-          old_color: undefined,
+          old_description: undefined,
           color: 'color:deadalias',
+          old_color: undefined,
         },
       ],
       changed: [
@@ -198,19 +199,15 @@ describe('configuration', () => {
       removed: [
         {
           name: 'removed',
-          color: 'color:removed',
         },
         {
           name: 'alias/old:2',
-          color: 'color:alias:old',
         },
         {
           name: 'alias/old:3',
-          color: 'color:alias:old',
         },
         {
           name: 'alias/old:4',
-          color: 'color:alias:old',
         },
       ],
     })

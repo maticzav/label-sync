@@ -14,18 +14,20 @@ export function calculateConfigurationDiff({
 }): {
   added: GitHubLabel[]
   changed: GitHubLabel[]
-  aliased: GitHubLabel[]
-  removed: GitHubLabel[]
+  aliased: Required<Pick<GitHubLabel, 'name' | 'old_name'>>[]
+  removed: Pick<GitHubLabel, 'name'>[]
 } {
   /**
    * Label may fall into four classes:
-   *  - it may be new: not on Github and no other label
-   *    in the configuration references it
+   *  - it may be new: not on GitHub and no other label
+   *    in the configuration references it (e.g. as an old version of the label)
    *  - it may be updated: name remains the same but color
    *    or description have changed
    *  - it may be aliased: one of the labels references a
-   *    label that exists on Github but is not present in
+   *    label that exists on GitHub but is not present in
    *    the configuration anymore
+   *    (one label may reference multiple old labels, but multiple
+   *      labels can't refernce the same old label)
    *  - it may be removed: no labels alias it and it is
    *    not in the configuration
    *
@@ -40,46 +42,48 @@ export function calculateConfigurationDiff({
 
   const currentLabelsMap = new Map(currentLabels.map((l) => [l.name, l]))
 
-  let added: GitHubLabel[] = []
-  let changed: GitHubLabel[] = []
-  let aliased: GitHubLabel[] = []
-  let removed: GitHubLabel[] = []
+  const added: GitHubLabel[] = []
+  const changed: GitHubLabel[] = []
+  const aliased: Required<Pick<GitHubLabel, 'name' | 'old_name'>>[] = []
+  const removed: Pick<GitHubLabel, 'name'>[] = []
 
   for (const label of Object.keys(config)) {
-    // We know that each label inhere is only referenced once.
+    // This algorithm assumes each label is only referenced once.
     // You may not reference the same label in two different alias.
     const hydratedLabel = hydrateLabel(label)
 
-    const existingLabel = hydratedLabel.old_name !== undefined
+    const isExistingLabel = hydratedLabel.old_name !== undefined
 
-    const labelAlias: string[] = (config[label].alias ?? []).filter((aliasName) => currentLabelsMap.has(aliasName))
-    const labelIsAliased = labelAlias.length !== 0
+    const aliaii: string[] = (config[label].alias ?? []).filter((aliasName) => currentLabelsMap.has(aliasName))
+    const isLabelAlias = aliaii.length > 0
 
-    // New labels:
+    const hasLabelChanged = currentLabels.some((cLabel) => {
+      if (cLabel.name !== hydratedLabel.name) {
+        return false
+      }
+
+      // Description is optional. It has changed if:
+      //  - it wasn't defined and now is
+      //  - it was defined and has changed
+      const hasDescriptionChanged = (cLabel.description ?? '') !== (hydratedLabel.description ?? '')
+
+      // Color of a label is always defined. We check whether it has changed.
+      const hasColorChanged = normalizeColor(cLabel.color) !== normalizeColor(hydratedLabel.color)
+
+      return hasDescriptionChanged || hasColorChanged
+    })
+
+    // New label:
     //  - doesn't exist yet
-    //  - isn't aliased
-    if (!existingLabel && !labelIsAliased) {
+    //  - isn't an alias for another label
+    if (!isExistingLabel && !isLabelAlias) {
       added.push(hydratedLabel)
       continue
     }
 
     // Updated labels:
     //  - either color or description has changed.
-    const labelHasChanged = currentLabels.some((cLabel) => {
-      const sameName = cLabel.name === hydratedLabel.name
-
-      // Description is optional. It has changed if:
-      //  - it wasn't defined and now is
-      //  - it was defined and has changed
-      const descriptionChanged = (cLabel.description ?? '') !== (hydratedLabel.description ?? '')
-
-      // Color of a label is always defined. We check whether it has changed.
-      const colorChanged = normalizeColor(cLabel.color) !== normalizeColor(hydratedLabel.color)
-
-      return sameName && (descriptionChanged || colorChanged)
-    })
-
-    if (existingLabel && labelHasChanged && !labelIsAliased) {
+    if (isExistingLabel && hasLabelChanged && !isLabelAlias) {
       changed.push(hydratedLabel)
       continue
     }
@@ -88,33 +92,45 @@ export function calculateConfigurationDiff({
     //  - add an existing label to changed labels
     //  - this one shouldn't be removed afterwards since we
     //    are renaming it.
-    const existingAliasedLabel = labelAlias.find((alias) => currentLabelsMap.has(alias))
-    for (const alias of labelAlias) {
-      // We should rename the label to an existing one if the new
-      // one doesn't exist yet.
-      if (alias === existingAliasedLabel && !existingLabel) {
+
+    // Find the first old label of the label that is currently examined
+    // and use it as the source that should be changed.
+    const origin = aliaii.find((alias) => currentLabelsMap.has(alias))
+
+    for (const alias of aliaii) {
+      if (alias === origin && !isExistingLabel) {
+        // Change the "original" label to the name of the new one.
         changed.push({ ...hydratedLabel, old_name: alias })
       } else {
+        // Alias all other labels to the new one.
         aliased.push({ ...hydratedLabel, old_name: alias })
       }
     }
   }
 
   for (const label of currentLabels) {
-    const labelRemoved = !config.hasOwnProperty(label.name)
-    const labelRenamed = changed.find(({ old_name }) => old_name === label.name)
+    const isLabelConfigured = config.hasOwnProperty(label.name)
+    const isLabelRenamed = changed.find(({ old_name }) => old_name === label.name)
 
     // Mark label as removed if it weren't renamed (changed)
     // as part of the aliasing and isn't configured anymore.
-    if (labelRemoved && !labelRenamed) {
-      removed.push({ name: label.name, color: label.color })
+    //
+    // NOTE: This also catches aliased labels that won't be renamed.
+    if (!isLabelConfigured && !isLabelRenamed) {
+      removed.push({ name: label.name })
     }
   }
 
-  return { added, changed, removed, aliased }
+  return {
+    added,
+    changed,
+    removed,
+    aliased,
+  }
 
   /**
-   * Returns information for the label with a given name from the active labels map.
+   * Returns information for the label with a given name from the
+   * currently active labels map.
    */
   function hydrateLabel(name: string): GitHubLabel {
     const oldLabel = currentLabelsMap.get(name)
@@ -123,6 +139,7 @@ export function calculateConfigurationDiff({
       old_name: oldLabel?.name,
       name,
       //
+      old_description: oldLabel?.description,
       description: config[name]!.description,
       //
       old_color: oldLabel?.color,

@@ -1,8 +1,10 @@
 import ml from 'multilines'
 import pino from 'pino'
-import { OrganizationSyncProcessor } from '../../src/processors/organizationSyncProcessor'
+
 import { MockGitHubEndpoints } from '../__fixtures__/endpoints'
 import { MockTaskQueue } from '../__fixtures__/queue'
+
+import { OrganizationSyncProcessor } from '../../src/processors/organizationSyncProcessor'
 
 describe('organization sync', () => {
   test('syncs a configuration and dispatches subtasks on valid configuration', async () => {

@@ -55,7 +55,10 @@ export class RepositorySyncProcessor extends Processor<ProcessorData> {
     try {
       await famap(added, (label) => this.endpoints.createLabel({ owner, repo }, label))
       await famap(changed, (label) => this.endpoints.updateLabel({ owner, repo }, label))
-      await this.endpoints.aliasLabels({ owner, repo }, aliased)
+
+      if (aliased.length > 0) {
+        await this.endpoints.aliasLabels({ owner, repo }, aliased)
+      }
 
       if (removeUnconfiguredLabels) {
         await famap(removed, (label) => this.endpoints.removeLabel({ owner, repo }, label))

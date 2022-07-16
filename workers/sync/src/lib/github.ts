@@ -81,7 +81,7 @@ export interface GitHubLabel {
   old_name?: string
   name: string
 
-  old_description?: string
+  old_description?: string | null
   description?: string | null
 
   old_color?: string
@@ -186,7 +186,7 @@ export interface IGitHubEndpoints {
    * adding a label with the new name to each issue that has a label with
    * the old name of the aliased label.
    */
-  aliasLabels(id: RepositoryIdentifier, labels: GitHubLabel[]): Promise<void>
+  aliasLabels(id: RepositoryIdentifier, labels: Required<Pick<GitHubLabel, 'name' | 'old_name'>>[]): Promise<void>
 
   /**
    * Gets all issues in a given repository.
@@ -501,14 +501,21 @@ export class GitHubEndpoints implements IGitHubEndpoints {
    * adding a label with the new name to each issue that has a label with
    * the old name of the aliased label.
    */
-  public async aliasLabels({ repo, owner }: RepositoryIdentifier, labels: GitHubLabel[]): Promise<void> {
+  public async aliasLabels(
+    { repo, owner }: RepositoryIdentifier,
+    labels: Required<Pick<GitHubLabel, 'name' | 'old_name'>>[],
+  ): Promise<void> {
     const issues = await this.getRepositoryIssues({ repo, owner })
 
     for (const issue of issues) {
       // Filter labels that should be in this issue but are not.
       const missingLabels = labels.filter((label) => {
-        // issue.labels.some((issueLabel) => issueLabel.name === label.old_name)
-        return false
+        return issue.labels.some((l) => {
+          if (typeof l === 'string') {
+            return l === label.old_name
+          }
+          return l.name === label.old_name
+        })
       })
 
       if (missingLabels.length === 0) continue

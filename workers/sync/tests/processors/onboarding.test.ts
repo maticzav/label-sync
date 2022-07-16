@@ -1,8 +1,10 @@
 import pino from 'pino'
+
 import { populateTemplate, TEMPLATES } from '../../src/lib/templates'
-import { OnboardingProcessor } from '../../src/processors/onboardingProcessor'
 import { MockGitHubEndpoints } from '../__fixtures__/endpoints'
 import { MockTaskQueue } from '../__fixtures__/queue'
+
+import { OnboardingProcessor } from '../../src/processors/onboardingProcessor'
 
 describe('onboarding', () => {
   test('onboards organization', async () => {

@@ -15,6 +15,8 @@ import {
 interface MockGitHubEndpointsData {
   repos?: { [owner: string]: { [repo: string]: { id: number; default_branch: string } | null } }
 
+  labels?: { [owner: string]: { [repo: string]: GitHubLabel[] } }
+
   configs?: { [owner: string]: string }
 
   files?: { [path: string]: string }
@@ -43,6 +45,7 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
     this.files = data.files ?? {}
     this.configs = data.configs ?? {}
     this.installations = data.installations ?? {}
+    this.labels = data.labels ?? {}
   }
 
   // EVENTS
@@ -70,19 +73,32 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
     return MockGitHubEndpoints.push('get_labels', { repo, owner, page })
   }
 
-  static createLabel(
-    id: { owner: string; repo: string },
-    label: Pick<GitHubLabel, 'color' | 'description' | 'name'>,
-  ): StackItem {
-    return MockGitHubEndpoints.push('create_label', { id, label })
+  static createLabel({
+    owner,
+    repo,
+    label,
+  }: {
+    owner: string
+    repo: string
+    label: Pick<GitHubLabel, 'color' | 'description' | 'name'>
+  }): StackItem {
+    return MockGitHubEndpoints.push('create_label', { owner, repo, label })
   }
 
-  static updateLabel(id: { owner: string; repo: string }, label: GitHubLabel): StackItem {
-    return MockGitHubEndpoints.push('update_label', { id, label })
+  static updateLabel({ owner, repo, label }: { owner: string; repo: string; label: GitHubLabel }): StackItem {
+    return MockGitHubEndpoints.push('update_label', { owner, repo, label })
   }
 
-  static removeLabel(id: { owner: string; repo: string }, label: Pick<GitHubLabel, 'name'>): StackItem {
-    return MockGitHubEndpoints.push('remove_label', { id, label })
+  static removeLabel({
+    owner,
+    repo,
+    label,
+  }: {
+    owner: string
+    repo: string
+    label: Pick<GitHubLabel, 'name'>
+  }): StackItem {
+    return MockGitHubEndpoints.push('remove_label', { owner, repo, label })
   }
 
   static addLabelsToIssue(
@@ -92,8 +108,16 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
     return MockGitHubEndpoints.push('add_labels_to_issue', { id, params })
   }
 
-  static aliasLabels(id: { owner: string; repo: string }, labels: GitHubLabel[]): StackItem {
-    return MockGitHubEndpoints.push('alias_labels', { id, labels })
+  static aliasLabels({
+    owner,
+    repo,
+    labels,
+  }: {
+    owner: string
+    repo: string
+    labels: Required<Pick<GitHubLabel, 'name' | 'old_name'>>[]
+  }): StackItem {
+    return MockGitHubEndpoints.push('alias_labels', { owner, repo, labels })
   }
 
   static getRepositoryIssues(params: { owner: string; repo: string; page: number }): StackItem {
@@ -209,43 +233,48 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
     return this.configs[id.owner] ?? null
   }
 
+  private labels: { [owner: string]: { [repo: string]: GitHubLabel[] } }
+
   async getLabels(
     { repo, owner }: { owner: string; repo: string },
     page?: number | undefined,
   ): Promise<GitHubLabel[] | null> {
     this.push('get_labels', { repo, owner, page })
-    return []
+    return this.labels[owner]?.[repo] ?? null
   }
 
   async createLabel(
-    id: { owner: string; repo: string },
+    { owner, repo }: { owner: string; repo: string },
     label: Pick<GitHubLabel, 'color' | 'description' | 'name'>,
   ): Promise<GitHubLabel | null> {
-    this.push('create_label', { id, label })
+    this.push('create_label', { owner, repo, label })
     return label
   }
 
-  async updateLabel(id: { owner: string; repo: string }, label: GitHubLabel): Promise<GitHubLabel | null> {
-    this.push('update_label', { id, label })
+  async updateLabel({ owner, repo }: { owner: string; repo: string }, label: GitHubLabel): Promise<GitHubLabel | null> {
+    this.push('update_label', { owner, repo, label })
     return label
   }
 
-  async removeLabel(id: { owner: string; repo: string }, label: Pick<GitHubLabel, 'name'>): Promise<void> {
-    this.push('remove_label', { id, label })
+  async removeLabel({ owner, repo }: { owner: string; repo: string }, label: Pick<GitHubLabel, 'name'>): Promise<void> {
+    this.push('remove_label', { owner, repo, label })
   }
 
   async addLabelsToIssue(
-    id: { owner: string; repo: string },
+    { owner, repo }: { owner: string; repo: string },
     params: { issue_number: number; labels: Pick<GitHubLabel, 'name'>[] },
   ): Promise<GitHubLabel[] | null> {
-    this.push('add_labels_to_issue', { id, params })
+    this.push('add_labels_to_issue', { owner, repo, params })
 
     const labels = params.labels.map((label) => ({ ...label, id: 42, color: '#000fff' }))
     return labels
   }
 
-  async aliasLabels(id: { owner: string; repo: string }, labels: GitHubLabel[]): Promise<void> {
-    this.push('alias_labels', { id, labels })
+  async aliasLabels(
+    { owner, repo }: { owner: string; repo: string },
+    labels: Required<Pick<GitHubLabel, 'name' | 'old_name'>>[],
+  ): Promise<void> {
+    this.push('alias_labels', { owner, repo, labels })
   }
 
   async getRepositoryIssues(
