@@ -9,11 +9,13 @@
     "@labelsync/queues": "workspace:*",
     "@octokit/auth-app": "^3.6.1",
     "@octokit/core": "^3.6.0",
+    "lodash": "^4.17.21",
     "luxon": "^2.4.0",
     "multilines": "^1.0.3",
     "pino": "^7.11.0"
   },
   "devDependencies": {
-    "@octokit/types": "^6.38.2"
+    "@octokit/types": "^6.38.2",
+    "@types/lodash": "^4.14.182"
   }
 }

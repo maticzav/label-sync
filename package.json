@@ -7,7 +7,7 @@
     "release": "yarn build && changeset publish",
     "test": "NODE_ENV=test LOG_LEVEL=fatal jest"
   },
-  "devDependencies": {
+  "dependencies": {
     "@changesets/cli": "^2.23.2",
     "@types/node": "^18.0.1",
     "chalk": "4.1.2",
