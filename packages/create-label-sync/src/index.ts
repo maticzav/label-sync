@@ -96,8 +96,7 @@ async function main(
   }>([
     {
       name: 'repositoriesRaw',
-      message:
-        'Type in repositories that LabelSync should include in configuration (comma-split):',
+      message: 'Type in repositories that LabelSync should include in configuration (comma-split):',
       type: 'input',
     },
   ])
@@ -117,14 +116,10 @@ async function main(
    * we check if we have it in the list of templates and load that one if it's there.
    */
   if (cli.flags.template) {
-    const matchingTemplate = templates.find(
-      (temp) => temp.identifier === cli.flags.template,
-    )
+    const matchingTemplate = templates.find((temp) => temp.identifier === cli.flags.template)
 
     if (!matchingTemplate) {
-      const availableTemplates = templates
-        .map((temp) => `"${temp.identifier}"`)
-        .join(', ')
+      const availableTemplates = templates.map((temp) => `"${temp.identifier}"`).join(', ')
 
       console.warn(
         /* prettier-ignore */
@@ -219,7 +214,7 @@ async function main(
    */
   try {
     await mkdir(dist, { recursive: true })
-  } catch (err) {
+  } catch (err: any) {
     if (err.code != 'EEXIST') {
       console.error(`Couldn't create destination folder ${dist}`)
       console.error(err)
@@ -277,7 +272,7 @@ async function main(
           return populatedFile
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       templateSpinner.fail()
       console.error(`Error in ${name}`, err.message)
       process.exit(1)
@@ -298,9 +293,7 @@ const cli = meow(
   |
   | Flags:
   |    - force (f): force creates the repository
-  |    - template (t): ${templates
-    .map((temp) => `"${temp.identifier}"`)
-    .join(', ')}
+  |    - template (t): ${templates.map((temp) => `"${temp.identifier}"`).join(', ')}
   |    - path (p): folder to scaffold the configuration to 
 `,
   {

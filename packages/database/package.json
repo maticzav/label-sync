@@ -1,7 +1,8 @@
 {
   "name": "@labelsync/database",
   "scripts": {
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "deploy": "prisma migrate deploy"
   },
   "dependencies": {
     "@prisma/client": "^3.15.2",

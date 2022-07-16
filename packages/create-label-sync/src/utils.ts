@@ -11,30 +11,21 @@ type Dict<T> = { [key: string]: T }
 /**
  * Negates the wrapped function.
  */
-export function not<T, L extends Array<T>>(
-  fn: (...args: L) => boolean,
-): (...args: L) => boolean {
+export function not<T, L extends Array<T>>(fn: (...args: L) => boolean): (...args: L) => boolean {
   return (...args) => !fn(...args)
 }
 
 /**
  * Loads a tree of utf-8 decoded files at paths.
  */
-export function loadTreeFromPath(
-  root: string,
-  ignore: (string | RegExp)[],
-): { [path: string]: string } {
+export function loadTreeFromPath(root: string, ignore: (string | RegExp)[]): { [path: string]: string } {
   const files = fs.readdirSync(root, { encoding: 'utf-8' })
   const tree = files
     .filter((file) => !ignore.some((glob) => RegExp(glob).test(file)))
     .flatMap((file) => {
       const rootFilePath = path.resolve(root, file)
       if (fs.lstatSync(rootFilePath).isDirectory()) {
-        return Object.entries(
-          mapKeys(loadTreeFromPath(rootFilePath, ignore), (key) =>
-            unshift(file, key),
-          ),
-        )
+        return Object.entries(mapKeys(loadTreeFromPath(rootFilePath, ignore), (key) => unshift(file, key)))
       } else {
         return [[file, fs.readFileSync(rootFilePath, { encoding: 'utf-8' })]]
       }
@@ -53,10 +44,7 @@ function unshift(pre: string, path: string): string {
 /**
  * Maps entries in an object.
  */
-export function mapEntries<T, V>(
-  m: Dict<T>,
-  fn: (v: T, key: string) => V,
-): Dict<V> {
+export function mapEntries<T, V>(m: Dict<T>, fn: (v: T, key: string) => V): Dict<V> {
   return Object.fromEntries(
     Object.keys(m).map((key) => {
       return [key, fn(m[key], key)]
@@ -67,10 +55,7 @@ export function mapEntries<T, V>(
 /**
  * Writes virtual file system representation to the file system.
  */
-export async function writeTreeToPath(
-  root: string,
-  tree: { [path: string]: string },
-): Promise<void> {
+export async function writeTreeToPath(root: string, tree: { [path: string]: string }): Promise<void> {
   tree = mapKeys(tree, (file) => path.resolve(root, file))
 
   const actions = Object.keys(tree).map(async (filePath) => {
@@ -88,10 +73,7 @@ export async function writeTreeToPath(
 /**
  * Maps keys of an object.
  */
-export function mapKeys<T>(
-  m: Dict<T>,
-  fn: (key: string, v: T) => string,
-): Dict<T> {
+export function mapKeys<T>(m: Dict<T>, fn: (key: string, v: T) => string): Dict<T> {
   return Object.fromEntries(
     Object.keys(m).map((key) => {
       return [fn(key, m[key]), m[key]]

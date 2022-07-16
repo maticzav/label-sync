@@ -1,8 +1,3 @@
-import fs from 'fs'
-import path from 'path'
-import { promisify } from 'util'
-
-import * as ls from '../src'
 import { repo, label } from '../src'
 
 describe('combinations:', () => {
