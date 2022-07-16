@@ -15,13 +15,14 @@ services:
         value: 16
       - key: DATABASE_URL
         fromDatabase:
-          name: petka-db
+          name: labelsync-db
           property: connectionString
       - key: REDIS_URL
         fromService:
-          name: petka-redis
+          name: labelsync-redis
           type: redis
           property: connectionString
+      - fromGroup: labelsync-secrets
     buildFilter:
       paths:
         - server/**/*
@@ -48,6 +49,7 @@ services:
           name: labelsync-redis
           type: redis
           property: connectionString
+      - fromGroup: labelsync-secrets
     buildFilter:
       paths:
         - server/**/*
@@ -63,7 +65,6 @@ services:
     ipAllowList: # required
       - source: 0.0.0.0/0
         description: everywhere
-    plan: starter
 
 databases:
   - name: labelsync-db
