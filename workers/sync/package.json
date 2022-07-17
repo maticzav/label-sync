@@ -10,15 +10,18 @@
     "@octokit/auth-app": "^3.6.1",
     "@octokit/core": "^3.6.0",
     "@sentry/node": "^7.7.0",
+    "handlebars": "^4.7.7",
     "lodash": "^4.17.21",
     "luxon": "^2.4.0",
     "multilines": "^1.0.3",
     "pino": "^7.11.0",
+    "prettier": "^2.7.1",
     "query-string": "^7.1.1"
   },
   "devDependencies": {
     "@octokit/types": "^6.38.2",
     "@types/lodash": "^4.14.182",
-    "@types/luxon": "^2.3.2"
+    "@types/luxon": "^2.3.2",
+    "@types/prettier": "^2.6.3"
   }
 }
