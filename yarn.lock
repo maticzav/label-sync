@@ -1065,6 +1065,7 @@ __metadata:
     "@octokit/core": ^3.6.0
     "@octokit/types": ^6.38.2
     "@types/lodash": ^4.14.182
+    "@types/luxon": ^2.3.2
     lodash: ^4.17.21
     luxon: ^2.4.0
     multilines: ^1.0.3
@@ -2197,7 +2198,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/luxon@npm:^2.3.1":
+"@types/luxon@npm:^2.3.1, @types/luxon@npm:^2.3.2":
   version: 2.3.2
   resolution: "@types/luxon@npm:2.3.2"
   checksum: b9fe79118681f4bb9f2e37696a7df992a82683ba4448e7ad1af8cc241443ffc64ef08fdeaad749de9e6259b42b0d4b6540d7e880bca39bb504e0f3863d503c98
