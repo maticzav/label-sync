@@ -55,8 +55,12 @@ export class Queue<Task extends TaskSpec> {
 
   constructor(name: string, url: string) {
     this.name = name
-    this.client = redis.createClient({ url })
     this.logger = pino()
+
+    this.logger.info(`Connecting to Redis at "${url}"!`)
+
+    this.client = redis.createClient({ url })
+    this.client.on('error', (err) => this.logger.error(err, 'Redis Client Error'))
   }
 
   /**
