@@ -13,6 +13,7 @@ import { config } from './lib/config'
 import { Sources } from './lib/sources'
 import { stripe } from './routes/stripe.route'
 import { subscribe } from './routes/subscribe.route'
+import { status } from './routes/status.route'
 
 /**
  * Utility function that starts the server.
@@ -51,6 +52,9 @@ const setup = (app: Probot, { getRouter }: ApplicationFunctionOptions) => {
 
   const stripeRouter = getRouter('/stripe')
   stripe(stripeRouter, sources)
+
+  const statusRouter = getRouter('/status')
+  status(statusRouter, sources)
 
   /* Events */
 
