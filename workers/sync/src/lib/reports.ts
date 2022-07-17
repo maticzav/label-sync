@@ -1,7 +1,7 @@
 import ml from 'multilines'
 import os from 'os'
 import prettier from 'prettier'
-import { stringifyUrl } from 'query-string'
+import * as qs from 'query-string'
 
 import { LSCLabel, LSCRepositoryConfiguration } from '@labelsync/config'
 
@@ -275,7 +275,7 @@ function ulOfUnchangedReports(reports: LabelSyncReport[]): string {
  * Creates a colorful badge for the label.
  */
 function badge(props: { name: string; color: string }): string {
-  const url = stringifyUrl({
+  const url = qs.stringifyUrl({
     url: 'https://img.shields.io/static/v1',
     query: {
       label: '',

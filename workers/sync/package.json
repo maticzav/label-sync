@@ -13,7 +13,8 @@
     "lodash": "^4.17.21",
     "luxon": "^2.4.0",
     "multilines": "^1.0.3",
-    "pino": "^7.11.0"
+    "pino": "^7.11.0",
+    "query-string": "^7.1.1"
   },
   "devDependencies": {
     "@octokit/types": "^6.38.2",
