@@ -1,4 +1,4 @@
-import Sentry from '@sentry/node'
+import * as Sentry from '@sentry/node'
 
 import { config } from './lib/env'
 import { Worker } from './worker'
@@ -21,7 +21,9 @@ worker
   .then(() => {
     console.log(`Started watching...  `)
   })
-  .catch(() => {})
+  .catch((err) => {
+    console.error(err)
+  })
 
 process.on('SIGINT', () => {
   worker.stop()
