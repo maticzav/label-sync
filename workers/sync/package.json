@@ -9,6 +9,7 @@
     "@labelsync/queues": "workspace:*",
     "@octokit/auth-app": "^3.6.1",
     "@octokit/core": "^3.6.0",
+    "@sentry/node": "^7.7.0",
     "lodash": "^4.17.21",
     "luxon": "^2.4.0",
     "multilines": "^1.0.3",

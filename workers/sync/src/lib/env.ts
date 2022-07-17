@@ -4,6 +4,7 @@ type Config = {
   ghPrivateKey: string
 
   redisUrl: string
+  sentryDSN: string
 }
 
 // Environments
@@ -16,6 +17,7 @@ const prod = {
   ghPrivateKey: process.env.GH_PRIVATE_KEY!,
 
   redisUrl: process.env.REDIS_URL!,
+  sentryDSN: process.env.SENTRY_DSN!,
 }
 
 const dev = {
@@ -24,6 +26,7 @@ const dev = {
   ghPrivateKey: '',
 
   redisUrl: 'redis://localhost:6379',
+  sentryDSN: '',
 }
 
 const enviroment = process.env.NODE_ENV
