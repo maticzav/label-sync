@@ -9,7 +9,7 @@
     "type-check": "tsc"
   },
   "dependencies": {
-    "@stripe/stripe-js": "1.29.0",
+    "@stripe/stripe-js": "1.32.0",
     "lodash": "4.17.21",
     "multilines": "1.0.3",
     "next": "^12.2.2",
@@ -23,7 +23,7 @@
   "devDependencies": {
     "@tailwindcss/ui": "0.7.2",
     "@types/lodash": "4.14.182",
-    "@types/node": "18.0.1",
+    "@types/node": "18.0.5",
     "@types/react": "^18.0.15",
     "@types/react-dom": "16.9.14",
     "@types/react-transition-group": "4.4.4",

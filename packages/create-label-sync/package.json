@@ -21,8 +21,8 @@
   "devDependencies": {
     "@types/inquirer": "7.3.3",
     "@types/meow": "5.0.0",
-    "@types/node": "18.0.1",
-    "@types/prettier": "2.6.0"
+    "@types/node": "18.0.5",
+    "@types/prettier": "2.6.3"
   },
   "license": "MIT"
 }
