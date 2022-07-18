@@ -32,7 +32,7 @@ services:
         - '**/*.test.ts'
 
   - name: labelsync-worker
-    type: web
+    type: worker
     env: node
     region: frankfurt
     buildCommand: yarn workspaces focus labelsync @labelsync/sync
