@@ -6,28 +6,12 @@ interface TableProps<T extends string> {
   description: string
   columns: { label: string; key: T }[]
   data: ({ id: string } & { [P in T]?: string })[]
-  onEdit?: (id: string) => void
 }
 
 /**
  * A component that presents data in a table.
  */
-export function Table<T extends string>({
-  header,
-  description,
-  columns,
-  data,
-  onEdit,
-}: TableProps<T>) {
-  const handleEdit = useCallback(
-    (id: string) => {
-      if (onEdit) {
-        onEdit(id)
-      }
-    },
-    [onEdit],
-  )
-
+export function Table<T extends string>({ header, description, columns, data }: TableProps<T>) {
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">

@@ -1,6 +1,7 @@
-import React from 'react'
-import { AppProps } from 'next/app'
 import { ClerkProvider, RedirectToSignIn, SignedIn, SignedOut } from '@clerk/nextjs'
+import { AppProps } from 'next/app'
+import React from 'react'
+import { Toaster } from 'react-hot-toast'
 
 import '../styles/index.css'
 import Head from 'next/head'
@@ -16,6 +17,7 @@ export default function MyApp({ Component, pageProps, router }: AppProps) {
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         </Head>
+
         <Component {...pageProps} />
       </>
     )
@@ -29,6 +31,8 @@ export default function MyApp({ Component, pageProps, router }: AppProps) {
       <SignedOut>
         <RedirectToSignIn />
       </SignedOut>
+
+      <Toaster />
     </ClerkProvider>
   )
 }

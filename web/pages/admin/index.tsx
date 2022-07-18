@@ -2,16 +2,17 @@ import { HashtagIcon, CloudIcon, LibraryIcon } from '@heroicons/react/outline'
 import { TagIcon } from '@heroicons/react/solid'
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import toast from 'react-hot-toast'
+
+import type { Task } from '@labelsync/queues'
 
 import { Header } from 'components/admin/Header'
+import { Button } from 'components/Button'
 import { SelectInput } from 'components/SelectInput'
 import { Table } from 'components/Table'
 import { TextInput } from 'components/TextInput'
 
-import type { Task } from '@labelsync/queues'
-import { Button } from 'components/Button'
 import { UnionOmit } from 'lib/utils'
-import { LoadingIndicator } from 'components/LoadingIndicator'
 
 /**
  * Admin dashboard page.
@@ -20,7 +21,6 @@ export default function Admin() {
   const timer = useRef<NodeJS.Timer | null>()
 
   const [queue, setQueue] = useState<Task[]>([])
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>()
 
   useEffect(() => {
@@ -71,9 +71,7 @@ export default function Admin() {
       }
     }
 
-    setLoading(true)
-
-    fetch('/api/queue/add', {
+    const promise = fetch('/api/queue/add', {
       method: 'POST',
       body: JSON.stringify({
         ...data,
@@ -81,20 +79,18 @@ export default function Admin() {
       }),
     })
       .then((res) => res.json())
-      .then((data) => {
-        setLoading(false)
-
+      .then(async (data) => {
         if ('message' in data) {
-          setError(data.message)
-          return
+          throw new Error(data.message)
         }
         setError(null)
       })
-      .catch((err) => {
-        console.error(err)
-        setError(err.message)
-        setLoading(false)
-      })
+
+    toast.promise(promise, {
+      loading: 'Seding task to queue...',
+      success: 'Task sent to queue!',
+      error: 'Something went wrong...',
+    })
   }, [id, org, repo, kind, accountType, prNumber])
 
   return (
@@ -200,10 +196,7 @@ export default function Admin() {
             </div>
 
             <div className="w-56 py-5">
-              <Button onClick={pushtask}>
-                {loading && <LoadingIndicator />}
-                Submit
-              </Button>
+              <Button onClick={pushtask}>Submit</Button>
 
               {error && <p className="text-red-600 w-max mt-1">{error}</p>}
             </div>
