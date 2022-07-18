@@ -4,6 +4,13 @@ import { GitHubLabel } from './github'
 /**
  * Calculates the difference between labels in the configuration
  * and the labels that are currently in the repository.
+ *
+ * NOTE: This function already accounts for the nature of the transition,
+ *       meaning that added labels should only be created, changed ones updated, removed
+ *       ones deleted and aliased labels should be added to existing labels in all issues.
+ *
+ *       It's important that you first add labels, then update them, the alias and lastly
+ *       remove them from the system.
  */
 export function calculateConfigurationDiff({
   config,
@@ -54,7 +61,9 @@ export function calculateConfigurationDiff({
 
     const isExistingLabel = hydratedLabel.old_name !== undefined
 
-    const aliaii: string[] = (config[label].alias ?? []).filter((aliasName) => currentLabelsMap.has(aliasName))
+    const aliaii: string[] = (config[label].alias ?? []).filter((aliasName) =>
+      currentLabelsMap.has(aliasName),
+    )
     const isLabelAlias = aliaii.length > 0
 
     const hasLabelChanged = currentLabels.some((cLabel) => {
