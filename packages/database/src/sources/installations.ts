@@ -42,27 +42,16 @@ export class InstallationsSource extends Source<Key, Value> {
   // Utility Methods
 
   /**
-   * Creates a new installation or updates the existing one with given data.
+   * Creates a new installation if it doesn't exist yet with provided data or
+   * activates an existing one.
    */
-  public upsert(
-    installation: Pick<Installation, 'account' | 'activated' | 'plan'> & {
+  public activate(
+    installation: Pick<Installation, 'account' | 'plan'> & {
       email?: string | null
-      cadence: 'YEARLY' | 'MONTHLY'
+      cadence: number
     },
   ): Omit<Value, 'ttl'> {
     const id = cuid()
-
-    let periodEndsAt = DateTime.now()
-    switch (installation.cadence) {
-      case 'MONTHLY': {
-        periodEndsAt = periodEndsAt.plus({ months: 1 })
-        break
-      }
-      case 'YEARLY': {
-        periodEndsAt = periodEndsAt.plus({ years: 1 })
-        break
-      }
-    }
 
     const data = {
       id,
@@ -70,8 +59,8 @@ export class InstallationsSource extends Source<Key, Value> {
       account: installation.account,
       email: installation.email ?? null,
       plan: installation.plan,
-      periodEndsAt: periodEndsAt,
-      activated: installation.activated,
+      periodEndsAt: DateTime.now().plus({ months: installation.cadence }),
+      activated: true,
     }
 
     this.enqueue(async () => {
@@ -82,19 +71,13 @@ export class InstallationsSource extends Source<Key, Value> {
           periodEndsAt: data.periodEndsAt.toJSDate(),
         },
         update: {
-          activated: data.activated,
+          activated: true,
           periodEndsAt: data.periodEndsAt.toJSDate(),
         },
       })
     })
 
-    this.set(
-      { account: installation.account },
-      {
-        ...data,
-        ttl: DateTime.now().plus({ days: 1 }),
-      },
-    )
+    this.set({ account: installation.account }, { ...data, ttl: DateTime.now().plus({ days: 1 }) })
 
     return data
   }
@@ -107,7 +90,11 @@ export class InstallationsSource extends Source<Key, Value> {
    * NOTE: This function assumes that the user has already created
    * account. If they haven't, it will fail.
    */
-  public async upgrade(data: { account: string; cadence: number }): Promise<Installation | null> {
+  public async upgrade(data: {
+    account: string
+    email?: string | null
+    periodEndsAt: DateTime
+  }): Promise<Installation | null> {
     const installation = await this.get({ account: data.account })
     if (!installation) {
       return null
@@ -116,16 +103,23 @@ export class InstallationsSource extends Source<Key, Value> {
     const updatedInstallation = {
       ...installation,
       plan: 'PAID' as const,
-      periodEndsAt: DateTime.now().plus({ months: data.cadence }),
+      periodEndsAt: data.periodEndsAt,
       ttl: DateTime.now().plus({ days: 1 }),
     }
 
     this.enqueue(async () => {
-      await this.prisma().installation.update({
+      await this.prisma().installation.upsert({
         where: { account: data.account },
-        data: {
+        create: {
+          plan: 'PAID' as const,
+          account: data.account,
+          periodEndsAt: updatedInstallation.periodEndsAt.toJSDate(),
+          email: data.email,
+        },
+        update: {
           plan: 'PAID' as const,
           periodEndsAt: updatedInstallation.periodEndsAt.toJSDate(),
+          email: data.email,
         },
       })
     })

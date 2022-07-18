@@ -24,6 +24,7 @@
     "react-transition-group": "4.4.2",
     "react-typist": "2.0.5",
     "redis": "^4.2.0",
+    "stripe": "^9.13.0",
     "zod": "^3.17.9"
   },
   "devDependencies": {

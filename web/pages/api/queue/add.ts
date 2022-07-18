@@ -61,7 +61,7 @@ export default withAuth(async (req: WithAuthProp<NextApiRequest>, res: NextApiRe
     return
   }
 
-  const task = schema.parse(req.body)
+  const task = schema.parse(JSON.parse(req.body))
 
   const id = await tasks.shared.push({
     ...task,

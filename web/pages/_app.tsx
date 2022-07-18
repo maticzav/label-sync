@@ -8,10 +8,7 @@ import Head from 'next/head'
 const PRIVATE_PAGES = ['/admin', '/admin/queue']
 
 export default function MyApp({ Component, pageProps, router }: AppProps) {
-  console.log(router.pathname)
   const isPublicPage = !PRIVATE_PAGES.includes(router.pathname)
-
-  console.log({ isPublicPage })
 
   if (isPublicPage) {
     return (

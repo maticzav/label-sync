@@ -16,11 +16,11 @@ export const github = (app: Probot, sources: Sources) => {
 
     /* Find installation. */
 
-    const installation = sources.installations.upsert({
+    const installation = sources.installations.activate({
       account: owner,
-      cadence: 'YEARLY',
+      email: account.email,
+      cadence: 12,
       plan: 'FREE',
-      activated: true,
     })
 
     app.log.info(`Onboarding ${owner}.`, {

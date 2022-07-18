@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
 import { MailIcon, AtSymbolIcon, ReceiptTaxIcon } from '@heroicons/react/solid'
-
 import { loadStripe } from '@stripe/stripe-js'
+import classnames from 'classnames'
+import React, { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/router'
 
 import Navigation from 'components/Navigation'
+import { SelectInput } from 'components/SelectInput'
 import { TextInput } from 'components/TextInput'
 import Footer from 'components/Footer'
 
 import { NOTION_DOCS_URL, NOTION_SUPPORT_URL } from '../constants'
-import { SelectInput } from 'components/SelectInput'
-import classnames from 'classnames'
+import { LoadingIndicator } from 'components/LoadingIndicator'
 
 /* Stripe */
 
@@ -55,7 +55,7 @@ function Form() {
   const [account, setAccount] = useState('')
   const [cadence, setCadence] = useState<Period>('ANNUALLY')
   const [plan, setPlan] = useState<Plan>('PAID')
-  const [coupon, setCoupon] = useState<string | undefined>(undefined)
+  const [coupon, setCoupon] = useState<string>('')
 
   useEffect(() => {
     /* Populate the form from the URL. */
@@ -87,80 +87,51 @@ function Form() {
 
   const [fetching, setFetching] = useState<Fetching>({ status: 'NOT_REQUESTED' })
 
-  async function subscribe() {
-    /* Required values */
-    if ([email, account].some((val) => val.trim() === '')) {
-      setFetching({
-        status: 'ERR',
-        message: 'You must fill all the required fields.',
-      })
-      return
-    }
-
-    /* Fix coupon */
-    const fixedCoupon = !coupon || coupon?.trim() === '' ? undefined : coupon
-
-    // Contact server
+  /**
+   * Function that performs the actual subscription.
+   */
+  const subscribe = useCallback(async () => {
     setFetching({ status: 'LOADING' })
 
-    try {
-      let body: string
-      switch (plan) {
-        case 'FREE': {
-          body = JSON.stringify({ email, account, agreed: true, plan: 'FREE' })
-          break
-        }
-        case 'PAID': {
-          body = JSON.stringify({
-            email,
-            account,
-            agreed: true,
-            plan: 'PAID',
-            period: cadence || query.period,
-            coupon: fixedCoupon,
-          })
-          break
-        }
-      }
+    let body = JSON.stringify({ email, account, agreed: true, plan: 'FREE' })
+    if (plan === 'PAID') {
+      body = JSON.stringify({ email, account, plan: 'PAID', cadence, coupon })
+    }
 
-      const res = (await fetch('https://webhook.label-sync.com/subscribe/session', {
-        method: 'POST',
-        mode: 'cors',
-        credentials: 'same-origin',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: body,
-      }).then((res) => res.json())) as
+    try {
+      const res:
         | { status: 'ok'; plan: 'FREE' }
         | { status: 'ok'; plan: 'PAID'; session: string }
-        | { status: 'err'; message: string }
+        | { status: 'error'; message: string } = await fetch('/api/checkout/create', {
+        method: 'POST',
+        body: body,
+      }).then((res) => res.json())
 
-      if (res.status === 'err') {
+      if (res.status === 'error') {
         setFetching({ status: 'ERR', message: res.message })
         return
       }
 
       setFetching({ status: 'SUCCESS' })
 
-      switch (res.plan) {
-        case 'FREE': {
-          window.location.href = 'https://github.com/apps/labelsync-manager'
-          break
-        }
-        case 'PAID': {
-          /* redirect to stripe */
-          await stripeLoader
-            .then((stripe) => stripe!.redirectToCheckout({ sessionId: res.session }))
-            .catch((err) => console.log(err))
-          break
-        }
+      if (res.plan === 'FREE') {
+        window.location.href = 'https://github.com/apps/labelsync-manager'
+        return
       }
+
+      if (!res.session) {
+        setFetching({ status: 'ERR', message: 'Something went wrong... try again in a minute.' })
+        return
+      }
+
+      // Redirect to Stripe for purchase.
+      await stripeLoader
+        .then((stripe) => stripe!.redirectToCheckout({ sessionId: res.session }))
+        .catch((err) => console.log(err))
     } catch (err: any) {
       setFetching({ status: 'ERR', message: err.message })
     }
-  }
+  }, [email, account, cadence, coupon, plan, setFetching])
 
   return (
     <div className="pt-2 pb-10 lg:pb-24 px-4 overflow-hidden sm:px-6 lg:px-8 mx-auto max-w-xl">
@@ -254,23 +225,12 @@ function Form() {
           </div>
 
           <div className="col-span-2 mt-1">
-            <button
+            <Submit
+              label={plan === 'PAID' ? 'Subscribe' : 'Install'}
+              disabled={fetching.status === 'LOADING' || email === '' || account === ''}
+              loading={fetching.status === 'LOADING'}
               onClick={subscribe}
-              type="button"
-              disabled={fetching.status === 'LOADING'}
-              className={classnames({
-                'w-full inline-flex items-center justify-center px-6 py-3': true,
-                'text-base leading-6 font-medium text-white': true,
-                'border border-transparent rounded-md': true,
-                'bg-emerald-600': true,
-                'hover:bg-emerald-500 ': true,
-                'focus:outline-none focus:border-emerald-700 focus:shadow-outline-indigo': true,
-                'active:bg-emerald-700': true,
-                'transition ease-in-out duration-150': true,
-              })}
-            >
-              {plan === 'PAID' ? 'Subscribe' : 'Install'}
-            </button>
+            />
 
             {fetching.status === 'ERR' && (
               <p className="mt-2 text-sm text-red-600 mx-1">{fetching.message}</p>
@@ -285,6 +245,48 @@ function Form() {
         {/*  */}
       </div>
     </div>
+  )
+}
+
+function Submit({
+  label,
+  loading,
+  disabled,
+  onClick,
+}: {
+  label: string
+  disabled: boolean
+  loading: boolean
+  onClick: () => void
+}) {
+  const handleClick = useCallback(() => {
+    if (!disabled) {
+      onClick()
+    }
+  }, [onClick, disabled])
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      disabled={disabled}
+      className={classnames(
+        `w-full inline-flex items-center justify-center px-6 py-3
+        text-base leading-6 font-medium text-white
+        border border-transparent rounded-md
+        bg-emerald-600
+        hover:bg-emerald-500
+        focus:outline-none focus:border-emerald-700 focus:shadow-outline-indigo
+        active:bg-emerald-700 active:scale-95
+        transition ease-in-out duration-150`,
+        {
+          'scale-95 bg-gray-300 hover:bg-gray-200 active:bg-gray-300 active:scale-90': disabled,
+        },
+      )}
+    >
+      {loading && <LoadingIndicator />}
+      {label}
+    </button>
   )
 }
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 
-import Button from '../components/Button'
+import { Button } from '../components/Button'
 import Hero from '../components/Hero'
 import * as Feature from '../components/Feature'
 import Footer from '../components/Footer'
@@ -16,8 +16,9 @@ import { NOTION_DOCS_URL, NOTION_SUPPORT_URL } from '../constants'
 import { scrollToId } from '../lib/scroll'
 import { Toggle } from 'components/Toggle'
 import { useCallback } from 'react'
+import { getPlanPrice, PLAN_IDS } from 'lib/checkout'
 
-export default function Home() {
+export default function Home({ prices }: { prices: { annual: number; monthly: number } }) {
   return (
     <>
       <Head>
@@ -74,14 +75,34 @@ export default function Home() {
       <Features />
       <DetailedFeatures />
       <Testimonials />
-      <Pricing price={{ monthly: 20, annual: 16 }} />
+      <Pricing price={prices} />
       <FAQ />
       <Footer />
     </>
   )
 }
 
-/* Sections */
+/**
+ * SSR function that fetches the latest prices from the server.
+ */
+export const getStaticProps = async () => {
+  const [annual, monthly] = await Promise.all([
+    //
+    getPlanPrice('ANNUALLY'),
+    getPlanPrice('MONTHLY'),
+  ])
+
+  return {
+    props: {
+      prices: {
+        monthly: monthly.monthly_amount,
+        annual: annual.monthly_amount,
+      },
+    },
+  }
+}
+
+// Sections ------------------------------------------------------------------
 
 function Introduction() {
   return (
@@ -409,14 +430,14 @@ function Testimonials() {
 }
 
 function Pricing({ price }: { price: { annual: number; monthly: number } }) {
-  const [period, setPeriod] = useState<'ANNUALLY' | 'MONTHLY'>('ANNUALLY')
+  const [cadence, setPeriod] = useState<'ANNUALLY' | 'MONTHLY'>('ANNUALLY')
   const toggle = useCallback(() => {
-    if (period === 'ANNUALLY') {
+    if (cadence === 'ANNUALLY') {
       setPeriod('MONTHLY')
     } else {
       setPeriod('ANNUALLY')
     }
-  }, [period, setPeriod])
+  }, [cadence, setPeriod])
 
   return (
     <Section id="pricing" name="pricing" className="bg-emerald-600">
@@ -435,9 +456,9 @@ function Pricing({ price }: { price: { annual: number; monthly: number } }) {
 
       <div className="mt-8 lg:mt-12">
         <Toggle
-          isOn={period === 'MONTHLY'}
+          isOn={cadence === 'ANNUALLY'}
           onClick={toggle}
-          options={{ off: 'Pay monthly', on: 'Pay annualy' }}
+          options={{ off: 'Pay monthly', on: 'Pay annually' }}
         />
       </div>
 
@@ -450,7 +471,7 @@ function Pricing({ price }: { price: { annual: number; monthly: number } }) {
             <div>
               <Tier
                 name="Free"
-                description="Great for starting out with LabelSync."
+                description="Great for starting out with LabelSync"
                 price={<>$0</>}
                 features={[
                   { name: 'LabelSync Manager' },
@@ -476,11 +497,11 @@ function Pricing({ price }: { price: { annual: number; monthly: number } }) {
             <div className="mt-10 lg:mt-0">
               <Tier
                 name="The Complete solution"
-                description="Best for teams and users with rapid workflows."
+                description="Best for teams"
                 price={
                   <>
-                    {period === 'ANNUALLY' && <>${price.annual}</>}
-                    {period === 'MONTHLY' && <>${price.monthly}</>}
+                    {cadence === 'ANNUALLY' && <>${price.annual.toFixed(2)}</>}
+                    {cadence === 'MONTHLY' && <>${price.monthly.toFixed(2)}</>}
                     <span className="ml-1 text-2xl leading-8 font-medium text-gray-500">/mo</span>
                   </>
                 }
@@ -492,7 +513,7 @@ function Pricing({ price }: { price: { annual: number; monthly: number } }) {
                   { name: 'Wildcard repository configuration' },
                 ]}
                 link={
-                  <Link href={{ pathname: '/subscribe', query: { plan: 'PAID', period } }}>
+                  <Link href={{ pathname: '/subscribe', query: { plan: 'PAID', period: cadence } }}>
                     <a>
                       <Button>Start Syncing</Button>
                     </a>

@@ -8,12 +8,12 @@ import Stripe from 'stripe'
 import { InstallationsSource } from '@labelsync/database'
 import { TaskQueue } from '@labelsync/queues'
 
-import { github } from './routes/github.events'
 import { config } from './lib/config'
 import { Sources } from './lib/sources'
-import { stripe } from './routes/stripe.route'
-import { subscribe } from './routes/subscribe.route'
+
+import { github } from './routes/github.events'
 import { status } from './routes/status.route'
+import { stripe } from './routes/stripe.route'
 
 /**
  * Utility function that starts the server.
@@ -46,9 +46,6 @@ const setup = (app: Probot, { getRouter }: ApplicationFunctionOptions) => {
   if (!getRouter) {
     throw new Error(`Couldn't start app because it's missing router.`)
   }
-
-  const subscribeRouter = getRouter('/subscribe')
-  subscribe(subscribeRouter, sources)
 
   const stripeRouter = getRouter('/stripe')
   stripe(stripeRouter, sources)
