@@ -20,11 +20,7 @@ export default function Hero() {
         <div className="h-32">
           <h2 className="text-4xl tracking-tight leading-10 font-extrabold text-gray-900 sm:text-5xl sm:leading-none md:text-6xl">
             {/* Typing animation */}
-            <Typing
-              index={typingIndex}
-              onTypingDone={nextTyping}
-              key={typingIndex}
-            ></Typing>
+            <Typing index={typingIndex} onTypingDone={nextTyping} key={typingIndex}></Typing>
             {/* End of typing animation */}
           </h2>
         </div>
@@ -42,7 +38,7 @@ export default function Hero() {
             <a
               href="#"
               onClick={() => scrollToId('pricing')}
-              className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-teal transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
+              className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-500 focus:outline-none focus:shadow-outline-teal transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
             >
               Sync labels
             </a>
@@ -50,7 +46,7 @@ export default function Hero() {
           <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
             <a
               href="https://calendly.com/maticzav/labelsync"
-              className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-green-600 bg-white hover:text-green-500 focus:outline-none focus:shadow-outline-blue transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
+              className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-emerald-600 bg-white hover:text-emerald-500 focus:outline-none focus:shadow-outline-blue transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
             >
               Live demo
             </a>
@@ -81,7 +77,7 @@ const typings = shuffle([
   {
     lead: 'Sync labels.',
     sub: 'across all\n repositories.',
-    color: 'text-green-400 whitespace-pre md:whitespace-normal',
+    color: 'text-emerald-400 whitespace-pre md:whitespace-normal',
   },
   {
     lead: 'Your Tasks and Code.',

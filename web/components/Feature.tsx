@@ -22,7 +22,7 @@ export function Left(props: Feature) {
 
           {props.title[0]}
           <br />
-          <span className="text-green-600">{props.title[1]}</span>
+          <span className="text-emerald-600">{props.title[1]}</span>
         </h3>
         <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
           {props.description}
@@ -56,7 +56,7 @@ export function Right(props: Feature) {
           {props.icon}
           {props.title[0]}
           <br />
-          <span className="text-green-600 lg:ml-2">{props.title[1]}</span>
+          <span className="text-emerald-600 lg:ml-2">{props.title[1]}</span>
         </h3>
         <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
           {props.description}
@@ -67,11 +67,7 @@ export function Right(props: Feature) {
 
       <div className="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:col-start-1 lg:mx-0 lg:flex lg:items-center">
         <div className="relative mx-auto block w-full max-h-64 rounded-lg shadow-lg overflow-auto focus:outline-none focus:shadow-outline lg:max-w-md">
-          <img
-            className="w-full object-cover object-left-top"
-            src={props.image}
-            alt={props.alt}
-          />
+          <img className="w-full object-cover object-left-top" src={props.image} alt={props.alt} />
         </div>
       </div>
     </div>

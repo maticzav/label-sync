@@ -11,10 +11,7 @@ export default function Picker<T extends string>(props: Picker<T>) {
     <div className="p-2 bg-indigo-800 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex">
       {props.options.map((option) => {
         return (
-          <span
-            key={option}
-            className="flex rounded-full uppercase px-2 py-1 text-xs font-bold"
-          >
+          <span key={option} className="flex rounded-full uppercase px-2 py-1 text-xs font-bold">
             {option}
           </span>
         )

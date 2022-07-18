@@ -13,11 +13,11 @@ export interface Banner {
 export default function Banner(props: Banner) {
   return (
     <div className="container mx-auto px-2 sm:px-6 lg:px-8">
-      <div className="p-2 rounded-lg bg-green-600 shadow-lg sm:p-3">
+      <div className="p-2 rounded-lg bg-emerald-600 shadow-lg sm:p-3">
         <div className="flex items-center justify-between flex-wrap">
           {/* Icon */}
           <div className="w-0 flex-1 flex items-center">
-            <span className="flex p-2 rounded-lg bg-green-800">
+            <span className="flex p-2 rounded-lg bg-emerald-800">
               <svg
                 className="h-6 w-6 text-white"
                 stroke="currentColor"
@@ -42,7 +42,7 @@ export default function Banner(props: Banner) {
             <div className="rounded-md shadow-sm">
               <button
                 onClick={props.button.onClick}
-                className="flex w-full items-center justify-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-green-600 bg-white hover:text-green-500 focus:outline-none focus:shadow-outline transition ease-in-out duration-150"
+                className="flex w-full items-center justify-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-emerald-600 bg-white hover:text-emerald-500 focus:outline-none focus:shadow-outline transition ease-in-out duration-150"
               >
                 {props.button.text}
               </button>
@@ -53,7 +53,7 @@ export default function Banner(props: Banner) {
             <button
               type="button"
               onClick={props.button.onClick}
-              className="-mr-1 flex p-2 rounded-md hover:bg-green-500 focus:outline-none focus:bg-green-500 transition ease-in-out duration-150"
+              className="-mr-1 flex p-2 rounded-md hover:bg-emerald-500 focus:outline-none focus:bg-emerald-500 transition ease-in-out duration-150"
               aria-label="Dismiss"
             >
               <svg

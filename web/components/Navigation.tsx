@@ -19,7 +19,7 @@ export default function Navigation(props: Navigation) {
 
   return (
     <>
-      <div className="max-w-screen-xl mx-auto px-6 sm:px-6">
+      <div className="max-w-screen-xl mx-auto px-6 sm:px-6 pt-6 pb-12 sm:pb-16 md:pb-20 lg:pb-28 xl:pb-32">
         {/* Desktop navigation */}
         <nav className="relative container flex items-center justify-between sm:h-10 md:justify-end">
           <div className="flex items-center flex-1 md:absolute md:inset-y-0 md:left-0">
@@ -39,12 +39,7 @@ export default function Navigation(props: Navigation) {
                   type="button"
                   className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
                 >
-                  <svg
-                    className="h-6 w-6"
-                    stroke="currentColor"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -77,10 +72,7 @@ export default function Navigation(props: Navigation) {
       {/* Mobile navigation */}
 
       <div className="absolute top-0 inset-x-0 p-2 md:hidden">
-        <div
-          className="ease-in duration-700"
-          style={{ display: open ? 'block' : 'none' }}
-        >
+        <div className="ease-in duration-700" style={{ display: open ? 'block' : 'none' }}>
           <div className="rounded-lg shadow-md transition transform origin-top-right">
             <div className="rounded-lg bg-white shadow-xs overflow-hidden">
               <div className="px-5 pt-4 flex items-center justify-between">
@@ -101,12 +93,7 @@ export default function Navigation(props: Navigation) {
                     onClick={toggle}
                     className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
                   >
-                    <svg
-                      className="h-6 w-6"
-                      stroke="currentColor"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"

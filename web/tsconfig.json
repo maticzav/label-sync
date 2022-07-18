@@ -1,12 +1,10 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "rootDir": ".",
     "module": "esnext",
-    "lib": [
-      "dom",
-      "es2017",
-      "es2019"
-    ],
+    "lib": ["dom", "es2017", "es2019"],
     "declaration": true,
     "declarationMap": true,
     "strict": true,
@@ -22,16 +20,13 @@
     "noEmit": true,
     "isolatedModules": true,
     "target": "es5",
-    "allowJs": true,
-    "incremental": true
+    "allowJs": false,
+    "incremental": true,
+    "paths": {
+      "@labelsync/queues": ["../packages/queues/src/index.ts"]
+    }
   },
-  "references": [],
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "references": [{ "path": "../" }],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
 }

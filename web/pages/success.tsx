@@ -5,17 +5,13 @@ export const Success = () => (
   <div className="w-full h-full flex flex-col justify-center bg-gray-100">
     {/* Text */}
     <div className="text-center container">
-      <h1 className="font-semibold leading-1 text-4xl md:text-5xl text-green-500 my-3">
+      <h1 className="font-semibold leading-1 text-4xl md:text-5xl text-emerald-500 my-3">
         Success! 🎉
       </h1>
     </div>
 
     {/* Image */}
-    <img
-      className="max-h-36 md:max-h-48 block mx-auto my-8"
-      src="/img/success.svg"
-      alt="Success"
-    />
+    <img className="max-h-36 md:max-h-48 block mx-auto my-8" src="/img/success.svg" alt="Success" />
     {/* Links */}
     <div className="mx-auto">
       <span className="relative z-0 inline-flex shadow-sm">
