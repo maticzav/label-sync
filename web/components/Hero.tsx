@@ -38,17 +38,17 @@ export default function Hero() {
             <a
               href="#"
               onClick={() => scrollToId('pricing')}
-              className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-500 focus:outline-none focus:shadow-outline-teal transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
+              className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-500 focus:outline-none focus:shadow-outline-teal transition duration-150 ease-in-out md:text-lg md:px-10"
             >
-              Sync labels
+              Sync Labels
             </a>
           </div>
           <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
             <a
               href="https://calendly.com/maticzav/labelsync"
-              className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-emerald-600 bg-white hover:text-emerald-500 focus:outline-none focus:shadow-outline-blue transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
+              className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-emerald-600 bg-white hover:text-emerald-500 focus:outline-none focus:shadow-outline-blue transition duration-150 ease-in-out md:text-lg md:px-10"
             >
-              Live demo
+              Live Demo
             </a>
           </div>
         </div>

@@ -130,8 +130,7 @@ function Features() {
     <Section id="features" name="features" className="bg-white overflow-hidden">
       <div className="container">
         <div className="relative max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          {/* <!-- Side art --> */}
-
+          {/* Side Art */}
           <svg
             className="absolute top-0 left-full transform -translate-x-1/2 -translate-y-3/4 lg:left-auto lg:right-full lg:translate-x-2/3 lg:translate-y-1/4"
             width="404"
@@ -161,7 +160,7 @@ function Features() {
             <rect width="404" height="784" fill="url(#8b1b5f72-e944-4457-af67-0c6d15a99f38)" />
           </svg>
 
-          {/* <!-- Features --> */}
+          {/* Features */}
 
           <div className="relative lg:grid lg:grid-cols-3 lg:gap-x-8">
             <div className="lg:col-span-1">
@@ -172,7 +171,6 @@ function Features() {
             </div>
 
             <div className="mt-10 sm:grid sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 lg:col-span-2 lg:mt-0">
-              {/* <!-- Features --> */}
               <div>
                 <div className="flex items-center justify-center h-12 w-12 rounded-md bg-emerald-600 text-white">
                   <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -194,6 +192,7 @@ function Features() {
                   </p>
                 </div>
               </div>
+
               <div className="mt-10 sm:mt-0">
                 <div className="flex items-center justify-center h-12 w-12 rounded-md bg-emerald-600 text-white">
                   <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -241,6 +240,7 @@ function Features() {
                   </p>
                 </div>
               </div>
+
               <div className="mt-10 sm:mt-0">
                 <div className="flex items-center justify-center h-12 w-12 rounded-md bg-emerald-600 text-white">
                   <svg

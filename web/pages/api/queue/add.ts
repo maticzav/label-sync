@@ -61,10 +61,15 @@ export default withAuth(async (req: WithAuthProp<NextApiRequest>, res: NextApiRe
     return
   }
 
-  const task = schema.parse(JSON.parse(req.body))
+  const parsed = schema.safeParse(JSON.parse(req.body))
+
+  if (!parsed.success) {
+    res.status(400).json({ message: parsed.error.message })
+    return
+  }
 
   const id = await tasks.shared.push({
-    ...task,
+    ...parsed.data,
     dependsOn: [],
     isPaidPlan: true,
   })
