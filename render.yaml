@@ -62,6 +62,7 @@ services:
 
   - name: labelsync-redis
     type: redis
+    region: frankfurt
     ipAllowList: # required
       - source: 0.0.0.0/0
         description: everywhere
