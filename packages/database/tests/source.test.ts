@@ -10,9 +10,7 @@ class MockSource extends Source<string, { ttl: DateTime; time: DateTime; value: 
     this.data = data
   }
 
-  public async fetch(
-    key: string,
-  ): Promise<{ ttl: DateTime; time: DateTime; value: string } | null> {
+  public async fetch(key: string): Promise<{ ttl: DateTime; time: DateTime; value: string } | null> {
     if (key in this.data) {
       return {
         ttl: DateTime.now().plus({ milliseconds: 5 }),
@@ -32,9 +30,7 @@ class MockSource extends Source<string, { ttl: DateTime; time: DateTime; value: 
     super.invalidate(key)
   }
 
-  public enqueue(
-    fn: (self: Source<string, { ttl: DateTime; time: DateTime; value: string }>) => Promise<void>,
-  ): void {
+  public enqueue(fn: (self: Source<string, { ttl: DateTime; time: DateTime; value: string }>) => Promise<void>): void {
     super.enqueue(fn)
   }
 }
@@ -71,7 +67,7 @@ describe('source', () => {
 
     expect(firstLookup?.time! <= start).toBeTruthy()
 
-    await sleep(10)
+    await sleep(100)
 
     const secondLookup = await source.get('foo')
     expect(secondLookup?.time! > start).toBeTruthy()
