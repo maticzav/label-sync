@@ -1,16 +1,4 @@
-import { PrismaClient } from '@prisma/client'
 import { DateTime } from 'luxon'
-
-import { getUnsafeGlobalClient } from './prisma'
-
-export enum CacheStrategy {
-  // Only use cached value.
-  CacheOnly,
-  // Always fetch from the network.
-  NetworkOnly,
-  // If there's a value in the cache use it, otherwise fetch from the network.
-  CacheFirst,
-}
 
 /**
  * Source implements an in-memory caching mechanism that should be extended
@@ -43,16 +31,12 @@ export abstract class Source<Key, Value extends { ttl: DateTime }> {
    */
   private concurrency: number
 
-  /**
-   * Reference to the PrismaClient that may be used to connect to the database.
-   */
-  protected prisma: () => PrismaClient
-
   constructor(concurrency: number, timeout: number) {
-    this.concurrency = concurrency
     this.clear = this.clear.bind(this)
+
+    this.concurrency = concurrency
+
     this.timer = setInterval(this.clear, timeout)
-    this.prisma = getUnsafeGlobalClient
   }
 
   /**
@@ -73,17 +57,12 @@ export abstract class Source<Key, Value extends { ttl: DateTime }> {
    * Data gathering function that caches the intermidiate result.
    *
    * @param key The key to use for caching.
-   * @param strategy The strategy to use for fetching the data.
    */
-  async get(key: Key, strategy: CacheStrategy = CacheStrategy.CacheFirst): Promise<Value | null> {
+  async get(key: Key): Promise<Value | null> {
     const id = this.identify(key)
     const cached = this.cache[id]
-    if (cached && strategy !== CacheStrategy.NetworkOnly) {
+    if (cached) {
       return cached
-    }
-
-    if (strategy === CacheStrategy.CacheOnly) {
-      return null
     }
 
     const data = await this.fetch(key)
@@ -92,6 +71,19 @@ export abstract class Source<Key, Value extends { ttl: DateTime }> {
     }
 
     return data
+  }
+
+  /**
+   * Synchronously fetches the data from the cache.
+   */
+  lookup(key: Key): Value | null {
+    const id = this.identify(key)
+    const cached = this.cache[id]
+
+    if (cached) {
+      return cached
+    }
+    return null
   }
 
   /**

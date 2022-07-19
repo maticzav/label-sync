@@ -56,12 +56,16 @@ export class Worker {
 
     const octokit = getOctokitForInstallation(task.ghInstallationId)
     const endpoints = new GitHubEndpoints(octokit)
-    const installation = { id: task.ghInstallationId, isPaidPlan: task.isPaidPlan }
+    const installation = { id: task.ghInstallationId }
 
     switch (task.kind) {
       case 'dryrun_config': {
         const processor = new DryRunProcessor(installation, this.queue, endpoints, this.logger)
-        await processor.perform({ owner: task.org, pr_number: task.pr_number })
+        await processor.perform({
+          owner: task.org,
+          pr_number: task.pr_number,
+          isPro: task.isPaidPlan,
+        })
         break
       }
 
@@ -73,13 +77,13 @@ export class Worker {
 
       case 'sync_org': {
         const processor = new OrganizationSyncProcessor(installation, this.queue, endpoints, this.logger)
-        await processor.perform({ owner: task.org })
+        await processor.perform({ owner: task.org, isPro: task.isPaidPlan })
         break
       }
 
       case 'sync_repo': {
         const processor = new RepositorySyncProcessor(installation, this.queue, endpoints, this.logger)
-        await processor.perform({ owner: task.org, repo: task.repo })
+        await processor.perform({ owner: task.org, repo: task.repo, isPro: task.isPaidPlan })
         break
       }
 
@@ -90,13 +94,19 @@ export class Worker {
           repo: task.repo,
           issue_number: task.issue_number,
           label: task.label,
+          isPro: task.isPaidPlan,
         })
         break
       }
 
       case 'check_unconfigured_labels': {
         const processor = new UnconfiguredLabelsProcessor(installation, this.queue, endpoints, this.logger)
-        await processor.perform({ owner: task.org, repo: task.repo, label: task.label })
+        await processor.perform({
+          owner: task.org,
+          repo: task.repo,
+          label: task.label,
+          isPro: task.isPaidPlan,
+        })
         break
       }
 

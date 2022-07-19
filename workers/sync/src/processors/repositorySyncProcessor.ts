@@ -7,6 +7,7 @@ import { famap } from '../lib/utils'
 type ProcessorData = {
   owner: string
   repo: string
+  isPro: boolean
 }
 
 /**
@@ -16,7 +17,7 @@ export class RepositorySyncProcessor extends Processor<ProcessorData> {
   /**
    * Syncs configuration of a repository with its labels.
    */
-  public async perform({ owner, repo }: ProcessorData): Promise<void> {
+  public async perform({ owner, repo, isPro }: ProcessorData): Promise<void> {
     this.log.info(`Syncing repository ${owner}/${repo}...`)
 
     const rawConfig = await this.endpoints.getConfig({ owner })
@@ -24,10 +25,7 @@ export class RepositorySyncProcessor extends Processor<ProcessorData> {
       this.log.info(`No configuration, skipping siblings sync.`)
       return
     }
-    const parsedConfig = parseConfig({
-      input: rawConfig,
-      isPro: this.installation.isPaidPlan,
-    })
+    const parsedConfig = parseConfig({ input: rawConfig, isPro })
     if (!parsedConfig.ok) {
       this.log.info(`Invalid configuration file in organization ${owner}...`)
       return

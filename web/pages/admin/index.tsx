@@ -59,7 +59,7 @@ export default function Admin() {
         break
       }
       case 'onboard_org': {
-        data = { kind: 'onboard_org', org, isPaidPlan: true, accountType }
+        data = { kind: 'onboard_org', org, accountType }
         break
       }
       case 'dryrun_config': {
@@ -110,9 +110,7 @@ export default function Admin() {
             <div className="sm:flex sm:items-center">
               <div className="sm:flex-auto">
                 <h1 className="text-xl font-semibold text-gray-900">Push a Task</h1>
-                <p className="mt-2 text-sm text-gray-700">
-                  Create a new task and push it to the queue
-                </p>
+                <p className="mt-2 text-sm text-gray-700">Create a new task and push it to the queue</p>
               </div>
             </div>
 

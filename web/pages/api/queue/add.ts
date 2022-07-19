@@ -14,23 +14,30 @@ const schema = z.discriminatedUnion('kind', [
   z.object({
     kind: z.literal('sync_org'),
     ghInstallationId: z.number(),
+    isPaidPlan: z.boolean(),
+
     org: z.string(),
   }),
   z.object({
     kind: z.literal('sync_repo'),
     ghInstallationId: z.number(),
+    isPaidPlan: z.boolean(),
+
     repo: z.string(),
     org: z.string(),
   }),
   z.object({
     kind: z.literal('dryrun_config'),
     ghInstallationId: z.number(),
+    isPaidPlan: z.boolean(),
+
     org: z.string(),
     pr_number: z.number(),
   }),
   z.object({
     kind: z.literal('add_siblings'),
     ghInstallationId: z.number(),
+    isPaidPlan: z.boolean(),
 
     repo: z.string(),
     org: z.string(),
@@ -41,6 +48,7 @@ const schema = z.discriminatedUnion('kind', [
   z.object({
     kind: z.literal('check_unconfigured_labels'),
     ghInstallationId: z.number(),
+    isPaidPlan: z.boolean(),
 
     repo: z.string(),
     org: z.string(),
@@ -71,7 +79,6 @@ export default withAuth(async (req: WithAuthProp<NextApiRequest>, res: NextApiRe
   const id = await tasks.shared.push({
     ...parsed.data,
     dependsOn: [],
-    isPaidPlan: true,
   })
 
   res.status(200).json({ id })

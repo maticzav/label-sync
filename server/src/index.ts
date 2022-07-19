@@ -13,7 +13,7 @@ import { Sources } from './lib/sources'
 
 import { github } from './routes/github.events'
 import { status } from './routes/status.route'
-import { stripe } from './routes/stripe.route'
+import { stripe } from './routes/stripe.events'
 
 /**
  * Utility function that starts the server.

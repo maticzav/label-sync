@@ -2,7 +2,7 @@ import cuid from 'cuid'
 import { DateTime } from 'luxon'
 import plimit from 'p-limit'
 
-import { Source } from '../lib/source'
+import { DatabaseSource } from '../lib/dbsource'
 import { Installation } from '../lib/types'
 
 type Key = { account: string }
@@ -14,7 +14,7 @@ type Value = {
 /**
  * Lets you check information about the installation for a given user.
  */
-export class InstallationsSource extends Source<Key, Value> {
+export class InstallationsSource extends DatabaseSource<Key, Value> {
   constructor() {
     super(5, 60 * 1000)
   }
@@ -45,41 +45,28 @@ export class InstallationsSource extends Source<Key, Value> {
    * Creates a new installation if it doesn't exist yet with provided data or
    * activates an existing one.
    */
-  public activate(
-    installation: Pick<Installation, 'account' | 'plan'> & {
-      email?: string | null
-      cadence: number
-    },
-  ): Omit<Value, 'ttl'> {
+  public activate(data: Pick<Installation, 'account'> & Partial<Pick<Installation, 'email' | 'ghInstallationId'>>) {
     const id = cuid()
 
-    const data = {
-      id,
-      createdAt: DateTime.now().toJSDate(),
-      account: installation.account,
-      email: installation.email ?? null,
-      plan: installation.plan,
-      periodEndsAt: DateTime.now().plus({ months: installation.cadence }),
-      activated: true,
-    }
-
+    this.invalidate({ account: data.account })
     this.enqueue(async () => {
       await this.prisma().installation.upsert({
-        where: { account: installation.account },
+        where: { account: data.account },
         create: {
-          ...data,
-          periodEndsAt: data.periodEndsAt.toJSDate(),
+          id,
+          account: data.account,
+          ghInstallationId: data.ghInstallationId,
+          email: data.email,
+          plan: 'FREE',
+          periodEndsAt: DateTime.now().plus({ months: 6 }).toJSDate(),
+          activated: true,
         },
         update: {
+          ghInstallationId: data.ghInstallationId,
           activated: true,
-          periodEndsAt: data.periodEndsAt.toJSDate(),
         },
       })
     })
-
-    this.set({ account: installation.account }, { ...data, ttl: DateTime.now().plus({ days: 1 }) })
-
-    return data
   }
 
   /**
@@ -115,6 +102,7 @@ export class InstallationsSource extends Source<Key, Value> {
           account: data.account,
           periodEndsAt: updatedInstallation.periodEndsAt.toJSDate(),
           email: data.email,
+          activated: false,
         },
         update: {
           plan: 'PAID' as const,

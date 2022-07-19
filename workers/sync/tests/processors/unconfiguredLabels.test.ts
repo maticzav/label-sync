@@ -41,6 +41,7 @@ describe('unconfigured labels', () => {
       owner: 'test-org',
       repo: 'a',
       label: 'label/unconfigured',
+      isPro: true,
     })
 
     expect(endpoints.stack()).toEqual([
@@ -86,6 +87,7 @@ describe('unconfigured labels', () => {
       owner: 'test-org',
       repo: 'a',
       label: 'label/unconfigured',
+      isPro: true,
     })
 
     expect(endpoints.stack()).toEqual([
