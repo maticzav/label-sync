@@ -1,14 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { withAuth, WithAuthProp, users } from '@clerk/nextjs/api'
+import { users, requireAuth, RequireAuthProp } from '@clerk/nextjs/api'
 
 import * as tasks from 'lib/tasks'
 
-export default withAuth(async (req: WithAuthProp<NextApiRequest>, res: NextApiResponse) => {
-  if (!req.auth.userId) {
-    res.status(403).json({ message: 'Unauthenticated' })
-    return
-  }
-
+export default requireAuth(async (req: RequireAuthProp<NextApiRequest>, res: NextApiResponse) => {
   const user = await users.getUser(req.auth.userId)
   console.log(user)
 

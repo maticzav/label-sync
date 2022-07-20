@@ -1,4 +1,4 @@
-import { withAuth, WithAuthProp, users } from '@clerk/nextjs/api'
+import { users, requireAuth, RequireAuthProp } from '@clerk/nextjs/api'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import * as z from 'zod'
 
@@ -57,7 +57,7 @@ const schema = z.discriminatedUnion('kind', [
   }),
 ])
 
-export default withAuth(async (req: WithAuthProp<NextApiRequest>, res: NextApiResponse) => {
+export default requireAuth(async (req: RequireAuthProp<NextApiRequest>, res: NextApiResponse) => {
   if (!req.auth.userId) {
     res.status(403).json({ message: 'Unauthenticated' })
     return
