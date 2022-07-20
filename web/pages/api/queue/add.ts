@@ -59,13 +59,15 @@ const schema = z.discriminatedUnion('kind', [
 
 export default withAuth(async (req: WithAuthProp<NextApiRequest>, res: NextApiResponse) => {
   if (!req.auth.userId) {
-    res.status(403).json({ message: 'Unauthorized' })
+    res.status(403).json({ message: 'Unauthenticated' })
     return
   }
 
   const user = await users.getUser(req.auth.userId)
+  console.log(user)
+
   if (!user.publicMetadata['is_admin']) {
-    res.status(403).json({ message: 'Unauthorized' })
+    res.status(403).json({ message: 'Unauthorized, You Need Admin Privliges!' })
     return
   }
 
