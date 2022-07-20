@@ -9,6 +9,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    timeout-minutes: 15
+
     services:
       postgres:
         image: postgres:13
@@ -38,7 +40,8 @@ jobs:
       - name: Use Node
         uses: actions/setup-node@v2
         with:
-          node-version: '16.x'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
 
       - name: Install dependencies
         run: yarn install
@@ -56,6 +59,8 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
+
+    timeout-minutes: 5
 
     needs:
       - test

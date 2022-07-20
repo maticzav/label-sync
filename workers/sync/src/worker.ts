@@ -36,7 +36,7 @@ export class Worker {
     this.tick = this.tick.bind(this)
 
     this.queue = new TaskQueue(config.redisUrl)
-    this.logger = pino()
+    this.logger = pino({})
   }
 
   /**
