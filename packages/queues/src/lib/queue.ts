@@ -185,7 +185,8 @@ export class Queue<Task extends TaskSpec> {
         if (!more || this.disposed) {
           return
         }
-      } catch {
+      } catch (err) {
+        this.logger.error(err, `Error while processing task "${task.id}"!`)
         await this._push(task)
       }
     }

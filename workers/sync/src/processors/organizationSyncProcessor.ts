@@ -17,11 +17,11 @@ export class OrganizationSyncProcessor extends Processor<ProcessorData> {
    * Syncs configuration of a repository with its labels.
    */
   public async perform({ owner, isPro }: ProcessorData) {
+    this.log.info(`Performing organization sync for "${owner}"`)
     const configRepoName = getLSConfigRepoName(owner)
     const rawConfig = await this.endpoints.getConfig({ owner })
 
     /* No configuration, skip the evaluation. */
-    /* istanbul ignore next */
     if (rawConfig === null) {
       this.log.info(`No configuration, skipping sync.`)
       return

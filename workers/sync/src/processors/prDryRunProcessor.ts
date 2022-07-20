@@ -17,6 +17,8 @@ type ProcessorData = {
  */
 export class DryRunProcessor extends Processor<ProcessorData> {
   public async perform({ owner, pr_number, isPro }: ProcessorData) {
+    this.log.info(`Performing dryrun for ${owner}/${pr_number}`)
+
     const configRepoName = getLSConfigRepoName(owner)
 
     const check = await this.endpoints.createPRCheckRun(

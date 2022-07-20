@@ -16,6 +16,8 @@ type ProcessorData = {
  */
 export class OnboardingProcessor extends Processor<ProcessorData> {
   async perform({ owner, accountType }: ProcessorData): Promise<void> {
+    this.log.info(`Onboarding "${owner}"!`)
+
     const configRepoName = getLSConfigRepoName(owner)
 
     const accessibleRepos = await this.endpoints.checkInstallationAccess({
