@@ -50,7 +50,7 @@ describe('dry run', () => {
       endpoints,
       logger,
     )
-    await processor.perform({ owner: 'test-org', pr_number: 1 })
+    await processor.perform({ owner: 'test-org', pr_number: 1, isPro: true })
 
     expect(endpoints.stack()).toMatchObject([
       MockGitHubEndpoints.createPRCheckRun({
@@ -110,7 +110,7 @@ describe('dry run', () => {
       endpoints,
       logger,
     )
-    await processor.perform({ owner: 'test-org', pr_number: 1 })
+    await processor.perform({ owner: 'test-org', pr_number: 1, isPro: true })
 
     expect(endpoints.stack()).toMatchObject([
       MockGitHubEndpoints.createPRCheckRun({
@@ -168,7 +168,7 @@ describe('dry run', () => {
       endpoints,
       logger,
     )
-    await processor.perform({ owner: 'test-org', pr_number: 1 })
+    await processor.perform({ owner: 'test-org', pr_number: 1, isPro: true })
 
     expect(endpoints.stack()).toMatchObject([
       MockGitHubEndpoints.createPRCheckRun({

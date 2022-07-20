@@ -7,6 +7,8 @@
     "lib": ["es2017", "es2019"],
 
     "strict": true,
+    "composite": true,
+    "declaration": true,
 
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,

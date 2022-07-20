@@ -53,6 +53,8 @@ export class Queue<Task extends TaskSpec> {
    */
   private releases: (() => void)[] = []
 
+  private connected: boolean = false
+
   constructor(name: string, url: string) {
     this.name = name
     this.logger = pino()
@@ -67,7 +69,12 @@ export class Queue<Task extends TaskSpec> {
    * Starts the queue and connects to Redis.
    */
   public async start(): Promise<void> {
-    await this.client.connect()
+    this.logger.info(`Connecting to queue "${this.name}"...`)
+    if (!this.connected) {
+      await this.client.connect()
+    }
+    this.connected = true
+    this.logger.info(`Connected to queue "${this.name}"!`)
   }
 
   /**
@@ -88,6 +95,10 @@ export class Queue<Task extends TaskSpec> {
    * Lists all tasks that are currently in the queue.
    */
   public async list(): Promise<Task[]> {
+    if (!this.connected) {
+      await this.start()
+    }
+
     this.logger.info(`Listing tasks in queue "${this.name}"!`)
 
     const rawtasks = await this.client.LRANGE(this.queue(), 0, -1)
@@ -101,6 +112,10 @@ export class Queue<Task extends TaskSpec> {
    * the task identifier.
    */
   public async push(task: UnionOmit<Task, 'id'>): Promise<string> {
+    if (!this.connected) {
+      await this.start()
+    }
+
     const id = crypto.randomUUID()
     const hydratedTask = { id, ...task } as Task
 
@@ -126,6 +141,10 @@ export class Queue<Task extends TaskSpec> {
    * to the executor for processing.
    */
   public async process(fn: (task: Task) => Promise<boolean>) {
+    if (!this.connected) {
+      await this.start()
+    }
+
     processor: while (!this.disposed) {
       this.logger.info(`Checking for new task in queue "${this.name}"!`)
 

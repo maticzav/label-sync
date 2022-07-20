@@ -9,27 +9,40 @@
     "type-check": "tsc"
   },
   "dependencies": {
+    "@clerk/nextjs": "^3.8.0",
+    "@headlessui/react": "^1.6.6",
+    "@heroicons/react": "^1.0.6",
+    "@labelsync/queues": "workspace:*",
     "@stripe/stripe-js": "1.32.0",
+    "classnames": "^2.3.1",
     "lodash": "4.17.21",
+    "luxon": "^3.0.1",
     "multilines": "1.0.3",
     "next": "^12.2.2",
     "prop-types": "15.7.2",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
+    "react": "18.2.0",
+    "react-confetti": "^6.1.0",
+    "react-dom": "18.2.0",
+    "react-hot-toast": "^2.3.0",
     "react-transition-group": "4.4.2",
     "react-typist": "2.0.5",
-    "swr": "0.5.7"
+    "react-use": "^17.4.0",
+    "redis": "^4.2.0",
+    "stripe": "^9.13.0",
+    "zod": "^3.17.9"
   },
   "devDependencies": {
+    "@tailwindcss/forms": "^0.5.2",
     "@tailwindcss/ui": "0.7.2",
     "@types/lodash": "4.14.182",
+    "@types/luxon": "^2.4.0",
     "@types/node": "18.0.5",
     "@types/react": "^18.0.15",
     "@types/react-dom": "16.9.14",
     "@types/react-transition-group": "4.4.4",
     "@types/react-typist": "2.0.3",
-    "autoprefixer": "9.8.6",
-    "tailwindcss": "1.9.6",
+    "autoprefixer": "10.4.7",
+    "tailwindcss": "3.1.6",
     "typescript": "4.7.4"
   }
 }

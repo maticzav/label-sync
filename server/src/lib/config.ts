@@ -11,11 +11,6 @@ type Config = {
   stripeApiKey: string
   stripeEndpointSecret: string
 
-  planIds: {
-    annual: string
-    monthly: string
-  }
-
   databaseUrl: string
   redisUrl: string
 
@@ -30,7 +25,11 @@ const base = {}
 const prod = {
   prod: true,
 
-  corsOrigins: ['https://label-sync.com', 'https://www.label-sync.com', 'https://webhook.label-sync.com'],
+  corsOrigins: [
+    'https://label-sync.com',
+    'https://www.label-sync.com',
+    'https://webhook.label-sync.com',
+  ],
 
   ghAppId: process.env.GH_APP_ID!,
   ghPrivateKey: process.env.GH_PRIVATE_KEY!,
@@ -38,11 +37,6 @@ const prod = {
 
   stripeApiKey: process.env.STRIPE_API_KEY!,
   stripeEndpointSecret: process.env.STRIPE_ENDPOINT_SECRET!,
-
-  planIds: {
-    annual: 'price_HKxac3217AdNnw',
-    monthly: 'price_HKxYK7gvZO3ieE',
-  },
 
   databaseUrl: process.env.DATABASE_URL!,
   redisUrl: process.env.REDIS_URL!,
@@ -62,11 +56,6 @@ const dev = {
 
   stripeApiKey: '',
   stripeEndpointSecret: '',
-
-  planIds: {
-    annual: 'plan_HEG5LPquldqfJp',
-    monthly: 'plan_HEG5wHlZp4io5Q',
-  },
 
   databaseUrl: 'postgres://prisma:prisma@localhost:5432/prisma',
   redisUrl: 'redis://localhost:6379',

@@ -10,8 +10,6 @@ describe('queue', () => {
   beforeEach(async () => {
     const name = Math.random().toString(32)
     queue = new Queue(name, 'redis://localhost:6379')
-
-    await queue.start()
   })
 
   afterEach(async () => {

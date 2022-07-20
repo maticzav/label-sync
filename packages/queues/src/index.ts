@@ -1,1 +1,2 @@
-export { Task, TaskQueue, ITaskQueue } from './queues/tasks'
+export { TaskQueue } from './queues/tasks'
+export type { Task, ITaskQueue } from './queues/tasks'

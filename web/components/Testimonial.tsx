@@ -56,11 +56,7 @@ export default function Testimonial(props: Testimonial) {
                 />
               </pattern>
             </defs>
-            <rect
-              width="404"
-              height="404"
-              fill="url(#ad119f34-7694-4c31-947f-5c9d249b21f3)"
-            />
+            <rect width="404" height="404" fill="url(#ad119f34-7694-4c31-947f-5c9d249b21f3)" />
           </svg>
         )}
 
@@ -69,11 +65,7 @@ export default function Testimonial(props: Testimonial) {
         <div className="relative">
           {props.logo && (
             <a href={props.logo.url}>
-              <img
-                className="max-h-10 mx-auto"
-                src={props.logo.image}
-                alt={props.logo.name}
-              />
+              <img className="max-h-10 mx-auto" src={props.logo.image} alt={props.logo.name} />
             </a>
           )}
 
@@ -94,21 +86,17 @@ export default function Testimonial(props: Testimonial) {
                   />
                 </div>
                 <div className="mt-3 text-center md:mt-0 md:ml-4 md:flex md:items-center">
-                  <div className="text-base leading-6 font-medium text-gray-900">
-                    {props.name}
-                  </div>
+                  <div className="text-base leading-6 font-medium text-gray-900">{props.name}</div>
 
                   <svg
-                    className="hidden md:block mx-1 h-5 w-5 text-green-600"
+                    className="hidden md:block mx-1 h-5 w-5 text-emerald-600"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
                     <path d="M11 0h3L9 20H6l5-20z" />
                   </svg>
 
-                  <div className="text-base leading-6 font-medium text-gray-500">
-                    {props.role}
-                  </div>
+                  <div className="text-base leading-6 font-medium text-gray-500">{props.role}</div>
                 </div>
               </div>
             </footer>

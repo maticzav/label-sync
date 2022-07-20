@@ -8,6 +8,7 @@ export type Installation = {
 
   account: string
   email: string | null
+  ghInstallationId: number | null
 
   plan: Plan
   periodEndsAt: DateTime

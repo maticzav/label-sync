@@ -44,6 +44,7 @@ describe('siblings', () => {
       repo: 'a',
       issue_number: 1,
       label: 'label/regular',
+      isPro: true,
     })
 
     expect(endpoints.stack()).toEqual([

@@ -5,6 +5,7 @@ import { Processor } from '../lib/processor'
 
 type ProcessorData = {
   owner: string
+  isPro: boolean
 }
 
 /**
@@ -15,7 +16,7 @@ export class OrganizationSyncProcessor extends Processor<ProcessorData> {
   /**
    * Syncs configuration of a repository with its labels.
    */
-  public async perform({ owner }: ProcessorData) {
+  public async perform({ owner, isPro }: ProcessorData) {
     const configRepoName = getLSConfigRepoName(owner)
     const rawConfig = await this.endpoints.getConfig({ owner })
 
@@ -25,7 +26,7 @@ export class OrganizationSyncProcessor extends Processor<ProcessorData> {
       this.log.info(`No configuration, skipping sync.`)
       return
     }
-    const parsedConfig = parseConfig({ input: rawConfig, isPro: this.installation.isPaidPlan })
+    const parsedConfig = parseConfig({ input: rawConfig, isPro })
 
     if (!parsedConfig.ok) {
       this.log.info(`Error in configuration, openning issue.`, {
@@ -64,7 +65,7 @@ export class OrganizationSyncProcessor extends Processor<ProcessorData> {
           org: owner,
           dependsOn: [],
           ghInstallationId: this.installation.id,
-          isPaidPlan: this.installation.isPaidPlan,
+          isPaidPlan: isPro,
         })
       }
       return

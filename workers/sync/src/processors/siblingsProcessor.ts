@@ -8,13 +8,14 @@ type ProcessorData = {
   repo: string
   issue_number: number
   label: string
+  isPro: boolean
 }
 
 export class SiblingsProcessor extends Processor<ProcessorData> {
   /**
    * Syncs the configuration of a repository with its labels.
    */
-  public async perform({ owner, repo, label, issue_number }: ProcessorData): Promise<void> {
+  public async perform({ owner, repo, label, issue_number, isPro }: ProcessorData): Promise<void> {
     this.log.info(`${issue_number} labeled with "${label}" in ${owner}/${repo}...`)
 
     const rawConfig = await this.endpoints.getConfig({ owner })
@@ -22,10 +23,7 @@ export class SiblingsProcessor extends Processor<ProcessorData> {
       this.log.info(`No configuration, skipping siblings sync.`)
       return
     }
-    const parsedConfig = parseConfig({
-      input: rawConfig,
-      isPro: this.installation.isPaidPlan,
-    })
+    const parsedConfig = parseConfig({ input: rawConfig, isPro })
 
     if (!parsedConfig.ok) {
       this.log.info(parsedConfig, `Invalid configuration, skipping siblings sync.`)

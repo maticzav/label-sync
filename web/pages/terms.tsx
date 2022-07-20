@@ -1,4 +1,6 @@
+import { Redirect } from 'components/Redirect'
 import React from 'react'
+
 import { NOTION_PRIVACY_TOS_URL } from '../constants'
 
 export default class Terms extends React.Component {
@@ -8,15 +10,6 @@ export default class Terms extends React.Component {
     }
   }
   render() {
-    return (
-      <div className="w-full h-full flex flex-col justify-center">
-        <title>GitHub LabelSync - Terms of Service</title>
-        <img
-          className="h-7 block mx-auto"
-          src="/img/logos/labelsync.svg"
-          alt="LabelSync Logo"
-        />
-      </div>
-    )
+    return <Redirect title="GitHub LabelSync - Terms of Service" />
   }
 }

@@ -1,7 +1,9 @@
 import bodyParser from 'body-parser'
 import { Router } from 'express'
-import { config } from '../lib/config'
+import { DateTime } from 'luxon'
+import Stripe from 'stripe'
 
+import { config } from '../lib/config'
 import { Sources } from '../lib/sources'
 
 /**
@@ -36,30 +38,25 @@ export const stripe = (router: Router, sources: Sources) => {
       case 'checkout.session.completed':
       /* Customer paid an invoice */
       case 'invoice.payment_succeeded': {
-        const payload = event.data.object as {
-          subscription: string
-        }
+        const payload = event.data.object as { subscription: string }
 
         const sub = await sources.stripe.subscriptions.retrieve(payload.subscription)
+        if (sub.status !== 'active') {
+          sources.log.info(`Subscription ${payload.subscription} is not active.`)
+          return
+        }
 
-        let cadence = 0
-        switch (sub.metadata.period) {
-          case 'ANNUALLY':
-            cadence = 12
-            break
-
-          case 'MONTHLY':
-            cadence = 1
-            break
-
-          /* istanbul ingore next */
-          default:
-            throw new Error(`Unknown period ${sub.metadata.period}`)
+        let customer: Stripe.Customer
+        if (typeof sub.customer === 'string') {
+          customer = (await sources.stripe.customers.retrieve(sub.customer)) as Stripe.Customer
+        } else {
+          customer = sub.customer as Stripe.Customer
         }
 
         const installation = await sources.installations.upgrade({
           account: sub.metadata.account,
-          cadence,
+          periodEndsAt: DateTime.fromMillis(sub.current_period_end),
+          email: customer.email,
         })
 
         sources.log.info(sub.metadata, `New subscriber ${installation?.account ?? 'NONE'}`)
@@ -67,10 +64,10 @@ export const stripe = (router: Router, sources: Sources) => {
         return res.json({ received: true })
       }
 
-      /* istanbul ignore next */
       default: {
         sources.log.warn(`unhandled stripe webhook event: ${event.type}`)
-        return res.status(400).end()
+        res.status(400).end()
+        return
       }
     }
     /* End of Stripe Webhook handler */

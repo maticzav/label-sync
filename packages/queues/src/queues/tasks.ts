@@ -3,25 +3,26 @@ import { UnionOmit, UnionShare } from '../lib/utils'
 
 type SharedTaskInfo = TaskSpec & {
   ghInstallationId: number
-  isPaidPlan: boolean
 }
 export type Task = UnionShare<
   | { kind: 'onboard_org'; org: string; accountType: string }
-  | { kind: 'sync_org'; org: string }
-  | { kind: 'sync_repo'; repo: string; org: string }
-  | { kind: 'dryrun_config'; org: string; pr_number: number }
+  | { kind: 'sync_org'; org: string; isPaidPlan: boolean }
+  | { kind: 'sync_repo'; repo: string; org: string; isPaidPlan: boolean }
+  | { kind: 'dryrun_config'; org: string; pr_number: number; isPaidPlan: boolean }
   | {
       kind: 'add_siblings'
       org: string
       repo: string
       issue_number: number
       label: string
+      isPaidPlan: boolean
     }
   | {
       kind: 'check_unconfigured_labels'
       org: string
       repo: string
       label: string
+      isPaidPlan: boolean
     },
   SharedTaskInfo
 >

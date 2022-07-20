@@ -8,10 +8,7 @@ import { IGitHubEndpoints } from './github'
  * should extend. It provides base functionality for the processor.
  */
 export class Processor<T> {
-  protected installation: {
-    id: number
-    isPaidPlan: boolean
-  }
+  protected installation: { id: number }
 
   /**
    * Available GitHub methods to communicate with the API.
@@ -30,7 +27,7 @@ export class Processor<T> {
   protected queue: Pick<ITaskQueue, 'push'>
 
   constructor(
-    installation: { id: number; isPaidPlan: boolean },
+    installation: { id: number },
     queue: Pick<ITaskQueue, 'push'>,
     endpoints: IGitHubEndpoints,
     logger: pino.Logger,

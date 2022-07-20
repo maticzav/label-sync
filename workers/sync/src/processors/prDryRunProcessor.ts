@@ -8,6 +8,7 @@ import { generateHumanReadablePRReport, LabelSyncReport } from '../lib/reports'
 type ProcessorData = {
   owner: string
   pr_number: number
+  isPro: boolean
 }
 
 /**
@@ -15,7 +16,7 @@ type ProcessorData = {
  * results on the PR.
  */
 export class DryRunProcessor extends Processor<ProcessorData> {
-  public async perform({ owner, pr_number }: ProcessorData) {
+  public async perform({ owner, pr_number, isPro }: ProcessorData) {
     const configRepoName = getLSConfigRepoName(owner)
 
     const check = await this.endpoints.createPRCheckRun(
@@ -29,7 +30,7 @@ export class DryRunProcessor extends Processor<ProcessorData> {
     const result = await this.dryrun({
       owner,
       repo: configRepoName,
-      installation: this.installation,
+      isPro,
       pull_number: pr_number,
     })
 
@@ -58,12 +59,12 @@ export class DryRunProcessor extends Processor<ProcessorData> {
   private async dryrun({
     owner,
     repo,
-    installation,
+    isPro,
     pull_number,
   }: {
     repo: string
     owner: string
-    installation: { isPaidPlan: boolean }
+    isPro: boolean
     pull_number: number
   }) {
     const rawConfig = await this.endpoints.getConfig({ owner })
@@ -74,10 +75,7 @@ export class DryRunProcessor extends Processor<ProcessorData> {
       return { ok: false, message: 'No configuration found.' }
     }
 
-    const parsedConfig = parseConfig({
-      input: rawConfig,
-      isPro: installation.isPaidPlan,
-    })
+    const parsedConfig = parseConfig({ input: rawConfig, isPro })
 
     if (!parsedConfig.ok) {
       this.log.info(`Error in configuration, openning issue.`, {

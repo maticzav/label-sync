@@ -45,7 +45,7 @@ describe('repository sync', () => {
       endpoints,
       logger,
     )
-    await processor.perform({ owner: 'test-org', repo: 'a' })
+    await processor.perform({ owner: 'test-org', repo: 'a', isPro: true })
 
     expect(endpoints.stack()).toMatchObject([
       MockGitHubEndpoints.getConfig({ owner: 'test-org' }),
@@ -87,7 +87,7 @@ describe('repository sync', () => {
       endpoints,
       logger,
     )
-    await processor.perform({ owner: 'test-org', repo: 'a' })
+    await processor.perform({ owner: 'test-org', repo: 'a', isPro: true })
 
     expect(endpoints.stack()).toMatchObject([
       MockGitHubEndpoints.getConfig({ owner: 'test-org' }),
@@ -138,7 +138,7 @@ describe('repository sync', () => {
       endpoints,
       logger,
     )
-    await processor.perform({ owner: 'test-org', repo: 'a' })
+    await processor.perform({ owner: 'test-org', repo: 'a', isPro: true })
 
     expect(endpoints.stack()).toMatchObject([
       MockGitHubEndpoints.getConfig({ owner: 'test-org' }),

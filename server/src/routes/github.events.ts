@@ -16,25 +16,18 @@ export const github = (app: Probot, sources: Sources) => {
 
     /* Find installation. */
 
-    const installation = sources.installations.upsert({
+    sources.installations.activate({
       account: owner,
-      cadence: 'YEARLY',
-      plan: 'FREE',
-      activated: true,
+      email: account.email,
+      ghInstallationId: ctx.payload.installation.id,
     })
 
-    app.log.info(`Onboarding ${owner}.`, {
-      meta: {
-        plan: installation.plan,
-        periodEndsAt: installation.periodEndsAt,
-      },
-    })
+    app.log.info(`Onboarding ${owner}.`)
 
     await sources.tasks.push({
       kind: 'onboard_org',
       dependsOn: [],
       ghInstallationId: ctx.payload.installation.id,
-      isPaidPlan: installation.plan === 'PAID',
       org: owner,
       accountType: ctx.payload.sender.type,
     })

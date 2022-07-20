@@ -24,9 +24,7 @@ export default function Tier(props: Tier) {
         <div className="mt-4 flex items-baseline text-6xl leading-none font-extrabold">
           {props.price}
         </div>
-        <p className="mt-5 text-lg leading-7 text-gray-500">
-          {props.description}
-        </p>
+        <p className="mt-5 text-lg leading-7 text-gray-500">{props.description}</p>
       </div>
 
       <div className="px-6 pt-6 pb-8 bg-gray-50 sm:p-10 sm:pt-6">
@@ -39,7 +37,7 @@ export default function Tier(props: Tier) {
             >
               <div className="flex-shrink-0">
                 <svg
-                  className="h-6 w-6 text-green-500"
+                  className="h-6 w-6 text-emerald-500"
                   stroke="currentColor"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -52,9 +50,7 @@ export default function Tier(props: Tier) {
                   />
                 </svg>
               </div>
-              <p className="ml-3 text-base leading-6 text-gray-700">
-                {feature.name}
-              </p>
+              <p className="ml-3 text-base leading-6 text-gray-700">{feature.name}</p>
             </li>
           ))}
         </ul>

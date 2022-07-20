@@ -1,7 +1,8 @@
-import React, { useState, PropsWithChildren } from 'react'
+import React, { useState } from 'react'
+import Head from 'next/head'
 import Link from 'next/link'
 
-import Button from '../components/Button'
+import { Button } from '../components/Button'
 import Hero from '../components/Hero'
 import * as Feature from '../components/Feature'
 import Footer from '../components/Footer'
@@ -13,65 +14,95 @@ import Testimonial from '../components/Testimonial'
 import { NOTION_DOCS_URL, NOTION_SUPPORT_URL } from '../constants'
 
 import { scrollToId } from '../lib/scroll'
+import { Toggle } from 'components/Toggle'
+import { useCallback } from 'react'
+import { getPlanPrice, PLAN_IDS } from 'lib/checkout'
 
-/* Pricing event */
-
-export default function Home() {
+export default function Home({ prices }: { prices: { annual: number; monthly: number } }) {
   return (
     <>
-      <title>GitHub LabelSync - The best way to sync labels</title>
+      <Head>
+        {/* Splitbee */}
+        <script async src="https://cdn.splitbee.io/sb.js" />
 
-      <Title></Title>
-      <Introduction></Introduction>
-      <Features></Features>
-      <DetailedFeatures></DetailedFeatures>
-      <Testimonials></Testimonials>
-      <Pricing></Pricing>
-      <FAQ></FAQ>
-      <Footer></Footer>
+        {/* Crisp */}
+        <script
+          type="text/javascript"
+          dangerouslySetInnerHTML={{
+            __html: `window.$crisp=[];window.CRISP_WEBSITE_ID="f485b5a2-8a24-43ec-8783-7542d6ef3c25";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();`,
+          }}
+        />
+
+        <title>GitHub LabelSync - The best way to sync labels</title>
+
+        <meta
+          name="description"
+          content="LabelSync helps you effortlessly sync labels across your organization. It comes with utility tools that help with the transition and advanced features that help you manage your labels and issues better."
+        />
+      </Head>
+
+      {/* Content */}
+      <Navigation
+        links={[
+          {
+            label: 'Documentation',
+            href: NOTION_DOCS_URL,
+          },
+          {
+            label: 'Install',
+            href: 'https://github.com/apps/labelsync-manager',
+          },
+          {
+            label: 'Pricing',
+            href: '#',
+            onClick: () => scrollToId('pricing'),
+          },
+          {
+            label: 'Features',
+            href: '#',
+            onClick: () => scrollToId('features'),
+          },
+          {
+            label: 'Support',
+            href: NOTION_SUPPORT_URL,
+          },
+        ]}
+      />
+
+      <Hero />
+
+      <Introduction />
+      <Features />
+      <DetailedFeatures />
+      <Testimonials />
+      <Pricing price={prices} />
+      <FAQ />
+      <Footer />
     </>
   )
 }
 
-/* Sections */
+/**
+ * SSR function that fetches the latest prices from the server.
+ */
+export const getStaticProps = async () => {
+  const [annual, monthly] = await Promise.all([
+    //
+    getPlanPrice('ANNUALLY'),
+    getPlanPrice('MONTHLY'),
+  ])
 
-function Title() {
-  return (
-    <div className="relative bg-gray-80 overflow-hidden">
-      <div className="relative pt-6 pb-12 sm:pb-16 md:pb-20 lg:pb-28 xl:pb-32">
-        <Navigation
-          links={[
-            {
-              label: 'Documentation',
-              href: NOTION_DOCS_URL,
-            },
-            {
-              label: 'Install',
-              href: 'https://github.com/apps/labelsync-manager',
-            },
-            {
-              label: 'Pricing',
-              href: '#',
-              onClick: () => scrollToId('pricing'),
-            },
-            {
-              label: 'Features',
-              href: '#',
-              onClick: () => scrollToId('features'),
-            },
-            {
-              label: 'Support',
-              href: NOTION_SUPPORT_URL,
-            },
-          ]}
-        ></Navigation>
-
-        {/* Hero */}
-        <Hero></Hero>
-      </div>
-    </div>
-  )
+  return {
+    props: {
+      prices: {
+        monthly: monthly.monthly_amount,
+        annual: annual.monthly_amount,
+      },
+    },
+  }
 }
+
+// Sections ------------------------------------------------------------------
 
 function Introduction() {
   return (
@@ -88,7 +119,7 @@ function Introduction() {
             That's why I created LabelSync - to help you get to the best parts of labels more quickly. &rdquo;
           </p>
         }
-      ></Testimonial>
+      />
     </div>
   )
 }
@@ -98,8 +129,7 @@ function Features() {
     <Section id="features" name="features" className="bg-white overflow-hidden">
       <div className="container">
         <div className="relative max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          {/* <!-- Side art --> */}
-
+          {/* Side Art */}
           <svg
             className="absolute top-0 left-full transform -translate-x-1/2 -translate-y-3/4 lg:left-auto lg:right-full lg:translate-x-2/3 lg:translate-y-1/4"
             width="404"
@@ -122,9 +152,9 @@ function Features() {
             <rect width="404" height="784" fill="url(#8b1b5f72-e944-4457-af67-0c6d15a99f38)" />
           </svg>
 
-          {/* <!-- Features --> */}
+          {/* Features */}
 
-          <div className="relative lg:grid lg:grid-cols-3 lg:col-gap-8">
+          <div className="relative lg:grid lg:grid-cols-3 lg:gap-x-8">
             <div className="lg:col-span-1">
               <h3 className="text-3xl leading-9 font-extrabold tracking-tight text-gray-900 sm:text-4xl sm:leading-10">
                 <span className="mr-3">🚀</span>
@@ -132,10 +162,9 @@ function Features() {
               </h3>
             </div>
 
-            <div className="mt-10 sm:grid sm:grid-cols-2 sm:col-gap-8 sm:row-gap-10 lg:col-span-2 lg:mt-0">
-              {/* <!-- Features --> */}
+            <div className="mt-10 sm:grid sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 lg:col-span-2 lg:mt-0">
               <div>
-                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-green-500 text-white">
+                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-emerald-600 text-white">
                   <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
@@ -153,8 +182,9 @@ function Features() {
                   </p>
                 </div>
               </div>
+
               <div className="mt-10 sm:mt-0">
-                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-green-500 text-white">
+                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-emerald-600 text-white">
                   <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
@@ -173,7 +203,7 @@ function Features() {
               </div>
 
               <div className="mt-10 sm:mt-0">
-                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-green-500 text-white">
+                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-emerald-600 text-white">
                   <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
@@ -189,8 +219,9 @@ function Features() {
                   </p>
                 </div>
               </div>
+
               <div className="mt-10 sm:mt-0">
-                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-green-500 text-white">
+                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-emerald-600 text-white">
                   <svg
                     fill="none"
                     className="h-6 w-6"
@@ -225,18 +256,14 @@ function Features() {
 function DetailedFeatures() {
   return (
     <Section id="detailed-features" name="detailed fetaures" className="relative bg-gray-50 overflow-hidden">
-      {/* <!-- Leading text --> */}
-
       <div className="text-center">
         <h2 className="inline-block mt-20 text-4xl tracking-tight leading-10 font-extrabold text-gray-900 sm:leading-none sm:text-6xl lg:text-5xl xl:text-6xl underline-green">
           Features
         </h2>
       </div>
 
-      {/* <!-- Features --> */}
-
       <div className="relative container mx-auto pt-6 md:px-10 pb-20 md:pb-20 lg:pb-24 xl:pb-32">
-        {/* <!-- GH Issues --> */}
+        {/* Issues */}
 
         <Feature.Left
           caption="Automate in Github"
@@ -250,7 +277,7 @@ function DetailedFeatures() {
           }
           alt="Issues Overview"
           image="/img/examples/issues.png"
-        ></Feature.Left>
+        />
 
         {/* PR message */}
 
@@ -263,9 +290,10 @@ function DetailedFeatures() {
           alt="PullRequest message"
           image="/img/examples/pr-comment.png"
           icon={<span className="mr-2">🤖</span>}
-        ></Feature.Right>
+        />
 
         {/* Yaml */}
+
         <Feature.Left
           caption="Language of flexibility"
           title={['use the power of', 'yaml for configuration.']}
@@ -284,7 +312,7 @@ function DetailedFeatures() {
           }
           image="/img/examples/yaml.png"
           alt="YAML configuration"
-        ></Feature.Left>
+        />
 
         {/* TypeScript */}
 
@@ -306,7 +334,7 @@ function DetailedFeatures() {
           }
           image="/img/examples/typescript.png"
           alt="Issues overview"
-        ></Feature.Right>
+        />
 
         {/* Siblings */}
 
@@ -323,7 +351,7 @@ function DetailedFeatures() {
           }
           image="/img/examples/siblings.png"
           alt="Siblings example"
-        ></Feature.Left>
+        />
 
         {/*  */}
 
@@ -332,8 +360,6 @@ function DetailedFeatures() {
             and more...
           </h2>
         </div>
-
-        {/* <!--  --> */}
       </div>
     </Section>
   )
@@ -349,13 +375,11 @@ function Testimonials() {
       <Testimonial
         heading="What our users say about us?"
         content={
-          <>
-            <p className="mb-3">
-              &ldquo;Label-Sync enables us to have much a more efficient project management process where everything
-              relies on a consistent set of labels. Triage, Prioritization, Estimation, everything can be done with
-              labels now. &rdquo;
-            </p>
-          </>
+          <p className="mb-3">
+            &ldquo;Label-Sync enables us to have much a more efficient project management process where everything
+            relies on a consistent set of labels. Triage, Prioritization, Estimation, everything can be done with labels
+            now. &rdquo;
+          </p>
         }
         role="Engineering Manager, Prisma"
         name="Jan Piotrowski"
@@ -366,177 +390,95 @@ function Testimonials() {
           url: 'https://prisma.io',
         }}
         pattern
-      ></Testimonial>
+      />
     </Section>
   )
 }
 
-const prices = {
-  ANNUALLY: 8,
-  MONTHLY: 10,
-}
-
-function Pricing() {
-  const [period, setPeriod] = useState<'ANNUALLY' | 'MONTHLY'>('ANNUALLY')
-
-  function toggle() {
-    switch (period) {
-      case 'MONTHLY': {
-        setPeriod('ANNUALLY')
-        break
-      }
-      case 'ANNUALLY': {
-        setPeriod('MONTHLY')
-        break
-      }
+function Pricing({ price }: { price: { annual: number; monthly: number } }) {
+  const [cadence, setPeriod] = useState<'ANNUALLY' | 'MONTHLY'>('ANNUALLY')
+  const toggle = useCallback(() => {
+    if (cadence === 'ANNUALLY') {
+      setPeriod('MONTHLY')
+    } else {
+      setPeriod('ANNUALLY')
     }
-  }
+  }, [cadence, setPeriod])
 
   return (
-    <Section id="pricing" name="pricing" className="bg-green-500">
+    <Section id="pricing" name="pricing" className="bg-emerald-600">
       <div className="pt-12 container text-center px-10 sm:px-6 sm:pt-16 lg:pt-24">
         <h2 className="text-lg leading-6 font-semibold text-gray-300 uppercase tracking-wider">Pricing</h2>
         <p className="mt-2 text-3xl leading-9 font-extrabold text-white sm:text-4xl sm:leading-10 lg:text-5xl lg:leading-none">
           Ready to get started?
         </p>
         <p className="mt-4 md:mt-6 text-xl mx-auto md:max-w-2xl leading-7 text-gray-200">
-          We are also giving you an option for 14-day free trial to find out how the tool works and a free tier to see
-          how great it is.
+          Know what you are looking for? Go Pro! <br />
+          Still undecided? Start with a free plan and see how it works!
         </p>
       </div>
 
-      {/* Launch discount */}
-      {/* <div className="mt-8 text-center sm:mt-8 lg:mt-12">
-        <p className="text-2xl leading-9 font-bold text-white sm:text-3xl sm:leading-none italic">
-          20% Launch Dicount
-        </p>
-      </div> */}
-
-      {/* Period changer */}
-
-      <div className="block mx-auto flex justify-center mt-8 lg:mt-12">
-        <span className="mr-3 text-gray-200 font-semibold align-baseline">Pay monthly</span>
-
-        {/*
-          Simple toggle
-
-          On: "bg-green-500", Off: "bg-gray-200"
-        */}
-        <span
-          onClick={toggle}
-          className={
-            'relative inline-block flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline ' +
-            (period === 'ANNUALLY' ? 'bg-green-400' : 'bg-gray-200')
-          }
-        >
-          {/* On: "translate-x-5", Off: "translate-x-0" */}
-          <span
-            className={
-              'inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200 ' +
-              (period === 'ANNUALLY' ? 'translate-x-5' : 'translate-x-0')
-            }
-          ></span>
-        </span>
-
-        <span className="align-baseline font-semibold ml-3 text-gray-200">Pay annualy</span>
+      <div className="mt-8 lg:mt-12">
+        <Toggle isOn={cadence === 'ANNUALLY'} onClick={toggle} options={{ off: 'Pay monthly', on: 'Pay annually' }} />
       </div>
 
-      {/* <!-- Tiers --> */}
+      <div className="mt-8 pb-12 bg-white sm:mt-12 sm:pb-16 lg:mt-12 lg:pb-24 relative">
+        <div className="absolute inset-0 h-3/4 lg:h-1/2 bg-emerald-600" />
 
-      <div className="mt-8 pb-12 bg-white sm:mt-12 sm:pb-16 lg:mt-12 lg:pb-24">
-        {/* Container */}
-        <div className="relative">
-          {/* Background  */}
-          <div className="absolute inset-0 h-3/4 lg:h-1/2 bg-green-500"></div>
+        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-md mx-auto lg:max-w-5xl lg:grid lg:grid-cols-2 lg:gap-5">
+            {/* Free */}
+            <div>
+              <Tier
+                name="Free"
+                description="Great for starting out with LabelSync"
+                price={<>$0</>}
+                features={[
+                  { name: 'LabelSync Manager' },
+                  { name: 'Configuration Libraries' },
+                  { name: 'Limited to 5 Repository Configurations' },
+                  { name: 'No Credit Card Required' },
+                ]}
+                link={
+                  <Link href={{ pathname: '/subscribe', query: { plan: 'FREE' } }}>
+                    <a>
+                      <Button>Install LabelSync</Button>
+                    </a>
+                  </Link>
+                }
+              ></Tier>
+            </div>
 
-          {/* Tiers container */}
-          <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md mx-auto lg:max-w-5xl lg:grid lg:grid-cols-2 lg:gap-5">
-              {/* <!-- Free tier --> */}
-
-              <div>
-                <Tier
-                  name="Free"
-                  description="Great for starting out with LabelSync."
-                  price={<>$0</>}
-                  features={[
-                    { name: 'LabelSync Manager' },
-                    { name: 'Configuration Libraries' },
-                    { name: 'Limited to 5 repositories' },
-                  ]}
-                  link={
-                    <Link
-                      href={{
-                        pathname: '/subscribe',
-                        query: { plan: 'FREE' },
-                      }}
-                    >
-                      <a>
-                        <Button>Install LabelSync</Button>
-                      </a>
-                    </Link>
-                  }
-                ></Tier>
-              </div>
-
-              {/* <!-- Paid Tier --> */}
-              <div className="mt-10 lg:mt-0">
-                <Tier
-                  name="The Complete solution"
-                  description="Best for teams and users with rapid workflows."
-                  price={
-                    <>
-                      {/* Yearly pricing */}
-                      {period === 'ANNUALLY' && (
-                        <>
-                          ${prices.ANNUALLY}
-                          {/* $12
-                          <span className="ml-1 text-2xl leading-8 font-medium text-gray-500 line-through">
-                            $16
-                          </span> */}
-                        </>
-                      )}
-                      {/* Monthly pricing */}
-                      {period === 'MONTHLY' && (
-                        <>
-                          ${prices.MONTHLY}
-                          {/* $16
-                          <span className="ml-1 text-2xl leading-8 font-medium text-gray-500 line-through">
-                            $20
-                          </span> */}
-                        </>
-                      )}
-                      <span className="ml-1 text-2xl leading-8 font-medium text-gray-500">/mo</span>
-                    </>
-                  }
-                  features={[
-                    { name: 'LabelSync Manager' },
-                    { name: 'Configuration Libraries' },
-                    { name: 'Siblings and Aliasing' },
-                    { name: 'Unlimited repositories' },
-                    { name: 'Wildcard repository configuration' },
-                  ]}
-                  link={
-                    <Link
-                      href={{
-                        pathname: '/subscribe',
-                        query: { plan: 'PAID', period },
-                      }}
-                    >
-                      <a>
-                        <Button>Sync my labels</Button>
-                      </a>
-                    </Link>
-                  }
-                ></Tier>
-              </div>
-              {/* End of tiers */}
+            {/* Paid */}
+            <div className="mt-10 lg:mt-0">
+              <Tier
+                name="The Complete solution"
+                description="Best for teams"
+                price={
+                  <>
+                    {cadence === 'ANNUALLY' && <>${price.annual.toFixed(2)}</>}
+                    {cadence === 'MONTHLY' && <>${price.monthly.toFixed(2)}</>}
+                    <span className="ml-1 text-2xl leading-8 font-medium text-gray-500">/mo</span>
+                  </>
+                }
+                features={[
+                  { name: 'Everything in Free Plan' },
+                  { name: 'Siblings and Aliasing' },
+                  { name: 'Unlimited Repositories' },
+                  { name: 'Wildcard Repository Configuration' },
+                ]}
+                link={
+                  <Link href={{ pathname: '/subscribe', query: { plan: 'PAID', period: cadence } }}>
+                    <a>
+                      <Button>Start Syncing</Button>
+                    </a>
+                  </Link>
+                }
+              ></Tier>
             </div>
           </div>
-          {/* <!-- End of tiers container  --> */}
         </div>
       </div>
-      {/* End of tier container */}
     </Section>
   )
 }
@@ -546,9 +488,10 @@ function FAQ() {
     <div className="bg-white">
       <div className="container mx-auto pt-12 pb-16 sm:pt-16 sm:pb-20 px-4 sm:px-6 lg:pt-20 lg:pb-28 lg:px-8">
         <h2 className="text-3xl leading-9 font-extrabold text-gray-900">Frequently asked questions</h2>
+
         <div className="mt-6 border-t-2 border-gray-100 pt-10">
           <dl className="md:grid md:grid-cols-2 md:gap-8">
-            {/* <!-- LEFT Questions --> */}
+            {/* Left Questions */}
             <div>
               <div>
                 <dt className="text-lg leading-6 font-medium text-gray-900">
@@ -556,8 +499,8 @@ function FAQ() {
                 </dt>
                 <dd className="mt-2">
                   <p className="text-base leading-6 text-gray-500">
-                    Please send us an
-                    <a className="mx-1" href="mailto:support@label-sync.com">
+                    Chat with us on Crisp or send an
+                    <a className="mx-1 underline" href="mailto:support@label-sync.com">
                       email
                     </a>
                     to our support team. We'll try to get back to you as soon as possible.
@@ -566,7 +509,7 @@ function FAQ() {
               </div>
             </div>
 
-            {/* <!-- RIGHT questions --> */}
+            {/* Right Questions */}
             <div className="mt-12 md:mt-0">
               <div>
                 <dt className="text-lg leading-6 font-medium text-gray-900">
@@ -575,10 +518,10 @@ function FAQ() {
                 <dd className="mt-2">
                   <p className="text-base leading-6 text-gray-500">
                     Please reach out to
-                    <a href="mailto:matic@label-sync.com" className=" ml-1">
+                    <a href="mailto:matic@label-sync.com" className="underline mx-1">
                       matic@label-sync.com
                     </a>
-                    . I'd be more than happy to chat about LabelSync with you!
+                    or start a Crisp chat. I'd be more than happy to chat about LabelSync with you!
                   </p>
                 </dd>
               </div>

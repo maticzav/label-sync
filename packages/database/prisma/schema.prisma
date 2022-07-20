@@ -12,13 +12,15 @@ model Installation {
   createdAt DateTime @default(now())
 
   // Info
-  account      String   @unique
-  email        String?
+  account          String  @unique
+  ghInstallationId Int?
+  email            String?
+
   plan         Plan
   periodEndsAt DateTime
 
   // Manager properties
-  activated Boolean @default(false)
+  activated Boolean
 }
 
 enum Plan {

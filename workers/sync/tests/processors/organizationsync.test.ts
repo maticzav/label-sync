@@ -33,7 +33,7 @@ describe('organization sync', () => {
     const logger = pino()
 
     const processor = new OrganizationSyncProcessor(installation, queue, endpoints, logger)
-    await processor.perform({ owner: 'test-org' })
+    await processor.perform({ owner: 'test-org', isPro: true })
 
     const tasks: string[] = []
     await queue.process(async (task) => {
@@ -70,7 +70,7 @@ describe('organization sync', () => {
     const logger = pino()
 
     const processor = new OrganizationSyncProcessor(installation, queue, endpoints, logger)
-    await processor.perform({ owner: 'test-org' })
+    await processor.perform({ owner: 'test-org', isPro: true })
 
     const tasks: string[] = []
     await queue.process(async (task) => {
@@ -112,7 +112,7 @@ describe('organization sync', () => {
     const logger = pino()
 
     const processor = new OrganizationSyncProcessor(installation, queue, endpoints, logger)
-    await processor.perform({ owner: 'test-org' })
+    await processor.perform({ owner: 'test-org', isPro: true })
 
     const tasks: string[] = []
     await queue.process(async (task) => {
