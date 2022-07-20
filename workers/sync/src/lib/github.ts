@@ -1,7 +1,7 @@
 import { getLSConfigRepoName, LS_CONFIG_PATH } from '@labelsync/config'
 import { Octokit } from '@octokit/core'
 import '@octokit/types'
-import Sentry from '@sentry/node'
+import * as Sentry from '@sentry/node'
 import { DateTime } from 'luxon'
 
 import * as dict from '../data/dict'

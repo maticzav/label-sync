@@ -46,6 +46,8 @@ export class Worker {
     await this.queue.start()
 
     this.queue.process(this.tick)
+
+    this.logger.info(`Worker started!`)
   }
 
   /**
