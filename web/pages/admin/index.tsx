@@ -27,9 +27,16 @@ export default function Admin() {
     timer.current = setInterval(() => {
       fetch('/api/queue/list')
         .then((res) => res.json())
-        .then((data) => setQueue(data.list))
+        .then((data) => {
+          if ('message' in data) {
+            setError(data.message)
+            return
+          }
+          setQueue(data.list)
+        })
         .catch((err) => {
           console.error(err)
+          setError(err.message)
         })
     }, 1000)
 
@@ -103,7 +110,7 @@ export default function Admin() {
           </div>
         </header>
 
-        <main>
+        <main className="max-w-7xl mx-auto">
           {/* Content */}
 
           <div className="px-4 sm:px-6 lg:px-8">
