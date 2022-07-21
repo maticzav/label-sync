@@ -65,8 +65,8 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
     return MockGitHubEndpoints.push('get_file', { owner, repo, ref, path })
   }
 
-  static getConfig(id: { owner: string }): StackItem {
-    return MockGitHubEndpoints.push('get_config', id)
+  static getConfig({ owner, ref }: { owner: string; ref?: string }): StackItem {
+    return MockGitHubEndpoints.push('get_config', { owner, ref })
   }
 
   static getLabels({ repo, owner }: { owner: string; repo: string }, page?: number | undefined): StackItem {
@@ -101,13 +101,18 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
     return MockGitHubEndpoints.push('remove_label', { owner, repo, label })
   }
 
-  static addLabelsToIssue(id: {
+  static addLabelsToIssue({
+    owner,
+    repo,
+    issue_number,
+    labels,
+  }: {
     owner: string
     repo: string
     issue_number: number
     labels: Pick<GitHubLabel, 'name'>[]
   }): StackItem {
-    return MockGitHubEndpoints.push('add_labels_to_issue', id)
+    return MockGitHubEndpoints.push('add_labels_to_issue', { owner, repo, issue_number, labels })
   }
 
   static aliasLabels({
@@ -147,8 +152,8 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
     return MockGitHubEndpoints.push('create_file_tree', { repo, tree })
   }
 
-  static createBlob(id: { owner: string; repo: string }, content: string): StackItem {
-    return MockGitHubEndpoints.push('create_blob', { ...id, content })
+  static createBlob({ owner, repo }: { owner: string; repo: string }, content: string): StackItem {
+    return MockGitHubEndpoints.push('create_blob', { owner, repo, content })
   }
 
   static createRepository(
@@ -158,12 +163,15 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
     return MockGitHubEndpoints.push('create_repository', { owner, repo, params })
   }
 
-  static createCommit(id: { owner: string; repo: string }, params: { sha: string; message: string; parent: string }) {
-    return MockGitHubEndpoints.push('create_commit', { id, params })
+  static createCommit(
+    { owner, repo }: { owner: string; repo: string },
+    { sha, message, parent }: { sha: string; message: string; parent: string },
+  ) {
+    return MockGitHubEndpoints.push('create_commit', { owner, repo, sha, message, parent })
   }
 
-  static getRef(id: { owner: string; repo: string; ref: string }): StackItem {
-    return MockGitHubEndpoints.push('get_ref', id)
+  static getRef({ owner, repo, ref }: { owner: string; repo: string; ref: string }): StackItem {
+    return MockGitHubEndpoints.push('get_ref', { owner, repo, ref })
   }
 
   static updateRef({ repo, owner, ...params }: { owner: string; repo: string; ref: string; sha: string }): StackItem {
@@ -182,8 +190,8 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
     return MockGitHubEndpoints.push('get_installation_repos', { owner, params: { page } })
   }
 
-  static getPullRequest(id: { owner: string; repo: string; number: number }): StackItem {
-    return MockGitHubEndpoints.push('get_pull_request', id)
+  static getPullRequest({ owner, repo, number }: { owner: string; repo: string; number: number }): StackItem {
+    return MockGitHubEndpoints.push('get_pull_request', { owner, repo, number })
   }
 
   static createPRCheckRun({
@@ -224,25 +232,25 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
 
   private repos: { [owner: string]: { [repo: string]: { id: number; default_branch: string } | null } }
 
-  async getRepo(id: { owner: string; repo: string }): Promise<GitHubRepository | null> {
-    this.push('get_repo', id)
-    const repo = this.repos?.[id.owner]?.[id.repo]
-    if (repo) {
-      return {
-        id: repo.id,
-        name: id.repo,
-        default_branch: repo.default_branch,
-      }
+  async getRepo({ owner, repo }: { owner: string; repo: string }): Promise<GitHubRepository | null> {
+    this.push('get_repo', { owner, repo })
+    const data = this.repos?.[owner]?.[repo]
+    if (data == null) {
+      return null
     }
 
-    return null
+    return {
+      id: data.id,
+      name: repo,
+      default_branch: data.default_branch,
+    }
   }
 
   private files: { [path: string]: string }
 
   async getFile(
-    { owner, repo, ref }: { owner: string; repo: string; ref: string },
-    path: string,
+    { owner, repo }: { owner: string; repo: string },
+    { path, ref }: { path: string; ref?: string },
   ): Promise<string | null> {
     this.push('get_file', { owner, repo, ref, path })
     return this.files[path] ?? null
@@ -250,9 +258,9 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
 
   private configs: { [owner: string]: string }
 
-  async getConfig(id: { owner: string }): Promise<string | null> {
-    this.push('get_config', id)
-    return this.configs[id.owner] ?? null
+  async getConfig({ owner, ref }: { owner: string; ref?: string }): Promise<string | null> {
+    this.push('get_config', { owner, ref })
+    return this.configs[owner] ?? null
   }
 
   private labels: { [owner: string]: { [repo: string]: GitHubLabel[] } }
@@ -340,10 +348,10 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
   }
 
   async createCommit(
-    id: { owner: string; repo: string },
-    params: { sha: string; message: string; parent: string },
+    { owner, repo }: { owner: string; repo: string },
+    { sha, message, parent }: { sha: string; message: string; parent: string },
   ): Promise<GitHubCommit | null> {
-    this.push('create_commit', { id, params })
+    this.push('create_commit', { owner, repo, sha, message, parent })
 
     return {
       sha: 'sha',
@@ -383,7 +391,10 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
 
   private installations: { [owner: string]: string[] }
 
-  async checkInstallationAccess(id: {
+  async checkInstallationAccess({
+    owner,
+    repos,
+  }: {
     owner: string
     repos: string[]
   }): Promise<
@@ -391,10 +402,10 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
     | { status: 'Insufficient'; missing: string[]; accessible: string[] }
     | null
   > {
-    this.push('check_installation_access', id)
+    this.push('check_installation_access', { owner, repos })
 
-    const accessible = this.installations[id.owner] ?? []
-    const missing = id.repos.filter((r) => !accessible.includes(r))
+    const accessible = this.installations[owner] ?? []
+    const missing = repos.filter((r) => !accessible.includes(r))
 
     if (missing.length > 0) {
       return { status: 'Insufficient', missing, accessible }
@@ -403,8 +414,11 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
     return { status: 'Sufficient', accessible }
   }
 
-  async getInstallationRepos(id: { owner: string }, page?: number | undefined): Promise<GitHubRepository[] | null> {
-    this.push('get_installation_repos', { id, page })
+  async getInstallationRepos(
+    { owner }: { owner: string },
+    page?: number | undefined,
+  ): Promise<GitHubRepository[] | null> {
+    this.push('get_installation_repos', { owner, page })
     return []
   }
 
@@ -427,12 +441,12 @@ export class MockGitHubEndpoints implements IGitHubEndpoints {
       merge_commit_sha: null,
       head: {
         label: 'canary',
-        ref: 'canary',
+        ref: 'refs/heads/canary',
         sha: 'canary_sha',
       },
       base: {
         label: 'main',
-        ref: 'main',
+        ref: 'refs/heads/main',
         sha: 'main_sha',
       },
       /** Indicates whether or not the pull request is a draft. */

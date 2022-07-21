@@ -69,11 +69,14 @@ export class DryRunProcessor extends Processor<ProcessorData> {
     isPro: boolean
     pull_number: number
   }) {
-    const rawConfig = await this.endpoints.getConfig({ owner })
+    const pr = await this.endpoints.getPullRequest({ owner, repo }, { number: pull_number })
+    if (pr == null) {
+      return { ok: false, message: 'Could not find pull request.' }
+    }
 
-    // No configuration, skip the evaluation.
+    const rawConfig = await this.endpoints.getConfig({ owner, ref: pr.head.ref })
     if (rawConfig === null) {
-      this.log.info(`No configuration, skipping dryrun.`)
+      this.log.info({ owner, pr }, `No configuration, skipping dryrun.`)
       return { ok: false, message: 'No configuration found.' }
     }
 

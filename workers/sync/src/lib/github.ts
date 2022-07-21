@@ -11,7 +11,6 @@ import { select } from './utils'
 // Interface
 
 type RepositoryIdentifier = { owner: string; repo: string }
-type BranchIdentifier = RepositoryIdentifier & { ref: string }
 
 export interface GitHubIssue {
   id: number
@@ -139,13 +138,13 @@ export interface IGitHubEndpoints {
   /**
    * Loads a file from GitHub if it exists.
    */
-  getFile(id: BranchIdentifier, path: string): Promise<string | null>
+  getFile(id: RepositoryIdentifier, params: { path: string; ref?: string }): Promise<string | null>
 
   /**
    * Returns the string value of the configuration file for a given owner
    * if it exists.
    */
-  getConfig(id: { owner: string }): Promise<string | null>
+  getConfig(id: { owner: string; ref?: string }): Promise<string | null>
 
   /**
    * Returns all labels that are present in the given repository.
@@ -339,6 +338,7 @@ export class GitHubEndpoints implements IGitHubEndpoints {
       return res.data
     } catch (err) {
       Sentry.captureException(err, {
+        tags: { method: 'getRepo' },
         extra: { owner, repo },
       })
       return null
@@ -348,13 +348,21 @@ export class GitHubEndpoints implements IGitHubEndpoints {
   /**
    * Loads a file from GitHub if it exists.
    */
-  public async getFile({ owner, repo, ref }: BranchIdentifier, path: string): Promise<string | null> {
+  public async getFile(
+    { owner, repo }: RepositoryIdentifier,
+    { path, ref }: { path: string; ref?: string },
+  ): Promise<string | null> {
     try {
+      const ghrepo = await this.getRepo({ owner, repo })
+      if (ghrepo == null) {
+        return null
+      }
+
       const res = await this.octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
         owner: owner,
-        path: path,
+        path,
         repo: repo,
-        ref: ref,
+        ref: ref ?? `refs/heads/${ghrepo.default_branch}`,
       })
 
       if ('content' in res.data) {
@@ -364,6 +372,7 @@ export class GitHubEndpoints implements IGitHubEndpoints {
       return null
     } catch (err) /* istanbul ignore next */ {
       Sentry.captureException(err, {
+        tags: { method: 'getFile' },
         extra: { owner, repo, path, ref },
       })
       return null
@@ -374,24 +383,13 @@ export class GitHubEndpoints implements IGitHubEndpoints {
    * Returns the string value of the configuration file for a given owner
    * if it exists.
    */
-  public async getConfig({ owner }: { owner: string }): Promise<string | null> {
+  public async getConfig({ owner, ref }: { owner: string; ref?: string }): Promise<string | null> {
     try {
-      const configRepoName = getLSConfigRepoName(owner)
-      const repo = await this.getRepo({ owner, repo: configRepoName })
-      if (repo == null) {
-        return null
-      }
-
-      return this.getFile(
-        {
-          owner,
-          repo: configRepoName,
-          ref: `refs/heads/${repo.default_branch}`,
-        },
-        LS_CONFIG_PATH,
-      )
+      const repo = getLSConfigRepoName(owner)
+      return this.getFile({ owner, repo }, { path: LS_CONFIG_PATH, ref })
     } catch (err) {
       Sentry.captureException(err, {
+        tags: { method: 'getConfig' },
         extra: { owner },
       })
       return null
@@ -411,8 +409,6 @@ export class GitHubEndpoints implements IGitHubEndpoints {
 
     // Recursively fetch subpages if there my be more labels.
     let subpages: GitHubLabel[] = []
-
-    /* istanbul ignore next */
     if (res.data.length === 100) {
       subpages = await this.getLabels({ repo, owner }, _page + 1)
     }
@@ -437,7 +433,10 @@ export class GitHubEndpoints implements IGitHubEndpoints {
       })
       return res.data
     } catch (err: any) /* istanbul ignore next */ {
-      Sentry.captureException(err, { extra: { repo, owner } })
+      Sentry.captureException(err, {
+        tags: { method: 'createLabel' },
+        extra: { repo, owner },
+      })
       return null
     }
   }
@@ -457,7 +456,10 @@ export class GitHubEndpoints implements IGitHubEndpoints {
       })
       return res.data
     } catch (err: any) /* istanbul ignore next */ {
-      Sentry.captureException(err, { extra: { repo, owner } })
+      Sentry.captureException(err, {
+        tags: { method: 'updateLabel' },
+        extra: { repo, owner },
+      })
       return null
     }
   }
@@ -473,7 +475,10 @@ export class GitHubEndpoints implements IGitHubEndpoints {
         name: label.name,
       })
     } catch (err: any) /* istanbul ignore next */ {
-      Sentry.captureException(err, { extra: { repo, owner } })
+      Sentry.captureException(err, {
+        tags: { method: 'removeLabel' },
+        extra: { repo, owner },
+      })
     }
   }
 
@@ -573,15 +578,23 @@ export class GitHubEndpoints implements IGitHubEndpoints {
       title: string
       body: string
     },
-  ): Promise<GitHubIssue> {
-    const res = await this.octokit.request('POST /repos/{owner}/{repo}/issues', {
-      owner,
-      repo,
-      title: params.title,
-      body: params.body,
-    })
+  ): Promise<GitHubIssue | null> {
+    try {
+      const res = await this.octokit.request('POST /repos/{owner}/{repo}/issues', {
+        owner,
+        repo,
+        title: params.title,
+        body: params.body,
+      })
 
-    return res.data
+      return res.data
+    } catch (err) {
+      Sentry.captureException(err, {
+        tags: { method: 'openIssue' },
+        extra: { repo, owner },
+      })
+      return null
+    }
   }
 
   /**
@@ -669,6 +682,7 @@ export class GitHubEndpoints implements IGitHubEndpoints {
       }
     } catch (err) {
       Sentry.captureException(err, {
+        tags: { method: 'createRepository' },
         extra: { owner, repo },
       })
       return null
@@ -694,6 +708,7 @@ export class GitHubEndpoints implements IGitHubEndpoints {
       return res.data
     } catch (err) {
       Sentry.captureException(err, {
+        tags: { method: 'createCommit' },
         extra: { owner, repo },
       })
       return null
@@ -714,6 +729,7 @@ export class GitHubEndpoints implements IGitHubEndpoints {
       return res.data
     } catch (err) {
       Sentry.captureException(err, {
+        tags: { method: 'getRef' },
         extra: { owner, repo },
       })
       return null
@@ -742,30 +758,38 @@ export class GitHubEndpoints implements IGitHubEndpoints {
    * NOTE: This function assumes repository is empty.
    */
   public async bootstrapConfigRepository(id: RepositoryIdentifier, tree: FileTree.Type): Promise<GitHubRef | null> {
-    const repo = await this.createRepository(id, {
-      description: 'LabelSync configuration repository.',
-    })
-    if (repo == null) {
+    try {
+      const repo = await this.createRepository(id, {
+        description: 'LabelSync configuration repository.',
+      })
+      if (repo == null) {
+        return null
+      }
+
+      const ghtree = await this.createFileTree(id, tree)
+      const main = await this.getRef(id, 'heads/main')
+      if (main == null) {
+        return null
+      }
+
+      const commit = await this.createCommit(id, {
+        sha: ghtree.sha,
+        message: ':sparkles: Scaffold configuration',
+        parent: main.object.sha,
+      })
+      if (commit == null) {
+        return null
+      }
+
+      const ref = await this.updateRef(id, { ref: 'heads/main', sha: commit.sha })
+      return ref
+    } catch (err) {
+      Sentry.captureException(err, {
+        tags: { method: 'bootstrapConfigRepository' },
+        extra: { owner: id.owner, repo: id.repo },
+      })
       return null
     }
-
-    const ghtree = await this.createFileTree(id, tree)
-    const master = await this.getRef(id, 'heads/master')
-    if (master == null) {
-      return null
-    }
-
-    const commit = await this.createCommit(id, {
-      sha: ghtree.sha,
-      message: ':sparkles: Scaffold configuration',
-      parent: master.object.sha,
-    })
-    if (commit == null) {
-      return null
-    }
-
-    const ref = await this.updateRef(id, { ref: 'heads/master', sha: commit.sha })
-    return ref
   }
 
   /**
@@ -819,6 +843,7 @@ export class GitHubEndpoints implements IGitHubEndpoints {
       return [...res.data.repositories, ...subpages]
     } catch (err) {
       Sentry.captureException(err, {
+        tags: { method: 'getInstallationRepos' },
         extra: { owner, _page },
       })
       return null
@@ -839,6 +864,7 @@ export class GitHubEndpoints implements IGitHubEndpoints {
       return res.data
     } catch (err) {
       Sentry.captureException(err, {
+        tags: { method: 'getPullRequest' },
         extra: { owner, repo, number },
       })
       return null
@@ -872,6 +898,7 @@ export class GitHubEndpoints implements IGitHubEndpoints {
       return res.data
     } catch (err) {
       Sentry.captureException(err, {
+        tags: { method: 'createPRCheckRun' },
         extra: { owner, repo, pr_number },
       })
       return null
@@ -918,6 +945,7 @@ export class GitHubEndpoints implements IGitHubEndpoints {
       return res.data
     } catch (err) {
       Sentry.captureException(err, {
+        tags: { method: 'completePRCheckRun' },
         extra: { owner, repo, check_run },
       })
       return null
@@ -948,6 +976,7 @@ export class GitHubEndpoints implements IGitHubEndpoints {
       return res.data
     } catch (err) {
       Sentry.captureException(err, {
+        tags: { method: 'mergePR' },
         extra: { repo, owner, pr_number },
       })
       return null
