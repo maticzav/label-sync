@@ -1,3 +1,5 @@
+import { Octokit } from '@octokit/core'
+import { createAppAuth } from '@octokit/auth-app'
 import pino from 'pino'
 
 import { Task, TaskQueue } from '@labelsync/queues'
@@ -5,7 +7,7 @@ import { Task, TaskQueue } from '@labelsync/queues'
 import { GitHubEndpoints } from './lib/github'
 import { ExhaustiveSwitchCheck } from './lib/utils'
 import { config } from './lib/env'
-import { getOctokitForInstallation } from './lib/auth'
+
 import { DryRunProcessor } from './processors/prDryRunProcessor'
 import { OnboardingProcessor } from './processors/onboardingProcessor'
 import { OrganizationSyncProcessor } from './processors/organizationSyncProcessor'
@@ -32,8 +34,20 @@ export class Worker {
    */
   private disposed: boolean = false
 
+  /**
+   * Shared Octokit instance authenticated as a GitHub application.
+   */
+  private octokit: Octokit
+
   constructor() {
     this.tick = this.tick.bind(this)
+    this.octokit = new Octokit({
+      authStrategy: createAppAuth,
+      auth: {
+        appId: config.ghAppId,
+        privateKey: config.ghPrivateKey,
+      },
+    })
 
     this.queue = new TaskQueue(config.redisUrl)
     this.logger = pino({})
@@ -51,18 +65,48 @@ export class Worker {
   }
 
   /**
+   * Creates a new Octokit instance that is authenticated as a GitHub application.
+   */
+  private auth(installationId: number): Promise<Octokit> {
+    return this.octokit.auth({
+      type: 'installation',
+      installationId,
+      factory: (options: any) => {
+        const Octo = this.octokit.constructor as typeof Octokit
+
+        return new Octo({
+          ...options,
+          throttle: {
+            ...options.throttle,
+            installationId,
+          },
+          auth: {
+            ...options.auth,
+            installationId,
+          },
+        })
+      },
+    }) as Promise<Octokit>
+  }
+
+  /**
    * Performs a single lookup and possible execution.
    */
   private async tick(task: Task): Promise<boolean> {
     this.logger.info(`New task "${task.kind}"!`)
 
-    const octokit = getOctokitForInstallation(task.ghInstallationId)
-    const endpoints = new GitHubEndpoints(octokit)
+    const octokit = await this.auth(task.ghInstallationId)
+
+    const endpoints = new GitHubEndpoints(octokit as Octokit)
     const installation = { id: task.ghInstallationId }
+    const logger = this.logger.child({
+      kind: task.kind,
+      installationId: task.ghInstallationId,
+    })
 
     switch (task.kind) {
       case 'dryrun_config': {
-        const processor = new DryRunProcessor(installation, this.queue, endpoints, this.logger)
+        const processor = new DryRunProcessor(installation, this.queue, endpoints, logger)
         await processor.perform({
           owner: task.org,
           pr_number: task.pr_number,
@@ -72,25 +116,25 @@ export class Worker {
       }
 
       case 'onboard_org': {
-        const processor = new OnboardingProcessor(installation, this.queue, endpoints, this.logger)
+        const processor = new OnboardingProcessor(installation, this.queue, endpoints, logger)
         await processor.perform({ owner: task.org, accountType: task.accountType })
         break
       }
 
       case 'sync_org': {
-        const processor = new OrganizationSyncProcessor(installation, this.queue, endpoints, this.logger)
+        const processor = new OrganizationSyncProcessor(installation, this.queue, endpoints, logger)
         await processor.perform({ owner: task.org, isPro: task.isPaidPlan })
         break
       }
 
       case 'sync_repo': {
-        const processor = new RepositorySyncProcessor(installation, this.queue, endpoints, this.logger)
+        const processor = new RepositorySyncProcessor(installation, this.queue, endpoints, logger)
         await processor.perform({ owner: task.org, repo: task.repo, isPro: task.isPaidPlan })
         break
       }
 
       case 'add_siblings': {
-        const processor = new SiblingsProcessor(installation, this.queue, endpoints, this.logger)
+        const processor = new SiblingsProcessor(installation, this.queue, endpoints, logger)
         await processor.perform({
           owner: task.org,
           repo: task.repo,
@@ -102,7 +146,7 @@ export class Worker {
       }
 
       case 'check_unconfigured_labels': {
-        const processor = new UnconfiguredLabelsProcessor(installation, this.queue, endpoints, this.logger)
+        const processor = new UnconfiguredLabelsProcessor(installation, this.queue, endpoints, logger)
         await processor.perform({
           owner: task.org,
           repo: task.repo,
