@@ -270,7 +270,7 @@ export interface IGitHubEndpoints {
   /**
    * Fetches a pull request from the repository if it exists.
    */
-  getPullRequest(id: RepositoryIdentifier, params: { number: number }): Promise<GitHubPullRequest | null>
+  getPullRequest(id: RepositoryIdentifier, params: { pr_number: number }): Promise<GitHubPullRequest | null>
 
   /**
    * Creates a new check run on a given pull request if that pull request
@@ -853,19 +853,19 @@ export class GitHubEndpoints implements IGitHubEndpoints {
   /**
    * Fetches a pull request from the repository if it exists.
    */
-  public async getPullRequest({ owner, repo, number }: { owner: string; repo: string; number: number }) {
+  public async getPullRequest({ owner, repo, pr_number }: { owner: string; repo: string; pr_number: number }) {
     try {
       const res = await this.octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}', {
         owner,
         repo,
-        pull_number: number,
+        pull_number: pr_number,
       })
 
       return res.data
     } catch (err) {
       Sentry.captureException(err, {
         tags: { method: 'getPullRequest' },
-        extra: { owner, repo, number },
+        extra: { owner, repo, number: pr_number },
       })
       return null
     }
@@ -879,7 +879,7 @@ export class GitHubEndpoints implements IGitHubEndpoints {
     { repo, owner }: RepositoryIdentifier,
     { pr_number, name }: { pr_number: number; name: string },
   ) {
-    const pr = await this.getPullRequest({ owner, repo, number: pr_number })
+    const pr = await this.getPullRequest({ owner, repo, pr_number: pr_number })
 
     if (!pr) {
       return null
@@ -959,7 +959,7 @@ export class GitHubEndpoints implements IGitHubEndpoints {
     { repo, owner }: RepositoryIdentifier,
     { pr_number }: { pr_number: number },
   ): Promise<GitHubMergeCommit | null> {
-    const pr = await this.getPullRequest({ owner, repo, number: pr_number })
+    const pr = await this.getPullRequest({ owner, repo, pr_number })
 
     if (!pr) {
       return null

@@ -19,30 +19,26 @@ export class DryRunProcessor extends Processor<ProcessorData> {
   public async perform({ owner, pr_number, isPro }: ProcessorData) {
     this.log.info(`Performing dryrun for ${owner}/${pr_number}`)
 
-    const configRepoName = getLSConfigRepoName(owner)
+    const repo = getLSConfigRepoName(owner)
 
     const check = await this.endpoints.createPRCheckRun(
-      { repo: configRepoName, owner },
+      { repo: repo, owner },
       {
         name: 'LabelSync Configuration Check',
-        pr_number: pr_number,
+        pr_number,
       },
     )
 
-    const result = await this.dryrun({
-      owner,
-      repo: configRepoName,
-      isPro,
-      pull_number: pr_number,
-    })
+    const result = await this.dryrun({ owner, repo, isPro, pr_number: pr_number })
 
+    // Don't complete the check if we couldn't create it.
     if (!check) {
       return
     }
 
     // Complete the check with status if it was created successfully.
     await this.endpoints.completePRCheckRun(
-      { owner, repo: configRepoName },
+      { owner, repo },
       {
         check_run: check.id,
         conclusion: result.ok ? 'success' : 'failure',
@@ -62,16 +58,17 @@ export class DryRunProcessor extends Processor<ProcessorData> {
     owner,
     repo,
     isPro,
-    pull_number,
+    pr_number: pr_number,
   }: {
     repo: string
     owner: string
     isPro: boolean
-    pull_number: number
+    pr_number: number
   }) {
-    const pr = await this.endpoints.getPullRequest({ owner, repo }, { number: pull_number })
+    const pr = await this.endpoints.getPullRequest({ owner, repo }, { pr_number })
     if (pr == null) {
-      return { ok: false, message: 'Could not find pull request.' }
+      this.log.error({ owner, repo, pr_number }, `Could not find pull request for ${owner}/${repo}#${pr_number}`)
+      throw new Error(`Could not find PR ${pr_number}`)
     }
 
     const rawConfig = await this.endpoints.getConfig({ owner, ref: pr.head.ref })
@@ -83,14 +80,15 @@ export class DryRunProcessor extends Processor<ProcessorData> {
     const parsedConfig = parseConfig({ input: rawConfig, isPro })
 
     if (!parsedConfig.ok) {
-      this.log.info(`Error in configuration, openning issue.`, {
-        meta: { config: rawConfig, error: parsedConfig.error },
-      })
+      this.log.info(
+        { meta: { config: rawConfig, error: parsedConfig.error } },
+        `Error in configuration, openning issue.`,
+      )
 
       const comment = messages['invalid.config.comment'](parsedConfig.error)
-      await this.endpoints.comment({ owner, repo }, { issue: pull_number, comment })
+      await this.endpoints.comment({ owner, repo }, { issue: pr_number, comment })
 
-      this.log.info({ comment }, `Commented on the issue ${pull_number} in ${owner}/${repo}.`)
+      this.log.info({ comment }, `Commented on the issue ${pr_number} in ${owner}/${repo}.`)
 
       return { ok: false, message: parsedConfig.error }
     }
@@ -108,8 +106,8 @@ export class DryRunProcessor extends Processor<ProcessorData> {
       })
 
       const comment = messages['insufficient.permissions.comment'](access.missing)
-      await this.endpoints.comment({ owner, repo }, { issue: pull_number, comment })
-      this.log.info({ comment }, `Commented on the issue ${pull_number} in ${owner}/${repo}.`)
+      await this.endpoints.comment({ owner, repo }, { issue: pr_number, comment })
+      this.log.info({ comment }, `Commented on the issue ${pr_number} in ${owner}/${repo}.`)
 
       return { ok: false, message: comment }
     }
