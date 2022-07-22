@@ -67,26 +67,17 @@ export class Worker {
   /**
    * Creates a new Octokit instance that is authenticated as a GitHub application.
    */
-  private auth(installationId: number): Promise<Octokit> {
-    return this.octokit.auth({
-      type: 'installation',
-      installationId,
-      factory: (options: any) => {
-        const Octo = this.octokit.constructor as typeof Octokit
-
-        return new Octo({
-          ...options,
-          throttle: {
-            ...options.throttle,
-            installationId,
-          },
-          auth: {
-            ...options.auth,
-            installationId,
-          },
-        })
+  private auth(installationId: number): Octokit {
+    const instance = new Octokit({
+      authStrategy: createAppAuth,
+      auth: {
+        appId: config.ghAppId,
+        privateKey: config.ghPrivateKey,
+        installationId,
       },
-    }) as Promise<Octokit>
+    })
+
+    return instance
   }
 
   /**
@@ -95,9 +86,9 @@ export class Worker {
   private async tick(task: Task): Promise<boolean> {
     this.logger.info(`New task "${task.kind}"!`)
 
-    const octokit = await this.auth(task.ghInstallationId)
+    const octokit = this.auth(task.ghInstallationId)
 
-    const endpoints = new GitHubEndpoints(octokit as Octokit)
+    const endpoints = new GitHubEndpoints(octokit)
     const installation = { id: task.ghInstallationId }
     const logger = this.logger.child({
       kind: task.kind,
