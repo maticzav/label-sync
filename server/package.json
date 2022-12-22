@@ -14,7 +14,7 @@
     "body-parser": "1.20.0",
     "cors": "2.8.5",
     "express": "4.18.1",
-    "jsonwebtoken": "8.5.1",
+    "jsonwebtoken": "9.0.0",
     "lodash": "^4.17.21",
     "luxon": "^3.0.1",
     "multilines": "1.0.3",
