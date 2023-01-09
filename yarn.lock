@@ -1092,7 +1092,7 @@ __metadata:
     "@prisma/client": ^3.15.2
     "@types/luxon": ^2.3.2
     cuid: ^2.1.8
-    luxon: ^3.0.1
+    luxon: ^3.2.1
     p-limit: 3.1.0
     prisma: ^3.15.2
     query-string: ^7.1.1
@@ -1132,7 +1132,7 @@ __metadata:
     express: 4.18.1
     jsonwebtoken: 8.5.1
     lodash: ^4.17.21
-    luxon: ^3.0.1
+    luxon: ^3.2.1
     multilines: 1.0.3
     pino: ^7.11.0
     pino-datadog: ^2.0.2
@@ -1157,7 +1157,7 @@ __metadata:
     "@types/prettier": ^2.6.3
     handlebars: ^4.7.7
     lodash: ^4.17.21
-    luxon: ^3.0.1
+    luxon: ^3.2.1
     multilines: ^1.0.3
     pino: ^7.11.0
     prettier: ^2.7.1
@@ -7117,10 +7117,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"luxon@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "luxon@npm:3.0.1"
-  checksum: aa966eb919bf95b1bd819cda784d1f6f66e3fb65bd9ec7bf68b6a978eeb4e3e14f7e2275021b473f93b15b6b7ba2e5a30471e53add3929a7e695fcfd6dd40ec8
+"luxon@npm:^3.2.1":
+  version: 3.2.1
+  resolution: "luxon@npm:3.2.1"
+  checksum: 3fa3def2c5f5d3032b4c46220c4da8aeb467ac979888fc9d2557adcd22195f93516b4ad5909a75862bec8dc6ddc0953b0f38e6d2f4a8ab8450ddc531a83cf20d
   languageName: node
   linkType: hard
 
@@ -10872,7 +10872,7 @@ __metadata:
     autoprefixer: 10.4.7
     classnames: ^2.3.1
     lodash: 4.17.21
-    luxon: ^3.0.1
+    luxon: ^3.2.1
     multilines: 1.0.3
     next: ^12.2.2
     prop-types: 15.7.2
